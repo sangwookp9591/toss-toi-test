@@ -1,0 +1,91 @@
+{
+  "baseline": "165bdc14048005a3",
+  "lockHash": "ed46c033c3262424725b8310155724f8f07cff79bfb7f741d91120a8f65f6634",
+  "algorithm": "SHA256(JSON.stringify({entries: sortedEntries, lockfileHash: SHA256(rawLockBytes)})).slice(0,16)",
+  "cases": [
+    {
+      "change": "baseline",
+      "key": "165bdc14048005a3",
+      "changed": false
+    },
+    {
+      "change": "entry-order",
+      "key": "165bdc14048005a3",
+      "changed": false
+    },
+    {
+      "change": "entry-added",
+      "key": "7bb65f7a368089c6",
+      "changed": true
+    },
+    {
+      "change": "duplicate-entry",
+      "key": "71b4405981398656",
+      "changed": true
+    },
+    {
+      "change": "lock-whitespace",
+      "key": "e595d8a19df88518",
+      "changed": true
+    },
+    {
+      "change": "lock-version-string",
+      "key": "d905ba726991970a",
+      "changed": true
+    },
+    {
+      "change": "build-tool-version-only",
+      "key": "165bdc14048005a3",
+      "changed": false
+    },
+    {
+      "change": "build-config-only",
+      "key": "165bdc14048005a3",
+      "changed": false
+    },
+    {
+      "change": "NODE_ENV-only",
+      "key": "165bdc14048005a3",
+      "changed": false
+    },
+    {
+      "change": "package-json-non-entry-metadata",
+      "key": "165bdc14048005a3",
+      "changed": false
+    },
+    {
+      "change": "registry-credentials-only",
+      "key": "165bdc14048005a3",
+      "changed": false
+    }
+  ],
+  "artifactConfigCheck": {
+    "change": "minify false -> true",
+    "trials": [
+      {
+        "repeat": 1,
+        "keyA": "165bdc14048005a3",
+        "keyB": "165bdc14048005a3",
+        "artifactAHash": "f0feb560c830efe8d596b80c72508f1d45f2d82b57222bef64d76d593a848d1a",
+        "artifactBHash": "679067d23ecbc3a0cb09f920b4abda95761e3adaecfaa0a992d0122303db328f",
+        "artifactChanged": true
+      },
+      {
+        "repeat": 2,
+        "keyA": "165bdc14048005a3",
+        "keyB": "165bdc14048005a3",
+        "artifactAHash": "f0feb560c830efe8d596b80c72508f1d45f2d82b57222bef64d76d593a848d1a",
+        "artifactBHash": "679067d23ecbc3a0cb09f920b4abda95761e3adaecfaa0a992d0122303db328f",
+        "artifactChanged": true
+      },
+      {
+        "repeat": 3,
+        "keyA": "165bdc14048005a3",
+        "keyB": "165bdc14048005a3",
+        "artifactAHash": "f0feb560c830efe8d596b80c72508f1d45f2d82b57222bef64d76d593a848d1a",
+        "artifactBHash": "679067d23ecbc3a0cb09f920b4abda95761e3adaecfaa0a992d0122303db328f",
+        "artifactChanged": true
+      }
+    ]
+  }
+}

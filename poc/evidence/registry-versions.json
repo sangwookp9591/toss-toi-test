@@ -1,0 +1,172 @@
+{
+  "sucrase": {
+    "version": "3.35.1",
+    "published": "2025-11-19T17:10:51.830Z",
+    "tags": {
+      "latest": "3.35.1"
+    },
+    "url": "https://registry.npmjs.org/sucrase"
+  },
+  "pnpm": {
+    "version": "12.3.4",
+    "published": "2026-09-04T14:20:10.390Z",
+    "tags": {
+      "latest-1": "1.43.1",
+      "latest-2": "2.25.7",
+      "latest-3": "3.8.1",
+      "latest-4": "4.14.4",
+      "latest-5": "5.18.10",
+      "dev": "6.23.7-202112041634",
+      "pr4475": "0.0.0-pr4475.1",
+      "latest-6": "6.35.1",
+      "next-6": "6.35.1",
+      "latest-7": "7.33.5",
+      "next-7": "7.33.7",
+      "latest-8": "8.15.9",
+      "next-8": "8.15.9",
+      "next-9": "9.15.9",
+      "latest-9": "9.15.9",
+      "latest-10": "10.34.5",
+      "next-10": "10.34.5",
+      "latest-12": "12.3.4",
+      "latest": "12.3.4",
+      "next-11": "11.26.0",
+      "latest-11": "11.26.0",
+      "next-12": "12.4.1"
+    },
+    "url": "https://registry.npmjs.org/pnpm"
+  },
+  "esbuild-wasm": {
+    "version": "0.28.2",
+    "published": "2026-08-08T20:02:02.456Z",
+    "tags": {
+      "latest": "0.28.2"
+    },
+    "url": "https://registry.npmjs.org/esbuild-wasm"
+  },
+  "esbuild": {
+    "version": "0.28.2",
+    "published": "2026-08-08T20:00:55.454Z",
+    "tags": {
+      "latest": "0.28.2"
+    },
+    "url": "https://registry.npmjs.org/esbuild"
+  },
+  "react-dom": {
+    "version": "19.3.0",
+    "published": "2026-09-09T17:17:39.744Z",
+    "tags": {
+      "beta": "19.0.0-beta-26f2496093-20240514",
+      "rc": "19.0.0-rc.1",
+      "next": "19.3.0-canary-d5736f09-20260507",
+      "backport": "19.0.8",
+      "experimental": "0.0.0-experimental-82c44beb-20260910",
+      "latest": "19.3.0",
+      "canary": "19.3.0-canary-82c44beb-20260910"
+    },
+    "url": "https://registry.npmjs.org/react-dom"
+  },
+  "oxc-transform": {
+    "version": "0.149.0",
+    "published": "2026-09-07T14:54:27.349Z",
+    "tags": {
+      "latest": "0.149.0"
+    },
+    "url": "https://registry.npmjs.org/oxc-transform"
+  },
+  "@swc/wasm": {
+    "version": "1.16.2",
+    "published": "2026-09-04T19:50:44.763Z",
+    "tags": {
+      "latest": "1.16.2",
+      "nightly": "1.16.2-nightly-20260904.1"
+    },
+    "url": "https://registry.npmjs.org/@swc/wasm"
+  },
+  "yarn": {
+    "version": "1.22.22",
+    "published": "2024-03-09T21:35:40.868Z",
+    "tags": {
+      "legacy": "1.21.1",
+      "rc": "1.22.0",
+      "berry": "2.4.3",
+      "latest": "1.22.22"
+    },
+    "url": "https://registry.npmjs.org/yarn"
+  },
+  "@babel/standalone": {
+    "version": "8.0.5",
+    "published": "2026-09-10T21:14:27.575Z",
+    "tags": {
+      "esm": "7.21.4-esm.4",
+      "next": "8.0.0-rc.6",
+      "latest": "8.0.5"
+    },
+    "url": "https://registry.npmjs.org/@babel/standalone"
+  },
+  "playwright-core": {
+    "version": "1.63.0",
+    "published": "2026-09-04T22:43:09.102Z",
+    "tags": {
+      "rc": "1.18.0-rc1",
+      "latest": "1.63.0",
+      "next": "1.64.0-alpha-2026-09-11",
+      "beta": "1.63.0-beta-1789083203000"
+    },
+    "url": "https://registry.npmjs.org/playwright-core"
+  },
+  "@tanstack/react-query": {
+    "version": "5.102.8",
+    "published": "2026-08-27T16:06:57.089Z",
+    "tags": {
+      "alpha": "5.0.0-alpha.91",
+      "beta": "5.0.0-beta.35",
+      "rc": "5.0.0-rc.16",
+      "previous": "4.44.0",
+      "latest": "5.102.8"
+    },
+    "url": "https://registry.npmjs.org/@tanstack/react-query"
+  },
+  "@swc/wasm-web": {
+    "version": "1.16.2",
+    "published": "2026-09-04T19:47:44.426Z",
+    "tags": {
+      "latest": "1.16.2",
+      "nightly": "1.16.2-nightly-20260904.1"
+    },
+    "url": "https://registry.npmjs.org/@swc/wasm-web"
+  },
+  "react": {
+    "version": "19.3.0",
+    "published": "2026-09-09T17:21:30.071Z",
+    "tags": {
+      "beta": "19.0.0-beta-26f2496093-20240514",
+      "rc": "19.0.0-rc.1",
+      "next": "19.3.0-canary-d5736f09-20260507",
+      "backport": "19.0.8",
+      "experimental": "0.0.0-experimental-82c44beb-20260910",
+      "latest": "19.3.0",
+      "canary": "19.3.0-canary-82c44beb-20260910"
+    },
+    "url": "https://registry.npmjs.org/react"
+  },
+  "@rolldown/browser": {
+    "version": "1.2.8",
+    "published": "2026-09-09T09:42:29.805Z",
+    "tags": {
+      "nightly": "1.0.0-beta.13-commit.024b632",
+      "canary": "1.0.0-beta.31-commit.832324a",
+      "latest": "1.2.8"
+    },
+    "url": "https://registry.npmjs.org/@rolldown/browser"
+  },
+  "@yarnpkg/cli-dist": {
+    "version": "4.18.0",
+    "published": "2026-07-29T09:29:32.964Z",
+    "tags": {
+      "v3": "3.8.7",
+      "latest": "4.18.0"
+    },
+    "url": "https://registry.npmjs.org/@yarnpkg/cli-dist"
+  }
+}

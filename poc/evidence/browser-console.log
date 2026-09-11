@@ -1,0 +1,390 @@
+plain esbuild-wasm 1 {
+  name: 'esbuild-wasm',
+  crossOriginIsolated: false,
+  sharedArrayBuffer: 'undefined',
+  js_import_ms: 3.5,
+  wasm_ready_ms: 42.600000001490116,
+  module_ready_ms: 46.100000001490116,
+  context_first_bundle_ms: 177.5,
+  incremental_rebuild_ms: 12.5
+}
+plain esbuild-wasm 2 {
+  name: 'esbuild-wasm',
+  crossOriginIsolated: false,
+  sharedArrayBuffer: 'undefined',
+  js_import_ms: 3.899999998509884,
+  wasm_ready_ms: 41.20000000298023,
+  module_ready_ms: 45.100000001490116,
+  context_first_bundle_ms: 182,
+  incremental_rebuild_ms: 14.300000004470348
+}
+plain esbuild-wasm 3 {
+  name: 'esbuild-wasm',
+  crossOriginIsolated: false,
+  sharedArrayBuffer: 'undefined',
+  js_import_ms: 2.899999998509884,
+  wasm_ready_ms: 40.900000005960464,
+  module_ready_ms: 43.80000000447035,
+  context_first_bundle_ms: 176.39999999850988,
+  incremental_rebuild_ms: 9.899999998509884
+}
+plain esbuild-full 1 {
+  name: 'esbuild-full',
+  crossOriginIsolated: false,
+  sharedArrayBuffer: 'undefined',
+  js_import_ms: 2.899999998509884,
+  wasm_ready_ms: 39.600000001490116,
+  module_ready_ms: 42.5,
+  first_full_bundle_ms: 180.89999999850988,
+  second_full_bundle_ms: 11.5
+}
+plain esbuild-full 2 {
+  name: 'esbuild-full',
+  crossOriginIsolated: false,
+  sharedArrayBuffer: 'undefined',
+  js_import_ms: 2.899999998509884,
+  wasm_ready_ms: 41.20000000298023,
+  module_ready_ms: 44.100000001490116,
+  first_full_bundle_ms: 184.89999999850988,
+  second_full_bundle_ms: 13
+}
+plain esbuild-full 3 {
+  name: 'esbuild-full',
+  crossOriginIsolated: false,
+  sharedArrayBuffer: 'undefined',
+  js_import_ms: 3.100000001490116,
+  wasm_ready_ms: 38,
+  module_ready_ms: 41.100000001490116,
+  first_full_bundle_ms: 184.10000000149012,
+  second_full_bundle_ms: 17.399999998509884
+}
+plain swc-wasm 1 {
+  name: 'swc-wasm',
+  crossOriginIsolated: false,
+  sharedArrayBuffer: 'undefined',
+  js_import_ms: 1.5999999940395355,
+  wasm_ready_ms: 28.600000001490116,
+  module_ready_ms: 30.19999999552965,
+  first_transform_all_ms: 53.899999998509884,
+  second_transform_all_ms: 1.8000000044703484
+}
+plain swc-wasm 2 {
+  name: 'swc-wasm',
+  crossOriginIsolated: false,
+  sharedArrayBuffer: 'undefined',
+  js_import_ms: 1.8000000044703484,
+  wasm_ready_ms: 31.69999999552965,
+  module_ready_ms: 33.5,
+  first_transform_all_ms: 53.20000000298023,
+  second_transform_all_ms: 1.7999999970197678
+}
+plain swc-wasm 3 {
+  name: 'swc-wasm',
+  crossOriginIsolated: false,
+  sharedArrayBuffer: 'undefined',
+  js_import_ms: 1.7999999970197678,
+  wasm_ready_ms: 27.5,
+  module_ready_ms: 29.299999997019768,
+  first_transform_all_ms: 53.600000001490116,
+  second_transform_all_ms: 1.8999999985098839
+}
+plain sucrase 1 {
+  name: 'sucrase',
+  crossOriginIsolated: false,
+  sharedArrayBuffer: 'undefined',
+  module_ready_ms: 13.600000001490116,
+  first_transform_all_ms: 11.700000002980232,
+  second_transform_all_ms: 3.6999999955296516
+}
+plain sucrase 2 {
+  name: 'sucrase',
+  crossOriginIsolated: false,
+  sharedArrayBuffer: 'undefined',
+  module_ready_ms: 13,
+  first_transform_all_ms: 11.399999998509884,
+  second_transform_all_ms: 3.2999999970197678
+}
+plain sucrase 3 {
+  name: 'sucrase',
+  crossOriginIsolated: false,
+  sharedArrayBuffer: 'undefined',
+  module_ready_ms: 13.200000002980232,
+  first_transform_all_ms: 11.700000002980232,
+  second_transform_all_ms: 3.5
+}
+plain babel 1 {
+  name: 'babel',
+  crossOriginIsolated: false,
+  sharedArrayBuffer: 'undefined',
+  module_ready_ms: 121.89999999850988,
+  first_transform_all_ms: 34.899999998509884,
+  second_transform_all_ms: 10.5
+}
+plain babel 2 {
+  name: 'babel',
+  crossOriginIsolated: false,
+  sharedArrayBuffer: 'undefined',
+  module_ready_ms: 124.39999999850988,
+  first_transform_all_ms: 34.69999999552965,
+  second_transform_all_ms: 10
+}
+plain babel 3 {
+  name: 'babel',
+  crossOriginIsolated: false,
+  sharedArrayBuffer: 'undefined',
+  module_ready_ms: 124.69999999552965,
+  first_transform_all_ms: 35.70000000298023,
+  second_transform_all_ms: 10.100000001490116
+}
+plain oxc-wasm 1 {
+  name: 'oxc-wasm',
+  crossOriginIsolated: false,
+  sharedArrayBuffer: 'undefined',
+  module_ready_ms: 38.600000001490116,
+  first_transform_all_ms: 20.099999994039536,
+  second_transform_all_ms: 1.5
+}
+plain oxc-wasm 2 {
+  name: 'oxc-wasm',
+  crossOriginIsolated: false,
+  sharedArrayBuffer: 'undefined',
+  module_ready_ms: 37.400000005960464,
+  first_transform_all_ms: 19.899999998509884,
+  second_transform_all_ms: 1.6000000014901161
+}
+plain oxc-wasm 3 {
+  name: 'oxc-wasm',
+  crossOriginIsolated: false,
+  sharedArrayBuffer: 'undefined',
+  module_ready_ms: 37.69999999552965,
+  first_transform_all_ms: 19.900000005960464,
+  second_transform_all_ms: 1.6999999955296516
+}
+plain rolldown-browser 1 {
+  name: 'rolldown-browser',
+  crossOriginIsolated: false,
+  sharedArrayBuffer: 'undefined',
+  failed_after_ms: 87.60000000149012,
+  error: "DataCloneError: Failed to execute 'postMessage' on 'Worker': SharedArrayBuffer transfer requires self.crossOriginIsolated.\n" +
+    '    at http://127.0.0.1:55919/public/rolldown/index.js:308:16\n' +
+    '    at new Promise (<anonymous>)\n' +
+    '    at ThreadManager.loadWasmModuleToWorker (http://127.0.0.1:55919/public/rolldown/index.js:246:25)\n' +
+    '    at ThreadManager.loadWasmModuleToAllWorkers (http://127.0.0.1:55919/public/rolldown/index.js:195:26)\n' +
+    '    at http://127.0.0.1:55919/public/rolldown/index.js:8623:44\n' +
+    '    at http://127.0.0.1:55919/public/rolldown/index.js:8635:12\n' +
+    '    at async http://127.0.0.1:55919/public/rolldown/index.js:32926:7'
+}
+plain rolldown-browser 2 {
+  name: 'rolldown-browser',
+  crossOriginIsolated: false,
+  sharedArrayBuffer: 'undefined',
+  failed_after_ms: 87.20000000298023,
+  error: "DataCloneError: Failed to execute 'postMessage' on 'Worker': SharedArrayBuffer transfer requires self.crossOriginIsolated.\n" +
+    '    at http://127.0.0.1:55919/public/rolldown/index.js:308:16\n' +
+    '    at new Promise (<anonymous>)\n' +
+    '    at ThreadManager.loadWasmModuleToWorker (http://127.0.0.1:55919/public/rolldown/index.js:246:25)\n' +
+    '    at ThreadManager.loadWasmModuleToAllWorkers (http://127.0.0.1:55919/public/rolldown/index.js:195:26)\n' +
+    '    at http://127.0.0.1:55919/public/rolldown/index.js:8623:44\n' +
+    '    at http://127.0.0.1:55919/public/rolldown/index.js:8635:12\n' +
+    '    at async http://127.0.0.1:55919/public/rolldown/index.js:32926:7'
+}
+plain rolldown-browser 3 {
+  name: 'rolldown-browser',
+  crossOriginIsolated: false,
+  sharedArrayBuffer: 'undefined',
+  failed_after_ms: 88,
+  error: "DataCloneError: Failed to execute 'postMessage' on 'Worker': SharedArrayBuffer transfer requires self.crossOriginIsolated.\n" +
+    '    at http://127.0.0.1:55919/public/rolldown/index.js:308:16\n' +
+    '    at new Promise (<anonymous>)\n' +
+    '    at ThreadManager.loadWasmModuleToWorker (http://127.0.0.1:55919/public/rolldown/index.js:246:25)\n' +
+    '    at ThreadManager.loadWasmModuleToAllWorkers (http://127.0.0.1:55919/public/rolldown/index.js:195:26)\n' +
+    '    at http://127.0.0.1:55919/public/rolldown/index.js:8623:44\n' +
+    '    at http://127.0.0.1:55919/public/rolldown/index.js:8635:12\n' +
+    '    at async http://127.0.0.1:55919/public/rolldown/index.js:32926:7'
+}
+iso esbuild-wasm 1 {
+  name: 'esbuild-wasm',
+  crossOriginIsolated: true,
+  sharedArrayBuffer: 'function',
+  js_import_ms: 3.125,
+  wasm_ready_ms: 40.53000000119209,
+  module_ready_ms: 43.6600000038743,
+  context_first_bundle_ms: 175.7449999973178,
+  incremental_rebuild_ms: 9.594999998807907
+}
+iso esbuild-wasm 2 {
+  name: 'esbuild-wasm',
+  crossOriginIsolated: true,
+  sharedArrayBuffer: 'function',
+  js_import_ms: 3.064999997615814,
+  wasm_ready_ms: 43.93000000715256,
+  module_ready_ms: 46.99500000476837,
+  context_first_bundle_ms: 209.74500000476837,
+  incremental_rebuild_ms: 12.369999997317791
+}
+iso esbuild-wasm 3 {
+  name: 'esbuild-wasm',
+  crossOriginIsolated: true,
+  sharedArrayBuffer: 'function',
+  js_import_ms: 3.040000006556511,
+  wasm_ready_ms: 43.84499999880791,
+  module_ready_ms: 46.88500000536442,
+  context_first_bundle_ms: 187.875,
+  incremental_rebuild_ms: 11.380000002682209
+}
+iso esbuild-full 1 {
+  name: 'esbuild-full',
+  crossOriginIsolated: true,
+  sharedArrayBuffer: 'function',
+  js_import_ms: 3.3299999982118607,
+  wasm_ready_ms: 44.98499999940395,
+  module_ready_ms: 48.32000000029802,
+  first_full_bundle_ms: 176.3399999961257,
+  second_full_bundle_ms: 14.380000002682209
+}
+iso esbuild-full 2 {
+  name: 'esbuild-full',
+  crossOriginIsolated: true,
+  sharedArrayBuffer: 'function',
+  js_import_ms: 3.125,
+  wasm_ready_ms: 43.985000006854534,
+  module_ready_ms: 47.11500000208616,
+  first_full_bundle_ms: 176.47500000149012,
+  second_full_bundle_ms: 16.439999997615814
+}
+iso esbuild-full 3 {
+  name: 'esbuild-full',
+  crossOriginIsolated: true,
+  sharedArrayBuffer: 'function',
+  js_import_ms: 3.5399999991059303,
+  wasm_ready_ms: 43.064999997615814,
+  module_ready_ms: 46.60999999940395,
+  first_full_bundle_ms: 183.90999999642372,
+  second_full_bundle_ms: 13.29500000178814
+}
+iso swc-wasm 1 {
+  name: 'swc-wasm',
+  crossOriginIsolated: true,
+  sharedArrayBuffer: 'function',
+  js_import_ms: 1.9199999943375587,
+  wasm_ready_ms: 30.820000000298023,
+  module_ready_ms: 32.75,
+  first_transform_all_ms: 53.07499999552965,
+  second_transform_all_ms: 1.6950000002980232
+}
+iso swc-wasm 2 {
+  name: 'swc-wasm',
+  crossOriginIsolated: true,
+  sharedArrayBuffer: 'function',
+  js_import_ms: 1.5500000044703484,
+  wasm_ready_ms: 27.16499999910593,
+  module_ready_ms: 28.719999998807907,
+  first_transform_all_ms: 53.395000003278255,
+  second_transform_all_ms: 1.844999998807907
+}
+iso swc-wasm 3 {
+  name: 'swc-wasm',
+  crossOriginIsolated: true,
+  sharedArrayBuffer: 'function',
+  js_import_ms: 1.744999997317791,
+  wasm_ready_ms: 30.469999998807907,
+  module_ready_ms: 32.21999999880791,
+  first_transform_all_ms: 53.42999999970198,
+  second_transform_all_ms: 1.7749999985098839
+}
+iso sucrase 1 {
+  name: 'sucrase',
+  crossOriginIsolated: true,
+  sharedArrayBuffer: 'function',
+  module_ready_ms: 13.419999994337559,
+  first_transform_all_ms: 11.715000003576279,
+  second_transform_all_ms: 3.4450000002980232
+}
+iso sucrase 2 {
+  name: 'sucrase',
+  crossOriginIsolated: true,
+  sharedArrayBuffer: 'function',
+  module_ready_ms: 12.905000001192093,
+  first_transform_all_ms: 11.905000001192093,
+  second_transform_all_ms: 3.469999998807907
+}
+iso sucrase 3 {
+  name: 'sucrase',
+  crossOriginIsolated: true,
+  sharedArrayBuffer: 'function',
+  module_ready_ms: 13.839999996125698,
+  first_transform_all_ms: 11.570000000298023,
+  second_transform_all_ms: 3.280000001192093
+}
+iso babel 1 {
+  name: 'babel',
+  crossOriginIsolated: true,
+  sharedArrayBuffer: 'function',
+  module_ready_ms: 122.76999999582767,
+  first_transform_all_ms: 35.09000000357628,
+  second_transform_all_ms: 10.41499999910593
+}
+iso babel 2 {
+  name: 'babel',
+  crossOriginIsolated: true,
+  sharedArrayBuffer: 'function',
+  module_ready_ms: 123.81499999761581,
+  first_transform_all_ms: 34.53499999642372,
+  second_transform_all_ms: 9.875
+}
+iso babel 3 {
+  name: 'babel',
+  crossOriginIsolated: true,
+  sharedArrayBuffer: 'function',
+  module_ready_ms: 126.40999999642372,
+  first_transform_all_ms: 35.1600000038743,
+  second_transform_all_ms: 9.924999997019768
+}
+iso oxc-wasm 1 {
+  name: 'oxc-wasm',
+  crossOriginIsolated: true,
+  sharedArrayBuffer: 'function',
+  module_ready_ms: 37.51500000059605,
+  first_transform_all_ms: 19.700000002980232,
+  second_transform_all_ms: 1.5799999982118607
+}
+iso oxc-wasm 2 {
+  name: 'oxc-wasm',
+  crossOriginIsolated: true,
+  sharedArrayBuffer: 'function',
+  module_ready_ms: 37.94500000029802,
+  first_transform_all_ms: 19.910000003874302,
+  second_transform_all_ms: 1.6099999994039536
+}
+iso oxc-wasm 3 {
+  name: 'oxc-wasm',
+  crossOriginIsolated: true,
+  sharedArrayBuffer: 'function',
+  module_ready_ms: 38.355000004172325,
+  first_transform_all_ms: 19.625,
+  second_transform_all_ms: 1.6599999964237213
+}
+iso rolldown-browser 1 {
+  name: 'rolldown-browser',
+  crossOriginIsolated: true,
+  sharedArrayBuffer: 'function',
+  module_ready_ms: 176.90999999642372,
+  first_full_bundle_ms: 89.06499999761581,
+  second_full_bundle_ms: 11.390000000596046
+}
+iso rolldown-browser 2 {
+  name: 'rolldown-browser',
+  crossOriginIsolated: true,
+  sharedArrayBuffer: 'function',
+  module_ready_ms: 181.64999999850988,
+  first_full_bundle_ms: 88.28999999910593,
+  second_full_bundle_ms: 10.984999999403954
+}
+iso rolldown-browser 3 {
+  name: 'rolldown-browser',
+  crossOriginIsolated: true,
+  sharedArrayBuffer: 'function',
+  module_ready_ms: 175.14500000327826,
+  first_full_bundle_ms: 88.3399999961257,
+  second_full_bundle_ms: 10.259999997913837
+}

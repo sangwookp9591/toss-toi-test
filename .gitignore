@@ -1,0 +1,14 @@
+node_modules/
+.tmp/
+.cache/
+.npm-cache/
+.xdg/
+.yarn/
+.pnp.*
+poc/public/
+poc/critique/tools.js
+poc/evidence/webinar*
+poc/evidence/toss-*.html
+poc/evidence/source-*.txt
+transcript-*.txt
+.DS_Store

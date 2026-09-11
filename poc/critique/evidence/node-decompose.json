@@ -1,0 +1,59 @@
+[
+  {
+    "repeat": 1,
+    "probe": false,
+    "import_ms": 13.616416999999998,
+    "initialize_ms": 2.921709,
+    "context_ms": 109.675292,
+    "first_bundle_ms": 119.43099999999998,
+    "to_first_ms": 245.64441799999997
+  },
+  {
+    "repeat": 2,
+    "probe": false,
+    "import_ms": 13.172584000000004,
+    "initialize_ms": 2.922583000000003,
+    "context_ms": 106.768667,
+    "first_bundle_ms": 116.05879200000004,
+    "to_first_ms": 238.92262600000004
+  },
+  {
+    "repeat": 3,
+    "probe": false,
+    "import_ms": 13.425791000000004,
+    "initialize_ms": 3.1176249999999968,
+    "context_ms": 105.539833,
+    "first_bundle_ms": 115.464875,
+    "to_first_ms": 237.548124
+  },
+  {
+    "repeat": 1,
+    "probe": true,
+    "import_ms": 12.7425,
+    "initialize_ms": 2.9564589999999953,
+    "empty_probe_ms": 171.27075,
+    "context_ms": 8.553750000000008,
+    "first_bundle_ms": 43.367583000000025,
+    "to_first_ms": 238.89104200000003
+  },
+  {
+    "repeat": 2,
+    "probe": true,
+    "import_ms": 12.969417,
+    "initialize_ms": 2.9339160000000035,
+    "empty_probe_ms": 177.37574999999998,
+    "context_ms": 10.438208000000003,
+    "first_bundle_ms": 46.0155,
+    "to_first_ms": 249.732791
+  },
+  {
+    "repeat": 3,
+    "probe": true,
+    "import_ms": 13.165125,
+    "initialize_ms": 2.9815420000000046,
+    "empty_probe_ms": 174.92700000000002,
+    "context_ms": 8.748333000000002,
+    "first_bundle_ms": 44.63312499999998,
+    "to_first_ms": 244.455125
+  }
+]

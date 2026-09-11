@@ -1,0 +1,161 @@
+{
+  "browser": "153.0.8010.36",
+  "samples": [
+    {
+      "mode": "good",
+      "repeat": 1,
+      "identity": {
+        "appA": true,
+        "appB": true,
+        "AB": true
+      },
+      "clients": 2,
+      "queryClientShared": true,
+      "fetches": 1,
+      "text": "A:1:shared-valueB:0:shared-value",
+      "hookClick": true,
+      "errors": [],
+      "requests": [
+        "http://127.0.0.1:55570/public/singleton/good.html",
+        "http://127.0.0.1:55570/public/singleton/react.js",
+        "http://127.0.0.1:55570/public/singleton/react-dom-client.js",
+        "http://127.0.0.1:55570/public/singleton/query.js",
+        "http://127.0.0.1:55570/public/singleton/A.js",
+        "http://127.0.0.1:55570/public/singleton/B.js",
+        "http://127.0.0.1:55570/public/singleton/jsx-runtime.js",
+        "http://127.0.0.1:55570/public/singleton/react-dom.js"
+      ]
+    },
+    {
+      "mode": "good",
+      "repeat": 2,
+      "identity": {
+        "appA": true,
+        "appB": true,
+        "AB": true
+      },
+      "clients": 2,
+      "queryClientShared": true,
+      "fetches": 1,
+      "text": "A:1:shared-valueB:0:shared-value",
+      "hookClick": true,
+      "errors": [],
+      "requests": [
+        "http://127.0.0.1:55570/public/singleton/good.html",
+        "http://127.0.0.1:55570/public/singleton/react.js",
+        "http://127.0.0.1:55570/public/singleton/react-dom-client.js",
+        "http://127.0.0.1:55570/public/singleton/query.js",
+        "http://127.0.0.1:55570/public/singleton/A.js",
+        "http://127.0.0.1:55570/public/singleton/B.js",
+        "http://127.0.0.1:55570/public/singleton/jsx-runtime.js",
+        "http://127.0.0.1:55570/public/singleton/react-dom.js"
+      ]
+    },
+    {
+      "mode": "good",
+      "repeat": 3,
+      "identity": {
+        "appA": true,
+        "appB": true,
+        "AB": true
+      },
+      "clients": 2,
+      "queryClientShared": true,
+      "fetches": 1,
+      "text": "A:1:shared-valueB:0:shared-value",
+      "hookClick": true,
+      "errors": [],
+      "requests": [
+        "http://127.0.0.1:55570/public/singleton/good.html",
+        "http://127.0.0.1:55570/public/singleton/react.js",
+        "http://127.0.0.1:55570/public/singleton/react-dom-client.js",
+        "http://127.0.0.1:55570/public/singleton/query.js",
+        "http://127.0.0.1:55570/public/singleton/A.js",
+        "http://127.0.0.1:55570/public/singleton/B.js",
+        "http://127.0.0.1:55570/public/singleton/jsx-runtime.js",
+        "http://127.0.0.1:55570/public/singleton/react-dom.js"
+      ]
+    },
+    {
+      "mode": "bad",
+      "repeat": 1,
+      "identity": {
+        "appA": true,
+        "appB": false,
+        "AB": false
+      },
+      "clients": 0,
+      "queryClientShared": false,
+      "fetches": 0,
+      "text": "",
+      "hookClick": false,
+      "errors": [
+        "Cannot read properties of null (reading 'useState')"
+      ],
+      "requests": [
+        "http://127.0.0.1:55570/public/singleton/bad.html",
+        "http://127.0.0.1:55570/public/singleton/react.js",
+        "http://127.0.0.1:55570/public/singleton/react-dom-client.js",
+        "http://127.0.0.1:55570/public/singleton/query.js",
+        "http://127.0.0.1:55570/public/singleton/A.js",
+        "http://127.0.0.1:55570/public/singleton/B-bad.js",
+        "http://127.0.0.1:55570/public/singleton/jsx-runtime.js",
+        "http://127.0.0.1:55570/public/singleton/react-dom.js"
+      ]
+    },
+    {
+      "mode": "bad",
+      "repeat": 2,
+      "identity": {
+        "appA": true,
+        "appB": false,
+        "AB": false
+      },
+      "clients": 0,
+      "queryClientShared": false,
+      "fetches": 0,
+      "text": "",
+      "hookClick": false,
+      "errors": [
+        "Cannot read properties of null (reading 'useState')"
+      ],
+      "requests": [
+        "http://127.0.0.1:55570/public/singleton/bad.html",
+        "http://127.0.0.1:55570/public/singleton/react.js",
+        "http://127.0.0.1:55570/public/singleton/react-dom-client.js",
+        "http://127.0.0.1:55570/public/singleton/query.js",
+        "http://127.0.0.1:55570/public/singleton/A.js",
+        "http://127.0.0.1:55570/public/singleton/B-bad.js",
+        "http://127.0.0.1:55570/public/singleton/jsx-runtime.js",
+        "http://127.0.0.1:55570/public/singleton/react-dom.js"
+      ]
+    },
+    {
+      "mode": "bad",
+      "repeat": 3,
+      "identity": {
+        "appA": true,
+        "appB": false,
+        "AB": false
+      },
+      "clients": 0,
+      "queryClientShared": false,
+      "fetches": 0,
+      "text": "",
+      "hookClick": false,
+      "errors": [
+        "Cannot read properties of null (reading 'useState')"
+      ],
+      "requests": [
+        "http://127.0.0.1:55570/public/singleton/bad.html",
+        "http://127.0.0.1:55570/public/singleton/react.js",
+        "http://127.0.0.1:55570/public/singleton/react-dom-client.js",
+        "http://127.0.0.1:55570/public/singleton/query.js",
+        "http://127.0.0.1:55570/public/singleton/A.js",
+        "http://127.0.0.1:55570/public/singleton/B-bad.js",
+        "http://127.0.0.1:55570/public/singleton/jsx-runtime.js",
+        "http://127.0.0.1:55570/public/singleton/react-dom.js"
+      ]
+    }
+  ]
+}

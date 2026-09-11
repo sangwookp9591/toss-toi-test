@@ -1,0 +1,15 @@
+import {init,parse,MagicString,TraceMap,originalPositionFor} from './tools.js';
+export async function ready(){await init();}
+export class Bundleless{
+ constructor(oxc,files,maps=false){this.oxc=oxc;this.files=files;this.maps=maps;this.transformed=new Map();this.linked=new Map();this.urlRecords=new Map();this.allocated=[];}
+ resolve(id,importer){if(!id.startsWith('.')&&!id.startsWith('/'))return {external:true,id};const parts=(id.startsWith('/')?id:importer.slice(0,importer.lastIndexOf('/')+1)+id).split('/'),norm=[];for(const p of parts)if(p==='..')norm.pop();else if(p&&p!=='.')norm.push(p);const base='/'+norm.join('/');for(const ext of ['', '.tsx','.ts','/index.tsx'])if(base+ext in this.files)return {id:base+ext};throw Error('Unknown local import '+id)}
+ compile(entry='/index.tsx'){
+ const stats={transforms:0,rewrites:0,blobCreated:0,transform_ms:0,link_ms:0,map_ms:0,changedURLs:[]};
+ for(const [file,source]of Object.entries(this.files)){if(this.transformed.get(file)?.source===source)continue;const t=performance.now();const out=this.oxc.transformSync(file,source,{jsx:{runtime:'automatic'},sourcemap:this.maps});stats.transform_ms+=performance.now()-t;if(out.errors?.length)throw Error(JSON.stringify(out.errors));const imports=parse(out.code)[0];this.transformed.set(file,{source,code:out.code,imports,oxcMap:out.map});stats.transforms++}
+ const visiting=new Set(),visit=file=>{if(visiting.has(file))throw Error('Cycle rejected by direct blob linker: '+[...visiting,file].join(' -> '));visiting.add(file);const record=this.transformed.get(file);const replacements=[];for(const imp of record.imports){if(imp.type==='import-meta')continue;if(!imp.specifier || imp.glob)throw Error('Computed dynamic import needs runtime resolver');const dep=this.resolve(imp.specifier,file);if(!dep.external)replacements.push({imp,url:visit(dep.id)})}
+ const signature=record.code+JSON.stringify(replacements.map(x=>x.url)),cached=this.linked.get(file);if(cached?.signature===signature){visiting.delete(file);return cached.url}const start=performance.now(),s=new MagicString(record.code);for(const {imp,url}of replacements){s.overwrite(imp.start,imp.end,imp.type==='dynamic'?JSON.stringify(url):url)}let map;const mapStart=performance.now();if(this.maps)map=s.generateMap({hires:true,source:file+'.transformed',includeContent:true});stats.map_ms+=performance.now()-mapStart;
+ const code=s.toString(),url=URL.createObjectURL(new Blob([code],{type:'text/javascript'}));stats.link_ms+=performance.now()-start;this.allocated.push(url);this.urlRecords.set(url,{file,rewriteMap:map,oxcMap:record.oxcMap});this.linked.set(file,{signature,url});stats.rewrites++;stats.blobCreated++;stats.changedURLs.push(file);visiting.delete(file);return url};const url=visit(entry);return {url,stats};
+ }
+ mapPosition(url,line,column){const record=this.urlRecords.get(url);const mid=originalPositionFor(new TraceMap(record.rewriteMap),{line,column});const original=originalPositionFor(new TraceMap(record.oxcMap),{line:mid.line,column:mid.column});return {intermediate:mid,original,file:record.file}}
+ dispose(){for(const u of this.allocated)URL.revokeObjectURL(u)}
+}

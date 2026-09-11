@@ -1,0 +1,74 @@
+[
+  {
+    mode: 'good',
+    repeat: 1,
+    identity: { appA: true, appB: true, AB: true },
+    clients: 2,
+    queryClientShared: true,
+    fetches: 1,
+    text: 'A:1:shared-valueB:0:shared-value',
+    hookClick: true,
+    errors: [],
+    moduleRequests: 7
+  },
+  {
+    mode: 'good',
+    repeat: 2,
+    identity: { appA: true, appB: true, AB: true },
+    clients: 2,
+    queryClientShared: true,
+    fetches: 1,
+    text: 'A:1:shared-valueB:0:shared-value',
+    hookClick: true,
+    errors: [],
+    moduleRequests: 7
+  },
+  {
+    mode: 'good',
+    repeat: 3,
+    identity: { appA: true, appB: true, AB: true },
+    clients: 2,
+    queryClientShared: true,
+    fetches: 1,
+    text: 'A:1:shared-valueB:0:shared-value',
+    hookClick: true,
+    errors: [],
+    moduleRequests: 7
+  },
+  {
+    mode: 'bad',
+    repeat: 1,
+    identity: { appA: true, appB: false, AB: false },
+    clients: 0,
+    queryClientShared: false,
+    fetches: 0,
+    text: '',
+    hookClick: false,
+    errors: [ "Cannot read properties of null (reading 'useState')" ],
+    moduleRequests: 7
+  },
+  {
+    mode: 'bad',
+    repeat: 2,
+    identity: { appA: true, appB: false, AB: false },
+    clients: 0,
+    queryClientShared: false,
+    fetches: 0,
+    text: '',
+    hookClick: false,
+    errors: [ "Cannot read properties of null (reading 'useState')" ],
+    moduleRequests: 7
+  },
+  {
+    mode: 'bad',
+    repeat: 3,
+    identity: { appA: true, appB: false, AB: false },
+    clients: 0,
+    queryClientShared: false,
+    fetches: 0,
+    text: '',
+    hookClick: false,
+    errors: [ "Cannot read properties of null (reading 'useState')" ],
+    moduleRequests: 7
+  }
+]

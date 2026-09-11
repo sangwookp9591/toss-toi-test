@@ -1,0 +1,94 @@
+{
+  "checkedAt": "2026-09-11T10:12:59.493Z",
+  "url": "https://registry.npmjs.org/pnpm",
+  "version": "12.3.4",
+  "published": "2026-09-04T14:20:10.390Z",
+  "dist": {
+    "shasum": "c8260d54be08e502ee2940b67ae4a361c8aa0a4c",
+    "tarball": "https://registry.npmjs.org/pnpm/-/pnpm-12.3.4.tgz",
+    "fileCount": 450,
+    "integrity": "sha512-lhqkH7B32joEpEHZ+OFevAyW2o73ELLrZ7+e58sGEOq9SPH9hfUc/+c4RnhfoPh8VqOocqHYk/hEZ0G1zORUVw==",
+    "signatures": [
+      {
+        "sig": "MEUCIQC/A4zVIWe7XoIaqQVNH1Bk7BciKUd0GujKDMcKfhIMGQIgRVhPapQz+x664jlBkwBOZ/QDr+GKl5hCBd66123BuNc=",
+        "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+      }
+    ],
+    "attestations": {
+      "url": "https://registry.npmjs.org/-/npm/v1/attestations/pnpm@12.3.4",
+      "provenance": {
+        "predicateType": "https://slsa.dev/provenance/v1"
+      }
+    },
+    "unpackedSize": 3910961
+  },
+  "package": {
+    "name": "pnpm",
+    "publishConfig": {
+      "executableFiles": [
+        "./dist/node-gyp-bin/node-gyp",
+        "./dist/node-gyp-bin/node-gyp.cmd",
+        "./dist/node_modules/node-gyp/bin/node-gyp.js",
+        "./dist/node_modules/node-gyp/gyp/gyp_main.py",
+        "./dist/node_modules/node-gyp/gyp/gyp"
+      ]
+    },
+    "version": "12.3.4",
+    "description": "Fast, disk space efficient package manager",
+    "keywords": [
+      "pnpm",
+      "package manager",
+      "rust"
+    ],
+    "license": "MIT",
+    "homepage": "https://github.com/pnpm/pnpm/tree/main/pnpm",
+    "bugs": "https://github.com/pnpm/pnpm/issues",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/pnpm/pnpm",
+      "directory": "pnpm/npm/pnpm"
+    },
+    "bin": {
+      "pnpm": "pnpm",
+      "pn": "pn",
+      "pnpx": "pnpx",
+      "pnx": "pnx"
+    },
+    "type": "module",
+    "engines": {
+      "node": ">=18.*"
+    },
+    "files": [
+      "pnpm",
+      "pn",
+      "pnpx",
+      "pnx",
+      "bin/",
+      "install.js",
+      "native-binary.mjs",
+      "dist/",
+      "THIRD-PARTY-NOTICES.md"
+    ],
+    "optionalDependencies": {
+      "@pnpm/exe.win32-x64": "12.3.4",
+      "@pnpm/exe.win32-arm64": "12.3.4",
+      "@pnpm/exe.darwin-x64": "12.3.4",
+      "@pnpm/exe.darwin-arm64": "12.3.4",
+      "@pnpm/exe.linux-x64": "12.3.4",
+      "@pnpm/exe.linux-arm64": "12.3.4",
+      "@pnpm/exe.linux-x64-musl": "12.3.4",
+      "@pnpm/exe.linux-arm64-musl": "12.3.4"
+    },
+    "scripts": {
+      "preinstall": "node install.js",
+      "postinstall": "node install.js",
+      "bundle-node-gyp": "node scripts/bundle-node-gyp.mjs"
+    }
+  },
+  "binary": {
+    "path": "/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/node_modules/pnpm/pnpm",
+    "file": "/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/node_modules/pnpm/pnpm: Mach-O 64-bit executable arm64",
+    "version": "12.3.4",
+    "sha256": "99ccfa6b57e73c693ec2ec9760a978f063b001df8f462e89fce3a30be3d641f3"
+  }
+}

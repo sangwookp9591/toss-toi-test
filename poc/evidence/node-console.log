@@ -1,0 +1,156 @@
+esbuild-wasm 1 {
+  name: 'esbuild-wasm',
+  js_initialize_ms: 17.740249999999996,
+  wasm_ready_probe_ms: 181.587917,
+  module_ready_ms: 199.335625,
+  context_first_bundle_ms: 56.136750000000006,
+  incremental_rebuild_ms: 12.665292000000022
+}
+esbuild-wasm 2 {
+  name: 'esbuild-wasm',
+  js_initialize_ms: 16.577125000000002,
+  wasm_ready_probe_ms: 180.327791,
+  module_ready_ms: 196.90920899999998,
+  context_first_bundle_ms: 53.56216700000002,
+  incremental_rebuild_ms: 10.205583000000047
+}
+esbuild-wasm 3 {
+  name: 'esbuild-wasm',
+  js_initialize_ms: 16.345209,
+  wasm_ready_probe_ms: 180.55733300000003,
+  module_ready_ms: 196.908,
+  context_first_bundle_ms: 54.821,
+  incremental_rebuild_ms: 11.117542000000014
+}
+esbuild-full 1 {
+  name: 'esbuild-full',
+  js_initialize_ms: 16.90075,
+  wasm_ready_probe_ms: 189.607667,
+  module_ready_ms: 206.51929099999998,
+  first_full_bundle_ms: 50.205292000000014,
+  second_full_bundle_ms: 13.101541999999995
+}
+esbuild-full 2 {
+  name: 'esbuild-full',
+  js_initialize_ms: 16.739292,
+  wasm_ready_probe_ms: 180.08587500000002,
+  module_ready_ms: 196.832417,
+  first_full_bundle_ms: 51.067207999999965,
+  second_full_bundle_ms: 13.991000000000042
+}
+esbuild-full 3 {
+  name: 'esbuild-full',
+  js_initialize_ms: 17.112584,
+  wasm_ready_probe_ms: 177.567542,
+  module_ready_ms: 194.687709,
+  first_full_bundle_ms: 54.861625000000004,
+  second_full_bundle_ms: 22.223000000000013
+}
+swc-wasm 1 {
+  name: 'swc-wasm',
+  module_ready_ms: 36.009583,
+  first_transform_all_ms: 54.228708000000005,
+  second_transform_all_ms: 1.8534999999999968
+}
+swc-wasm 2 {
+  name: 'swc-wasm',
+  module_ready_ms: 32.174792,
+  first_transform_all_ms: 53.564541999999996,
+  second_transform_all_ms: 1.8315410000000014
+}
+swc-wasm 3 {
+  name: 'swc-wasm',
+  module_ready_ms: 32.532,
+  first_transform_all_ms: 53.536417,
+  second_transform_all_ms: 1.7269579999999962
+}
+sucrase 1 {
+  name: 'sucrase',
+  module_ready_ms: 45.364625000000004,
+  first_transform_all_ms: 17.500124999999997,
+  second_transform_all_ms: 7.126834000000002
+}
+sucrase 2 {
+  name: 'sucrase',
+  module_ready_ms: 32.356415999999996,
+  first_transform_all_ms: 17.231375,
+  second_transform_all_ms: 6.809750000000008
+}
+sucrase 3 {
+  name: 'sucrase',
+  module_ready_ms: 32.215042,
+  first_transform_all_ms: 17.068667000000005,
+  second_transform_all_ms: 6.650666000000001
+}
+babel 1 {
+  name: 'babel',
+  module_ready_ms: 171.811667,
+  first_transform_all_ms: 55.620833000000005,
+  second_transform_all_ms: 20.75999999999999
+}
+babel 2 {
+  name: 'babel',
+  module_ready_ms: 167.29904200000001,
+  first_transform_all_ms: 56.81462500000001,
+  second_transform_all_ms: 21.64479099999997
+}
+babel 3 {
+  name: 'babel',
+  module_ready_ms: 167.736584,
+  first_transform_all_ms: 64.67420800000002,
+  second_transform_all_ms: 24.497041999999993
+}
+oxc-native 1 {
+  name: 'oxc-native',
+  module_ready_ms: 8.026875,
+  first_transform_all_ms: 3.9826659999999983,
+  second_transform_all_ms: 0.17062500000000114
+}
+oxc-native 2 {
+  name: 'oxc-native',
+  module_ready_ms: 4.539375,
+  first_transform_all_ms: 0.47850000000000037,
+  second_transform_all_ms: 0.1725829999999995
+}
+oxc-native 3 {
+  name: 'oxc-native',
+  module_ready_ms: 4.678958999999999,
+  first_transform_all_ms: 0.47766599999999926,
+  second_transform_all_ms: 0.17233300000000185
+}
+oxc-wasm 1 {
+  name: 'oxc-wasm',
+  module_ready_ms: 49.657625,
+  first_transform_all_ms: 20.687791000000004,
+  second_transform_all_ms: 1.763542000000001
+}
+oxc-wasm 2 {
+  name: 'oxc-wasm',
+  module_ready_ms: 40.674334,
+  first_transform_all_ms: 20.978874999999995,
+  second_transform_all_ms: 1.580207999999999
+}
+oxc-wasm 3 {
+  name: 'oxc-wasm',
+  module_ready_ms: 40.816041,
+  first_transform_all_ms: 20.626124999999995,
+  second_transform_all_ms: 1.6090410000000048
+}
+rolldown-browser 1 {
+  name: 'rolldown-browser',
+  module_ready_ms: 95.538,
+  first_full_bundle_ms: 103.686333,
+  second_full_bundle_ms: 51.21104199999999
+}
+rolldown-browser 2 {
+  name: 'rolldown-browser',
+  module_ready_ms: 93.767875,
+  first_full_bundle_ms: 100.79883300000002,
+  second_full_bundle_ms: 50.37170899999998
+}
+rolldown-browser 3 {
+  name: 'rolldown-browser',
+  module_ready_ms: 91.53866699999999,
+  first_full_bundle_ms: 102.555417,
+  second_full_bundle_ms: 51.18554199999997
+}

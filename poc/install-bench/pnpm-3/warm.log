@@ -1,0 +1,13 @@
+✓ Lockfile passes supply-chain policies (verified 777ms ago)
+Lockfile is up to date, resolution step is skipped
+Packages: +6
+++++++
+Progress: resolved 6, reused 6, downloaded 0, added 6, done
+
+dependencies:
++ @tanstack/react-query 5.102.8
++ clsx 2.1.1
++ react 19.3.0
++ react-dom 19.3.0
+
+Done in 44ms using pnpm v12.3.4

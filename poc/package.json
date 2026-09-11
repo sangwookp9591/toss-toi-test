@@ -1,0 +1,23 @@
+{
+  "name": "toss-admin-evidence-poc",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@babel/standalone": "8.0.5",
+    "@oxc-transform/binding-wasm32-wasi": "0.149.0",
+    "@rolldown/browser": "1.2.8",
+    "@swc/wasm": "1.16.2",
+    "@swc/wasm-web": "1.16.2",
+    "@tanstack/react-query": "5.102.8",
+    "@yarnpkg/cli-dist": "4.18.0",
+    "esbuild": "0.28.2",
+    "esbuild-wasm": "0.28.2",
+    "oxc-transform": "0.149.0",
+    "playwright-core": "1.63.0",
+    "pnpm": "12.3.4",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "sucrase": "3.35.1",
+    "yarn": "1.22.22"
+  }
+}

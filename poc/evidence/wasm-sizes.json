@@ -1,0 +1,22 @@
+[
+  {
+    "file": "node_modules/esbuild-wasm/esbuild.wasm",
+    "bytes": 13978850,
+    "gzipBytes": 3785500
+  },
+  {
+    "file": "node_modules/@swc/wasm-web/wasm_bg.wasm",
+    "bytes": 20246940,
+    "gzipBytes": 5386731
+  },
+  {
+    "file": "node_modules/@rolldown/browser/dist/rolldown-binding.wasm32-wasi.wasm",
+    "bytes": 10871452,
+    "gzipBytes": 3512987
+  },
+  {
+    "file": "node_modules/@oxc-transform/binding-wasm32-wasi/transform.wasm32-wasi.wasm",
+    "bytes": 3254252,
+    "gzipBytes": 1096643
+  }
+]

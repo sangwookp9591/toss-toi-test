@@ -1,0 +1,82 @@
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: '@babel/standalone@8.0.5',
+npm warn EBADENGINE   required: { node: '^22.18.0 || >=24.11.0' },
+npm warn EBADENGINE   current: { node: 'v22.14.0', npm: '11.4.2' }
+npm warn EBADENGINE }
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: '@babel/core@8.0.5',
+npm warn EBADENGINE   required: { node: '^22.18.0 || >=24.11.0' },
+npm warn EBADENGINE   current: { node: 'v22.14.0', npm: '11.4.2' }
+npm warn EBADENGINE }
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: '@babel/generator@8.0.5',
+npm warn EBADENGINE   required: { node: '^22.18.0 || >=24.11.0' },
+npm warn EBADENGINE   current: { node: 'v22.14.0', npm: '11.4.2' }
+npm warn EBADENGINE }
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: '@babel/parser@8.0.5',
+npm warn EBADENGINE   required: { node: '^22.18.0 || >=24.11.0' },
+npm warn EBADENGINE   current: { node: 'v22.14.0', npm: '11.4.2' }
+npm warn EBADENGINE }
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: '@babel/code-frame@8.0.0',
+npm warn EBADENGINE   required: { node: '^22.18.0 || >=24.11.0' },
+npm warn EBADENGINE   current: { node: 'v22.14.0', npm: '11.4.2' }
+npm warn EBADENGINE }
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: '@babel/helper-compilation-targets@8.0.5',
+npm warn EBADENGINE   required: { node: '^22.18.0 || >=24.11.0' },
+npm warn EBADENGINE   current: { node: 'v22.14.0', npm: '11.4.2' }
+npm warn EBADENGINE }
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: '@babel/helpers@8.0.5',
+npm warn EBADENGINE   required: { node: '^22.18.0 || >=24.11.0' },
+npm warn EBADENGINE   current: { node: 'v22.14.0', npm: '11.4.2' }
+npm warn EBADENGINE }
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: '@babel/template@8.0.0',
+npm warn EBADENGINE   required: { node: '^22.18.0 || >=24.11.0' },
+npm warn EBADENGINE   current: { node: 'v22.14.0', npm: '11.4.2' }
+npm warn EBADENGINE }
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: '@babel/traverse@8.0.5',
+npm warn EBADENGINE   required: { node: '^22.18.0 || >=24.11.0' },
+npm warn EBADENGINE   current: { node: 'v22.14.0', npm: '11.4.2' }
+npm warn EBADENGINE }
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: '@babel/types@8.0.5',
+npm warn EBADENGINE   required: { node: '^22.18.0 || >=24.11.0' },
+npm warn EBADENGINE   current: { node: 'v22.14.0', npm: '11.4.2' }
+npm warn EBADENGINE }
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: '@babel/helper-validator-identifier@8.0.4',
+npm warn EBADENGINE   required: { node: '^22.18.0 || >=24.11.0' },
+npm warn EBADENGINE   current: { node: 'v22.14.0', npm: '11.4.2' }
+npm warn EBADENGINE }
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: '@babel/compat-data@8.0.5',
+npm warn EBADENGINE   required: { node: '^22.18.0 || >=24.11.0' },
+npm warn EBADENGINE   current: { node: 'v22.14.0', npm: '11.4.2' }
+npm warn EBADENGINE }
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: '@babel/helper-validator-option@8.0.0',
+npm warn EBADENGINE   required: { node: '^22.18.0 || >=24.11.0' },
+npm warn EBADENGINE   current: { node: 'v22.14.0', npm: '11.4.2' }
+npm warn EBADENGINE }
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: '@babel/helper-globals@8.0.0',
+npm warn EBADENGINE   required: { node: '^22.18.0 || >=24.11.0' },
+npm warn EBADENGINE   current: { node: 'v22.14.0', npm: '11.4.2' }
+npm warn EBADENGINE }
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: '@babel/helper-string-parser@8.0.0',
+npm warn EBADENGINE   required: { node: '^22.18.0 || >=24.11.0' },
+npm warn EBADENGINE   current: { node: 'v22.14.0', npm: '11.4.2' }
+npm warn EBADENGINE }
+
+added 127 packages in 11s
+npm notice
+npm notice New minor version of npm available! 11.4.2 -> 11.19.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.19.1
+npm notice To update run: npm install -g npm@11.19.1
+npm notice

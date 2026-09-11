@@ -1,0 +1,20 @@
+{
+  "esm-dev/esm.sh": {
+    "sha": "67fbd653ee2a5a435606c840e4714b5573f49638",
+    "date": "2026-09-10T10:42:42Z",
+    "url": "https://github.com/esm-dev/esm.sh/commit/67fbd653ee2a5a435606c840e4714b5573f49638",
+    "status": 200
+  },
+  "stackblitz/bolt.new": {
+    "sha": "eda10b121221b30825a4c16eec5da1fd3eb1eb99",
+    "date": "2024-12-17T06:29:27Z",
+    "url": "https://github.com/stackblitz/bolt.new/commit/eda10b121221b30825a4c16eec5da1fd3eb1eb99",
+    "status": 200
+  },
+  "Sandpack/nodebox-runtime": {
+    "sha": "65a4ccf5507e1d93616445c93af88e18a9c499cf",
+    "date": "2023-11-29T19:49:26Z",
+    "url": "https://github.com/Sandpack/nodebox-runtime/commit/65a4ccf5507e1d93616445c93af88e18a9c499cf",
+    "status": 200
+  }
+}

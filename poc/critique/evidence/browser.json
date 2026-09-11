@@ -1,0 +1,882 @@
+{
+  "environment": {
+    "date": "2026-09-11T10:12:00.692Z",
+    "os": "25.6.0",
+    "cpu": "Apple M4",
+    "node": "v22.14.0",
+    "browser": "153.0.8010.36"
+  },
+  "render": [
+    {
+      "repeat": 1,
+      "kind": "bundleless",
+      "maps": false,
+      "crossOriginIsolated": false,
+      "init_ms": 40.599999994039536,
+      "first": {
+        "build_ms": 22.799999997019768,
+        "render_ms": 62,
+        "total_ms": 84.90000000596046,
+        "stats": {
+          "transforms": 4,
+          "rewrites": 4,
+          "blobCreated": 4,
+          "transform_ms": 19.50000001490116,
+          "link_ms": 1.0999999940395355,
+          "map_ms": 0,
+          "changedURLs": [
+            "/Table.tsx",
+            "/data.ts",
+            "/App.tsx",
+            "/index.tsx"
+          ]
+        },
+        "rows": 100,
+        "cell": "User 0"
+      },
+      "edit": {
+        "build_ms": 1.699999988079071,
+        "render_ms": 49,
+        "total_ms": 50.69999998807907,
+        "stats": {
+          "transforms": 1,
+          "rewrites": 3,
+          "blobCreated": 3,
+          "transform_ms": 0.7999999970197678,
+          "link_ms": 0.699999988079071,
+          "map_ms": 0,
+          "changedURLs": [
+            "/Table.tsx",
+            "/App.tsx",
+            "/index.tsx"
+          ]
+        },
+        "rows": 100,
+        "cell": "User 0 updated"
+      },
+      "first_with_init_ms": 125.5,
+      "pageErrors": []
+    },
+    {
+      "repeat": 2,
+      "kind": "bundleless",
+      "maps": false,
+      "crossOriginIsolated": false,
+      "init_ms": 46.69999998807907,
+      "first": {
+        "build_ms": 22.700000002980232,
+        "render_ms": 62.70000000298023,
+        "total_ms": 85.6000000089407,
+        "stats": {
+          "transforms": 4,
+          "rewrites": 4,
+          "blobCreated": 4,
+          "transform_ms": 19.599999979138374,
+          "link_ms": 1.0000000149011612,
+          "map_ms": 0,
+          "changedURLs": [
+            "/Table.tsx",
+            "/data.ts",
+            "/App.tsx",
+            "/index.tsx"
+          ]
+        },
+        "rows": 100,
+        "cell": "User 0"
+      },
+      "edit": {
+        "build_ms": 1.5999999940395355,
+        "render_ms": 48.5,
+        "total_ms": 50.099999994039536,
+        "stats": {
+          "transforms": 1,
+          "rewrites": 3,
+          "blobCreated": 3,
+          "transform_ms": 0.7000000029802322,
+          "link_ms": 0.5999999940395355,
+          "map_ms": 0,
+          "changedURLs": [
+            "/Table.tsx",
+            "/App.tsx",
+            "/index.tsx"
+          ]
+        },
+        "rows": 100,
+        "cell": "User 0 updated"
+      },
+      "first_with_init_ms": 132.29999999701977,
+      "pageErrors": []
+    },
+    {
+      "repeat": 3,
+      "kind": "bundleless",
+      "maps": false,
+      "crossOriginIsolated": false,
+      "init_ms": 40.8999999910593,
+      "first": {
+        "build_ms": 22.799999997019768,
+        "render_ms": 70,
+        "total_ms": 92.90000000596046,
+        "stats": {
+          "transforms": 4,
+          "rewrites": 4,
+          "blobCreated": 4,
+          "transform_ms": 19.600000008940697,
+          "link_ms": 1.2999999970197678,
+          "map_ms": 0,
+          "changedURLs": [
+            "/Table.tsx",
+            "/data.ts",
+            "/App.tsx",
+            "/index.tsx"
+          ]
+        },
+        "rows": 100,
+        "cell": "User 0"
+      },
+      "edit": {
+        "build_ms": 1.7000000029802322,
+        "render_ms": 50.19999998807907,
+        "total_ms": 51.8999999910593,
+        "stats": {
+          "transforms": 1,
+          "rewrites": 3,
+          "blobCreated": 3,
+          "transform_ms": 0.6000000089406967,
+          "link_ms": 0.800000011920929,
+          "map_ms": 0,
+          "changedURLs": [
+            "/Table.tsx",
+            "/App.tsx",
+            "/index.tsx"
+          ]
+        },
+        "rows": 100,
+        "cell": "User 0 updated"
+      },
+      "first_with_init_ms": 133.79999999701977,
+      "pageErrors": []
+    },
+    {
+      "repeat": 1,
+      "kind": "esbuild",
+      "maps": false,
+      "crossOriginIsolated": false,
+      "init_ms": 93.20000000298023,
+      "first": {
+        "build_ms": 134.5,
+        "render_ms": 73.20000000298023,
+        "total_ms": 207.8999999910593,
+        "stats": {
+          "outputBytes": 5942
+        },
+        "rows": 100,
+        "cell": "User 0"
+      },
+      "edit": {
+        "build_ms": 8.300000011920929,
+        "render_ms": 42.099999994039536,
+        "total_ms": 50.5,
+        "stats": {
+          "outputBytes": 5955
+        },
+        "rows": 100,
+        "cell": "User 0 updated"
+      },
+      "first_with_init_ms": 301.09999999403954,
+      "pageErrors": []
+    },
+    {
+      "repeat": 2,
+      "kind": "esbuild",
+      "maps": false,
+      "crossOriginIsolated": false,
+      "init_ms": 93.40000000596046,
+      "first": {
+        "build_ms": 130.20000000298023,
+        "render_ms": 76.29999999701977,
+        "total_ms": 206.5,
+        "stats": {
+          "outputBytes": 5942
+        },
+        "rows": 100,
+        "cell": "User 0"
+      },
+      "edit": {
+        "build_ms": 9.5,
+        "render_ms": 40.900000005960464,
+        "total_ms": 50.400000005960464,
+        "stats": {
+          "outputBytes": 5955
+        },
+        "rows": 100,
+        "cell": "User 0 updated"
+      },
+      "first_with_init_ms": 299.90000000596046,
+      "pageErrors": []
+    },
+    {
+      "repeat": 3,
+      "kind": "esbuild",
+      "maps": false,
+      "crossOriginIsolated": false,
+      "init_ms": 93.8999999910593,
+      "first": {
+        "build_ms": 123.29999999701977,
+        "render_ms": 82.70000000298023,
+        "total_ms": 206,
+        "stats": {
+          "outputBytes": 5942
+        },
+        "rows": 100,
+        "cell": "User 0"
+      },
+      "edit": {
+        "build_ms": 9.600000008940697,
+        "render_ms": 39.599999994039536,
+        "total_ms": 49.20000000298023,
+        "stats": {
+          "outputBytes": 5955
+        },
+        "rows": 100,
+        "cell": "User 0 updated"
+      },
+      "first_with_init_ms": 299.8999999910593,
+      "pageErrors": []
+    },
+    {
+      "repeat": 1,
+      "kind": "bundleless",
+      "maps": true,
+      "crossOriginIsolated": false,
+      "init_ms": 40.5,
+      "first": {
+        "build_ms": 26.299999997019768,
+        "render_ms": 69.3999999910593,
+        "total_ms": 95.79999999701977,
+        "stats": {
+          "transforms": 4,
+          "rewrites": 4,
+          "blobCreated": 4,
+          "transform_ms": 20.600000008940697,
+          "link_ms": 3.7999999821186066,
+          "map_ms": 2.2999999821186066,
+          "changedURLs": [
+            "/Table.tsx",
+            "/data.ts",
+            "/App.tsx",
+            "/index.tsx"
+          ]
+        },
+        "rows": 100,
+        "cell": "User 0"
+      },
+      "edit": {
+        "build_ms": 1.7000000029802322,
+        "render_ms": 48.70000000298023,
+        "total_ms": 50.400000005960464,
+        "stats": {
+          "transforms": 1,
+          "rewrites": 3,
+          "blobCreated": 3,
+          "transform_ms": 0.7000000029802322,
+          "link_ms": 0.800000011920929,
+          "map_ms": 0.20000000298023224,
+          "changedURLs": [
+            "/Table.tsx",
+            "/App.tsx",
+            "/index.tsx"
+          ]
+        },
+        "rows": 100,
+        "cell": "User 0 updated"
+      },
+      "first_with_init_ms": 136.29999999701977,
+      "pageErrors": []
+    },
+    {
+      "repeat": 2,
+      "kind": "bundleless",
+      "maps": true,
+      "crossOriginIsolated": false,
+      "init_ms": 39.20000000298023,
+      "first": {
+        "build_ms": 27.299999997019768,
+        "render_ms": 67.5,
+        "total_ms": 94.79999999701977,
+        "stats": {
+          "transforms": 4,
+          "rewrites": 4,
+          "blobCreated": 4,
+          "transform_ms": 20.600000008940697,
+          "link_ms": 4.899999991059303,
+          "map_ms": 2.2999999970197678,
+          "changedURLs": [
+            "/Table.tsx",
+            "/data.ts",
+            "/App.tsx",
+            "/index.tsx"
+          ]
+        },
+        "rows": 100,
+        "cell": "User 0"
+      },
+      "edit": {
+        "build_ms": 1.8999999910593033,
+        "render_ms": 48.6000000089407,
+        "total_ms": 50.5,
+        "stats": {
+          "transforms": 1,
+          "rewrites": 3,
+          "blobCreated": 3,
+          "transform_ms": 0.7999999970197678,
+          "link_ms": 0.9000000059604645,
+          "map_ms": 0.29999999701976776,
+          "changedURLs": [
+            "/Table.tsx",
+            "/App.tsx",
+            "/index.tsx"
+          ]
+        },
+        "rows": 100,
+        "cell": "User 0 updated"
+      },
+      "first_with_init_ms": 134,
+      "pageErrors": []
+    },
+    {
+      "repeat": 3,
+      "kind": "bundleless",
+      "maps": true,
+      "crossOriginIsolated": false,
+      "init_ms": 40.099999994039536,
+      "first": {
+        "build_ms": 26.700000002980232,
+        "render_ms": 66.09999999403954,
+        "total_ms": 92.79999999701977,
+        "stats": {
+          "transforms": 4,
+          "rewrites": 4,
+          "blobCreated": 4,
+          "transform_ms": 20.700000002980232,
+          "link_ms": 4.199999988079071,
+          "map_ms": 2.4000000059604645,
+          "changedURLs": [
+            "/Table.tsx",
+            "/data.ts",
+            "/App.tsx",
+            "/index.tsx"
+          ]
+        },
+        "rows": 100,
+        "cell": "User 0"
+      },
+      "edit": {
+        "build_ms": 1.7000000029802322,
+        "render_ms": 49.6000000089407,
+        "total_ms": 51.30000001192093,
+        "stats": {
+          "transforms": 1,
+          "rewrites": 3,
+          "blobCreated": 3,
+          "transform_ms": 0.7000000029802322,
+          "link_ms": 0.7999999970197678,
+          "map_ms": 0.10000000894069672,
+          "changedURLs": [
+            "/Table.tsx",
+            "/App.tsx",
+            "/index.tsx"
+          ]
+        },
+        "rows": 100,
+        "cell": "User 0 updated"
+      },
+      "first_with_init_ms": 132.8999999910593,
+      "pageErrors": []
+    },
+    {
+      "repeat": 1,
+      "kind": "esbuild",
+      "maps": true,
+      "crossOriginIsolated": false,
+      "init_ms": 91.5,
+      "first": {
+        "build_ms": 130.09999999403954,
+        "render_ms": 67.79999999701977,
+        "total_ms": 197.8999999910593,
+        "stats": {
+          "outputBytes": 5942
+        },
+        "rows": 100,
+        "cell": "User 0"
+      },
+      "edit": {
+        "build_ms": 10.800000011920929,
+        "render_ms": 38.29999999701977,
+        "total_ms": 49.1000000089407,
+        "stats": {
+          "outputBytes": 5955
+        },
+        "rows": 100,
+        "cell": "User 0 updated"
+      },
+      "first_with_init_ms": 289.3999999910593,
+      "pageErrors": []
+    },
+    {
+      "repeat": 2,
+      "kind": "esbuild",
+      "maps": true,
+      "crossOriginIsolated": false,
+      "init_ms": 93.70000000298023,
+      "first": {
+        "build_ms": 122.3999999910593,
+        "render_ms": 87.79999999701977,
+        "total_ms": 210.19999998807907,
+        "stats": {
+          "outputBytes": 5942
+        },
+        "rows": 100,
+        "cell": "User 0"
+      },
+      "edit": {
+        "build_ms": 10.399999991059303,
+        "render_ms": 40.20000000298023,
+        "total_ms": 50.599999994039536,
+        "stats": {
+          "outputBytes": 5955
+        },
+        "rows": 100,
+        "cell": "User 0 updated"
+      },
+      "first_with_init_ms": 303.8999999910593,
+      "pageErrors": []
+    },
+    {
+      "repeat": 3,
+      "kind": "esbuild",
+      "maps": true,
+      "crossOriginIsolated": false,
+      "init_ms": 93.29999999701977,
+      "first": {
+        "build_ms": 132.8999999910593,
+        "render_ms": 87.5,
+        "total_ms": 220.59999999403954,
+        "stats": {
+          "outputBytes": 5942
+        },
+        "rows": 100,
+        "cell": "User 0"
+      },
+      "edit": {
+        "build_ms": 9.600000008940697,
+        "render_ms": 42.19999998807907,
+        "total_ms": 51.79999999701977,
+        "stats": {
+          "outputBytes": 5955
+        },
+        "rows": 100,
+        "cell": "User 0 updated"
+      },
+      "first_with_init_ms": 313.8999999910593,
+      "pageErrors": []
+    }
+  ],
+  "decompose": [
+    {
+      "repeat": 1,
+      "worker": true,
+      "probe": false,
+      "precompile": false,
+      "import_ms": 2.7999999970197678,
+      "initialize_ms": 38.3999999910593,
+      "context_ms": 50.70000000298023,
+      "first_bundle_ms": 126.6000000089407,
+      "rebuild_ms": 10,
+      "tiny_transform_ms": [
+        3.699999988079071,
+        2.4000000059604645,
+        2.5
+      ],
+      "to_first_ms": 218.5,
+      "pageErrors": []
+    },
+    {
+      "repeat": 2,
+      "worker": true,
+      "probe": false,
+      "precompile": false,
+      "import_ms": 2.8999999910593033,
+      "initialize_ms": 37.900000005960464,
+      "context_ms": 50.5,
+      "first_bundle_ms": 123.09999999403954,
+      "rebuild_ms": 8.400000005960464,
+      "tiny_transform_ms": [
+        5,
+        2.2999999970197678,
+        1.5
+      ],
+      "to_first_ms": 214.3999999910593,
+      "pageErrors": []
+    },
+    {
+      "repeat": 3,
+      "worker": true,
+      "probe": false,
+      "precompile": false,
+      "import_ms": 3.2000000029802322,
+      "initialize_ms": 40.70000000298023,
+      "context_ms": 51.70000000298023,
+      "first_bundle_ms": 128.29999999701977,
+      "rebuild_ms": 15.200000002980232,
+      "tiny_transform_ms": [
+        5.0999999940395355,
+        1.7000000029802322,
+        1.8999999910593033
+      ],
+      "to_first_ms": 223.90000000596046,
+      "pageErrors": []
+    },
+    {
+      "repeat": 1,
+      "worker": true,
+      "probe": true,
+      "precompile": false,
+      "import_ms": 2.9000000059604645,
+      "initialize_ms": 38.8999999910593,
+      "empty_probe_ms": 128,
+      "context_ms": 9,
+      "first_bundle_ms": 38.30000001192093,
+      "rebuild_ms": 10.699999988079071,
+      "tiny_transform_ms": [
+        1.4000000059604645,
+        1.2000000029802322,
+        0.8999999910593033
+      ],
+      "to_first_ms": 217.1000000089407,
+      "pageErrors": []
+    },
+    {
+      "repeat": 2,
+      "worker": true,
+      "probe": true,
+      "precompile": false,
+      "import_ms": 2.7999999970197678,
+      "initialize_ms": 38.5,
+      "empty_probe_ms": 133.90000000596046,
+      "context_ms": 7.299999997019768,
+      "first_bundle_ms": 41.099999994039536,
+      "rebuild_ms": 9.200000002980232,
+      "tiny_transform_ms": [
+        2.7000000029802322,
+        1.5999999940395355,
+        1.2999999970197678
+      ],
+      "to_first_ms": 223.59999999403954,
+      "pageErrors": []
+    },
+    {
+      "repeat": 3,
+      "worker": true,
+      "probe": true,
+      "precompile": false,
+      "import_ms": 2.6000000089406967,
+      "initialize_ms": 36.3999999910593,
+      "empty_probe_ms": 133.30000001192093,
+      "context_ms": 8.199999988079071,
+      "first_bundle_ms": 37.30000001192093,
+      "rebuild_ms": 10.899999991059303,
+      "tiny_transform_ms": [
+        2.2999999970197678,
+        2.1000000089406967,
+        1.8999999910593033
+      ],
+      "to_first_ms": 217.80000001192093,
+      "pageErrors": []
+    },
+    {
+      "repeat": 1,
+      "worker": false,
+      "probe": false,
+      "precompile": false,
+      "import_ms": 3.1000000089406967,
+      "initialize_ms": 75.20000000298023,
+      "context_ms": 13.799999997019768,
+      "first_bundle_ms": 156,
+      "rebuild_ms": 85.59999999403954,
+      "tiny_transform_ms": [
+        11.700000002980232,
+        6.700000002980232,
+        6.5
+      ],
+      "to_first_ms": 248.1000000089407,
+      "pageErrors": []
+    },
+    {
+      "repeat": 2,
+      "worker": false,
+      "probe": false,
+      "precompile": false,
+      "import_ms": 2.9000000059604645,
+      "initialize_ms": 77.29999999701977,
+      "context_ms": 14,
+      "first_bundle_ms": 154.79999999701977,
+      "rebuild_ms": 84,
+      "tiny_transform_ms": [
+        11.700000002980232,
+        6.4000000059604645,
+        6.399999991059303
+      ],
+      "to_first_ms": 249,
+      "pageErrors": []
+    },
+    {
+      "repeat": 3,
+      "worker": false,
+      "probe": false,
+      "precompile": false,
+      "import_ms": 2.7000000029802322,
+      "initialize_ms": 72.20000000298023,
+      "context_ms": 13.200000002980232,
+      "first_bundle_ms": 151.70000000298023,
+      "rebuild_ms": 83.8999999910593,
+      "tiny_transform_ms": [
+        11.599999994039536,
+        6.299999997019768,
+        6.4000000059604645
+      ],
+      "to_first_ms": 239.80000001192093,
+      "pageErrors": []
+    },
+    {
+      "repeat": 1,
+      "worker": false,
+      "probe": true,
+      "precompile": false,
+      "import_ms": 2.9000000059604645,
+      "initialize_ms": 72.8999999910593,
+      "empty_probe_ms": 80.30000001192093,
+      "context_ms": 7.699999988079071,
+      "first_bundle_ms": 91.20000000298023,
+      "rebuild_ms": 82.90000000596046,
+      "tiny_transform_ms": [
+        6.5,
+        6.299999997019768,
+        6.200000002980232
+      ],
+      "to_first_ms": 255,
+      "pageErrors": []
+    },
+    {
+      "repeat": 2,
+      "worker": false,
+      "probe": true,
+      "precompile": false,
+      "import_ms": 3,
+      "initialize_ms": 70.5,
+      "empty_probe_ms": 80.5,
+      "context_ms": 7.600000008940697,
+      "first_bundle_ms": 90,
+      "rebuild_ms": 84.19999998807907,
+      "tiny_transform_ms": [
+        6.700000002980232,
+        6.5999999940395355,
+        6.299999997019768
+      ],
+      "to_first_ms": 251.6000000089407,
+      "pageErrors": []
+    },
+    {
+      "repeat": 3,
+      "worker": false,
+      "probe": true,
+      "precompile": false,
+      "import_ms": 3.2000000029802322,
+      "initialize_ms": 73.59999999403954,
+      "empty_probe_ms": 80.20000000298023,
+      "context_ms": 6.700000002980232,
+      "first_bundle_ms": 90.70000000298023,
+      "rebuild_ms": 82.5,
+      "tiny_transform_ms": [
+        6.5,
+        6.299999997019768,
+        6.299999997019768
+      ],
+      "to_first_ms": 254.40000000596046,
+      "pageErrors": []
+    },
+    {
+      "repeat": 1,
+      "worker": true,
+      "probe": false,
+      "precompile": true,
+      "import_ms": 2.7000000029802322,
+      "fetch_compile_ms": 29.600000008940697,
+      "initialize_ms": 8.199999988079071,
+      "context_ms": 50.30000001192093,
+      "first_bundle_ms": 147.3999999910593,
+      "rebuild_ms": 11,
+      "tiny_transform_ms": [
+        4.9000000059604645,
+        3.2000000029802322,
+        1.3999999910593033
+      ],
+      "to_first_ms": 238.20000000298023,
+      "pageErrors": []
+    },
+    {
+      "repeat": 2,
+      "worker": true,
+      "probe": false,
+      "precompile": true,
+      "import_ms": 3.2999999970197678,
+      "fetch_compile_ms": 28,
+      "initialize_ms": 12.799999997019768,
+      "context_ms": 49.80000001192093,
+      "first_bundle_ms": 121.5,
+      "rebuild_ms": 9.299999997019768,
+      "tiny_transform_ms": [
+        4,
+        3.7000000029802322,
+        2.3999999910593033
+      ],
+      "to_first_ms": 215.40000000596046,
+      "pageErrors": []
+    },
+    {
+      "repeat": 3,
+      "worker": true,
+      "probe": false,
+      "precompile": true,
+      "import_ms": 2.7000000029802322,
+      "fetch_compile_ms": 28.100000008940697,
+      "initialize_ms": 7.799999997019768,
+      "context_ms": 51.79999999701977,
+      "first_bundle_ms": 123.40000000596046,
+      "rebuild_ms": 9.699999988079071,
+      "tiny_transform_ms": [
+        5.600000008940697,
+        2.2999999970197678,
+        2.7999999970197678
+      ],
+      "to_first_ms": 213.80000001192093,
+      "pageErrors": []
+    }
+  ],
+  "edges": [
+    {
+      "repeat": 1,
+      "cycle": "Cycle rejected by direct blob linker: /index.ts -> /b.ts -> /index.ts",
+      "map_build_stats": {
+        "transforms": 2,
+        "rewrites": 2,
+        "blobCreated": 2,
+        "transform_ms": 2.9000000059604645,
+        "link_ms": 1.7999999970197678,
+        "map_ms": 0.7999999970197678,
+        "changedURLs": [
+          "/data.ts",
+          "/bad.ts"
+        ]
+      },
+      "raw_stack": "Error: mapped failure 3\n    at fail (blob:http://127.0.0.1:56442/45d181f8-e0fd-4860-8339-7af0e18a8f45:4:8)\n    at blob:http://127.0.0.1:56442/45d181f8-e0fd-4860-8339-7af0e18a8f45:6:1",
+      "mapping": {
+        "intermediate": {
+          "source": "/bad.ts.transformed",
+          "line": 4,
+          "column": 7,
+          "name": null
+        },
+        "original": {
+          "source": "/bad.ts",
+          "line": 4,
+          "column": 8,
+          "name": null
+        },
+        "file": "/bad.ts"
+      },
+      "mapping_ms": 0.9000000059604645,
+      "expected": {
+        "file": "/bad.ts",
+        "line": 4
+      },
+      "pageErrors": []
+    },
+    {
+      "repeat": 2,
+      "cycle": "Cycle rejected by direct blob linker: /index.ts -> /b.ts -> /index.ts",
+      "map_build_stats": {
+        "transforms": 2,
+        "rewrites": 2,
+        "blobCreated": 2,
+        "transform_ms": 3,
+        "link_ms": 1.7000000029802322,
+        "map_ms": 0.7000000029802322,
+        "changedURLs": [
+          "/data.ts",
+          "/bad.ts"
+        ]
+      },
+      "raw_stack": "Error: mapped failure 3\n    at fail (blob:http://127.0.0.1:56442/2746c1ee-e863-4e3c-902f-fba0aab15152:4:8)\n    at blob:http://127.0.0.1:56442/2746c1ee-e863-4e3c-902f-fba0aab15152:6:1",
+      "mapping": {
+        "intermediate": {
+          "source": "/bad.ts.transformed",
+          "line": 4,
+          "column": 7,
+          "name": null
+        },
+        "original": {
+          "source": "/bad.ts",
+          "line": 4,
+          "column": 8,
+          "name": null
+        },
+        "file": "/bad.ts"
+      },
+      "mapping_ms": 0.7999999970197678,
+      "expected": {
+        "file": "/bad.ts",
+        "line": 4
+      },
+      "pageErrors": []
+    },
+    {
+      "repeat": 3,
+      "cycle": "Cycle rejected by direct blob linker: /index.ts -> /b.ts -> /index.ts",
+      "map_build_stats": {
+        "transforms": 2,
+        "rewrites": 2,
+        "blobCreated": 2,
+        "transform_ms": 3,
+        "link_ms": 1.5999999940395355,
+        "map_ms": 0.5999999940395355,
+        "changedURLs": [
+          "/data.ts",
+          "/bad.ts"
+        ]
+      },
+      "raw_stack": "Error: mapped failure 3\n    at fail (blob:http://127.0.0.1:56442/f28fcd2d-d6c3-4c3a-b2d7-1727c116f9a0:4:8)\n    at blob:http://127.0.0.1:56442/f28fcd2d-d6c3-4c3a-b2d7-1727c116f9a0:6:1",
+      "mapping": {
+        "intermediate": {
+          "source": "/bad.ts.transformed",
+          "line": 4,
+          "column": 7,
+          "name": null
+        },
+        "original": {
+          "source": "/bad.ts",
+          "line": 4,
+          "column": 8,
+          "name": null
+        },
+        "file": "/bad.ts"
+      },
+      "mapping_ms": 0.800000011920929,
+      "expected": {
+        "file": "/bad.ts",
+        "line": 4
+      },
+      "pageErrors": []
+    }
+  ]
+}

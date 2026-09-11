@@ -1,0 +1,10 @@
+➤ YN0000: · Yarn 4.18.0
+➤ YN0000: ┌ Resolution step
+➤ YN0085: │ + @tanstack/react-query@npm:5.102.8, clsx@npm:2.1.1, react-dom@npm:19.3.0, react@npm:19.3.0, @tanstack/query-core@npm:5.102.8, scheduler@npm:0.28.0
+➤ YN0000: └ Completed in 0s 888ms
+➤ YN0000: ┌ Fetch step
+➤ YN0013: │ 6 packages were added to the project (+ 10.98 MiB).
+➤ YN0000: └ Completed in 0s 290ms
+➤ YN0000: ┌ Link step
+➤ YN0000: └ Completed
+➤ YN0000: · Done in 1s 330ms
