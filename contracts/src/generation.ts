@@ -55,7 +55,7 @@ export type GenerationEvent = { seq: number; generationId: string } & (
  * GET  /generations/:id/events            SSE. Last-Event-ID 헤더로 끊긴 지점 이후 replay. 종결 이벤트(done/failed/canceled) 후 종료
  * POST /generations/:id/answers           body: { questionId, answer } → 204
  * POST /generations/:id/cancel            → 204. 이후 도착하는 결과는 저장·전송하지 않는다
- * GET  /healthz                           → { ok, agentMode: "claude" | "mock" }
+ * GET  /healthz                           → { ok, agentMode: "claude" | "mock" | "local" }
  *
  * 에이전트
  * - 모델: claude-opus-5, thinking { type: "adaptive" }, 스트리밍 tool runner(@anthropic-ai/sdk betaZodTool).
