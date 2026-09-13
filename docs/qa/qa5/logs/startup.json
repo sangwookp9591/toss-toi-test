@@ -1,0 +1,19 @@
+{
+  "elapsedSeconds": 41.367,
+  "newContainers": [
+    "toi-qa5-verdaccio-1",
+    "toi-qa5-verdaccio-init-1",
+    "toi-qa5-minio-1",
+    "toi-qa5-keycloak-1"
+  ],
+  "newVolumes": [
+    "toi-qa5_keycloak-data",
+    "toi-qa5_minio-data",
+    "toi-qa5_verdaccio-auth",
+    "toi-qa5_verdaccio-storage"
+  ],
+  "otherContainersUnchanged": true,
+  "otherVolumesUnchanged": true,
+  "envMode": "0600",
+  "comparison": "Container ID/name and sorted label pairs; volume name and sorted label pairs"
+}

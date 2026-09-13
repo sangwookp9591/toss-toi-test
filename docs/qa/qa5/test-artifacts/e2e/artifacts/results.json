@@ -1,0 +1,4368 @@
+{
+  "config": {
+    "argv": [
+      "/usr/local/bin/node",
+      "/Users/psw/Projects/toi-lite-qa5/e2e/node_modules/.bin/playwright",
+      "test",
+      "--repeat-each=3"
+    ],
+    "configFile": "/Users/psw/Projects/toi-lite-qa5/e2e/playwright.config.ts",
+    "rootDir": "/Users/psw/Projects/toi-lite-qa5/e2e/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/psw/Projects/toi-lite-qa5/e2e/test-results",
+        "repeatEach": 3,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/Users/psw/Projects/toi-lite-qa5/e2e/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 120000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "downloads.spec.ts",
+      "file": "downloads.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "T: Alice CSV/XLSX are AES-256 AE-2; signature, sub, single-use and 60-second expiry enforced",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 61645,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:02:24.065Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6e21fe7132a631b5f5c4-b734f9919536fd6eb43f",
+          "file": "downloads.spec.ts",
+          "line": 36,
+          "column": 1
+        },
+        {
+          "title": "U: viewer, nonmember and preview origin cannot create downloads",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1073,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:03:26.145Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6e21fe7132a631b5f5c4-c894906f8d3bc82e31ee",
+          "file": "downloads.spec.ts",
+          "line": 53,
+          "column": 1
+        },
+        {
+          "title": "V: MinIO bytes hide row values and password; successful delivery deletes ciphertext and wrapped key",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 143,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:03:27.228Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6e21fe7132a631b5f5c4-f438d72e8ab347e621bd",
+          "file": "downloads.spec.ts",
+          "line": 59,
+          "column": 1
+        },
+        {
+          "title": "W: audit verification is valid, seq remains continuous and audit contains no password, keys or signature",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1205,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:03:27.378Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6e21fe7132a631b5f5c4-02ad2f1f868c1cb90293",
+          "file": "downloads.spec.ts",
+          "line": 70,
+          "column": 1
+        },
+        {
+          "title": "download UI shows password once, saves using Bearer and clears it on close",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1170,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:03:28.589Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6e21fe7132a631b5f5c4-b1f126e4982b7085fc87",
+          "file": "downloads.spec.ts",
+          "line": 81,
+          "column": 1
+        },
+        {
+          "title": "T: Alice CSV/XLSX are AES-256 AE-2; signature, sub, single-use and 60-second expiry enforced",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 62491,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:05:37.209Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6e21fe7132a631b5f5c4-cd16d524e96e29962f24",
+          "file": "downloads.spec.ts",
+          "line": 36,
+          "column": 1
+        },
+        {
+          "title": "U: viewer, nonmember and preview origin cannot create downloads",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1044,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:06:40.132Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6e21fe7132a631b5f5c4-d535dadd54e0197d2502",
+          "file": "downloads.spec.ts",
+          "line": 53,
+          "column": 1
+        },
+        {
+          "title": "V: MinIO bytes hide row values and password; successful delivery deletes ciphertext and wrapped key",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 143,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:06:41.185Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6e21fe7132a631b5f5c4-7d4327e0bb2055121619",
+          "file": "downloads.spec.ts",
+          "line": 59,
+          "column": 1
+        },
+        {
+          "title": "W: audit verification is valid, seq remains continuous and audit contains no password, keys or signature",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1415,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:06:41.335Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6e21fe7132a631b5f5c4-4b819a9b6a36b3cbb2f2",
+          "file": "downloads.spec.ts",
+          "line": 70,
+          "column": 1
+        },
+        {
+          "title": "download UI shows password once, saves using Bearer and clears it on close",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1280,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:06:42.757Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6e21fe7132a631b5f5c4-eaf7cda370a4c421a8de",
+          "file": "downloads.spec.ts",
+          "line": 81,
+          "column": 1
+        },
+        {
+          "title": "T: Alice CSV/XLSX are AES-256 AE-2; signature, sub, single-use and 60-second expiry enforced",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 61655,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:08:52.036Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6e21fe7132a631b5f5c4-c4788886f4c8acb9f04b",
+          "file": "downloads.spec.ts",
+          "line": 36,
+          "column": 1
+        },
+        {
+          "title": "U: viewer, nonmember and preview origin cannot create downloads",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1152,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:09:54.131Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6e21fe7132a631b5f5c4-68c1d81c2013771fda44",
+          "file": "downloads.spec.ts",
+          "line": 53,
+          "column": 1
+        },
+        {
+          "title": "V: MinIO bytes hide row values and password; successful delivery deletes ciphertext and wrapped key",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 141,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:09:55.291Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6e21fe7132a631b5f5c4-d74b22541372a982bb56",
+          "file": "downloads.spec.ts",
+          "line": 59,
+          "column": 1
+        },
+        {
+          "title": "W: audit verification is valid, seq remains continuous and audit contains no password, keys or signature",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1314,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:09:55.439Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6e21fe7132a631b5f5c4-1c3dd69c9aa567931bf7",
+          "file": "downloads.spec.ts",
+          "line": 70,
+          "column": 1
+        },
+        {
+          "title": "download UI shows password once, saves using Bearer and clears it on close",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1178,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:09:56.761Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6e21fe7132a631b5f5c4-e5bf760a396aa374b114",
+          "file": "downloads.spec.ts",
+          "line": 81,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "identity.spec.ts",
+      "file": "identity.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "N: carol nonmember receives 404 and cannot mint or use preview/capability",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 673,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:03:29.791Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc384e94f5cb1e491b4d-b73a014b2a41d5502dc3",
+          "file": "identity.spec.ts",
+          "line": 17,
+          "column": 1
+        },
+        {
+          "title": "O: owner member UI protects last owner; viewer read only, editor generation, removal revokes proxy within 5s",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3917,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:03:30.472Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc384e94f5cb1e491b4d-ab821109e61c892dba62",
+          "file": "identity.spec.ts",
+          "line": 28,
+          "column": 1
+        },
+        {
+          "title": "P: live write requires another API owner approval and expires",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 380000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10151,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:03:34.398Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc384e94f5cb1e491b4d-2aca4a986734970b2e08",
+          "file": "identity.spec.ts",
+          "line": 51,
+          "column": 1
+        },
+        {
+          "title": "Q: preview capability never selects live upstream",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 77,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:03:44.559Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc384e94f5cb1e491b4d-a6b7805879646fba24c3",
+          "file": "identity.spec.ts",
+          "line": 77,
+          "column": 1
+        },
+        {
+          "title": "S: iframe globals/storage/messages/URLs contain no Keycloak token",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1260,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:03:58.423Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc384e94f5cb1e491b4d-22b661a57b5ddb23e4c4",
+          "file": "identity.spec.ts",
+          "line": 149,
+          "column": 1
+        },
+        {
+          "title": "AI: removed bob sees access revoked on broker query and periodic check without preview requests",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 31561,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:03:59.692Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc384e94f5cb1e491b4d-8bf21a43a148ccdb1500",
+          "file": "identity.spec.ts",
+          "line": 180,
+          "column": 1
+        },
+        {
+          "title": "AJ: viewer download panel explains role restriction with aria-describedby",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1695,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:04:31.264Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc384e94f5cb1e491b4d-09242bf6b3a18baaaf4c",
+          "file": "identity.spec.ts",
+          "line": 225,
+          "column": 1
+        },
+        {
+          "title": "N: carol nonmember receives 404 and cannot mint or use preview/capability",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 698,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:06:44.073Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc384e94f5cb1e491b4d-1dd33d2596aba91d9422",
+          "file": "identity.spec.ts",
+          "line": 17,
+          "column": 1
+        },
+        {
+          "title": "O: owner member UI protects last owner; viewer read only, editor generation, removal revokes proxy within 5s",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3268,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:06:44.778Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc384e94f5cb1e491b4d-cf731cce1ea48c97e27a",
+          "file": "identity.spec.ts",
+          "line": 28,
+          "column": 1
+        },
+        {
+          "title": "P: live write requires another API owner approval and expires",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 380000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10163,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:06:48.055Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc384e94f5cb1e491b4d-10996f0b298c661c20f7",
+          "file": "identity.spec.ts",
+          "line": 51,
+          "column": 1
+        },
+        {
+          "title": "Q: preview capability never selects live upstream",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 73,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:06:58.228Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc384e94f5cb1e491b4d-7e55705144b08659c63f",
+          "file": "identity.spec.ts",
+          "line": 77,
+          "column": 1
+        },
+        {
+          "title": "S: iframe globals/storage/messages/URLs contain no Keycloak token",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1283,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:07:11.412Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc384e94f5cb1e491b4d-b48c1515b52b027ed547",
+          "file": "identity.spec.ts",
+          "line": 149,
+          "column": 1
+        },
+        {
+          "title": "AI: removed bob sees access revoked on broker query and periodic check without preview requests",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 31335,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:07:12.707Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc384e94f5cb1e491b4d-f8e3f30151567b98e37c",
+          "file": "identity.spec.ts",
+          "line": 180,
+          "column": 1
+        },
+        {
+          "title": "AJ: viewer download panel explains role restriction with aria-describedby",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1191,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:07:44.054Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc384e94f5cb1e491b4d-247d680f39f53d178a5f",
+          "file": "identity.spec.ts",
+          "line": 225,
+          "column": 1
+        },
+        {
+          "title": "N: carol nonmember receives 404 and cannot mint or use preview/capability",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 706,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:09:57.971Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc384e94f5cb1e491b4d-705b291980567d0041a1",
+          "file": "identity.spec.ts",
+          "line": 17,
+          "column": 1
+        },
+        {
+          "title": "O: owner member UI protects last owner; viewer read only, editor generation, removal revokes proxy within 5s",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3854,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:09:58.685Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc384e94f5cb1e491b4d-79fb41c6d32bd79adad6",
+          "file": "identity.spec.ts",
+          "line": 28,
+          "column": 1
+        },
+        {
+          "title": "P: live write requires another API owner approval and expires",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 380000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10195,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:10:02.548Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc384e94f5cb1e491b4d-f237155e804838598c3e",
+          "file": "identity.spec.ts",
+          "line": 51,
+          "column": 1
+        },
+        {
+          "title": "Q: preview capability never selects live upstream",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 80,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:10:12.753Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc384e94f5cb1e491b4d-784040adba0229ffdfb7",
+          "file": "identity.spec.ts",
+          "line": 77,
+          "column": 1
+        },
+        {
+          "title": "S: iframe globals/storage/messages/URLs contain no Keycloak token",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1230,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:10:26.409Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc384e94f5cb1e491b4d-5bc3a3365dd9a98a79de",
+          "file": "identity.spec.ts",
+          "line": 149,
+          "column": 1
+        },
+        {
+          "title": "AI: removed bob sees access revoked on broker query and periodic check without preview requests",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 31253,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:10:27.649Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc384e94f5cb1e491b4d-6e8391ff1210c8b4f97f",
+          "file": "identity.spec.ts",
+          "line": 180,
+          "column": 1
+        },
+        {
+          "title": "AJ: viewer download panel explains role restriction with aria-describedby",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1161,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:10:58.914Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc384e94f5cb1e491b4d-5944184c031b8da7d60e",
+          "file": "identity.spec.ts",
+          "line": 225,
+          "column": 1
+        }
+      ],
+      "suites": [
+        {
+          "title": "R isolated serial mutation",
+          "file": "identity.spec.ts",
+          "line": 85,
+          "column": 6,
+          "specs": [
+            {
+              "title": "R: short-token renewal preserves a pending build; disabled bob cannot refresh or use expired access",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [
+                    {
+                      "type": "serial",
+                      "location": {
+                        "file": "/Users/psw/Projects/toi-lite-qa5/e2e/tests/identity.spec.ts",
+                        "line": 85,
+                        "column": 6
+                      }
+                    }
+                  ],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13771,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-13T23:03:44.644Z",
+                      "annotations": [
+                        {
+                          "type": "serial",
+                          "location": {
+                            "file": "/Users/psw/Projects/toi-lite-qa5/e2e/tests/identity.spec.ts",
+                            "line": 85,
+                            "column": 6
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bc384e94f5cb1e491b4d-bbea6060824053cafce1",
+              "file": "identity.spec.ts",
+              "line": 87,
+              "column": 3
+            },
+            {
+              "title": "R: short-token renewal preserves a pending build; disabled bob cannot refresh or use expired access",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [
+                    {
+                      "type": "serial",
+                      "location": {
+                        "file": "/Users/psw/Projects/toi-lite-qa5/e2e/tests/identity.spec.ts",
+                        "line": 85,
+                        "column": 6
+                      }
+                    }
+                  ],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13094,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-13T23:06:58.309Z",
+                      "annotations": [
+                        {
+                          "type": "serial",
+                          "location": {
+                            "file": "/Users/psw/Projects/toi-lite-qa5/e2e/tests/identity.spec.ts",
+                            "line": 85,
+                            "column": 6
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bc384e94f5cb1e491b4d-b7530e4a842c6d5c5c48",
+              "file": "identity.spec.ts",
+              "line": 87,
+              "column": 3
+            },
+            {
+              "title": "R: short-token renewal preserves a pending build; disabled bob cannot refresh or use expired access",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [
+                    {
+                      "type": "serial",
+                      "location": {
+                        "file": "/Users/psw/Projects/toi-lite-qa5/e2e/tests/identity.spec.ts",
+                        "line": 85,
+                        "column": 6
+                      }
+                    }
+                  ],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13559,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-13T23:10:12.841Z",
+                      "annotations": [
+                        {
+                          "type": "serial",
+                          "location": {
+                            "file": "/Users/psw/Projects/toi-lite-qa5/e2e/tests/identity.spec.ts",
+                            "line": 85,
+                            "column": 6
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bc384e94f5cb1e491b4d-067537e581ac9a9380ec",
+              "file": "identity.spec.ts",
+              "line": 87,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "isolation.spec.ts",
+      "file": "isolation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "X: project origins isolate storage and cross-project frame access",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3266,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:04:32.987Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8603831629f4016ade15-6183dd6c0ee351a8cd0f",
+          "file": "isolation.spec.ts",
+          "line": 13,
+          "column": 1
+        },
+        {
+          "title": "Y: response CSP survives document.open and blocks egress before the server receives it",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1800,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:04:36.263Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8603831629f4016ade15-559bc1aeb435f68773bf",
+          "file": "isolation.spec.ts",
+          "line": 39,
+          "column": 1
+        },
+        {
+          "title": "Z: project A preview session from project B origin returns PREVIEW_DIRECT_FORBIDDEN",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 19,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:04:38.072Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8603831629f4016ade15-12b0cc1d396dcc09b7b8",
+          "file": "isolation.spec.ts",
+          "line": 76,
+          "column": 1
+        },
+        {
+          "title": "AA: preview Host/path allowlist and studio embedding headers",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 24,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:04:38.100Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8603831629f4016ade15-da98beda4d8b51d45406",
+          "file": "isolation.spec.ts",
+          "line": 85,
+          "column": 1
+        },
+        {
+          "title": "AB: AST bypass sources are rejected without incrementing the source revision",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 35,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:04:38.129Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8603831629f4016ade15-77cc25f55b9269390c74",
+          "file": "isolation.spec.ts",
+          "line": 105,
+          "column": 1
+        },
+        {
+          "title": "AC: actual studio preview credentials never appear in frame globals, DOM, storage or messages",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1343,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:04:38.169Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8603831629f4016ade15-a8de42a68a6de9dcb349",
+          "file": "isolation.spec.ts",
+          "line": 130,
+          "column": 1
+        },
+        {
+          "title": "AD: generated location navigation leaks zero credentials, removes the frame and restores the good revision",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1513,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "AD navigation receiver: {\"requests\":0,\"credentialLeaks\":0}\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:04:39.520Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8603831629f4016ade15-12e5718471d82c858262",
+          "file": "isolation.spec.ts",
+          "line": 159,
+          "column": 1
+        },
+        {
+          "title": "AE: direct policy fetch is CSP-blocked while postMessage broker succeeds",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1185,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:04:41.043Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8603831629f4016ade15-ea3db6526261325ce434",
+          "file": "isolation.spec.ts",
+          "line": 185,
+          "column": 1
+        },
+        {
+          "title": "AF: replaced frame requests are ignored and its pending response is discarded",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1841,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:04:42.243Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8603831629f4016ade15-7e289d281d45b3496cd1",
+          "file": "isolation.spec.ts",
+          "line": 193,
+          "column": 1
+        },
+        {
+          "title": "AG: PATCH is 403 WRITE_NOT_ALLOWED until the user grants write capability",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1339,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:04:44.096Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8603831629f4016ade15-8743450e0a7b3836200f",
+          "file": "isolation.spec.ts",
+          "line": 209,
+          "column": 1
+        },
+        {
+          "title": "AH: broker enforces concurrency, rolling request rate, and 5 MiB response limit",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3576,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:04:45.446Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8603831629f4016ade15-2cacb904b8e0289ed6b1",
+          "file": "isolation.spec.ts",
+          "line": 219,
+          "column": 1
+        },
+        {
+          "title": "X: project origins isolate storage and cross-project frame access",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4289,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:07:45.273Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8603831629f4016ade15-5e11b5156fd51369b72e",
+          "file": "isolation.spec.ts",
+          "line": 13,
+          "column": 1
+        },
+        {
+          "title": "Y: response CSP survives document.open and blocks egress before the server receives it",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1777,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:07:49.572Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8603831629f4016ade15-76c5c649d75648a7a599",
+          "file": "isolation.spec.ts",
+          "line": 39,
+          "column": 1
+        },
+        {
+          "title": "Z: project A preview session from project B origin returns PREVIEW_DIRECT_FORBIDDEN",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 18,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:07:51.365Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8603831629f4016ade15-65038218ef98fe20f790",
+          "file": "isolation.spec.ts",
+          "line": 76,
+          "column": 1
+        },
+        {
+          "title": "AA: preview Host/path allowlist and studio embedding headers",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 25,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:07:51.391Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8603831629f4016ade15-aab0fb7d322b6b1994fd",
+          "file": "isolation.spec.ts",
+          "line": 85,
+          "column": 1
+        },
+        {
+          "title": "AB: AST bypass sources are rejected without incrementing the source revision",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 29,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:07:51.421Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8603831629f4016ade15-5498e99d77aeda528850",
+          "file": "isolation.spec.ts",
+          "line": 105,
+          "column": 1
+        },
+        {
+          "title": "AC: actual studio preview credentials never appear in frame globals, DOM, storage or messages",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1661,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:07:51.456Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8603831629f4016ade15-3ab0df4adc47a0cf743d",
+          "file": "isolation.spec.ts",
+          "line": 130,
+          "column": 1
+        },
+        {
+          "title": "AD: generated location navigation leaks zero credentials, removes the frame and restores the good revision",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1827,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "AD navigation receiver: {\"requests\":0,\"credentialLeaks\":0}\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:07:53.127Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8603831629f4016ade15-d8bc1465f54b16227cc0",
+          "file": "isolation.spec.ts",
+          "line": 159,
+          "column": 1
+        },
+        {
+          "title": "AE: direct policy fetch is CSP-blocked while postMessage broker succeeds",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1204,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:07:54.967Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8603831629f4016ade15-2d23697916ed03bb9d24",
+          "file": "isolation.spec.ts",
+          "line": 185,
+          "column": 1
+        },
+        {
+          "title": "AF: replaced frame requests are ignored and its pending response is discarded",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1938,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:07:56.179Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8603831629f4016ade15-46ce782c6e99d8d10356",
+          "file": "isolation.spec.ts",
+          "line": 193,
+          "column": 1
+        },
+        {
+          "title": "AG: PATCH is 403 WRITE_NOT_ALLOWED until the user grants write capability",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1644,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:07:58.128Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8603831629f4016ade15-2287d76baa9be1281d13",
+          "file": "isolation.spec.ts",
+          "line": 209,
+          "column": 1
+        },
+        {
+          "title": "AH: broker enforces concurrency, rolling request rate, and 5 MiB response limit",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3559,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:07:59.782Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8603831629f4016ade15-477a206a63c8ff38eba2",
+          "file": "isolation.spec.ts",
+          "line": 219,
+          "column": 1
+        },
+        {
+          "title": "X: project origins isolate storage and cross-project frame access",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3298,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:11:00.102Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8603831629f4016ade15-3fd3c81f0396320bb381",
+          "file": "isolation.spec.ts",
+          "line": 13,
+          "column": 1
+        },
+        {
+          "title": "Y: response CSP survives document.open and blocks egress before the server receives it",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2132,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:11:03.407Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8603831629f4016ade15-9ae9779d7a693ec1595c",
+          "file": "isolation.spec.ts",
+          "line": 39,
+          "column": 1
+        },
+        {
+          "title": "Z: project A preview session from project B origin returns PREVIEW_DIRECT_FORBIDDEN",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 16,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:11:05.551Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8603831629f4016ade15-37965dadf95e81c75e43",
+          "file": "isolation.spec.ts",
+          "line": 76,
+          "column": 1
+        },
+        {
+          "title": "AA: preview Host/path allowlist and studio embedding headers",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 22,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:11:05.573Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8603831629f4016ade15-5b1592656fdf2758ceb0",
+          "file": "isolation.spec.ts",
+          "line": 85,
+          "column": 1
+        },
+        {
+          "title": "AB: AST bypass sources are rejected without incrementing the source revision",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 27,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:11:05.601Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8603831629f4016ade15-9dbca96c72c0bb5dea01",
+          "file": "isolation.spec.ts",
+          "line": 105,
+          "column": 1
+        },
+        {
+          "title": "AC: actual studio preview credentials never appear in frame globals, DOM, storage or messages",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1302,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:11:05.633Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8603831629f4016ade15-0c4582a7192326601193",
+          "file": "isolation.spec.ts",
+          "line": 130,
+          "column": 1
+        },
+        {
+          "title": "AD: generated location navigation leaks zero credentials, removes the frame and restores the good revision",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1468,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "AD navigation receiver: {\"requests\":0,\"credentialLeaks\":0}\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:11:06.943Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8603831629f4016ade15-55fbfe5dc5952354538e",
+          "file": "isolation.spec.ts",
+          "line": 159,
+          "column": 1
+        },
+        {
+          "title": "AE: direct policy fetch is CSP-blocked while postMessage broker succeeds",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1224,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:11:08.421Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8603831629f4016ade15-ec2544f80c9a9b54782a",
+          "file": "isolation.spec.ts",
+          "line": 185,
+          "column": 1
+        },
+        {
+          "title": "AF: replaced frame requests are ignored and its pending response is discarded",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2018,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:11:09.655Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8603831629f4016ade15-eddb40c2bef9dee443dc",
+          "file": "isolation.spec.ts",
+          "line": 193,
+          "column": 1
+        },
+        {
+          "title": "AG: PATCH is 403 WRITE_NOT_ALLOWED until the user grants write capability",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1351,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:11:11.681Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8603831629f4016ade15-90f4bb1df7f64d20cd1c",
+          "file": "isolation.spec.ts",
+          "line": 209,
+          "column": 1
+        },
+        {
+          "title": "AH: broker enforces concurrency, rolling request rate, and 5 MiB response limit",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3943,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:11:13.045Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8603831629f4016ade15-5488eb200eee3e3bfe64",
+          "file": "isolation.spec.ts",
+          "line": 219,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "studio.spec.ts",
+      "file": "studio.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "A: 생성, 역질문, 마스킹, 조회 사유와 감사 기록",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2056,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:04:49.065Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-8733163736a83ecbbf59",
+          "file": "studio.spec.ts",
+          "line": 10,
+          "column": 1
+        },
+        {
+          "title": "B: 문법 오류는 마지막 정상 화면 유지",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1323,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:04:51.130Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-a4d6c92837139147d20d",
+          "file": "studio.spec.ts",
+          "line": 11,
+          "column": 1
+        },
+        {
+          "title": "C: 이전 실행을 지연해도 최신 revision만 커밋",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3831,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:04:52.464Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-831539f9987adec9fa50",
+          "file": "studio.spec.ts",
+          "line": 12,
+          "column": 1
+        },
+        {
+          "title": "D: viewer 자체 발급 차단, 읽기 전용 차단, 제한된 쓰기 허용",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2293,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:04:56.305Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-394d5a6fe3915dfd5b71",
+          "file": "studio.spec.ts",
+          "line": 13,
+          "column": 1
+        },
+        {
+          "title": "E: 두 탭 CAS 충돌과 최신 내용 다시 불러오기",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2780,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:04:58.607Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-34118f2408e9be774440",
+          "file": "studio.spec.ts",
+          "line": 16,
+          "column": 1
+        },
+        {
+          "title": "F: 사내 useToast와 앱 React 인스턴스 공유",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1662,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:05:01.397Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-12ab9d20c94ec765290d",
+          "file": "studio.spec.ts",
+          "line": 17,
+          "column": 1
+        },
+        {
+          "title": "G: 역질문 새로고침 복구, Last-Event-ID 이후 답변과 revision_ready",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1986,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:05:03.068Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-d5e55d82a515c594b071",
+          "file": "studio.spec.ts",
+          "line": 33,
+          "column": 1
+        },
+        {
+          "title": "G: 복구한 질문 취소와 이미 끝난 생성·404 안내",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2334,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:05:05.064Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-f824ed686dfa9a511533",
+          "file": "studio.spec.ts",
+          "line": 50,
+          "column": 1
+        },
+        {
+          "title": "H: 쓰기 권한 만료 시 토글 off, 안내와 read capability 재반영",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5674,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:05:07.408Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-6751c35e3b5db59ac0cc",
+          "file": "studio.spec.ts",
+          "line": 72,
+          "column": 1
+        },
+        {
+          "title": "I: 문법 오류 위치, 금지 패키지 이름과 runtime 원인",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1901,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:05:13.090Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-5cd82d245e7d7aed83f7",
+          "file": "studio.spec.ts",
+          "line": 83,
+          "column": 1
+        },
+        {
+          "title": "J: CAS 최신 불러오기 전에 파일별 내 편집 보관, 복사와 새로고침 유지",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3952,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:05:15.000Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-b8e39e525b14bcfc2235",
+          "file": "studio.spec.ts",
+          "line": 100,
+          "column": 1
+        },
+        {
+          "title": "K: 존재하지 않는 패키지 버전의 실제 조합 실패와 동일 revision 재시도",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2351,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:05:18.967Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-b12b401434ed730562ef",
+          "file": "studio.spec.ts",
+          "line": 120,
+          "column": 1
+        },
+        {
+          "title": "K: failed 응답·연결 실패·시간 초과 구분과 새로고침 없는 재빌드",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2970,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:05:21.328Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-0ed9cbc225e1f3b6ee7b",
+          "file": "studio.spec.ts",
+          "line": 138,
+          "column": 1
+        },
+        {
+          "title": "레이아웃: 1600px 답변 버튼은 한 줄",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1506,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:05:24.308Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-8c2733647c2d925d6171",
+          "file": "studio.spec.ts",
+          "line": 188,
+          "column": 34
+        },
+        {
+          "title": "레이아웃: 400px 답변 버튼은 한 줄",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1457,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:05:25.829Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-01fff78adf46c6b51ea9",
+          "file": "studio.spec.ts",
+          "line": 188,
+          "column": 34
+        },
+        {
+          "title": "L: 새 탭 활성 생성 전체 replay, 답변 동기화와 양쪽 취소 종결",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3856,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:05:27.300Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-c9dcf33db18dd8939d3b",
+          "file": "studio.spec.ts",
+          "line": 203,
+          "column": 1
+        },
+        {
+          "title": "M: 실제 Yarn 레지스트리 503 안내 후 저장소 복구와 동일 revision 재시도 성공",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5231,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:05:31.166Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-a9284135c006b485efce",
+          "file": "studio.spec.ts",
+          "line": 241,
+          "column": 1
+        },
+        {
+          "title": "A: 생성, 역질문, 마스킹, 조회 사유와 감사 기록",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2381,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:08:03.376Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-1e4fc2524073232df892",
+          "file": "studio.spec.ts",
+          "line": 10,
+          "column": 1
+        },
+        {
+          "title": "B: 문법 오류는 마지막 정상 화면 유지",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1237,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:08:05.764Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-2ec9047b500f6430bb7f",
+          "file": "studio.spec.ts",
+          "line": 11,
+          "column": 1
+        },
+        {
+          "title": "C: 이전 실행을 지연해도 최신 revision만 커밋",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3831,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:08:07.011Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-4f660569d40dea5785b3",
+          "file": "studio.spec.ts",
+          "line": 12,
+          "column": 1
+        },
+        {
+          "title": "D: viewer 자체 발급 차단, 읽기 전용 차단, 제한된 쓰기 허용",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2296,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:08:10.852Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-f8a3bc6343380c81dcb3",
+          "file": "studio.spec.ts",
+          "line": 13,
+          "column": 1
+        },
+        {
+          "title": "E: 두 탭 CAS 충돌과 최신 내용 다시 불러오기",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2436,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:08:13.158Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-4a1978ccdf3ab823649a",
+          "file": "studio.spec.ts",
+          "line": 16,
+          "column": 1
+        },
+        {
+          "title": "F: 사내 useToast와 앱 React 인스턴스 공유",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1318,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:08:15.604Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-8dacaa6999ffdb001752",
+          "file": "studio.spec.ts",
+          "line": 17,
+          "column": 1
+        },
+        {
+          "title": "G: 역질문 새로고침 복구, Last-Event-ID 이후 답변과 revision_ready",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1940,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:08:16.932Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-3d0a5d3cd56fea00e757",
+          "file": "studio.spec.ts",
+          "line": 33,
+          "column": 1
+        },
+        {
+          "title": "G: 복구한 질문 취소와 이미 끝난 생성·404 안내",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2381,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:08:18.881Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-1fecd2ab7ea7874c40ab",
+          "file": "studio.spec.ts",
+          "line": 50,
+          "column": 1
+        },
+        {
+          "title": "H: 쓰기 권한 만료 시 토글 off, 안내와 read capability 재반영",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6052,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:08:21.275Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-31b9fe3d02210cedeb9b",
+          "file": "studio.spec.ts",
+          "line": 72,
+          "column": 1
+        },
+        {
+          "title": "I: 문법 오류 위치, 금지 패키지 이름과 runtime 원인",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1921,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:08:27.339Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-292aaccaf9fce03f35e0",
+          "file": "studio.spec.ts",
+          "line": 83,
+          "column": 1
+        },
+        {
+          "title": "J: CAS 최신 불러오기 전에 파일별 내 편집 보관, 복사와 새로고침 유지",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4707,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:08:29.270Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-79408440567dfbf2150b",
+          "file": "studio.spec.ts",
+          "line": 100,
+          "column": 1
+        },
+        {
+          "title": "K: 존재하지 않는 패키지 버전의 실제 조합 실패와 동일 revision 재시도",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2276,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:08:33.987Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-347f5c84f5a14afa0b3f",
+          "file": "studio.spec.ts",
+          "line": 120,
+          "column": 1
+        },
+        {
+          "title": "K: failed 응답·연결 실패·시간 초과 구분과 새로고침 없는 재빌드",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2931,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:08:36.273Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-0b809ae6ce2d092eb565",
+          "file": "studio.spec.ts",
+          "line": 138,
+          "column": 1
+        },
+        {
+          "title": "레이아웃: 1600px 답변 버튼은 한 줄",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1851,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:08:39.214Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-a7846fb0ef6c71cae354",
+          "file": "studio.spec.ts",
+          "line": 188,
+          "column": 34
+        },
+        {
+          "title": "레이아웃: 400px 답변 버튼은 한 줄",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1467,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:08:41.074Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-d3df1227add94f2e3e10",
+          "file": "studio.spec.ts",
+          "line": 188,
+          "column": 34
+        },
+        {
+          "title": "L: 새 탭 활성 생성 전체 replay, 답변 동기화와 양쪽 취소 종결",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4017,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:08:42.552Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-db7078014afe85f6bb07",
+          "file": "studio.spec.ts",
+          "line": 203,
+          "column": 1
+        },
+        {
+          "title": "M: 실제 Yarn 레지스트리 503 안내 후 저장소 복구와 동일 revision 재시도 성공",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4618,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:08:46.578Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-15b2191df711e266a14c",
+          "file": "studio.spec.ts",
+          "line": 241,
+          "column": 1
+        },
+        {
+          "title": "A: 생성, 역질문, 마스킹, 조회 사유와 감사 기록",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2494,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:11:17.027Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-f516bf88587d856127c3",
+          "file": "studio.spec.ts",
+          "line": 10,
+          "column": 1
+        },
+        {
+          "title": "B: 문법 오류는 마지막 정상 화면 유지",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1357,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:11:19.530Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-d42d749d6c452a8cad4e",
+          "file": "studio.spec.ts",
+          "line": 11,
+          "column": 1
+        },
+        {
+          "title": "C: 이전 실행을 지연해도 최신 revision만 커밋",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3919,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:11:20.896Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-f56c3359babcd45bcd2b",
+          "file": "studio.spec.ts",
+          "line": 12,
+          "column": 1
+        },
+        {
+          "title": "D: viewer 자체 발급 차단, 읽기 전용 차단, 제한된 쓰기 허용",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2605,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:11:24.824Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-2005c8a0cebf1f86daf4",
+          "file": "studio.spec.ts",
+          "line": 13,
+          "column": 1
+        },
+        {
+          "title": "E: 두 탭 CAS 충돌과 최신 내용 다시 불러오기",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2451,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:11:27.439Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-9b73ef5f98d6055f1464",
+          "file": "studio.spec.ts",
+          "line": 16,
+          "column": 1
+        },
+        {
+          "title": "F: 사내 useToast와 앱 React 인스턴스 공유",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1322,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:11:29.900Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-e0ee9de85982c8a6f271",
+          "file": "studio.spec.ts",
+          "line": 17,
+          "column": 1
+        },
+        {
+          "title": "G: 역질문 새로고침 복구, Last-Event-ID 이후 답변과 revision_ready",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1934,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:11:31.232Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-86ade82b29553eef5602",
+          "file": "studio.spec.ts",
+          "line": 33,
+          "column": 1
+        },
+        {
+          "title": "G: 복구한 질문 취소와 이미 끝난 생성·404 안내",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2640,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:11:33.178Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-9ca4da7081cbae5d9211",
+          "file": "studio.spec.ts",
+          "line": 50,
+          "column": 1
+        },
+        {
+          "title": "H: 쓰기 권한 만료 시 토글 off, 안내와 read capability 재반영",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5725,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:11:35.828Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-8ceb8bd6893d46001c66",
+          "file": "studio.spec.ts",
+          "line": 72,
+          "column": 1
+        },
+        {
+          "title": "I: 문법 오류 위치, 금지 패키지 이름과 runtime 원인",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1584,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:11:41.563Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-925d1bb09926061253c1",
+          "file": "studio.spec.ts",
+          "line": 83,
+          "column": 1
+        },
+        {
+          "title": "J: CAS 최신 불러오기 전에 파일별 내 편집 보관, 복사와 새로고침 유지",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4015,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:11:43.155Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-4fa48f6484db115870ca",
+          "file": "studio.spec.ts",
+          "line": 100,
+          "column": 1
+        },
+        {
+          "title": "K: 존재하지 않는 패키지 버전의 실제 조합 실패와 동일 revision 재시도",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2328,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:11:47.181Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-503659794f76e680186a",
+          "file": "studio.spec.ts",
+          "line": 120,
+          "column": 1
+        },
+        {
+          "title": "K: failed 응답·연결 실패·시간 초과 구분과 새로고침 없는 재빌드",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2757,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:11:49.520Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-2402927ea303d8265146",
+          "file": "studio.spec.ts",
+          "line": 138,
+          "column": 1
+        },
+        {
+          "title": "레이아웃: 1600px 답변 버튼은 한 줄",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1794,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:11:52.287Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-2ab00802f94558104b9b",
+          "file": "studio.spec.ts",
+          "line": 188,
+          "column": 34
+        },
+        {
+          "title": "레이아웃: 400px 답변 버튼은 한 줄",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1740,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:11:54.089Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-de060d72d967d0241f00",
+          "file": "studio.spec.ts",
+          "line": 188,
+          "column": 34
+        },
+        {
+          "title": "L: 새 탭 활성 생성 전체 replay, 답변 동기화와 양쪽 취소 종결",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3869,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:11:55.845Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-c49863a791697991c447",
+          "file": "studio.spec.ts",
+          "line": 203,
+          "column": 1
+        },
+        {
+          "title": "M: 실제 Yarn 레지스트리 503 안내 후 저장소 복구와 동일 revision 재시도 성공",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5106,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T23:11:59.724Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-0e081fe09b940e8a4624",
+          "file": "studio.spec.ts",
+          "line": 241,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-13T23:02:23.038Z",
+    "duration": 582012.846,
+    "expected": 123,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

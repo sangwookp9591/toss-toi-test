@@ -1,0 +1,228 @@
+
+added 3 packages, and audited 4 packages in 638ms
+
+found 0 vulnerabilities
+[0.001s] development configuration: starting
+[0.008s] development configuration: ready (0.007s)
+[0.008s] Docker Compose project: toi-qa5
+[0.008s] Docker Compose: starting
+[3.256s]  Container toi-qa5-verdaccio-init-1  Created
+[3.257s]  Container toi-qa5-keycloak-1  Running
+[3.259s]  Container toi-qa5-minio-1  Running
+[3.259s]  Container toi-qa5-verdaccio-1  Running
+[6.290s]  Container toi-qa5-verdaccio-init-1  Starting
+[6.455s]  Container toi-qa5-verdaccio-init-1  Started
+[6.456s]  Container toi-qa5-verdaccio-init-1  Waiting
+[6.962s]  Container toi-qa5-verdaccio-init-1  Exited
+[7.176s] Docker Compose: ready (7.168s)
+[7.177s] Keycloak identity provisioning: starting
+[7.566s] Keycloak identity provisioning: ready (0.390s)
+[7.567s] registry and storage health: starting
+[7.576s] registry and storage health: ready (0.009s)
+[7.577s] packages/fake-tds install: starting
+[7.578s] packages/preview-runtime install: starting
+[7.579s] services/mock-backend install: starting
+[7.579s] packages/fake-tds: dependencies already installed
+[7.580s] packages/fake-tds install: ready (0.003s)
+[7.581s] services/policy-proxy install: starting
+[7.582s] packages/preview-runtime: dependencies already installed
+[7.582s] packages/preview-runtime install: ready (0.004s)
+[7.583s] services/deps-builder install: starting
+[7.583s] services/mock-backend: dependencies already installed
+[7.583s] services/mock-backend install: ready (0.005s)
+[7.584s] services/agent-server install: starting
+[7.584s] services/policy-proxy: dependencies already installed
+[7.585s] services/policy-proxy install: ready (0.004s)
+[7.585s] apps/studio install: starting
+[7.585s] services/deps-builder: dependencies already installed
+[7.586s] services/deps-builder install: ready (0.003s)
+[7.586s] services/agent-server: dependencies already installed
+[7.587s] services/agent-server install: ready (0.003s)
+[7.588s] apps/studio: dependencies already installed
+[7.588s] apps/studio install: ready (0.003s)
+[7.588s] download and audit storage provisioning: starting
+[17.461s] download and audit storage provisioning: ready (9.873s)
+[17.461s] registry setup: starting
+[17.585s] 
+[17.585s] > @toi/deps-builder@1.0.0 setup-registry
+[17.585s] > node scripts/setup-registry.mjs
+[17.586s] 
+[17.673s] Anonymous @toi/tds metadata blocked: HTTP 401
+[17.793s] fake-tds build: starting
+[18.592s] fake-tds build: ready (0.799s)
+[18.711s] @toi/tds@1.0.0 already published
+[18.823s] @toi/tds@1.1.0 already published
+[18.825s] Verified both versions published; anonymous access remains HTTP 401
+[18.839s] registry setup: ready (1.378s)
+[18.840s] fetch client publish: starting
+[18.968s] 
+[18.968s] > @toi/policy-proxy@1.0.0 publish:client
+[18.968s] > node scripts/publish-client.mjs
+[18.968s] 
+[19.924s] @toi/fetch@1.1.1 already published
+[19.932s] fetch client publish: ready (1.092s)
+[19.933s] mock-backend start: starting
+[19.936s] mock-backend: existing healthy service
+[19.936s] mock-backend start: ready (0.004s)
+[19.936s] policy-proxy start: starting
+[19.940s] policy-proxy: applying managed environment configuration
+[20.956s] policy-proxy start: ready (1.019s)
+[20.956s] deps-builder start: starting
+[20.960s] deps-builder: existing healthy service
+[20.960s] deps-builder start: ready (0.004s)
+[20.960s] agent-server start: starting
+[20.963s] agent-server: existing healthy service
+[20.963s] agent-server start: ready (0.003s)
+[20.963s] studio start: starting
+[20.967s] studio: applying managed environment configuration
+[21.479s] studio start: ready (0.516s)
+[21.480s] preview origin health: starting
+[21.483s] preview origin health: ready (0.003s)
+[21.483s] TOI-lite ready: http://localhost:5173 (logs: scripts/.run)
+
+> test:repeat
+> playwright test --repeat-each=3
+
+
+Running 123 tests using 1 worker
+
+(node:46712) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:46712) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓    1 tests/downloads.spec.ts:36:1 › T: Alice CSV/XLSX are AES-256 AE-2; signature, sub, single-use and 60-second expiry enforced (1.0m)
+  ✓    2 tests/downloads.spec.ts:53:1 › U: viewer, nonmember and preview origin cannot create downloads (1.1s)
+  ✓    3 tests/downloads.spec.ts:59:1 › V: MinIO bytes hide row values and password; successful delivery deletes ciphertext and wrapped key (143ms)
+  ✓    4 tests/downloads.spec.ts:70:1 › W: audit verification is valid, seq remains continuous and audit contains no password, keys or signature (1.2s)
+  ✓    5 tests/downloads.spec.ts:81:1 › download UI shows password once, saves using Bearer and clears it on close (1.2s)
+  ✓    6 tests/identity.spec.ts:17:1 › N: carol nonmember receives 404 and cannot mint or use preview/capability (673ms)
+  ✓    7 tests/identity.spec.ts:28:1 › O: owner member UI protects last owner; viewer read only, editor generation, removal revokes proxy within 5s (3.9s)
+  ✓    8 tests/identity.spec.ts:51:1 › P: live write requires another API owner approval and expires (10.2s)
+  ✓    9 tests/identity.spec.ts:77:1 › Q: preview capability never selects live upstream (77ms)
+  ✓   10 tests/identity.spec.ts:87:3 › R isolated serial mutation › R: short-token renewal preserves a pending build; disabled bob cannot refresh or use expired access (13.8s)
+  ✓   11 tests/identity.spec.ts:149:1 › S: iframe globals/storage/messages/URLs contain no Keycloak token (1.3s)
+  ✓   12 tests/identity.spec.ts:180:1 › AI: removed bob sees access revoked on broker query and periodic check without preview requests (31.6s)
+  ✓   13 tests/identity.spec.ts:225:1 › AJ: viewer download panel explains role restriction with aria-describedby (1.7s)
+  ✓   14 tests/isolation.spec.ts:13:1 › X: project origins isolate storage and cross-project frame access (3.3s)
+  ✓   15 tests/isolation.spec.ts:39:1 › Y: response CSP survives document.open and blocks egress before the server receives it (1.8s)
+  ✓   16 tests/isolation.spec.ts:76:1 › Z: project A preview session from project B origin returns PREVIEW_DIRECT_FORBIDDEN (19ms)
+  ✓   17 tests/isolation.spec.ts:85:1 › AA: preview Host/path allowlist and studio embedding headers (24ms)
+  ✓   18 tests/isolation.spec.ts:105:1 › AB: AST bypass sources are rejected without incrementing the source revision (35ms)
+  ✓   19 tests/isolation.spec.ts:130:1 › AC: actual studio preview credentials never appear in frame globals, DOM, storage or messages (1.3s)
+AD navigation receiver: {"requests":0,"credentialLeaks":0}
+  ✓   20 tests/isolation.spec.ts:159:1 › AD: generated location navigation leaks zero credentials, removes the frame and restores the good revision (1.5s)
+  ✓   21 tests/isolation.spec.ts:185:1 › AE: direct policy fetch is CSP-blocked while postMessage broker succeeds (1.2s)
+  ✓   22 tests/isolation.spec.ts:193:1 › AF: replaced frame requests are ignored and its pending response is discarded (1.8s)
+  ✓   23 tests/isolation.spec.ts:209:1 › AG: PATCH is 403 WRITE_NOT_ALLOWED until the user grants write capability (1.3s)
+  ✓   24 tests/isolation.spec.ts:219:1 › AH: broker enforces concurrency, rolling request rate, and 5 MiB response limit (3.6s)
+  ✓   25 tests/studio.spec.ts:10:1 › A: 생성, 역질문, 마스킹, 조회 사유와 감사 기록 (2.1s)
+  ✓   26 tests/studio.spec.ts:11:1 › B: 문법 오류는 마지막 정상 화면 유지 (1.3s)
+  ✓   27 tests/studio.spec.ts:12:1 › C: 이전 실행을 지연해도 최신 revision만 커밋 (3.8s)
+  ✓   28 tests/studio.spec.ts:13:1 › D: viewer 자체 발급 차단, 읽기 전용 차단, 제한된 쓰기 허용 (2.3s)
+  ✓   29 tests/studio.spec.ts:16:1 › E: 두 탭 CAS 충돌과 최신 내용 다시 불러오기 (2.8s)
+  ✓   30 tests/studio.spec.ts:17:1 › F: 사내 useToast와 앱 React 인스턴스 공유 (1.7s)
+  ✓   31 tests/studio.spec.ts:33:1 › G: 역질문 새로고침 복구, Last-Event-ID 이후 답변과 revision_ready (2.0s)
+  ✓   32 tests/studio.spec.ts:50:1 › G: 복구한 질문 취소와 이미 끝난 생성·404 안내 (2.3s)
+  ✓   33 tests/studio.spec.ts:72:1 › H: 쓰기 권한 만료 시 토글 off, 안내와 read capability 재반영 (5.7s)
+  ✓   34 tests/studio.spec.ts:83:1 › I: 문법 오류 위치, 금지 패키지 이름과 runtime 원인 (1.9s)
+  ✓   35 tests/studio.spec.ts:100:1 › J: CAS 최신 불러오기 전에 파일별 내 편집 보관, 복사와 새로고침 유지 (4.0s)
+  ✓   36 tests/studio.spec.ts:120:1 › K: 존재하지 않는 패키지 버전의 실제 조합 실패와 동일 revision 재시도 (2.4s)
+  ✓   37 tests/studio.spec.ts:138:1 › K: failed 응답·연결 실패·시간 초과 구분과 새로고침 없는 재빌드 (3.0s)
+  ✓   38 tests/studio.spec.ts:188:34 › 레이아웃: 1600px 답변 버튼은 한 줄 (1.5s)
+  ✓   39 tests/studio.spec.ts:188:34 › 레이아웃: 400px 답변 버튼은 한 줄 (1.5s)
+  ✓   40 tests/studio.spec.ts:203:1 › L: 새 탭 활성 생성 전체 replay, 답변 동기화와 양쪽 취소 종결 (3.9s)
+  ✓   41 tests/studio.spec.ts:241:1 › M: 실제 Yarn 레지스트리 503 안내 후 저장소 복구와 동일 revision 재시도 성공 (5.2s)
+(node:51239) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:51239) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   42 tests/downloads.spec.ts:36:1 › T: Alice CSV/XLSX are AES-256 AE-2; signature, sub, single-use and 60-second expiry enforced (1.0m)
+  ✓   43 tests/downloads.spec.ts:53:1 › U: viewer, nonmember and preview origin cannot create downloads (1.0s)
+  ✓   44 tests/downloads.spec.ts:59:1 › V: MinIO bytes hide row values and password; successful delivery deletes ciphertext and wrapped key (143ms)
+  ✓   45 tests/downloads.spec.ts:70:1 › W: audit verification is valid, seq remains continuous and audit contains no password, keys or signature (1.4s)
+  ✓   46 tests/downloads.spec.ts:81:1 › download UI shows password once, saves using Bearer and clears it on close (1.3s)
+  ✓   47 tests/identity.spec.ts:17:1 › N: carol nonmember receives 404 and cannot mint or use preview/capability (698ms)
+  ✓   48 tests/identity.spec.ts:28:1 › O: owner member UI protects last owner; viewer read only, editor generation, removal revokes proxy within 5s (3.3s)
+  ✓   49 tests/identity.spec.ts:51:1 › P: live write requires another API owner approval and expires (10.2s)
+  ✓   50 tests/identity.spec.ts:77:1 › Q: preview capability never selects live upstream (73ms)
+  ✓   51 tests/identity.spec.ts:87:3 › R isolated serial mutation › R: short-token renewal preserves a pending build; disabled bob cannot refresh or use expired access (13.1s)
+  ✓   52 tests/identity.spec.ts:149:1 › S: iframe globals/storage/messages/URLs contain no Keycloak token (1.3s)
+  ✓   53 tests/identity.spec.ts:180:1 › AI: removed bob sees access revoked on broker query and periodic check without preview requests (31.3s)
+  ✓   54 tests/identity.spec.ts:225:1 › AJ: viewer download panel explains role restriction with aria-describedby (1.2s)
+  ✓   55 tests/isolation.spec.ts:13:1 › X: project origins isolate storage and cross-project frame access (4.3s)
+  ✓   56 tests/isolation.spec.ts:39:1 › Y: response CSP survives document.open and blocks egress before the server receives it (1.8s)
+  ✓   57 tests/isolation.spec.ts:76:1 › Z: project A preview session from project B origin returns PREVIEW_DIRECT_FORBIDDEN (18ms)
+  ✓   58 tests/isolation.spec.ts:85:1 › AA: preview Host/path allowlist and studio embedding headers (25ms)
+  ✓   59 tests/isolation.spec.ts:105:1 › AB: AST bypass sources are rejected without incrementing the source revision (29ms)
+  ✓   60 tests/isolation.spec.ts:130:1 › AC: actual studio preview credentials never appear in frame globals, DOM, storage or messages (1.7s)
+AD navigation receiver: {"requests":0,"credentialLeaks":0}
+  ✓   61 tests/isolation.spec.ts:159:1 › AD: generated location navigation leaks zero credentials, removes the frame and restores the good revision (1.8s)
+  ✓   62 tests/isolation.spec.ts:185:1 › AE: direct policy fetch is CSP-blocked while postMessage broker succeeds (1.2s)
+  ✓   63 tests/isolation.spec.ts:193:1 › AF: replaced frame requests are ignored and its pending response is discarded (1.9s)
+  ✓   64 tests/isolation.spec.ts:209:1 › AG: PATCH is 403 WRITE_NOT_ALLOWED until the user grants write capability (1.6s)
+  ✓   65 tests/isolation.spec.ts:219:1 › AH: broker enforces concurrency, rolling request rate, and 5 MiB response limit (3.6s)
+  ✓   66 tests/studio.spec.ts:10:1 › A: 생성, 역질문, 마스킹, 조회 사유와 감사 기록 (2.4s)
+  ✓   67 tests/studio.spec.ts:11:1 › B: 문법 오류는 마지막 정상 화면 유지 (1.2s)
+  ✓   68 tests/studio.spec.ts:12:1 › C: 이전 실행을 지연해도 최신 revision만 커밋 (3.8s)
+  ✓   69 tests/studio.spec.ts:13:1 › D: viewer 자체 발급 차단, 읽기 전용 차단, 제한된 쓰기 허용 (2.3s)
+  ✓   70 tests/studio.spec.ts:16:1 › E: 두 탭 CAS 충돌과 최신 내용 다시 불러오기 (2.4s)
+  ✓   71 tests/studio.spec.ts:17:1 › F: 사내 useToast와 앱 React 인스턴스 공유 (1.3s)
+  ✓   72 tests/studio.spec.ts:33:1 › G: 역질문 새로고침 복구, Last-Event-ID 이후 답변과 revision_ready (1.9s)
+  ✓   73 tests/studio.spec.ts:50:1 › G: 복구한 질문 취소와 이미 끝난 생성·404 안내 (2.4s)
+  ✓   74 tests/studio.spec.ts:72:1 › H: 쓰기 권한 만료 시 토글 off, 안내와 read capability 재반영 (6.1s)
+  ✓   75 tests/studio.spec.ts:83:1 › I: 문법 오류 위치, 금지 패키지 이름과 runtime 원인 (1.9s)
+  ✓   76 tests/studio.spec.ts:100:1 › J: CAS 최신 불러오기 전에 파일별 내 편집 보관, 복사와 새로고침 유지 (4.7s)
+  ✓   77 tests/studio.spec.ts:120:1 › K: 존재하지 않는 패키지 버전의 실제 조합 실패와 동일 revision 재시도 (2.3s)
+  ✓   78 tests/studio.spec.ts:138:1 › K: failed 응답·연결 실패·시간 초과 구분과 새로고침 없는 재빌드 (2.9s)
+  ✓   79 tests/studio.spec.ts:188:34 › 레이아웃: 1600px 답변 버튼은 한 줄 (1.9s)
+  ✓   80 tests/studio.spec.ts:188:34 › 레이아웃: 400px 답변 버튼은 한 줄 (1.5s)
+  ✓   81 tests/studio.spec.ts:203:1 › L: 새 탭 활성 생성 전체 replay, 답변 동기화와 양쪽 취소 종결 (4.0s)
+  ✓   82 tests/studio.spec.ts:241:1 › M: 실제 Yarn 레지스트리 503 안내 후 저장소 복구와 동일 revision 재시도 성공 (4.6s)
+(node:54883) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:54883) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   83 tests/downloads.spec.ts:36:1 › T: Alice CSV/XLSX are AES-256 AE-2; signature, sub, single-use and 60-second expiry enforced (1.0m)
+  ✓   84 tests/downloads.spec.ts:53:1 › U: viewer, nonmember and preview origin cannot create downloads (1.2s)
+  ✓   85 tests/downloads.spec.ts:59:1 › V: MinIO bytes hide row values and password; successful delivery deletes ciphertext and wrapped key (141ms)
+  ✓   86 tests/downloads.spec.ts:70:1 › W: audit verification is valid, seq remains continuous and audit contains no password, keys or signature (1.3s)
+  ✓   87 tests/downloads.spec.ts:81:1 › download UI shows password once, saves using Bearer and clears it on close (1.2s)
+  ✓   88 tests/identity.spec.ts:17:1 › N: carol nonmember receives 404 and cannot mint or use preview/capability (706ms)
+  ✓   89 tests/identity.spec.ts:28:1 › O: owner member UI protects last owner; viewer read only, editor generation, removal revokes proxy within 5s (3.9s)
+  ✓   90 tests/identity.spec.ts:51:1 › P: live write requires another API owner approval and expires (10.2s)
+  ✓   91 tests/identity.spec.ts:77:1 › Q: preview capability never selects live upstream (80ms)
+  ✓   92 tests/identity.spec.ts:87:3 › R isolated serial mutation › R: short-token renewal preserves a pending build; disabled bob cannot refresh or use expired access (13.6s)
+  ✓   93 tests/identity.spec.ts:149:1 › S: iframe globals/storage/messages/URLs contain no Keycloak token (1.2s)
+  ✓   94 tests/identity.spec.ts:180:1 › AI: removed bob sees access revoked on broker query and periodic check without preview requests (31.3s)
+  ✓   95 tests/identity.spec.ts:225:1 › AJ: viewer download panel explains role restriction with aria-describedby (1.2s)
+  ✓   96 tests/isolation.spec.ts:13:1 › X: project origins isolate storage and cross-project frame access (3.3s)
+  ✓   97 tests/isolation.spec.ts:39:1 › Y: response CSP survives document.open and blocks egress before the server receives it (2.1s)
+  ✓   98 tests/isolation.spec.ts:76:1 › Z: project A preview session from project B origin returns PREVIEW_DIRECT_FORBIDDEN (16ms)
+  ✓   99 tests/isolation.spec.ts:85:1 › AA: preview Host/path allowlist and studio embedding headers (22ms)
+  ✓  100 tests/isolation.spec.ts:105:1 › AB: AST bypass sources are rejected without incrementing the source revision (27ms)
+  ✓  101 tests/isolation.spec.ts:130:1 › AC: actual studio preview credentials never appear in frame globals, DOM, storage or messages (1.3s)
+AD navigation receiver: {"requests":0,"credentialLeaks":0}
+  ✓  102 tests/isolation.spec.ts:159:1 › AD: generated location navigation leaks zero credentials, removes the frame and restores the good revision (1.5s)
+  ✓  103 tests/isolation.spec.ts:185:1 › AE: direct policy fetch is CSP-blocked while postMessage broker succeeds (1.2s)
+  ✓  104 tests/isolation.spec.ts:193:1 › AF: replaced frame requests are ignored and its pending response is discarded (2.0s)
+  ✓  105 tests/isolation.spec.ts:209:1 › AG: PATCH is 403 WRITE_NOT_ALLOWED until the user grants write capability (1.4s)
+  ✓  106 tests/isolation.spec.ts:219:1 › AH: broker enforces concurrency, rolling request rate, and 5 MiB response limit (3.9s)
+  ✓  107 tests/studio.spec.ts:10:1 › A: 생성, 역질문, 마스킹, 조회 사유와 감사 기록 (2.5s)
+  ✓  108 tests/studio.spec.ts:11:1 › B: 문법 오류는 마지막 정상 화면 유지 (1.4s)
+  ✓  109 tests/studio.spec.ts:12:1 › C: 이전 실행을 지연해도 최신 revision만 커밋 (3.9s)
+  ✓  110 tests/studio.spec.ts:13:1 › D: viewer 자체 발급 차단, 읽기 전용 차단, 제한된 쓰기 허용 (2.6s)
+  ✓  111 tests/studio.spec.ts:16:1 › E: 두 탭 CAS 충돌과 최신 내용 다시 불러오기 (2.5s)
+  ✓  112 tests/studio.spec.ts:17:1 › F: 사내 useToast와 앱 React 인스턴스 공유 (1.3s)
+  ✓  113 tests/studio.spec.ts:33:1 › G: 역질문 새로고침 복구, Last-Event-ID 이후 답변과 revision_ready (1.9s)
+  ✓  114 tests/studio.spec.ts:50:1 › G: 복구한 질문 취소와 이미 끝난 생성·404 안내 (2.6s)
+  ✓  115 tests/studio.spec.ts:72:1 › H: 쓰기 권한 만료 시 토글 off, 안내와 read capability 재반영 (5.7s)
+  ✓  116 tests/studio.spec.ts:83:1 › I: 문법 오류 위치, 금지 패키지 이름과 runtime 원인 (1.6s)
+  ✓  117 tests/studio.spec.ts:100:1 › J: CAS 최신 불러오기 전에 파일별 내 편집 보관, 복사와 새로고침 유지 (4.0s)
+  ✓  118 tests/studio.spec.ts:120:1 › K: 존재하지 않는 패키지 버전의 실제 조합 실패와 동일 revision 재시도 (2.3s)
+  ✓  119 tests/studio.spec.ts:138:1 › K: failed 응답·연결 실패·시간 초과 구분과 새로고침 없는 재빌드 (2.8s)
+  ✓  120 tests/studio.spec.ts:188:34 › 레이아웃: 1600px 답변 버튼은 한 줄 (1.8s)
+  ✓  121 tests/studio.spec.ts:188:34 › 레이아웃: 400px 답변 버튼은 한 줄 (1.7s)
+  ✓  122 tests/studio.spec.ts:203:1 › L: 새 탭 활성 생성 전체 replay, 답변 동기화와 양쪽 취소 종결 (3.9s)
+  ✓  123 tests/studio.spec.ts:241:1 › M: 실제 Yarn 레지스트리 503 안내 후 저장소 복구와 동일 revision 재시도 성공 (5.1s)
+
+  123 passed (9.7m)

@@ -1,0 +1,11 @@
+UI button: Keycloak으로 로그인
+UI button: 로그아웃
+UI button: 멤버 추가
+UI button: Keycloak으로 로그인
+UI button: 로그아웃
+UI button: 조회
+removedExactOrder: {"reasonFilledAfterRemoval":true,"elapsedMs":137,"iframeCount":0,"writeDisabled":true}
+UI button: Keycloak으로 로그인
+UI button: 로그아웃
+audit: {"status":200,"ok":true,"degraded":false,"anchorSeq":35,"anchoredThrough":35,"anchorAvailable":true,"anchorFailureMs":0,"lastSeq":35,"lastHash":"a598cae20e15e6be85f5881c1453c33590ddea0a817466500208240de67bbbcf","replicationPending":5,"replicationLagMs":44784,"replicationAvailable":true}
+completed: true

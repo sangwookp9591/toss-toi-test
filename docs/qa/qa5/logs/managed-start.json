@@ -1,0 +1,27 @@
+[
+  {
+    "name": "mock-backend",
+    "pid": 36902,
+    "mockMode": null
+  },
+  {
+    "name": "policy-proxy",
+    "pid": 36951,
+    "mockMode": null
+  },
+  {
+    "name": "deps-builder",
+    "pid": 37014,
+    "mockMode": null
+  },
+  {
+    "name": "agent-server",
+    "pid": 37126,
+    "mockMode": true
+  },
+  {
+    "name": "studio",
+    "pid": 37213,
+    "mockMode": null
+  }
+]

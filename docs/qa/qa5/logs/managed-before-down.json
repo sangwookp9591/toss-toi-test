@@ -1,0 +1,52 @@
+{
+  "services": [
+    {
+      "name": "mock-backend",
+      "pid": 36902,
+      "envVersion": 2
+    },
+    {
+      "name": "deps-builder",
+      "pid": 37014,
+      "envVersion": 2
+    },
+    {
+      "name": "agent-server",
+      "pid": 37126,
+      "envVersion": 2
+    },
+    {
+      "name": "policy-proxy",
+      "pid": 46588,
+      "envVersion": 2,
+      "approvalTtlSec": 8
+    },
+    {
+      "name": "studio",
+      "pid": 46636,
+      "envVersion": 2,
+      "e2e": "true"
+    }
+  ],
+  "descendantPids": [
+    36902,
+    36925,
+    36938,
+    36939,
+    37014,
+    37037,
+    37081,
+    37103,
+    37126,
+    37164,
+    37169,
+    37171,
+    40088,
+    46588,
+    46611,
+    46612,
+    46636,
+    46659,
+    46660
+  ]
+}

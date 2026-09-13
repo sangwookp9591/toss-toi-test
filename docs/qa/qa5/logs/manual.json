@@ -1,0 +1,113 @@
+{
+  "browser": "153.0.8010.36",
+  "projectId": "f30cffcd-4e00-457b-82fc-24d4848819da",
+  "alice": {
+    "login": true,
+    "created": true,
+    "generated": true,
+    "savedRevision": 3
+  },
+  "broker": {
+    "reasonRequired": true,
+    "masked": true,
+    "resource404EmptyResult": true,
+    "accessRevoked": false
+  },
+  "previewWrite": {
+    "deniedBefore": true,
+    "allowedAfter": true
+  },
+  "viewer": {
+    "disabled": true,
+    "ariaDescribedby": "_r_0_",
+    "description": "\uc554\ud638\ud654 \ub2e4\uc6b4\ub85c\ub4dc\ub294 editor \uc774\uc0c1\ub9cc \ud560 \uc218 \uc788\uc5b4\uc694. \ud504\ub85c\uc81d\ud2b8 owner\uc5d0\uac8c \uad8c\ud55c\uc744 \uc694\uccad\ud558\uc138\uc694.",
+    "top": "\uc870\ud68c \uad8c\ud55c\uc774\uc5d0\uc694. \uc0dd\uc131\u00b7\uc800\uc7a5\u00b7\uc4f0\uae30 \ud14c\uc2a4\ud2b8\u00b7\uc554\ud638\ud654 \ub2e4\uc6b4\ub85c\ub4dc\ub294 \ud3b8\uc9d1\uc790 \uc774\uc0c1\uc774 \ud560 \uc218 \uc788\uc5b4\uc694."
+  },
+  "download": {
+    "editorSuccess": true,
+    "downloadStatus": 200,
+    "reuseStatus": 410,
+    "aesNotice": "AES-256 ZIP\uc740 macOS \uae30\ubcf8 \uc555\ucd95 \ud574\uc81c \ub3c4\uad6c\ub85c \uc5f4 \uc218 \uc5c6\uc5b4\uc694. 7-Zip, Keka \ub610\ub294 7z x\ub97c \uc0ac\uc6a9\ud558\uc138\uc694.",
+    "passwordClosed": true
+  },
+  "removed": {
+    "queryMs": 89,
+    "idleMs": 29562,
+    "idleProxy": 0,
+    "checks": 2,
+    "locked": {
+      "query": {
+        "iframeCount": 0,
+        "promptDisabled": true,
+        "sourceDisabled": true,
+        "saveDisabled": true,
+        "sendDisabled": true,
+        "emptyResultCount": 0,
+        "notice": "\uc774 \ud504\ub85c\uc81d\ud2b8\uc5d0 \uc811\uadfc\ud560 \uc218 \uc5c6\uc5b4\uc694. \uba64\ubc84\uc5d0\uc11c \uc81c\uac70\ub418\uc5c8\uac70\ub098 \uad8c\ud55c\uc774 \ubc14\ub00c\uc5c8\uc744 \uc218 \uc788\uc5b4\uc694\ucc98\uc74c \ud654\uba74\uc73c\ub85c"
+      },
+      "idle": {
+        "iframeCount": 0,
+        "promptDisabled": true,
+        "sourceDisabled": true,
+        "saveDisabled": true,
+        "sendDisabled": true,
+        "emptyResultCount": 0,
+        "notice": "\uc774 \ud504\ub85c\uc81d\ud2b8\uc5d0 \uc811\uadfc\ud560 \uc218 \uc5c6\uc5b4\uc694. \uba64\ubc84\uc5d0\uc11c \uc81c\uac70\ub418\uc5c8\uac70\ub098 \uad8c\ud55c\uc774 \ubc14\ub00c\uc5c8\uc744 \uc218 \uc788\uc5b4\uc694\ucc98\uc74c \ud654\uba74\uc73c\ub85c"
+      }
+    },
+    "homeAfterReload": true
+  },
+  "carol": {
+    "notice": "\uc774 \ud504\ub85c\uc81d\ud2b8\uc5d0 \uc811\uadfc\ud560 \uc218 \uc5c6\uc5b4\uc694. \uba64\ubc84\uc5d0\uc11c \uc81c\uac70\ub418\uc5c8\uac70\ub098 \uad8c\ud55c\uc774 \ubc14\ub00c\uc5c8\uc744 \uc218 \uc788\uc5b4\uc694\ucc98\uc74c \ud654\uba74\uc73c\ub85c",
+    "iframeCount": 0
+  },
+  "live": {
+    "danaApproved": true,
+    "aliceReflected": true,
+    "capabilityStatus": 200
+  },
+  "isolation": {
+    "keys": [
+      "env",
+      "projectId",
+      "transport"
+    ],
+    "transport": "broker",
+    "frozen": true,
+    "origin": "http://p-f30cffcd-4e00-457b-82fc-24d4848819da.preview.localhost:5174",
+    "directFetchBlocked": true,
+    "origin2": "http://p-d1eb9a66-8628-48df-a34f-8285bccfe650.preview.localhost:5174",
+    "distinct": true,
+    "csp": "default-src 'none'; connect-src 'none'; script-src 'self' http://localhost:7100 'nonce-sDRyMoP/9V3Cs+oSH2CSVlL4wvHvEKCR'; style-src 'self' 'unsafe-inline'; img-src data: blob:; font-src data:; form-action 'none'; base-uri 'none'; frame-ancestors http://localhost:5173; worker-src 'none'; object-src 'none'"
+  },
+  "navigation": {
+    "hits": 0,
+    "tokenHits": 0,
+    "recovered": true
+  },
+  "removedExactOrder": {
+    "reasonFilledAfterRemoval": true,
+    "elapsedMs": 137,
+    "iframeCount": 0,
+    "writeDisabled": true
+  },
+  "audit": {
+    "status": 200,
+    "ok": true,
+    "degraded": false,
+    "anchorSeq": 35,
+    "anchoredThrough": 35,
+    "anchorAvailable": true,
+    "anchorFailureMs": 0,
+    "lastSeq": 35,
+    "lastHash": "a598cae20e15e6be85f5881c1453c33590ddea0a817466500208240de67bbbcf",
+    "replicationPending": 5,
+    "replicationLagMs": 44784,
+    "replicationAvailable": true
+  },
+  "completed": true,
+  "harnessNotes": [
+    "Two initial exploratory runs stopped at a strict button name that omitted the visible arrow; locator corrected to exact accessible name before final run.",
+    "Local HTTP receiver close waited on a Chrome preconnection after navigation evidence was saved; closed only the owned QA browser and verified root audit plus exact removal order in supplemental headed Chrome."
+  ]
+}

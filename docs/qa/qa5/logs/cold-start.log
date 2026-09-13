@@ -1,0 +1,150 @@
+[0.001s] development configuration: starting
+[0.010s] development configuration: ready (0.009s)
+[0.010s] Docker Compose project: toi-qa5
+[0.010s] Docker Compose: starting
+[0.223s]  Network toi-qa5_default  Creating
+[0.315s]  Network toi-qa5_default  Created
+[0.317s]  Volume "toi-qa5_verdaccio-storage"  Creating
+[0.321s]  Volume "toi-qa5_verdaccio-storage"  Created
+[0.322s]  Volume "toi-qa5_verdaccio-auth"  Creating
+[0.325s]  Volume "toi-qa5_verdaccio-auth"  Created
+[0.326s]  Volume "toi-qa5_minio-data"  Creating
+[0.327s]  Volume "toi-qa5_minio-data"  Created
+[0.328s]  Volume "toi-qa5_keycloak-data"  Creating
+[0.329s]  Volume "toi-qa5_keycloak-data"  Created
+[0.331s]  Container toi-qa5-minio-1  Creating
+[0.331s]  Container toi-qa5-verdaccio-init-1  Creating
+[0.331s]  Container toi-qa5-keycloak-1  Creating
+[0.396s]  Container toi-qa5-minio-1  Created
+[0.396s]  Container toi-qa5-keycloak-1  Created
+[0.402s]  Container toi-qa5-verdaccio-init-1  Created
+[0.402s]  Container toi-qa5-verdaccio-1  Creating
+[0.456s]  Container toi-qa5-verdaccio-1  Created
+[0.481s]  Container toi-qa5-keycloak-1  Starting
+[0.481s]  Container toi-qa5-verdaccio-init-1  Starting
+[0.481s]  Container toi-qa5-minio-1  Starting
+[0.635s]  Container toi-qa5-keycloak-1  Started
+[0.637s]  Container toi-qa5-minio-1  Started
+[0.644s]  Container toi-qa5-verdaccio-init-1  Started
+[0.644s]  Container toi-qa5-verdaccio-init-1  Waiting
+[1.148s]  Container toi-qa5-verdaccio-init-1  Exited
+[1.148s]  Container toi-qa5-verdaccio-1  Starting
+[1.284s]  Container toi-qa5-verdaccio-1  Started
+[1.491s] Docker Compose: ready (1.481s)
+[1.492s] Keycloak identity provisioning: starting
+[14.655s] Keycloak identity provisioning: ready (13.163s)
+[14.656s] registry and storage health: starting
+[14.667s] registry and storage health: ready (0.012s)
+[14.668s] packages/fake-tds install: starting
+[14.669s] packages/preview-runtime install: starting
+[14.669s] services/mock-backend install: starting
+[15.408s] 
+[15.409s] added 4 packages, and audited 5 packages in 620ms
+[15.409s] 
+[15.409s] found 0 vulnerabilities
+[15.608s] packages/fake-tds install: ready (0.940s)
+[15.608s] services/policy-proxy install: starting
+[16.453s] 
+[16.454s] added 125 packages, and audited 126 packages in 2s
+[16.454s] 
+[16.454s] 17 packages are looking for funding
+[16.454s]   run `npm fund` for details
+[16.459s] 
+[16.459s] 2 vulnerabilities (1 moderate, 1 critical)
+[16.460s] 
+[16.460s] To address all issues, run:
+[16.460s]   npm audit fix --force
+[16.460s] 
+[16.460s] Run `npm audit` for details.
+[16.525s] npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+[16.538s] npm warn deprecated rimraf@2.7.1: Rimraf versions prior to v4 are no longer supported
+[16.544s] npm warn deprecated lodash.isequal@4.5.0: This package is deprecated. Use require('node:util').isDeepStrictEqual instead.
+[16.562s] npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+[16.627s] npm warn deprecated fstream@1.0.12: This package is no longer supported.
+[16.761s] npm warn deprecated uuid@8.3.2: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
+[16.769s] services/mock-backend install: ready (2.100s)
+[16.770s] services/deps-builder install: starting
+[16.810s] 
+[16.810s] added 116 packages, and audited 117 packages in 2s
+[16.811s] 
+[16.811s] 22 packages are looking for funding
+[16.811s]   run `npm fund` for details
+[16.811s] 
+[16.811s] found 0 vulnerabilities
+[17.170s] packages/preview-runtime install: ready (2.501s)
+[17.170s] services/agent-server install: starting
+[18.118s] 
+[18.118s] added 252 packages, and audited 253 packages in 2s
+[18.119s] 
+[18.119s] 24 packages are looking for funding
+[18.119s]   run `npm fund` for details
+[18.129s] 
+[18.129s] 4 vulnerabilities (3 moderate, 1 critical)
+[18.130s] 
+[18.130s] To address all issues (including breaking changes), run:
+[18.130s]   npm audit fix --force
+[18.131s] 
+[18.131s] Run `npm audit` for details.
+[18.147s] services/policy-proxy install: ready (2.539s)
+[18.147s] apps/studio install: starting
+[18.408s] 
+[18.408s] added 100 packages, and audited 101 packages in 2s
+[18.408s] 
+[18.408s] 25 packages are looking for funding
+[18.409s]   run `npm fund` for details
+[18.412s] 
+[18.413s] 5 moderate severity vulnerabilities
+[18.413s] 
+[18.413s] To address all issues, run:
+[18.413s]   npm audit fix --force
+[18.413s] 
+[18.414s] Run `npm audit` for details.
+[18.424s] services/deps-builder install: ready (1.654s)
+[18.987s] 
+[18.987s] added 123 packages, and audited 124 packages in 2s
+[18.987s] 
+[18.987s] 24 packages are looking for funding
+[18.988s]   run `npm fund` for details
+[18.988s] 
+[18.988s] found 0 vulnerabilities
+[19.003s] services/agent-server install: ready (1.833s)
+[19.326s] 
+[19.326s] added 58 packages, and audited 59 packages in 1s
+[19.326s] 
+[19.327s] found 0 vulnerabilities
+[19.336s] apps/studio install: ready (1.189s)
+[19.336s] download and audit storage provisioning: starting
+[29.378s] download and audit storage provisioning: ready (10.041s)
+[29.378s] registry setup: starting
+[29.581s] 
+[29.581s] > @toi/deps-builder@1.0.0 setup-registry
+[29.582s] > node scripts/setup-registry.mjs
+[29.582s] 
+[29.680s] Anonymous @toi/tds metadata blocked: HTTP 401
+[29.946s] Registry token stored in gitignored root .env (mode 0600)
+[29.946s] fake-tds build: starting
+[31.060s] fake-tds build: ready (1.114s)
+[31.945s] Published @toi/tds@1.0.0
+[32.621s] Published @toi/tds@1.1.0
+[32.626s] Verified both versions published; anonymous access remains HTTP 401
+[32.640s] registry setup: ready (3.262s)
+[32.641s] fetch client publish: starting
+[32.777s] 
+[32.778s] > @toi/policy-proxy@1.0.0 publish:client
+[32.778s] > node scripts/publish-client.mjs
+[32.778s] 
+[34.707s] Published @toi/fetch@1.1.1; anonymous metadata is blocked
+[34.765s] fetch client publish: ready (2.124s)
+[34.765s] mock-backend start: starting
+[35.779s] mock-backend start: ready (1.013s)
+[35.779s] policy-proxy start: starting
+[37.292s] policy-proxy start: ready (1.514s)
+[37.293s] deps-builder start: starting
+[38.809s] deps-builder start: ready (1.515s)
+[38.809s] agent-server start: starting
+[40.849s] agent-server start: ready (2.039s)
+[40.849s] studio start: starting
+[41.362s] studio start: ready (0.513s)
+[41.362s] preview origin health: starting
+[41.367s] preview origin health: ready (0.004s)
+[41.367s] TOI-lite ready: http://localhost:5173 (logs: scripts/.run)

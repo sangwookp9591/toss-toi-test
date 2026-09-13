@@ -1,0 +1,21 @@
+{
+  "installedTools": {
+    "7z": null,
+    "7zz": null,
+    "keka": null
+  },
+  "kekaApplication": false,
+  "entries": [
+    {
+      "filename": "data.csv",
+      "encrypted": true,
+      "compressionMethod": 99,
+      "aesVersion": 2,
+      "vendor": "AE",
+      "aesStrength": 3,
+      "aesBits": 256,
+      "actualCompressionMethod": 8,
+      "withoutPassword": "denied"
+    }
+  ]
+}

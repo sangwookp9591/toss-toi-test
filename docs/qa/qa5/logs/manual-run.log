@@ -1,0 +1,47 @@
+UI button: Keycloak으로 로그인
+UI button: 로그아웃
+UI button: 프로젝트 만들기
+UI button: 보내기
+UI button: 아니요
+UI button: 저장하고 반영
+alice: {"login":true,"created":true,"generated":true,"savedRevision":3}
+UI button: 조회
+UI button: 조회
+UI button: 조회
+broker: {"reasonRequired":true,"masked":true,"resource404EmptyResult":true,"accessRevoked":false}
+UI button: 고객 상태를 정지로 변경
+UI button: 고객 상태를 정지로 변경
+previewWrite: {"deniedBefore":true,"allowedAfter":true}
+UI button: 멤버 추가
+UI button: Keycloak으로 로그인
+UI button: 로그아웃
+UI button: 암호화 파일 만들기
+viewer: {"disabled":true,"ariaDescribedby":"_r_0_","description":"암호화 다운로드는 editor 이상만 할 수 있어요. 프로젝트 owner에게 권한을 요청하세요.","top":"조회 권한이에요. 생성·저장·쓰기 테스트·암호화 다운로드는 편집자 이상이 할 수 있어요."}
+UI button: 암호화 파일 만들기
+UI button: ZIP 저장
+UI button: ZIP 저장
+UI button: 비밀번호 닫기
+download: {"editorSuccess":true,"downloadStatus":200,"reuseStatus":410,"aesNotice":"AES-256 ZIP은 macOS 기본 압축 해제 도구로 열 수 없어요. 7-Zip, Keka 또는 7z x를 사용하세요.","passwordClosed":true}
+UI button: 조회
+UI button: 저장하고 반영
+UI button: 보내기
+UI button: 저장하고 반영
+UI button: 보내기
+UI button: 처음 화면으로
+UI button: 프로젝트 만들기
+UI button: 프로젝트 만들기
+removed: {"queryMs":89,"idleMs":29562,"idleProxy":0,"checks":2,"locked":{"query":{"iframeCount":0,"promptDisabled":true,"sourceDisabled":true,"saveDisabled":true,"sendDisabled":true,"emptyResultCount":0,"notice":"이 프로젝트에 접근할 수 없어요. 멤버에서 제거되었거나 권한이 바뀌었을 수 있어요처음 화면으로"},"idle":{"iframeCount":0,"promptDisabled":true,"sourceDisabled":true,"saveDisabled":true,"sendDisabled":true,"emptyResultCount":0,"notice":"이 프로젝트에 접근할 수 없어요. 멤버에서 제거되었거나 권한이 바뀌었을 수 있어요처음 화면으로"}},"homeAfterReload":true}
+UI button: Keycloak으로 로그인
+UI button: 로그아웃
+carol: {"notice":"이 프로젝트에 접근할 수 없어요. 멤버에서 제거되었거나 권한이 바뀌었을 수 있어요처음 화면으로","iframeCount":0}
+UI button: live 쓰기 승인 요청
+UI button: Keycloak으로 로그인
+UI button: 로그아웃
+UI button: 승인 요청 조회
+UI button: 승인
+UI button: 승인 상태 새로고침
+live: {"danaApproved":true,"aliceReflected":true,"capabilityStatus":200}
+UI button: 프로젝트 만들기
+isolation: {"keys":["env","projectId","transport"],"transport":"broker","frozen":true,"origin":"http://p-f30cffcd-4e00-457b-82fc-24d4848819da.preview.localhost:5174","directFetchBlocked":true,"origin2":"http://p-d1eb9a66-8628-48df-a34f-8285bccfe650.preview.localhost:5174","distinct":true,"csp":"default-src 'none'; connect-src 'none'; script-src 'self' http://localhost:7100 'nonce-sDRyMoP/9V3Cs+oSH2CSVlL4wvHvEKCR'; style-src 'self' 'unsafe-inline'; img-src data: blob:; font-src data:; form-action 'none'; base-uri 'none'; frame-ancestors http://localhost:5173; worker-src 'none'; object-src 'none'"}
+navigation: {"hits":0,"tokenHits":0,"recovered":true}
+failure: {"stage":"login-root","name":"Error","message":"browser.newContext: Target page, context or browser has been closed"}

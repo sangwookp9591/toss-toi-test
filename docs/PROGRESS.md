@@ -1,6 +1,6 @@
 # TOI-lite 진행 기록
 
-기준 시점: 2026-09-14, `main` `9851f35`. 이 문서 커밋 전까지의 상태를 기록한다.
+기준 시점: 2026-09-14, `main` QA5 반영 커밋. 이 문서 커밋 전까지의 상태를 기록한다.
 
 ## 한눈에 보기
 
@@ -14,7 +14,8 @@
 | 토스와 차이 분석 CMP1 | 완료 | `cdbeaa9` | [`compare/TOSS-GAP.md`](compare/TOSS-GAP.md) |
 | **P0 구현(P0-1~P0-4)** | 완료 | `5a76cfb` | [`P0-DESIGN.md`](P0-DESIGN.md) |
 | **P0 독립 보안 리뷰 R3와 수정 F3-A·F3-B** | 완료 | `7665546` | [`review/REVIEW-R3.md`](review/REVIEW-R3.md) |
-| **새 클론 QA4와 수정 F4·F5** | 수정 완료, **F5 이후 새 클론 재검증은 안 함** | `9851f35` | [`qa/qa4/QA4-REPORT.md`](qa/qa4/QA4-REPORT.md), [`../e2e/F5-REPORT.md`](../e2e/F5-REPORT.md) |
+| **새 클론 QA4와 수정 F4·F5** | 완료 | `9851f35` | [`qa/qa4/QA4-REPORT.md`](qa/qa4/QA4-REPORT.md), [`../e2e/F5-REPORT.md`](../e2e/F5-REPORT.md) |
+| **새 클론 QA5(F5 재검증)** | **통과: QA4 대상 8항목 전부 해결, E2E 123/123, P0 실사용 검증 "예"** | `0723efb` 기준 검증 | [`qa/qa5/QA5-REPORT.md`](qa/qa5/QA5-REPORT.md) |
 
 ## P0에서 한 일
 
@@ -41,6 +42,7 @@
 | QA4 | Q4-N02 | medium | 제거된 멤버에게 "고객이 없어요" 표시 | `9851f35` 접근 철회 안내·편집 잠금·주기 확인 |
 | QA4 | Q4-N03 | low | viewer 다운로드 비활성 이유 없음 | `9851f35` 권한 안내·aria 설명 |
 | QA4 | Q4-D02~D04 | 문서 | README의 옛 토큰·CSP·공유 origin 설명, AES ZIP 해제 안내 없음 | `9851f35` |
+| QA5 | Q5-D01 | low(문서) | studio README의 `@toi/fetch` 버전 표기가 1.1.0(실제 1.1.1) | QA5 반영 커밋에서 수정 |
 | 구현 중 | E2E K 간헐 실패 | — | R 시나리오의 공유 클라이언트 TTL 누수 + 토큰 갱신 중 만료 이벤트가 앱 상태 초기화 | `788c742` |
 
 [`FOLLOWUPS.md`](FOLLOWUPS.md)의 L2(프리뷰 CSP), L6(자식 프로세스 env), L7(공유 프리뷰 origin·스튜디오 framable)은 P0-2와 R3 수정으로 닫혔다.
@@ -58,6 +60,18 @@
 | E2E `node scripts/dev-up.mjs --e2e` → `npm --prefix e2e run test:repeat` | 123/123 (41 시나리오 × 3) |
 
 주의: preview-runtime 브라우저 테스트와 deps-builder 통합 테스트는 서비스(5173·7100·MinIO·Verdaccio)가 떠 있어야 통과한다.
+
+### QA5 새 클론 재검증 (`0723efb`, `~/Projects/toi-lite-qa5`, `COMPOSE_PROJECT_NAME=toi-qa5`)
+
+| 항목 | 결과 |
+|---|---|
+| 무준비 기동 | 41.367초, 새 자원은 모두 `toi-qa5`, 다른 프로젝트 자원 전후 동일 |
+| Q4-N02 제거된 멤버 | 조회 137ms에 접근 불가 안내, UI 잠금, 주기 감지·처음 화면 복귀 유지 |
+| Q4-N03 viewer 다운로드 | 권한 설명·버튼 비활성·aria 연결, editor 승격 후 다운로드 성공 |
+| Q4-D02~D04 문서 | README 설명이 실제 frame 검사와 일치, 실제 ZIP이 AES-256 AE-2 |
+| 핵심 회귀 스팟 | 통과 |
+| E2E 3회 반복 | 123/123 |
+| 종료 | 포트 9개·서비스·`toi-qa5` 자원 0, 산출물 비밀값 일치 0 |
 
 ## 로컬 모델 실측 (P0-4)
 
@@ -81,7 +95,6 @@
 
 | 항목 | 출처 |
 |---|---|
-| F5 수정분 새 클론 재검증(QA4 판정은 수정 전 "아니오") | QA4 |
 | root·runtime 성능 벤치의 프로젝트별 origin 이행 | [`../e2e/P0C-REPORT.md`](../e2e/P0C-REPORT.md) |
 | 기존 `.env`를 새 Verdaccio 볼륨에 재사용할 때 registry 토큰 불일치(rotation 필요) | [`../scripts/F4-REPORT.md`](../scripts/F4-REPORT.md) |
 | 도구 호출이 안정적인 로컬 모델 또는 Claude로 같은 평가 | P0-4 |
@@ -90,9 +103,10 @@
 
 ## 결정 대기
 
-1. F5 이후 새 클론 짧은 재검증 여부
-2. 로컬 모델 교체 실측, Claude 실측, 또는 현재 결과로 종료
-3. 로컬 QA 클론(`~/Projects/toi-lite-qa`~`qa4`)과 `toi-qa*`·`toi-fxb` 볼륨 정리 여부
+1. 로컬 모델 교체 실측, Claude 실측, 또는 현재 결과로 종료
+2. 로컬 QA 클론(`~/Projects/toi-lite-qa`~`qa5`)과 `toi-qa*`·`toi-fxb` 볼륨 정리 여부
+
+원본 개발 환경은 QA5를 위해 내려 둔 상태다. 다시 쓰려면 `node scripts/dev-up.mjs`.
 
 ## 운영 기록
 

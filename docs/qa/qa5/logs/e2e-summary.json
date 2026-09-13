@@ -1,0 +1,22 @@
+{
+  "stats": {
+    "startTime": "2026-09-13T23:02:23.038Z",
+    "duration": 582012.846,
+    "expected": 123,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "tests": 123,
+  "uniqueScenarios": 41,
+  "statusCounts": {
+    "expected": 123
+  },
+  "allResultsPassed": true,
+  "eachScenarioRepeatedThreeTimes": true,
+  "workerCounts": {
+    "0": 41,
+    "1": 41,
+    "2": 41
+  }
+}

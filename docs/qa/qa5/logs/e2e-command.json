@@ -1,0 +1,15 @@
+{
+  "command": "npm --prefix e2e ci && COMPOSE_PROJECT_NAME=toi-qa5 node scripts/dev-up.mjs --e2e && npm --prefix e2e run test:repeat",
+  "exitCode": 0,
+  "elapsedSeconds": 605.455,
+  "restoredTrackedFiles": [
+    "e2e/artifacts/f5/shots/viewer-download-after.png",
+    "e2e/artifacts/other-tab-restored.png",
+    "e2e/artifacts/question-1600.png",
+    "e2e/artifacts/question-400.png",
+    "e2e/artifacts/registry-recovered.png",
+    "e2e/artifacts/results.json",
+    "e2e/artifacts/runtime-location.png",
+    "e2e/artifacts/studio.png"
+  ]
+}
