@@ -1,0 +1,10 @@
+== 1. 등록된 연산은 GET /reports/{year}/{month} 뿐. 등록되지 않은 /admin 요청
+direct  /admin                         -> 404
+encoded /reports/%252e%252e/admin      -> 400 | upstream received: []
+triple /reports/%25252e%25252e/admin -> 400 | upstream received: []
+single  /reports/%2e%2e/admin          -> 404 (한 번 인코딩은 fetch 클라이언트가 먼저 정규화해 /admin → 미등록 404)
+== 2. 마스킹 규칙 /items/*/phone 등에 대해 필드 변형이 원문 그대로 통과하는지
+{"id":"C001","Phone":"010-****-5678","contact":{"phone":"010-****-5678"},"phones":["010-****-5678"],"phone":{"number":"010-****-5678"},"rrn":"900101-*******","account":"****-****-5678"}
+audit maskedFields: ["/items/0/Phone","/items/0/account","/items/0/contact/phone (detected)","/items/0/phone/number","/items/0/phones/0 (detected)","/items/0/rrn"]
+audit policyWarnings: ["unregistered_pii_field"]
+PASS: H2 and M1 after-fix assertions

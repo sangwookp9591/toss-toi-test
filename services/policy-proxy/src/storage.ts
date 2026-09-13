@@ -2,6 +2,8 @@ import { mkdir, readFile, writeFile, rename, appendFile } from 'node:fs/promises
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import type { RegisteredApi, PublicApi, AuditRecord, MaskKind } from '../../../contracts/src/policy.js';
+import type { PolicyWarning } from './mask.js';
+export interface PolicyAuditRecord extends AuditRecord { policyWarnings?: PolicyWarning[] }
 import { HttpError, identifier } from './tokens.js';
 export function sanitize<T>(value: T, secrets: string[]): T {
   const clean = (item: unknown): unknown => {
@@ -56,13 +58,13 @@ export class PolicyStorage {
     });
     this.registryQueue = operation.catch(() => {}); return operation;
   }
-  append(record: AuditRecord): Promise<void> {
+  append(record: PolicyAuditRecord): Promise<void> {
     const operation = this.auditQueue.then(() => appendFile(path.join(this.directory, 'audit.jsonl'), JSON.stringify(record) + '\n', { mode: 0o600 }));
     this.auditQueue = operation.catch(() => {}); return operation;
   }
-  async audit(projectId: string | undefined, limit: number): Promise<AuditRecord[]> {
+  async audit(projectId: string | undefined, limit: number, subject?: string): Promise<PolicyAuditRecord[]> {
     await this.auditQueue;
-    try { const lines = (await readFile(path.join(this.directory, 'audit.jsonl'), 'utf8')).trim(); return (lines ? lines.split('\n').map(line => JSON.parse(line) as AuditRecord) : []).filter(record => !projectId || record.projectId === projectId).slice(-limit); }
+    try { const lines = (await readFile(path.join(this.directory, 'audit.jsonl'), 'utf8')).trim(); return (lines ? lines.split('\n').map(line => JSON.parse(line) as PolicyAuditRecord) : []).filter(record => (!projectId || record.projectId === projectId) && (!subject || record.user === subject)).slice(-limit); }
     catch (error) { if ((error as NodeJS.ErrnoException).code === 'ENOENT') return []; throw error; }
   }
 }

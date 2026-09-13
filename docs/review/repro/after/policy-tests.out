@@ -1,0 +1,80 @@
+
+> @toi/policy-proxy@1.0.0 test
+> vitest run --reporter=verbose
+
+
+ RUN  v4.0.18 /Users/psw/Projects/toss-toi-test/services/policy-proxy
+
+ ✓ test/dev-up.test.ts > dev-up persists independent random secrets, replaces defaults, and reuses values across launches 16ms
+ ✓ test/policy.test.ts > decision order and every denial are audited 27ms
+ ✓ test/policy.test.ts > masking snapshot includes concrete wildcard pointers and leaves source data intact 23ms
+ ✓ test/policy.test.ts > write authorization is re-evaluated for every request and allowWrite is enforced 6ms
+ ✓ test/policy.test.ts > registry hides upstream data and enforces platform-admin plus destination allowlist 22ms
+ ✓ test/policy.test.ts > service credentials, addresses and identifying headers never escape responses or audit 27ms
+ ✓ test/policy.test.ts > CORS only permits studio and preview, including X-Toi headers 1ms
+ ✓ test/policy.test.ts > dependency-free client attaches host credentials and maps 403 and 428 to typed errors 12ms
+ ✓ test/hardening.test.ts > C1 preview rejects /dev/session on server, including simple requests and preflights 23ms
+ ✓ test/hardening.test.ts > C1 preview rejects /capabilities on server, including simple requests and preflights 5ms
+ ✓ test/hardening.test.ts > C1 preview rejects /apis on server, including simple requests and preflights 5ms
+ ✓ test/hardening.test.ts > C1 preview rejects /apis/reports on server, including simple requests and preflights 3ms
+ ✓ test/hardening.test.ts > C1 preview rejects /audit on server, including simple requests and preflights 3ms
+ ✓ test/hardening.test.ts > C1 /dev/session requires application/json before parsing/authentication 4ms
+ ✓ test/hardening.test.ts > C1 /capabilities requires application/json before parsing/authentication 3ms
+ ✓ test/hardening.test.ts > C1 browser admin issuance denied even with bootstrap token; server admin requires correct token 9ms
+ ✓ test/hardening.test.ts > C1 audit requires project and filters subject before applying limit 8ms
+ ✓ test/hardening.test.ts > H1 production rejects TOI_SESSION_SECRET missing 1ms
+ ✓ test/hardening.test.ts > H1 production rejects TOI_SESSION_SECRET short 0ms
+ ✓ test/hardening.test.ts > H1 production rejects TOI_SESSION_SECRET known toi-dev-session-secret-change-before-production 0ms
+ ✓ test/hardening.test.ts > H1 production rejects TOI_SESSION_SECRET known toi-dev-capability-secret-change-before-production 0ms
+ ✓ test/hardening.test.ts > H1 production rejects TOI_SESSION_SECRET known dev-session-secret-change-me 0ms
+ ✓ test/hardening.test.ts > H1 production rejects TOI_SESSION_SECRET known dev-capability-secret-change-me 0ms
+ ✓ test/hardening.test.ts > H1 production rejects TOI_SESSION_SECRET known toi-dev-upstream-secret 0ms
+ ✓ test/hardening.test.ts > H1 production rejects TOI_CAPABILITY_SECRET missing 0ms
+ ✓ test/hardening.test.ts > H1 production rejects TOI_CAPABILITY_SECRET short 0ms
+ ✓ test/hardening.test.ts > H1 production rejects TOI_CAPABILITY_SECRET known toi-dev-session-secret-change-before-production 0ms
+ ✓ test/hardening.test.ts > H1 production rejects TOI_CAPABILITY_SECRET known toi-dev-capability-secret-change-before-production 0ms
+ ✓ test/hardening.test.ts > H1 production rejects TOI_CAPABILITY_SECRET known dev-session-secret-change-me 0ms
+ ✓ test/hardening.test.ts > H1 production rejects TOI_CAPABILITY_SECRET known dev-capability-secret-change-me 0ms
+ ✓ test/hardening.test.ts > H1 production rejects TOI_CAPABILITY_SECRET known toi-dev-upstream-secret 0ms
+ ✓ test/hardening.test.ts > H1 production rejects TOI_UPSTREAM_SERVICE_TOKEN missing 0ms
+ ✓ test/hardening.test.ts > H1 production rejects TOI_UPSTREAM_SERVICE_TOKEN short 0ms
+ ✓ test/hardening.test.ts > H1 production rejects TOI_UPSTREAM_SERVICE_TOKEN known toi-dev-session-secret-change-before-production 0ms
+ ✓ test/hardening.test.ts > H1 production rejects TOI_UPSTREAM_SERVICE_TOKEN known toi-dev-capability-secret-change-before-production 0ms
+ ✓ test/hardening.test.ts > H1 production rejects TOI_UPSTREAM_SERVICE_TOKEN known dev-session-secret-change-me 0ms
+ ✓ test/hardening.test.ts > H1 production rejects TOI_UPSTREAM_SERVICE_TOKEN known dev-capability-secret-change-me 0ms
+ ✓ test/hardening.test.ts > H1 production rejects TOI_UPSTREAM_SERVICE_TOKEN known toi-dev-upstream-secret 0ms
+ ✓ test/hardening.test.ts > H1 production rejects dev auth undefined 0ms
+ ✓ test/hardening.test.ts > H1 production rejects dev auth true 0ms
+ ✓ test/hardening.test.ts > H1 production rejects dev auth FALSE 0ms
+ ✓ test/hardening.test.ts > H1 production rejects admin token  0ms
+ ✓ test/hardening.test.ts > H1 production rejects admin token present 0ms
+ ✓ test/hardening.test.ts > H1 valid production disables dev auth; absent NODE_ENV generates unpredictable process secrets 0ms
+ ✓ test/hardening.test.ts > H1 actual main process exits before listen with unsafe production configuration 505ms
+ ✓ test/hardening.test.ts > H1 repository secret cannot forge a running development session: toi-dev-session-secret-change-before-production 2ms
+ ✓ test/hardening.test.ts > H1 repository secret cannot forge a running development session: toi-dev-capability-secret-change-before-production 1ms
+ ✓ test/hardening.test.ts > H1 repository secret cannot forge a running development session: dev-session-secret-change-me 1ms
+ ✓ test/hardening.test.ts > H1 repository secret cannot forge a running development session: dev-capability-secret-change-me 0ms
+ ✓ test/hardening.test.ts > H1 repository secret cannot forge a running development session: toi-dev-upstream-secret 0ms
+ ✓ test/hardening.test.ts > H2 raw HTTP path /reports/%252e%252e/admin is 400 without contacting upstream 4ms
+ ✓ test/hardening.test.ts > H2 raw HTTP path /reports/%25252e%25252e/admin is 400 without contacting upstream 2ms
+ ✓ test/hardening.test.ts > H2 raw HTTP path /reports/%2e%2e/admin is 400 without contacting upstream 1ms
+ ✓ test/hardening.test.ts > H2 raw HTTP path /reports/../admin is 400 without contacting upstream 2ms
+ ✓ test/hardening.test.ts > H2 raw HTTP path /reports/%2525252e/admin is 400 without contacting upstream 1ms
+ ✓ test/hardening.test.ts > H2 raw HTTP path /reports/%252f/admin is 400 without contacting upstream 1ms
+ ✓ test/hardening.test.ts > H2 raw HTTP path /reports/%2F/admin is 400 without contacting upstream 1ms
+ ✓ test/hardening.test.ts > H2 raw HTTP path /reports/%255c/admin is 400 without contacting upstream 2ms
+ ✓ test/hardening.test.ts > H2 raw HTTP path /reports/%/admin is 400 without contacting upstream 3ms
+ ✓ test/hardening.test.ts > H2 raw HTTP path /reports/%2525/admin is 400 without contacting upstream 2ms
+ ✓ test/hardening.test.ts > H2 raw HTTP path /reports/%00/admin is 400 without contacting upstream 1ms
+ ✓ test/hardening.test.ts > H2 raw HTTP path /reports/%3f/admin is 400 without contacting upstream 1ms
+ ✓ test/hardening.test.ts > H2 template variables cannot contain only dots; safe path matches exact upstream pathname 4ms
+ ✓ test/hardening.test.ts > M1 case-insensitive keys and terminal objects/arrays are recursively masked, drift detected and audited 4ms
+ ✓ test/hardening.test.ts > M1 unmatched rules warn; whole response and none rules still scan residual PII 5ms
+ ✓ test/hardening.test.ts > M1 non-JSON PII is blocked with audited detection and no raw response 4ms
+ ✓ test/policy.test.ts > real Chrome direct upstream GET is 401 and proxy GET is masked 200 873ms
+
+ Test Files  3 passed (3)
+      Tests  67 passed (67)
+   Start at  15:31:48
+   Duration  1.47s (transform 230ms, setup 0ms, import 538ms, tests 1.68s, environment 0ms)
+

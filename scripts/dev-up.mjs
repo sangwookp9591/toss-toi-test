@@ -1,9 +1,26 @@
 import { spawn } from 'node:child_process';
-import { mkdir, access, readFile, writeFile, open } from 'node:fs/promises';
+import { mkdir, access, readFile, writeFile, open, chmod } from 'node:fs/promises';
+import { randomBytes } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+export async function ensureDevelopmentSecrets(envFile, env = process.env) {
+ if (env.NODE_ENV === 'production') return;
+ env.NODE_ENV ??= 'development';
+ const known = new Set(['toi-dev-session-secret-change-before-production','toi-dev-capability-secret-change-before-production','dev-session-secret-change-me','dev-capability-secret-change-me','toi-dev-upstream-secret']);
+ let contents = ''; try { contents = await readFile(envFile, 'utf8'); } catch(e) { if(e.code !== 'ENOENT') throw e; }
+ let changed = false;
+ for (const key of ['TOI_SESSION_SECRET','TOI_CAPABILITY_SECRET','TOI_UPSTREAM_SERVICE_TOKEN']) {
+  if (env[key] && !known.has(env[key])) continue;
+  const value = randomBytes(32).toString('hex'); env[key] = value;
+  const line = new RegExp('^(?:export\\s+)?'+key+'=.*$', 'gm');
+  contents = contents.replace(line, '').trimEnd()+'\n'+key+'='+value+'\n'; changed = true;
+ }
+ if(changed) { await writeFile(envFile, contents, {mode:0o600}); await chmod(envFile,0o600); }
+}
+async function main() {
 const root=fileURLToPath(new URL('..',import.meta.url)),run=path.join(root,'scripts/.run');
 process.chdir(root);try{process.loadEnvFile(path.join(root,'.env'));}catch(e){if(e.code!=='ENOENT')throw e;}
+await ensureDevelopmentSecrets(path.join(root,'.env'));
 await mkdir(run,{recursive:true});
 const command=(cmd,args,cwd=root)=>new Promise((resolve,reject)=>{const child=spawn(cmd,args,{cwd,stdio:'inherit',env:process.env});child.on('exit',code=>code===0?resolve():reject(new Error(`${cmd} exited ${code}`)));child.on('error',reject);});
 const healthy=async(url,headers={})=>{try{return (await fetch(url,{headers,signal:AbortSignal.timeout(1500)})).ok;}catch{return false;}};
@@ -21,9 +38,12 @@ async function start(name,dir,url,args=['start'],headers={}){
  if(await healthy(url,headers)){console.log(`${name}: existing healthy service`);return;}
  const log=await open(path.join(run,name+'.log'),'a');const child=spawn('npm',args,{cwd:path.join(root,dir),detached:true,stdio:['ignore',log.fd,log.fd],env:{...process.env,AGENT_MODE:process.env.AGENT_MODE??'mock'}});child.unref();await log.close();managed.push({name,pid:child.pid});await writeFile(path.join(run,'processes.json'),JSON.stringify(managed,null,2));await wait(url,headers);console.log(`${name}: ready`);
 }
-await start('mock-backend','services/mock-backend','http://localhost:7300/healthz',['start'],{'X-Service-Token':process.env.TOI_UPSTREAM_SERVICE_TOKEN??'toi-dev-upstream-secret'});
+await start('mock-backend','services/mock-backend','http://localhost:7300/healthz',['start'],{'X-Service-Token':process.env.TOI_UPSTREAM_SERVICE_TOKEN});
 await start('policy-proxy','services/policy-proxy','http://localhost:7200/healthz');
 await start('deps-builder','services/deps-builder','http://localhost:7100/healthz');
 await start('agent-server','services/agent-server','http://localhost:7400/healthz');
 await start('studio','apps/studio','http://localhost:5173/healthz',['run','dev']);await wait('http://localhost:5174/healthz');
 console.log('TOI-lite ready: http://localhost:5173 (logs: scripts/.run)');
+
+}
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) await main();

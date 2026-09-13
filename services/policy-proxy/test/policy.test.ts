@@ -16,8 +16,8 @@ const listen = (server: Server) => new Promise<string>(resolve => server.listen(
 const close = (server: Server) => new Promise<void>(resolve => { server.closeAllConnections(); server.close(() => resolve()); });
 let mock: Server, proxy: Server, base: string, upstream: string, store: PolicyStorage, cfg: PolicyConfig, dataDir: string;
 let viewer: string, editor: string, admin: string, outsider: string, other: string, read: string, write: string, readClaims: CapabilityClaims;
-const send = (url: string, token?: string, value?: unknown) => fetch(base + url, { method: value === undefined ? 'GET' : 'POST', headers: token ? { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } : {}, body: value === undefined ? undefined : JSON.stringify(value) });
-const session = async (user: string, roles: string[]) => (await (await send('/dev/session', undefined, { user, roles })).json()).token as string;
+const send = (url: string, token?: string, value?: unknown) => fetch(base + url, { method: value === undefined ? 'GET' : 'POST', headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}), 'Content-Type': 'application/json' }, body: value === undefined ? undefined : JSON.stringify(value) });
+const session = async (user: string, roles: string[]) => (await (await send('/dev/session', roles.includes('platform-admin') ? cfg.devAdminToken : undefined, { user, roles })).json()).token as string;
 const cap = async (token: string, value: Record<string, unknown> = {}) => (await (await send('/capabilities', token, { projectId: 'test-project', env: 'preview', ttlSec: 300, ...value })).json());
 function call(options: { session?: string | null; cap?: string; project?: string; api?: string; path?: string; method?: string; reason?: string | null; extra?: Record<string, string> } = {}) {
   return fetch(`${base}/proxy/${options.api ?? 'customers'}${options.path ?? '/customers?size=20'}`, { method: options.method ?? 'GET', headers: { ...(options.session === null ? {} : { Authorization: `Bearer ${options.session ?? viewer}` }), 'X-Toi-Capability': options.cap ?? read, 'X-Toi-Project': options.project ?? 'test-project', ...(options.reason === null ? {} : { 'X-Toi-Reason': encodeURIComponent(options.reason ?? '고객 문의 응대') }), ...options.extra }, body: options.method === 'PATCH' ? JSON.stringify({ status: 'suspended' }) : undefined });
@@ -25,7 +25,7 @@ function call(options: { session?: string | null; cap?: string; project?: string
 beforeAll(async () => {
   await mkdir(path.join(serviceRoot, '.cache'), { recursive: true }); dataDir = await mkdtemp(path.join(serviceRoot, '.cache/policy-test-'));
   mock = createMockBackend('test-upstream-secret-very-private'); upstream = await listen(mock);
-  cfg = { ...configuration(), dataDir, upstreamUrl: upstream, upstreamAllowlist: [upstream], upstreamToken: 'test-upstream-secret-very-private', sessionSecret: 'test-session-signing-secret', capabilitySecret: 'test-capability-signing-secret', devAuth: true };
+  cfg = { ...configuration(), dataDir, upstreamUrl: upstream, upstreamAllowlist: [upstream], upstreamToken: 'test-upstream-secret-very-private', sessionSecret: 'test-session-signing-secret', capabilitySecret: 'test-capability-signing-secret', devAuth: true, devAdminToken: 'test-admin-bootstrap-token' };
   store = new PolicyStorage(dataDir); await store.init(); await seedRegistry(store, cfg);
   proxy = createPolicyProxy(cfg, store); base = await listen(proxy);
   viewer = await session('viewer-user', ['viewer']); editor = await session('editor-user', ['editor']); admin = await session('admin-user', ['platform-admin']); outsider = await session('outsider-user', []); other = await session('other-viewer', ['viewer']);

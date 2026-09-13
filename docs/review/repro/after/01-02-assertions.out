@@ -1,0 +1,42 @@
+C1 preview /dev/session {"status":403,"tokenObtained":false,"corsAllowed":false}
+C1 preview /capabilities {"status":403,"tokenObtained":false,"corsAllowed":false}
+C1 preview /apis {"status":403,"tokenObtained":false,"corsAllowed":false}
+C1 preview /apis/customers {"status":403,"tokenObtained":false,"corsAllowed":false}
+C1 preview /audit {"status":403,"tokenObtained":false,"corsAllowed":false}
+C1 text/plain /dev/session {"status":415}
+C1 text/plain /capabilities {"status":415}
+C1 browser admin {"status":403}
+C1 viewer/editor audit without project {"status":400}
+H1 production missing TOI_SESSION_SECRET {"startupRejected":true}
+H1 production short TOI_SESSION_SECRET {"startupRejected":true}
+H1 production known default TOI_SESSION_SECRET toi-dev-session-secret-change-before-production {"startupRejected":true}
+H1 production known default TOI_SESSION_SECRET toi-dev-capability-secret-change-before-production {"startupRejected":true}
+H1 production known default TOI_SESSION_SECRET dev-session-secret-change-me {"startupRejected":true}
+H1 production known default TOI_SESSION_SECRET dev-capability-secret-change-me {"startupRejected":true}
+H1 production known default TOI_SESSION_SECRET toi-dev-upstream-secret {"startupRejected":true}
+H1 production missing TOI_CAPABILITY_SECRET {"startupRejected":true}
+H1 production short TOI_CAPABILITY_SECRET {"startupRejected":true}
+H1 production known default TOI_CAPABILITY_SECRET toi-dev-session-secret-change-before-production {"startupRejected":true}
+H1 production known default TOI_CAPABILITY_SECRET toi-dev-capability-secret-change-before-production {"startupRejected":true}
+H1 production known default TOI_CAPABILITY_SECRET dev-session-secret-change-me {"startupRejected":true}
+H1 production known default TOI_CAPABILITY_SECRET dev-capability-secret-change-me {"startupRejected":true}
+H1 production known default TOI_CAPABILITY_SECRET toi-dev-upstream-secret {"startupRejected":true}
+H1 production missing TOI_UPSTREAM_SERVICE_TOKEN {"startupRejected":true}
+H1 production short TOI_UPSTREAM_SERVICE_TOKEN {"startupRejected":true}
+H1 production known default TOI_UPSTREAM_SERVICE_TOKEN toi-dev-session-secret-change-before-production {"startupRejected":true}
+H1 production known default TOI_UPSTREAM_SERVICE_TOKEN toi-dev-capability-secret-change-before-production {"startupRejected":true}
+H1 production known default TOI_UPSTREAM_SERVICE_TOKEN dev-session-secret-change-me {"startupRejected":true}
+H1 production known default TOI_UPSTREAM_SERVICE_TOKEN dev-capability-secret-change-me {"startupRejected":true}
+H1 production known default TOI_UPSTREAM_SERVICE_TOKEN toi-dev-upstream-secret {"startupRejected":true}
+H1 production dev auth missing {"startupRejected":true}
+H1 production dev auth true {"startupRejected":true}
+H1 production admin token set {"startupRejected":true}
+H1 production admin token empty {"startupRejected":true}
+H1 valid production {"accepted":true,"devAuth":false}
+H1 absent NODE_ENV {"mode":"development","usesKnownSecrets":false}
+H1 live :7200 forged toi-dev-session-secret-change-before-production {"status":401}
+H1 live :7200 forged toi-dev-capability-secret-change-before-production {"status":401}
+H1 live :7200 forged dev-session-secret-change-me {"status":401}
+H1 live :7200 forged dev-capability-secret-change-me {"status":401}
+H1 live :7200 forged toi-dev-upstream-secret {"status":401}
+PASS: C1 and H1 after-fix assertions
