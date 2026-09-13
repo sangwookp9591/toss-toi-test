@@ -1,0 +1,37 @@
+{
+  "auditBeforeFlush": {
+    "ok": true,
+    "degraded": false,
+    "anchorSeq": 501,
+    "anchoredThrough": 501,
+    "anchorAvailable": true,
+    "anchorFailureMs": 0,
+    "lastSeq": 501,
+    "lastHash": "f9d624e258fe7659e8443f9b1f4735fa7dc309c48d1b22a6874ae3afb881b706",
+    "replicationPending": 181,
+    "replicationLagMs": 217542,
+    "replicationAvailable": true
+  },
+  "previewSessionStatus": 200,
+  "justBeforeSignal": {
+    "status": "ok",
+    "audit": {
+      "ok": true,
+      "degraded": false,
+      "anchorSeq": 501,
+      "anchoredThrough": 501,
+      "anchorAvailable": true,
+      "anchorFailureMs": 0,
+      "lastSeq": 502,
+      "lastHash": "47b86247201738a8f1543ea274572954af0843ea38f0bb48801e29a4269199a8",
+      "replicationPending": 182,
+      "replicationLagMs": 217559,
+      "replicationAvailable": true
+    }
+  },
+  "afterFlushAnchor": {
+    "hash": "47b86247201738a8f1543ea274572954af0843ea38f0bb48801e29a4269199a8",
+    "seq": 502
+  },
+  "signal": "SIGTERM"
+}

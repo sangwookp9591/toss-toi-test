@@ -1,0 +1,10 @@
+Collecting pyzipper
+  Downloading pyzipper-0.4.0-py3-none-any.whl.metadata (6.0 kB)
+Collecting pycryptodomex (from pyzipper)
+  Downloading pycryptodomex-3.23.0-cp37-abi3-macosx_10_9_universal2.whl.metadata (3.4 kB)
+Downloading pyzipper-0.4.0-py3-none-any.whl (36 kB)
+Downloading pycryptodomex-3.23.0-cp37-abi3-macosx_10_9_universal2.whl (2.5 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.5/2.5 MB 9.4 MB/s  0:00:00
+Installing collected packages: pycryptodomex, pyzipper
+
+Successfully installed pycryptodomex-3.23.0 pyzipper-0.4.0

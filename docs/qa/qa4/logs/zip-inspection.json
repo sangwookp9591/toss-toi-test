@@ -1,0 +1,28 @@
+[
+  {
+    "format": "csv",
+    "encrypted": true,
+    "aesStrength": 3,
+    "aesVersion": 2,
+    "withoutPassword": "denied",
+    "wrongPassword": "denied",
+    "correctPasswordOpens": true,
+    "maskedName": true,
+    "maskedPhone": true,
+    "rawNameAbsent": true,
+    "rawPhoneAbsent": true
+  },
+  {
+    "format": "xlsx",
+    "encrypted": true,
+    "aesStrength": 3,
+    "aesVersion": 2,
+    "withoutPassword": "denied",
+    "wrongPassword": "denied",
+    "correctPasswordOpens": true,
+    "maskedName": true,
+    "maskedPhone": true,
+    "rawNameAbsent": true,
+    "rawPhoneAbsent": true
+  }
+]

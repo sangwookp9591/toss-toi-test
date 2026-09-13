@@ -1,0 +1,29 @@
+[
+  {
+    "name": "mock-backend",
+    "pid": 50024,
+    "envVersion": 2
+  },
+  {
+    "name": "deps-builder",
+    "pid": 50135,
+    "envVersion": 2
+  },
+  {
+    "name": "agent-server",
+    "pid": 50200,
+    "envVersion": 2
+  },
+  {
+    "name": "studio",
+    "pid": 64097,
+    "envVersion": 2,
+    "e2e": "true"
+  },
+  {
+    "name": "policy-proxy",
+    "pid": 75600,
+    "envVersion": 2,
+    "approvalTtlSec": 8
+  }
+]

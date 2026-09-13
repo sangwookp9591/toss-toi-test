@@ -1,0 +1,72 @@
+{
+  "at": "2026-09-13T14:19:17.209Z",
+  "seconds": 41.095,
+  "exitCode": 0,
+  "envMode": "600",
+  "originalVolumeMetadataUnchanged": true,
+  "originalContainers": "",
+  "containers": [
+    {
+      "name": "/toi-qa4-verdaccio-1",
+      "project": "toi-qa4",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/Users/psw/Projects/toi-lite-qa4/infra/verdaccio/config.yaml"
+        },
+        {
+          "type": "volume",
+          "name": "toi-qa4_verdaccio-storage",
+          "source": "/var/lib/docker/volumes/toi-qa4_verdaccio-storage/_data"
+        },
+        {
+          "type": "volume",
+          "name": "toi-qa4_verdaccio-auth",
+          "source": "/var/lib/docker/volumes/toi-qa4_verdaccio-auth/_data"
+        }
+      ]
+    },
+    {
+      "name": "/toi-qa4-verdaccio-init-1",
+      "project": "toi-qa4",
+      "mounts": [
+        {
+          "type": "volume",
+          "name": "toi-qa4_verdaccio-storage",
+          "source": "/var/lib/docker/volumes/toi-qa4_verdaccio-storage/_data"
+        },
+        {
+          "type": "volume",
+          "name": "toi-qa4_verdaccio-auth",
+          "source": "/var/lib/docker/volumes/toi-qa4_verdaccio-auth/_data"
+        }
+      ]
+    },
+    {
+      "name": "/toi-qa4-minio-1",
+      "project": "toi-qa4",
+      "mounts": [
+        {
+          "type": "volume",
+          "name": "toi-qa4_minio-data",
+          "source": "/var/lib/docker/volumes/toi-qa4_minio-data/_data"
+        }
+      ]
+    },
+    {
+      "name": "/toi-qa4-keycloak-1",
+      "project": "toi-qa4",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/Users/psw/Projects/toi-lite-qa4/infra/keycloak/realm-toi.json"
+        },
+        {
+          "type": "volume",
+          "name": "toi-qa4_keycloak-data",
+          "source": "/var/lib/docker/volumes/toi-qa4_keycloak-data/_data"
+        }
+      ]
+    }
+  ]
+}

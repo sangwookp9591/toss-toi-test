@@ -1,0 +1,103 @@
+{
+  "observedAt": "2026-09-13T14:06:27.828Z",
+  "commit": "042c2a36ee5a0ecbe2899bb7bd2429c3438ff6e4",
+  "initialNinePortsEmpty": true,
+  "initialPortObservation": "lsof listener query exit 1 with no output before startup",
+  "command": "COMPOSE_PROJECT_NAME=toi-qa4 node scripts/dev-up.mjs",
+  "exitCode": 1,
+  "elapsedSeconds": 10.448,
+  "envMode": "600",
+  "dockerChildEnvKeys": [
+    "PATH",
+    "TOI_MANAGED_ENV"
+  ],
+  "composeProjectNamePreserved": false,
+  "containers": [
+    {
+      "id": "191ba50a5f225c26a051ae8f16ecc5e5e5a5e7431ac4f2c24cd87e570a843f8f",
+      "name": "/toi-lite-keycloak-1",
+      "created": "2026-09-13T14:05:30.170533751Z",
+      "status": "running",
+      "composeProject": "toi-lite",
+      "workingDir": "/Users/psw/Projects/toi-lite-qa4/infra",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/Users/psw/Projects/toi-lite-qa4/infra/keycloak/realm-toi.json",
+          "destination": "/opt/keycloak/data/import/realm-toi.json"
+        },
+        {
+          "type": "volume",
+          "name": "toi-lite_keycloak-data",
+          "source": "/var/lib/docker/volumes/toi-lite_keycloak-data/_data",
+          "destination": "/opt/keycloak/data"
+        }
+      ]
+    },
+    {
+      "id": "88bd6699c58a974251c6c60ea253e4575545311d31f3ef109b937f8d4c243070",
+      "name": "/toi-lite-verdaccio-1",
+      "created": "2026-09-13T14:05:30.25923796Z",
+      "status": "running",
+      "composeProject": "toi-lite",
+      "workingDir": "/Users/psw/Projects/toi-lite-qa4/infra",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/Users/psw/Projects/toi-lite-qa4/infra/verdaccio/config.yaml",
+          "destination": "/verdaccio/conf/config.yaml"
+        },
+        {
+          "type": "volume",
+          "name": "toi-lite_verdaccio-auth",
+          "source": "/var/lib/docker/volumes/toi-lite_verdaccio-auth/_data",
+          "destination": "/verdaccio/auth"
+        },
+        {
+          "type": "volume",
+          "name": "toi-lite_verdaccio-storage",
+          "source": "/var/lib/docker/volumes/toi-lite_verdaccio-storage/_data",
+          "destination": "/verdaccio/storage"
+        }
+      ]
+    },
+    {
+      "id": "3879aa65939904132260781dd3c0f52d234479bfeebad32cd1bb3b529406e3d1",
+      "name": "/toi-lite-verdaccio-init-1",
+      "created": "2026-09-13T14:05:30.175138918Z",
+      "status": "exited",
+      "composeProject": "toi-lite",
+      "workingDir": "/Users/psw/Projects/toi-lite-qa4/infra",
+      "mounts": [
+        {
+          "type": "volume",
+          "name": "toi-lite_verdaccio-storage",
+          "source": "/var/lib/docker/volumes/toi-lite_verdaccio-storage/_data",
+          "destination": "/verdaccio/storage"
+        },
+        {
+          "type": "volume",
+          "name": "toi-lite_verdaccio-auth",
+          "source": "/var/lib/docker/volumes/toi-lite_verdaccio-auth/_data",
+          "destination": "/verdaccio/auth"
+        }
+      ]
+    },
+    {
+      "id": "5cceda926593f221a84b35d995ab1cae004a41957f106cb97d67f49044dd3e2b",
+      "name": "/toi-lite-minio-1",
+      "created": "2026-09-13T14:05:30.172820126Z",
+      "status": "running",
+      "composeProject": "toi-lite",
+      "workingDir": "/Users/psw/Projects/toi-lite-qa4/infra",
+      "mounts": [
+        {
+          "type": "volume",
+          "name": "toi-lite_minio-data",
+          "source": "/var/lib/docker/volumes/toi-lite_minio-data/_data",
+          "destination": "/data"
+        }
+      ]
+    }
+  ]
+}

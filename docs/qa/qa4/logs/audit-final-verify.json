@@ -1,0 +1,13 @@
+{
+  "ok": true,
+  "degraded": false,
+  "anchorSeq": 502,
+  "anchoredThrough": 502,
+  "anchorAvailable": true,
+  "anchorFailureMs": 0,
+  "lastSeq": 502,
+  "lastHash": "47b86247201738a8f1543ea274572954af0843ea38f0bb48801e29a4269199a8",
+  "replicationPending": 0,
+  "replicationLagMs": 0,
+  "replicationAvailable": true
+}

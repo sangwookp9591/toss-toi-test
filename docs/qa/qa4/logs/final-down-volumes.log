@@ -1,0 +1,9 @@
+ Volume toi-qa4_minio-data  Removing
+ Volume toi-qa4_verdaccio-storage  Removing
+ Volume toi-qa4_verdaccio-auth  Removing
+ Volume toi-qa4_keycloak-data  Removing
+ Volume toi-qa4_minio-data  Removed
+ Volume toi-qa4_verdaccio-storage  Removed
+ Volume toi-qa4_keycloak-data  Removed
+ Volume toi-qa4_verdaccio-auth  Removed
+Managed processes stopped; externally started services are left running.

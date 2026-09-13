@@ -1,0 +1,4 @@
+Archive:  docs/qa/qa4/logs/download-csv.zip
+   skipping: data.csv                need PK compat. v5.1 (can do v4.5)
+Caution:  zero files tested in docs/qa/qa4/logs/download-csv.zip.
+1 file skipped because of unsupported compression or encoding.

@@ -1,0 +1,22 @@
+[
+  {
+    "name": "toi-lite_keycloak-data",
+    "createdAt": "2026-09-13T10:50:49Z",
+    "project": "toi-lite"
+  },
+  {
+    "name": "toi-lite_minio-data",
+    "createdAt": "2026-09-13T05:00:04Z",
+    "project": "toi-lite"
+  },
+  {
+    "name": "toi-lite_verdaccio-storage",
+    "createdAt": "2026-09-13T05:00:04Z",
+    "project": "toi-lite"
+  },
+  {
+    "name": "toi-lite_verdaccio-auth",
+    "createdAt": "2026-09-13T05:00:04Z",
+    "project": "toi-lite"
+  }
+]

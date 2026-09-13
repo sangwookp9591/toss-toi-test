@@ -1,0 +1,26 @@
+{
+  "beforeRestart": {
+    "ok": true,
+    "degraded": false,
+    "anchorSeq": 57,
+    "anchoredThrough": 57,
+    "anchorAvailable": true,
+    "anchorFailureMs": 0,
+    "lastSeq": 57,
+    "lastHash": "a73dc43e5b57c02668300bb72d755e2caf06a35bdc5bd9416fb1ae623a4a240c",
+    "replicationPending": 25,
+    "replicationLagMs": 271491,
+    "replicationAvailable": true
+  },
+  "policyPid": 50073,
+  "signal": "SIGTERM",
+  "portStopped": true,
+  "afterStopAnchor": {
+    "hash": "a73dc43e5b57c02668300bb72d755e2caf06a35bdc5bd9416fb1ae623a4a240c",
+    "seq": 57
+  },
+  "segments": [
+    "audit/segments/1-32-09c73aed2db3bc99e0d2694abaaf0563a24749b2e280551d312bb6740670d58b.jsonl",
+    "audit/segments/33-57-a73dc43e5b57c02668300bb72d755e2caf06a35bdc5bd9416fb1ae623a4a240c.jsonl"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "command": "npm --prefix e2e ci && COMPOSE_PROJECT_NAME=toi-qa4 node scripts/dev-up.mjs --e2e && npm --prefix e2e run test:repeat",
+  "startedAt": "2026-09-13T14:29:31.782491+00:00",
+  "seconds": 509.02600716600136,
+  "exitCode": 0,
+  "changedTrackedFilesCopiedThenRestored": [
+    "e2e/artifacts/question-1600.png",
+    "e2e/artifacts/question-400.png",
+    "e2e/artifacts/registry-recovered.png",
+    "e2e/artifacts/results.json",
+    "e2e/artifacts/runtime-location.png"
+  ]
+}

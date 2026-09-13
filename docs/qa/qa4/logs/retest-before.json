@@ -1,0 +1,68 @@
+{
+  "at": "2026-09-13T14:18:11.135370+00:00",
+  "commit": "92469f1c5cf845f756bf49e424bb140180e9d762",
+  "ninePortsEmpty": true,
+  "toiLiteContainers": [],
+  "originalVolumeMetadata": [
+    {
+      "CreatedAt": "2026-09-13T10:50:49Z",
+      "Driver": "local",
+      "Labels": {
+        "com.docker.compose.config-hash": "1eb0bb965030106cb47858ebb02de076f2fcd638cf638d8e9b00a57007fc19c9",
+        "com.docker.compose.project": "toi-lite",
+        "com.docker.compose.version": "2.32.4",
+        "com.docker.compose.volume": "keycloak-data"
+      },
+      "Mountpoint": "/var/lib/docker/volumes/toi-lite_keycloak-data/_data",
+      "Name": "toi-lite_keycloak-data",
+      "Options": null,
+      "Scope": "local"
+    },
+    {
+      "CreatedAt": "2026-09-13T05:00:04Z",
+      "Driver": "local",
+      "Labels": {
+        "com.docker.compose.config-hash": "ee43bfba042c48427b5766ba409e0424044f6fd700c307255f110f3771c9c6f8",
+        "com.docker.compose.project": "toi-lite",
+        "com.docker.compose.version": "2.32.4",
+        "com.docker.compose.volume": "minio-data"
+      },
+      "Mountpoint": "/var/lib/docker/volumes/toi-lite_minio-data/_data",
+      "Name": "toi-lite_minio-data",
+      "Options": null,
+      "Scope": "local"
+    },
+    {
+      "CreatedAt": "2026-09-13T05:00:04Z",
+      "Driver": "local",
+      "Labels": {
+        "com.docker.compose.config-hash": "d023194b6df544b9861be0872ee264cf1af24bb7fb14ccabd0aefc6cce7147d3",
+        "com.docker.compose.project": "toi-lite",
+        "com.docker.compose.version": "2.32.4",
+        "com.docker.compose.volume": "verdaccio-storage"
+      },
+      "Mountpoint": "/var/lib/docker/volumes/toi-lite_verdaccio-storage/_data",
+      "Name": "toi-lite_verdaccio-storage",
+      "Options": null,
+      "Scope": "local"
+    },
+    {
+      "CreatedAt": "2026-09-13T05:00:04Z",
+      "Driver": "local",
+      "Labels": {
+        "com.docker.compose.config-hash": "d7ba8b11726de1301380efd0347758ffe1b2475299fbfbe4abe9eda4838bd81c",
+        "com.docker.compose.project": "toi-lite",
+        "com.docker.compose.version": "2.32.4",
+        "com.docker.compose.volume": "verdaccio-auth"
+      },
+      "Mountpoint": "/var/lib/docker/volumes/toi-lite_verdaccio-auth/_data",
+      "Name": "toi-lite_verdaccio-auth",
+      "Options": null,
+      "Scope": "local"
+    }
+  ],
+  "cleanup": [
+    ".env",
+    "scripts/.run"
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "at": "2026-09-13T14:40:28.881557+00:00",
+  "ports": [
+    8080,
+    4873,
+    9000,
+    5173,
+    5174,
+    7100,
+    7200,
+    7300,
+    7400
+  ],
+  "listeners": "",
+  "lsofExitCode": 1,
+  "knownServicePidsStillAlive": [],
+  "managedProcessGroupMembers": [],
+  "qa4Containers": [],
+  "qa4Volumes": [],
+  "originalToiLiteContainers": [],
+  "originalVolumeMetadataUnchanged": true,
+  "defaultDownExitCode": 0,
+  "volumesDownExitCode": 0,
+  "defaultDownPreservedVolumes": [
+    "toi-qa4_keycloak-data",
+    "toi-qa4_minio-data",
+    "toi-qa4_verdaccio-auth",
+    "toi-qa4_verdaccio-storage"
+  ],
+  "gitDiffStat": "",
+  "gitStatus": "?? docs/qa/qa4/"
+}
