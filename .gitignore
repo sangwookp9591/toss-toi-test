@@ -16,3 +16,4 @@ transcript-*.txt
 .env
 *.local
 dist/
+.run/
