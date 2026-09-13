@@ -11,7 +11,8 @@ services:
       - verdaccio-auth:/verdaccio/auth
 
   minio:
-    image: minio/minio:latest
+    # Docker Hub의 minio/minio는 공개 pull이 막혀 있어 quay.io 이미지를 릴리스 태그로 고정한다.
+    image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z
     command: server /data --console-address ":9001"
     ports:
       - "9000:9000"
