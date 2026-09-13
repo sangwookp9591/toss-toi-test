@@ -1,0 +1,17 @@
+
+> @toi/preview-runtime@0.1.0 test:browser
+> playwright test --grep cancel|navigation
+
+[WebServer] (node:87503) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 2 tests using 1 worker
+
+(node:87517) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:87517) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/runtime.browser.test.ts:88:1 › cancel followed by late successful execution is discarded (2.1s)
+  ✓  2 tests/runtime.browser.test.ts:271:1 › navigation removes committed documents, restores a fresh good frame and stops at three per minute (1.7s)
+
+  2 passed (5.4s)

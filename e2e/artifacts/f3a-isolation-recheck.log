@@ -1,0 +1,47 @@
+
+> test
+> playwright test tests/isolation.spec.ts --grep AD:|AH:
+
+
+Running 2 tests using 1 worker
+
+(node:72879) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:72879) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/isolation.spec.ts:159:1 › AD: generated location navigation leaks zero credentials, removes the frame and restores the good revision (32.7s)
+(node:73782) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:73782) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  2 tests/isolation.spec.ts:216:1 › AH: broker enforces concurrency, rolling request rate, and 5 MiB response limit (5.2s)
+
+
+  1) tests/isolation.spec.ts:159:1 › AD: generated location navigation leaks zero credentials, removes the frame and restores the good revision 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('프리뷰가 외부로 이동하려 해서 차단했습니다', { exact: true })
+    Expected: visible
+    Timeout: 30000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByText('프리뷰가 외부로 이동하려 해서 차단했습니다', { exact: true }) with timeout 30000ms
+      - waiting for getByText('프리뷰가 외부로 이동하려 해서 차단했습니다', { exact: true })
+
+
+      172 |     await expect(page.locator('#preview iframe')).toHaveCount(1);
+      173 |     await expect(page.frameLocator('#preview iframe').locator('body')).toHaveText(before, { useInnerText: true });
+    > 174 |     await expect(page.getByRole('status')).toContainText('프리뷰가 외부로 이동하려 해서 차단했습니다');
+          |                                                                              ^
+      175 |     expect((await snapshot(page)).events.some((event: any) => event.type === 'runtime_failed' && event.error.message === 'preview navigated away')).toBe(true);
+      176 |     expect(hits.length).toBeGreaterThan(0); expect(secrets.size).toBeGreaterThan(0);
+      177 |     expect(hits.some(hit => [...secrets].some(secret => decodeURIComponent(hit).includes(secret)))).toBe(false);
+        at /Users/psw/Projects/toss-toi-test/e2e/tests/isolation.spec.ts:174:78
+
+    Error Context: test-results/isolation-AD-generated-loc-8eec4--restores-the-good-revision/error-context.md
+
+  1 failed
+    tests/isolation.spec.ts:159:1 › AD: generated location navigation leaks zero credentials, removes the frame and restores the good revision 
+  1 passed (40.1s)

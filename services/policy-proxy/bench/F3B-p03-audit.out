@@ -1,0 +1,20 @@
+# canonicalJson determinism / ambiguity:
+  key order irrelevant: true
+  {"a":"1,\"b\":2"} vs {a:1,b:2} distinct: true
+  undefined dropped: {"a":1}
+  nested string with braces: true
+  unicode preserved: {"n":"홍 x"}
+
+# 50 concurrent appends: count=50 unique=true contiguous=true verify.ok=true
+# fsync: durableWrite() calls fd.datasync() before close (audit.ts:19) — code-confirmed
+
+# byte tamper (user u2->uX): verify.ok=false brokenAt=3
+# append after broken -> AUDIT_CHAIN_BROKEN
+
+# mid-line truncation across restart: verify.ok=false brokenAt=1
+
+# CLEAN tail truncation (5->3 records) across restart, NO replication:
+  verify.ok=true brokenAt=undefined lastSeq=3 recordsVisible=3
+  => UNDETECTED: chain accepts truncated tail (no external high-water anchor)
+
+# wrote p03-audit.out

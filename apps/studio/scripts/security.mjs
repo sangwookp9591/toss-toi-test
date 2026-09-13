@@ -9,8 +9,8 @@ export const studioHeaders = {
 };
 export function previewDocument(template) {
   const nonce = randomBytes(24).toString('base64');
-  const csp = ["default-src 'none'", 'connect-src http://localhost:7200',
-    `script-src 'self' http://localhost:7100 data: 'nonce-${nonce}'`,
+  const csp = ["default-src 'none'", "connect-src 'none'",
+    `script-src 'self' http://localhost:7100 'nonce-${nonce}'`,
     "style-src 'self' 'unsafe-inline'", 'img-src data: blob:', 'font-src data:',
     "form-action 'none'", "base-uri 'none'", `frame-ancestors ${studioOrigin}`,
     "worker-src 'none'", "object-src 'none'"].join('; ');

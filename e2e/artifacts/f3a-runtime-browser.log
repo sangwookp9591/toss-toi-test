@@ -1,0 +1,41 @@
+
+> @toi/preview-runtime@0.1.0 test:browser
+> playwright test
+
+[WebServer] (node:79968) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 26 tests using 1 worker
+
+(node:79986) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:79986) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/runtime-diagnostic.browser.test.ts:26:3 › sync throw maps App source after comments and "\n" (1.1s)
+  ✓   2 tests/runtime-diagnostic.browser.test.ts:26:3 › sync throw maps App source after comments and "\r\n" (894ms)
+  ✓   3 tests/runtime-diagnostic.browser.test.ts:36:1 › React render failure maps App instead of React internals and keeps the previous screen (1.1s)
+  ✓   4 tests/runtime-diagnostic.browser.test.ts:47:1 › nested Table render failure returns the child file and nearest user frame (1.2s)
+  ✓   5 tests/runtime-diagnostic.browser.test.ts:57:1 › unhandled async rejection maps the original throw after await (1.2s)
+  ✓   6 tests/runtime-diagnostic.browser.test.ts:66:1 › errors originating only in an import-map external have no VFS location (821ms)
+  ✓   7 tests/runtime-diagnostic.browser.test.ts:75:1 › primitive rejection has no invented position (758ms)
+  ✓   8 tests/runtime-diagnostic.browser.test.ts:84:1 › successive revisions use their own maps and normalize build diagnostic paths (968ms)
+  ✓   9 tests/runtime-diagnostic.browser.test.ts:98:1 › mapping stays in studio memory and never requests a map or transmits source text (877ms)
+  ✓  10 tests/runtime.browser.test.ts:20:1 › first commit, edit commit and no COOP/COEP (1.3s)
+  ✓  11 tests/runtime.browser.test.ts:33:1 › syntax and runtime failures retain the same last successful iframe (962ms)
+  ✓  12 tests/runtime.browser.test.ts:46:1 › React render throw retains previous screen (1.2s)
+  ✓  13 tests/runtime.browser.test.ts:54:1 › r10 starts, r11 starts and succeeds, late successful r10 is discarded (2.5s)
+  ✓  14 tests/runtime.browser.test.ts:74:1 › failed r11 and late successful r10 leave r9 visible (1.8s)
+  ✓  15 tests/runtime.browser.test.ts:88:1 › cancel followed by late successful execution is discarded (1.5s)
+  ✓  16 tests/runtime.browser.test.ts:101:1 › only exact allowlist imports pass, including generated JSX imports (865ms)
+  ✓  17 tests/runtime.browser.test.ts:111:1 › manifest and source digest mismatches are rejected (281ms)
+  ✓  18 tests/runtime.browser.test.ts:130:1 › forged messages from wrong origin or source cannot commit a candidate (1.0s)
+  ✓  19 tests/runtime.browser.test.ts:152:1 › merged VFS extension/index resolution and changed external set use the retained context (897ms)
+  ✓  20 tests/runtime.browser.test.ts:176:1 › frame construction preserves closing-script strings and Unicode (1.1s)
+  ✓  21 tests/runtime.browser.test.ts:183:1 › host config is credential-free, frozen and rejects legacy token fields (1.0s)
+  ✓  22 tests/runtime.browser.test.ts:202:1 › no host config creates no fetch global, including after a configured build (1.2s)
+  ✓  23 tests/runtime.browser.test.ts:220:1 › replacing only hostConfig with the same revision token commits the new config (913ms)
+  ✓  24 tests/runtime.browser.test.ts:240:1 › boot timeout retains previous iframe and dispose settles a build during input preparation (1.8s)
+  ✓  25 tests/runtime.browser.test.ts:271:1 › navigation removes committed documents, restores a fresh good frame and stops at three per minute (1.7s)
+  ✓  26 tests/runtime.browser.test.ts:288:1 › CSP rejects data and blob script modules while nonce inline code executes (855ms)
+
+  26 passed (32.0s)

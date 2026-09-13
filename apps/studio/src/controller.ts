@@ -1,3 +1,6 @@
+import { validateBrokerRequest, proxyBrokerRequest } from './fetch-broker.ts';
+import { brokerFailure } from '../../../packages/preview-runtime/src/broker.ts';
+import type { FrameToHostFetch } from '../../../contracts/src/runtime.ts';
 import { createPreviewRuntime, sourceDigest } from '../../../packages/preview-runtime/src/index.ts';
 import { previewOriginForProject } from '../../../contracts/src/runtime.ts';
 import type { PreviewRuntime, PreviewEvent, RevisionToken, PreviewHostConfig, Diagnostic } from '../../../contracts/src/runtime.ts';
@@ -57,6 +60,8 @@ export class StudioController {
   #state: StudioState = { approvals: [], files: {}, selected: '/src/App.tsx', dirty: false, status: '어떤 화면이 필요한가요?', busy: false, saving: false, conflict: false, writeAllowed: false, chats: [], events: [], generationEvents: [], audit: [], diagnostics: [], backups: [], previewPending: false, writeRemaining: 0 };
   #listeners = new Set<() => void>(); #runtime?: PreviewRuntime;
   #container?: HTMLElement; #runtimeProjectId?: string;
+  #session?: PreviewSession;
+  #sessionPending?: { projectId: string; epoch: number; promise: Promise<PreviewHostConfig> };
   #openEpoch = 0;
   #intent = 0; #attempt?: RevisionToken; #generationId?: string; #stream?: AbortController;
   #lastSeq = 0; #recovering = false; #writeTimer?: ReturnType<typeof setInterval>; #writeEpoch = 0;
@@ -71,15 +76,15 @@ export class StudioController {
     const container = this.#container;
     if (!container || this.#runtimeProjectId === projectId) return;
     ++this.#intent; ++this.#writeEpoch; clearInterval(this.#writeTimer);
-    this.#runtime?.dispose();
+    this.#runtime?.dispose(); this.#session = undefined;
     this.#runtimeProjectId = projectId;
     this.update({ lastCommit: undefined, writeAllowed: false, writeExpiresAt: undefined, writeRemaining: 0, events: [], diagnostics: [] });
     const previewOrigin = previewOriginForProject(projectId);
-    this.#runtime = createPreviewRuntime({ container, previewOrigin, frameUrl: previewOrigin + '/frame.html', esbuildWasmUrl: location.origin + '/esbuild.wasm', entry: '/src/main.tsx', bootTimeoutMs: 15000 });
+    this.#runtime = createPreviewRuntime({ container, previewOrigin, frameUrl: previewOrigin + '/frame.html', esbuildWasmUrl: location.origin + '/esbuild.wasm', entry: '/src/main.tsx', bootTimeoutMs: 15000 }, (request, signal) => this.brokerRequest(projectId, request, signal));
     this.#runtime.on(event => {
       if (event.token.projectId !== this.#runtimeProjectId) return;
       const change: Partial<StudioState> = { events: [...this.#state.events.slice(-49), event] };
-      if (event.type === 'committed') { change.lastCommit = event; change.status = '화면에 반영했어요'; change.diagnostics = []; change.previewPending = false; }
+      if (event.type === 'committed') { change.lastCommit = event; change.status = this.#state.previewError?.startsWith('프리뷰가 외부로') ? this.#state.previewError : '화면에 반영했어요'; change.diagnostics = this.#state.previewError?.startsWith('프리뷰가 외부로') ? this.#state.diagnostics : []; change.previewPending = false; }
       else if (event.token.attemptId === this.#attempt?.attemptId) {
         if (event.type === 'build_started') {
           container.style.setProperty('--preview-width', `${container.clientWidth}px`);
@@ -96,6 +101,10 @@ export class StudioController {
         }
         if (event.type === 'runtime_failed') { change.status = event.error.message.startsWith('CSP_BLOCKED:') ? '차단된 요청: 프리뷰 보안 정책이 요청을 막았어요' : `${this.failurePrefix()}: 실행 중 오류가 발생했어요`; change.diagnostics = [event.error]; change.previewPending = false; }
         if (event.type === 'stale_discarded') change.status = '이전 화면을 유지했어요: 더 최신 요청이 있어요';
+      }
+      if (event.type === 'runtime_failed' && event.error.message.startsWith('preview navigated away')) {
+        change.previewError = '프리뷰가 외부로 이동하려 해서 차단했습니다' + (event.error.message.includes('recovery limit') ? ' · 반복 이동으로 자동 복구를 중단했어요. 코드를 수정해 주세요.' : '');
+        change.status = change.previewError; change.diagnostics = [event.error]; change.previewPending = false;
       }
       this.update(change);
     });
@@ -248,6 +257,7 @@ export class StudioController {
   private async capability(project: Project): Promise<PreviewHostConfig> {
     const write = this.#state.writeAllowed; const epoch = this.#writeEpoch;
     const session = await json<PreviewSession>(API.policy + '/preview-sessions', { projectId: project.projectId, ...(write ? { write: { apiIds: project.apiIds, ttlSec: WRITE_TTL_SEC } } : {}) });
+    const hostConfig = previewHostConfig(session, project.projectId);
     if (write && this.#state.project?.projectId === project.projectId && this.#state.writeAllowed && epoch === this.#writeEpoch) {
       const expiresAt = session.capability.exp * 1000;
       clearInterval(this.#writeTimer);
@@ -262,7 +272,26 @@ export class StudioController {
       };
       this.#writeTimer = setInterval(tick, 1000); tick();
     }
-    return previewHostConfig(session, project.projectId, API.policy);
+    if (this.#state.project?.projectId === project.projectId && epoch === this.#writeEpoch) this.#session = session;
+    return hostConfig;
+  }
+  private async brokerRequest(projectId: string, request: FrameToHostFetch, signal: AbortSignal) {
+    const project = this.#state.project;
+    if (!project || project.projectId !== projectId || signal.aborted) return brokerFailure(request.requestId, 403, 'NOT_ALLOWED_SOURCE');
+    const allowedWrite = () => this.#state.writeAllowed && (!this.#state.writeExpiresAt || this.#state.writeExpiresAt > Date.now());
+    const denied = validateBrokerRequest(request, project.apiIds, allowedWrite());
+    if (denied) return denied;
+    const epoch = this.#writeEpoch;
+    if (!this.#session || Math.min(this.#session.sessionClaims.exp, this.#session.capability.exp) * 1000 <= Date.now()) {
+      if (!this.#sessionPending || this.#sessionPending.projectId !== projectId || this.#sessionPending.epoch !== epoch) {
+        const pending = { projectId, epoch, promise: this.capability(project) }; this.#sessionPending = pending;
+        void pending.promise.finally(() => { if (this.#sessionPending === pending) this.#sessionPending = undefined; }).catch(() => {});
+      }
+      await this.#sessionPending.promise;
+    }
+    if (signal.aborted || this.#state.project?.projectId !== projectId || epoch !== this.#writeEpoch || !this.#session) return brokerFailure(request.requestId, 403, 'NOT_ALLOWED_SOURCE');
+    if (request.method !== 'GET' && (!allowedWrite() || this.#session.capability.mode !== 'write' || !this.#session.capability.apiIds?.includes(request.apiId))) return brokerFailure(request.requestId, 403, 'WRITE_NOT_ALLOWED');
+    return proxyBrokerRequest(request, this.#session, API.policy, signal);
   }
   async retryPreview() { if (this.#state.project && !this.#state.previewPending) await this.preview(this.#state.project); }
   async preview(project: Project) {
@@ -311,7 +340,7 @@ export class StudioController {
       throw new DependencyError('구성 요소 서비스 연결 실패');
     } finally { clearTimeout(timeout); }
   }
-  dispose() { ++this.#openEpoch; ++this.#intent; this.#stream?.abort(); clearInterval(this.#writeTimer); this.#runtime?.dispose(); this.#runtime = undefined; this.#runtimeProjectId = undefined; this.#container = undefined; }
+  dispose() { this.#session = undefined; ++this.#writeEpoch; ++this.#openEpoch; ++this.#intent; this.#stream?.abort(); clearInterval(this.#writeTimer); this.#runtime?.dispose(); this.#runtime = undefined; this.#runtimeProjectId = undefined; this.#container = undefined; }
   async loadMembership() {
     if (!this.#state.project) return;
     try { this.update({ membership: await json<ProjectMembership>(`${API.agent}/projects/${this.#state.project.projectId}/membership`), accessNotice: undefined }); }

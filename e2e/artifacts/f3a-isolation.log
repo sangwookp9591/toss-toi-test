@@ -1,0 +1,63 @@
+
+> test
+> playwright test tests/isolation.spec.ts
+
+
+Running 11 tests using 1 worker
+
+(node:70887) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70887) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/isolation.spec.ts:13:1 › X: project origins isolate storage and cross-project frame access (6.7s)
+  ✓   2 tests/isolation.spec.ts:39:1 › Y: response CSP survives document.open and blocks egress before the server receives it (1.9s)
+  ✓   3 tests/isolation.spec.ts:76:1 › Z: project A preview session from project B origin returns PREVIEW_DIRECT_FORBIDDEN (31ms)
+  ✓   4 tests/isolation.spec.ts:85:1 › AA: preview Host/path allowlist and studio embedding headers (27ms)
+  ✓   5 tests/isolation.spec.ts:105:1 › AB: AST bypass sources are rejected without incrementing the source revision (48ms)
+  ✓   6 tests/isolation.spec.ts:130:1 › AC: actual studio preview credentials never appear in frame globals, DOM, storage or messages (1.6s)
+  ✘   7 tests/isolation.spec.ts:159:1 › AD: generated location navigation leaks zero credentials, removes the frame and restores the good revision (31.8s)
+(node:72281) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:72281) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   8 tests/isolation.spec.ts:182:1 › AE: direct policy fetch is CSP-blocked while postMessage broker succeeds (2.4s)
+  ✓   9 tests/isolation.spec.ts:190:1 › AF: replaced frame requests are ignored and its pending response is discarded (1.9s)
+  ✓  10 tests/isolation.spec.ts:206:1 › AG: PATCH is 403 WRITE_NOT_ALLOWED until the user grants write capability (1.7s)
+  ✓  11 tests/isolation.spec.ts:216:1 › AH: broker enforces concurrency, rolling request rate, and 5 MiB response limit (4.0s)
+
+
+  1) tests/isolation.spec.ts:159:1 › AD: generated location navigation leaks zero credentials, removes the frame and restores the good revision 
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator: locator('#preview iframe').contentFrame().locator('body')
+    Timeout: 30000ms
+    - Expected  - 3
+    + Received  + 1
+
+    - 새 어드민
+    -
+    - 채팅으로 화면을 만들어 보세요.
+    + 새 어드민채팅으로 화면을 만들어 보세요.
+
+    Call log:
+      - Expect "toHaveText" locator('#preview iframe').contentFrame().locator('body') with timeout 30000ms
+      - waiting for locator('#preview iframe').contentFrame().locator('body')
+        63 × locator resolved to <body>…</body>
+           - unexpected value "새 어드민채팅으로 화면을 만들어 보세요."
+
+
+      171 |     await expect.poll(async () => (await snapshot(page)).lastCommit?.token.revision).toBe(1);
+      172 |     await expect(page.locator('#preview iframe')).toHaveCount(1);
+    > 173 |     await expect(page.frameLocator('#preview iframe').locator('body')).toHaveText(before);
+          |                                                                        ^
+      174 |     await expect(page.getByText('프리뷰가 외부로 이동하려 해서 차단했습니다', { exact: true })).toBeVisible();
+      175 |     expect((await snapshot(page)).events.some((event: any) => event.type === 'runtime_failed' && event.error.message === 'preview navigated away')).toBe(true);
+      176 |     expect(hits.length).toBeGreaterThan(0); expect(secrets.size).toBeGreaterThan(0);
+        at /Users/psw/Projects/toss-toi-test/e2e/tests/isolation.spec.ts:173:72
+
+    Error Context: test-results/isolation-AD-generated-loc-8eec4--restores-the-good-revision/error-context.md
+
+  1 failed
+    tests/isolation.spec.ts:159:1 › AD: generated location navigation leaks zero credentials, removes the frame and restores the good revision 
+  10 passed (54.7s)

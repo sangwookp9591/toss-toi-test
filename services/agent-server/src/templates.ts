@@ -2,14 +2,14 @@ import type { VfsFiles } from '../../../contracts/src/runtime.ts';
 import type { PackageSetRequest } from '../../../contracts/src/package-set.ts';
 export const defaultPackageSet: PackageSetRequest = {
   entries: ['react', 'react-dom/client', 'react/jsx-runtime', '@tanstack/react-query', '@toi/tds', '@toi/fetch'],
-  dependencies: { react: '19.3.0', 'react-dom': '19.3.0', '@tanstack/react-query': '^5.0.0', '@toi/tds': '1.0.0', '@toi/fetch': '1.0.0' }
+  dependencies: { react: '19.3.0', 'react-dom': '19.3.0', '@tanstack/react-query': '^5.0.0', '@toi/tds': '1.0.0', '@toi/fetch': '1.1.0' }
 };
 export function templateFiles(apiId = 'customers'): VfsFiles {
   return {
     '/src/main.tsx': "import { createRoot } from 'react-dom/client';\nimport App from './App';\ncreateRoot(document.getElementById('root')!).render(<App />);\n",
     '/src/App.tsx': "export default function App() { return <main><h1>새 어드민</h1><p>채팅으로 화면을 만들어 보세요.</p></main>; }\n",
     '/src/api.ts': `import { configureToiFetch, toiFetch } from '@toi/fetch';
-// The trusted preview host injects runtime credentials; generated code never mints them.
+// The trusted preview host provides credential-free broker routing.
 type HostConfig = Parameters<typeof configureToiFetch>[0];
 const hostConfig = (globalThis as typeof globalThis & { __TOI_FETCH_CONFIG__?: HostConfig }).__TOI_FETCH_CONFIG__;
 if (!hostConfig) throw new Error('Preview host configuration missing: __TOI_FETCH_CONFIG__');

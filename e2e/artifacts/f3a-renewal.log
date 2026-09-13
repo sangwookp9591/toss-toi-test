@@ -1,0 +1,3 @@
+(node:85077) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+{"initialSessionIssues":1,"sharedRenewalIssues":1,"successfulConcurrentRequests":8}

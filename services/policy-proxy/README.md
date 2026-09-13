@@ -76,6 +76,7 @@ POST 처리 중 파일과 ZIP을 메모리에서만 만든다. `@zip.js/zip.js@2
 | `MINIO_ENDPOINT` | 로컬 `http://localhost:9000` |
 | `MINIO_ROOT_USER` / `MINIO_ROOT_PASSWORD` | 정책 자식 프로세스에서는 전용 사용자 값; dev-up이 `TOI_POLICY_MINIO_USER/PASSWORD`를 이 이름에 매핑 |
 | `TOI_DOWNLOAD_RETAIN_MS` | 선택, 기본/최대 86400000ms |
+| `TOI_AUDIT_RETENTION_DAYS` | 정수 1–36500일, 개발 기본 1; 운영은 보존 정책에 맞춰 명시적으로 설정(예: 365) |
 
 SDK는 `@aws-sdk/client-s3@3.1131.0`으로 고정한다. 정책 사용자는 위 두 버킷만 접근하고 감사 버킷 삭제 권한은 없다. 감사 버킷은 object lock, 다운로드 버킷은 삭제 가능한 비버전 저장소여야 한다. URL 서명 키 회전은 기존 URL을 무효화한다. KEK 회전은 새 다운로드 생성을 중단하고 기존 보존분을 소진·삭제한 뒤 새 KEK와 새 kekId를 함께 설정해 재기동한다. 단일 활성 KEK만 지원하므로 이전 kekId 객체는 503 `DOWNLOAD_KEY_UNAVAILABLE`로 닫히며 삭제 작업은 키 없이 계속 가능하다. 운영에서는 KMS의 키 버전별 unwrap/rewrap와 접근 감사·권한 분리를 구현해야 한다.
 
@@ -83,14 +84,30 @@ SDK는 `@aws-sdk/client-s3@3.1131.0`으로 고정한다. 정책 사용자는 위
 
 `audit.jsonl`은 단일 프로세스 직렬 큐로 기록하고 레코드마다 append 후 fdatasync를 완료한 뒤 응답한다. seq는 1부터 연속, 첫 prevHash는 64자리 0이며 hash는 hash 필드를 제외한 재귀 키 정렬 canonical JSON의 SHA-256이다. proxy·capability·preview-session·approval·download-create·download-fetch·membership-denied를 기록한다. 다운로드 서명 query와 ZIP 비밀번호는 감사에 넣지 않는다. 기존 해시 없는 파일은 `audit.legacy.<sha256>.jsonl`로 보존하고 새 체인의 첫 MIGRATE 레코드 `legacySha256`으로 연결한다. legacy 파일도 시작/검증 시 hash를 확인한다.
 
-기본 1000건 또는 5분마다 `audit/segments/<firstSeq>-<lastSeq>-<lastHash>.jsonl`을 MinIO로 복제한다. `If-None-Match: *` 조건부 생성으로 기존 키를 덮어쓰지 않는다. 이미 존재하는 키는 바이트가 같은 경우에만 재시도 성공으로 인정한다. 로컬 `audit-segments.json`은 이미 복제한 세그먼트를 기억하므로 원격 삭제도 탐지한다. 복제 실패는 최대 10초마다 재시도하며 `/healthz`의 `audit.replicationPending`, `replicationLagMs`, `replicationAvailable`로 상태를 보고한다. 저장소 통신 장애는 요청을 계속 처리하지만 체인·복제본 불일치는 계속 처리하지 않는다.
+기본 1000건 또는 5분마다 `audit/segments/<firstSeq>-<lastSeq>-<lastHash>.jsonl`을 MinIO로 복제한다. `If-None-Match: *` 조건부 생성으로 기존 키를 덮어쓰지 않는다. 이미 존재하는 키는 바이트가 같은 경우에만 재시도 성공으로 인정한다. 로컬 `audit-segments.json`은 이미 복제한 세그먼트를 기억하므로 원격 삭제도 탐지한다. 복제 실패는 최대 10초마다 재시도하며 `/healthz`의 `audit.replicationPending`, `replicationLagMs`, `replicationAvailable`로 상태를 보고한다. 세그먼트 복제 장애만으로는 요청을 중단하지 않는다. 외부 앵커 장애는 아래 시간 기준을 적용하고 체인·복제본 불일치는 즉시 닫는다.
 
-시작 시와 platform-admin의 `GET /audit/verify`에서 로컬 seq/hash/prevHash·legacy·모든 원격 세그먼트·로컬 복제 목록의 일치를 확인한다. 처음 발견한 brokenAt을 고정하고 `/healthz`를 제외한 모든 경로(OPTIONS 포함)를 503 `AUDIT_CHAIN_BROKEN`으로 거부한다. 감지 호출은 `{ok:false, brokenAt, ...}`를 반환하며 이후 오류와 health에서도 위치를 확인할 수 있다. append/fsync 실패도 서비스가 성공 응답을 내지 못하도록 체인을 닫는다. 이미 upstream에 전달된 쓰기 자체를 되돌리지는 못한다.
+R3-M1 외부 앵커는 `audit/anchors/<20자리 seq>-<hash>`에 `{seq,hash}` canonical JSON을 조건부 생성한다. 기본 1초 또는 50건마다 head를 저장하며 download-create·download-fetch·approval(거부 기록 포함)는 해당 앵커 PUT 완료를 기다린 뒤 응답한다. SIGTERM·SIGINT는 새 연결을 닫으면서 즉시 앵커와 미복제 세그먼트를 flush하고, 진행 중 요청 종료 후 한 번 더 flush한다. 실패한 종료 flush는 exit code 1로 보고한다. 강제 종료(SIGKILL) 직전 아직 앵커가 없는 최근 기록은 보장하지 않는다.
+
+처음 시작할 때 로컬 체인과 기존 원격 세그먼트를 확인하고 외부 앵커가 없으면 현재 head를 첫 앵커로 저장한다. 앵커 조회가 실패하면 없는 것으로 취급하지 않고 최초 검증이 성공할 때까지 새 요청을 거부한다. 기존 체인이 원래 온전했는지는 첫 앵커 생성 전의 신뢰할 수 있는 백업으로 확인해야 한다. 이후 시작/verify에서 가장 큰 원격 seq가 로컬보다 크거나 hash가 다르면 brokenAt을 고정한다. `/audit/verify`와 health의 `anchorSeq`는 관찰한 최신 원격 seq, `anchoredThrough`는 로컬과 일치 확인 또는 PUT 완료한 seq다. 정상 상태에서는 같다.
+
+최신 앵커 조회는 S3 `StartAfter`와 `MaxKeys=1`의 지수 탐색·이진 탐색으로 O(log seq)번의 제한된 목록 응답만 읽으며 마지막 seq 충돌 확인만 최대 2개를 읽는다. 전체 앵커 목록을 메모리에 올리거나 가변 최신 포인터를 신뢰하지 않는다. 앵커를 자동 삭제하지 않으며 운영 정리는 retention 만료 후 신뢰할 최신 앵커를 남기는 별도 절차로만 수행한다. 세그먼트 전체 검증 비용과 로컬 체인 메모리 크기는 기존처럼 기록량에 비례한다.
+
+앵커 기록 실패는 자동 재시도한다. 5초를 초과하면 `/healthz`는 HTTP 200에 `status: degraded`, 30초를 초과하면 새 요청은 503 `AUDIT_ANCHOR_UNAVAILABLE`이다. 중요 레코드의 응답은 첫 앵커 실패부터 503이며 성공을 먼저 내지 않는다. 복구 PUT/검증이 완료되면 실패 상태를 자동 해제한다. health에는 `anchorFailureMs`, `anchorAvailable`도 표시한다. `audit.ok`는 체인 무결성, `audit.degraded`는 체인 및 앵커 가용성 상태다. 네트워크 작업은 타임아웃을 가지며 주기 작업은 중복 대기열을 쌓지 않는다.
+
+R3-L1: 새 세그먼트·앵커 PUT은 `ObjectLockMode=COMPLIANCE`, `ObjectLockRetainUntilDate=현재+TOI_AUDIT_RETENTION_DAYS`를 설정한다. 다운로드 객체에는 적용하지 않는다. 이미 존재하던 retention 없는 객체에 소급 적용하지 않으므로 운영 이전 시 별도 보존 정책 적용이 필요하다. `scripts/storage.mjs`는 실제 감사 버킷 lock 확인 후 별도 임시 버킷에서 짧은 COMPLIANCE 보존을 설정하고 읽기·root의 versionId 지정 삭제 거부를 검증한 뒤 만료 후 객체/버킷을 삭제한다. 공용 감사 버킷에는 시험 객체를 남기지 않는다.
+
+S3 Object Lock은 객체 **버전**을 보존한다. root도 보존 중 버전 삭제를 할 수 없지만 versionId 없는 DELETE는 delete marker를 만들 수 있다([AWS Object Lock](https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lock.html)). 서비스 사용자는 감사 DeleteObject 권한이 없고 PUT은 조건부 생성이다. 독립 운영자/WORM 계정과 정책 분리 없이 root가 최신 객체를 숨기는 공격까지 이 애플리케이션만으로 막지는 못한다.
+
+개발 `scripts/dev-down.mjs`는 현재 `docker compose down`으로 종료하며 named volume은 보존한다. 명시적인 개발 초기화 `docker compose --env-file .env -f infra/docker-compose.yml down --volumes`는 스토리지 바깥에서 볼륨을 제거하므로 MinIO COMPLIANCE와 관계없이 가능하다. `test/retention.test.ts`는 공용 서비스 대신 실제 retained 객체가 든 격리 MinIO의 container·named volume을 제거하고 volume 부재를 검증한다. 운영에서 이 경로가 가능하지 않도록 스토리지 관리자·호스트 권한을 분리해야 한다.
+
+R3-M2: 프리뷰 origin의 모든 경로(health, OPTIONS 포함)는 CORS 헤더 없이 403 `PREVIEW_DIRECT_FORBIDDEN`이다. 스튜디오 브로커의 origin만 CORS를 허용하고 브로커가 보낸 preview session/capability의 프로젝트·멤버십·권한을 서버에서 계속 확인한다.
+
+시작 시와 platform-admin의 `GET /audit/verify`에서 로컬 seq/hash/prevHash·legacy·모든 원격 세그먼트·로컬 복제 목록의 일치를 확인한다. 처음 발견한 brokenAt을 고정하고 `/healthz`를 제외한 모든 허용 origin 경로(OPTIONS 포함)를 503 `AUDIT_CHAIN_BROKEN`으로 거부한다. 감지 호출은 `{ok:false, brokenAt, ...}`를 반환하며 이후 오류와 health에서도 위치를 확인할 수 있다. append/fsync 실패도 서비스가 성공 응답을 내지 못하도록 체인을 닫는다. 이미 upstream에 전달된 쓰기 자체를 되돌리지는 못한다.
 
 복구 시 서비스의 쓰기를 중단하고 손상된 로컬 디렉터리를 증거로 보존한다. 별도 신뢰 경로로 WORM 세그먼트의 키·바이트·연속 범위·hash를 검증한 뒤 원래 순서대로 로컬 체인을 복원한다. 마지막 복제 이후 tail은 별도 검증된 백업에서만 복구한다; 불확실한 행 삭제, seq 재번호, hash 재계산으로 검증을 우회하지 않는다. 원격/로컬 파일을 수정해 서비스가 자동으로 체인을 다시 신뢰하게 하지 않으며, 승인된 복구 후 재기동·관리자 verify로 정상 상태를 확인한다.
 
 운영에서는 독립 자격증명과 보존기간이 강제되는 WORM/object-lock compliance 저장소, 감사 체크포인트의 별도 신뢰 앵커, 영속 데이터 볼륨과 백업, 디렉터리 메타데이터 내구성, 복제 지연 알림, TLS, KMS, 용량/동시 작업 상한을 갖춰야 한다. 이 구현은 단일 policy-proxy 프로세스가 한 데이터 디렉터리를 소유한다. 여러 프로세스가 같은 파일을 쓰는 운영 구성은 분산 순번/저널 저장소 없이 지원하지 않는다. 로컬 tail과 원격 저장소·관리자 권한을 모두 탈취한 공격까지 hash 체인만으로 증명할 수는 없다.
 
-검증은 `test/downloads.test.ts`, `test/audit.test.ts`와 기존 정책 테스트를 포함한다. 로컬 한 줄 변조·원격 불일치·삭제·truncation fail-closed 테스트는 모두 임시 디렉터리와 격리 HTTP 인스턴스에서 실행해 공용 서비스를 손상시키지 않는다. 실제 Keycloak·MinIO·브라우저 T–W는 `e2e/tests/downloads.spec.ts`가 담당한다.
+검증은 `test/downloads.test.ts`, `test/audit.test.ts`와 기존 정책 테스트를 포함한다. 로컬 한 줄 변조·원격 불일치·삭제·truncation fail-closed 테스트는 모두 임시 디렉터리와 격리 HTTP 인스턴스에서 실행해 공용 서비스를 손상시키지 않는다. `npm test`의 retention/SIGTERM/SIGINT 통합 테스트는 Docker와 고정 MinIO 이미지를 사용해 격리 container·named volume을 생성하고 제거하므로 Docker 실행이 필요하다. 기존 브라우저 테스트는 Chrome을 사용한다. 실제 Keycloak·MinIO·브라우저 T–W는 `e2e/tests/downloads.spec.ts`가 담당한다.
 
 라이브러리/프로토콜 근거: [zip.js AE-2와 AES](https://gildas-lormeau.github.io/zip.js/), [ZIP 암호화 옵션](https://gildas-lormeau.github.io/zip.js/api/interfaces/ZipWriterAddDataOptions.html), [S3 조건부 생성](https://docs.aws.amazon.com/AmazonS3/latest/userguide/conditional-writes.html).

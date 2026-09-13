@@ -10,7 +10,7 @@ async function preview(account: Parameters<typeof api>[0], projectId: string) {
   expect(response.status).toBe(200); return response.json();
 }
 async function proxy(session: { sessionToken: string; capabilityToken: string }, projectId: string, path = '/customers', method = 'GET') {
-  return fetch(policy + '/proxy/customers' + path, { method, headers: { Origin: `http://p-${projectId}.preview.localhost:5174`, Authorization: 'Bearer ' + session.sessionToken, 'X-Toi-Capability': session.capabilityToken, 'X-Toi-Project': projectId, 'X-Toi-Reason': 'Identity boundary verification', 'Content-Type': 'application/json' }, ...(method === 'GET' ? {} : { body: JSON.stringify({ status: 'active' }) }) });
+  return fetch(policy + '/proxy/customers' + path, { method, headers: { Origin: 'http://localhost:5173', Authorization: 'Bearer ' + session.sessionToken, 'X-Toi-Capability': session.capabilityToken, 'X-Toi-Project': projectId, 'X-Toi-Reason': 'Identity boundary verification', 'Content-Type': 'application/json' }, ...(method === 'GET' ? {} : { body: JSON.stringify({ status: 'active' }) }) });
 }
 test('N: carol nonmember receives 404 and cannot mint or use preview/capability', async ({ browser, accounts }) => {
   const alice = await accounts('alice'); const carol = await accounts('carol'); const p = await project(alice);
@@ -165,11 +165,11 @@ test('S: iframe globals/storage/messages/URLs contain no Keycloak token', async 
     }
     collect(globalThis); collect({ ...localStorage }); collect({ ...sessionStorage }); strings.push(location.href);
     const config = (globalThis as any).__TOI_FETCH_CONFIG__;
-    return { strings, audience: JSON.parse(atob(config.sessionToken.split('.')[1])).aud, roles: JSON.parse(atob(config.sessionToken.split('.')[1])).roles };
+    return { strings, config };
   });
   // Compare in the Node worker: the test itself never sends an identity token into a frame.
   expect(result.strings.some(value => [...identityTokens].some(token => value.includes(token)))).toBe(false);
-  expect({ audience: result.audience, roles: result.roles }).toEqual({ audience: 'toi-preview', roles: ['viewer'] });
+  expect(Object.keys(result.config).sort()).toEqual(['env', 'projectId', 'transport']);
   const studioState = await page.evaluate(() => JSON.stringify({ ...localStorage, ...sessionStorage, snapshot: (window as any).studio.getSnapshot() }));
   expect([...identityTokens].some(token => studioState.includes(token))).toBe(false);
 });

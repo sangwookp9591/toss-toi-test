@@ -1,0 +1,98 @@
+
+> @toi/studio@1.0.0 test
+> node --experimental-transform-types --test test/*.test.ts
+
+TAP version 13
+# (node:85190) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: anonymous state and refresh failure erase identity and require login
+ok 1 - anonymous state and refresh failure erase identity and require login
+  ---
+  duration_ms: 2.458083
+  ...
+# Subtest: SSO restores memory state; concurrent renewal shares one request; snapshot has no tokens
+ok 2 - SSO restores memory state; concurrent renewal shares one request; snapshot has no tokens
+  ---
+  duration_ms: 12.566167
+  ...
+# Subtest: agent/policy Bearer injection, one renewal and retry preserve method, body, abort and SSE headers
+ok 3 - agent/policy Bearer injection, one renewal and retry preserve method, body, abort and SSE headers
+  ---
+  duration_ms: 34.262958
+  ...
+# Subtest: second 401 stops retrying and clears login, while 403 never refreshes
+ok 4 - second 401 stops retrying and clears login, while 403 never refreshes
+  ---
+  duration_ms: 6.3395
+  ...
+# Subtest: credentials never go to builder or lookalike origin
+ok 5 - credentials never go to builder or lookalike origin
+  ---
+  duration_ms: 1.036875
+  ...
+# Subtest: OIDC uses PKCE code flow, memory user store and only session-scoped transient state
+ok 6 - OIDC uses PKCE code flow, memory user store and only session-scoped transient state
+  ---
+  duration_ms: 0.494291
+  ...
+# Subtest: preview host configuration includes only broker routing, never credentials or extra response fields
+ok 7 - preview host configuration includes only broker routing, never credentials or extra response fields
+  ---
+  duration_ms: 0.228792
+  ...
+# Subtest: parallel rejected requests coalesce refresh and each retry at most once
+ok 8 - parallel rejected requests coalesce refresh and each retry at most once
+  ---
+  duration_ms: 7.199959
+  ...
+# Subtest: failed refresh after 401 never retries with stale credentials
+ok 9 - failed refresh after 401 never retries with stale credentials
+  ---
+  duration_ms: 0.780292
+  ...
+# Subtest: expiry during renewal preserves authenticated workspace state until renewal settles
+ok 10 - expiry during renewal preserves authenticated workspace state until renewal settles
+  ---
+  duration_ms: 0.665833
+  ...
+# Subtest: failed pending renewal logs out once, while a late expiry event ignores a fresh token
+ok 11 - failed pending renewal logs out once, while a late expiry event ignores a fresh token
+  ---
+  duration_ms: 0.333
+  ...
+# Subtest: signout cannot be undone by an in-flight renewal response
+ok 12 - signout cannot be undone by an in-flight renewal response
+  ---
+  duration_ms: 0.175333
+  ...
+# Subtest: preview config rejects another project session, capability, or privileged session
+ok 13 - preview config rejects another project session, capability, or privileged session
+  ---
+  duration_ms: 0.184166
+  ...
+# (node:85191) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: broker validates API allowlist, normalized prefix, methods, write, headers and UTF-8 body sizes
+ok 14 - broker validates API allowlist, normalized prefix, methods, write, headers and UTF-8 body sizes
+  ---
+  duration_ms: 3.946459
+  ...
+# Subtest: broker attaches only trusted credentials, Content-Type and encoded reason, forces redirect error
+ok 15 - broker attaches only trusted credentials, Content-Type and encoded reason, forces redirect error
+  ---
+  duration_ms: 29.1315
+  ...
+# Subtest: broker streams a maximum of 5 MiB, cancels excess, and sanitizes network errors
+ok 16 - broker streams a maximum of 5 MiB, cancels excess, and sanitizes network errors
+  ---
+  duration_ms: 1.212334
+  ...
+1..16
+# tests 16
+# suites 0
+# pass 16
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 245.795417

@@ -36,7 +36,7 @@ access·refresh·ID 토큰은 `InMemoryWebStorage` 기반 OIDC user store와 비
 
 ## 프리뷰 세션과 쓰기
 
-스튜디오는 `POST /preview-sessions`로 현재 프로젝트의 하향 세션과 capability를 함께 받는다. 프리뷰에는 그 응답의 `sessionToken`·`capabilityToken`만 `BuildInput.hostConfig.toiFetch`로 전달한다. Keycloak 토큰은 프리뷰 iframe·postMessage·URL·storage에 전달하지 않으며 debug snapshot에도 없다. 프레임은 하향 설정만 동결된 `__TOI_FETCH_CONFIG__`로 주입한다. 기존 개발용 세션 경로는 제거했다.
+스튜디오는 `POST /preview-sessions`로 현재 프로젝트의 하향 세션과 capability를 받아 비공개 메모리에만 보관한다. 프리뷰 `BuildInput.hostConfig.toiFetch`에는 `{ projectId, env, transport: "broker" }`만 전달한다. Keycloak·프리뷰 세션·capability 토큰은 frame 전역·DOM·postMessage·URL·storage·debug snapshot에 없다. `@toi/fetch@1.1.0`이 부팅 시 받은 부모 origin으로 요청하면 runtime이 frame 수명·origin·source·revision·동시성·속도를 확인하고 스튜디오가 API·쓰기·크기를 검증해 자격 증명을 붙인다. 만료된 읽기 세션은 브로커가 재발급하며 쓰기 만료는 기존 카운트다운과 사용자 재허용 흐름을 따른다.
 
 “쓰기 테스트 허용”을 켜면 같은 endpoint에 현재 `apiIds`와 최대 120초 TTL의 `write`를 요청하고 새 하향 세션·capability로 재빌드한다. 끄면 조회 세션을 발급한다. 모든 프리뷰 capability의 환경은 preview이며 합성 upstream만 사용한다. viewer 세션은 직접 capability를 발급할 수 없다.
 

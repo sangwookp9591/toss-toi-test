@@ -16,20 +16,21 @@ it('sends snapshotted hostConfig in the load message without changing revision i
     Object.assign(event, { data, origin: 'http://p-00000000-0000-4000-8000-000000000000.preview.localhost:5174', source: frameWindow });
     events.dispatchEvent(event);
   };
-  const frame = { contentWindow: frameWindow, style: { cssText: '' }, dataset: {}, sandbox: { add: vi.fn() }, setAttribute: vi.fn(), removeAttribute: vi.fn(), remove: vi.fn(), inert: false };
+  const frameEvents = new EventTarget();
+  const frame = { contentWindow: frameWindow, style: { cssText: '' }, dataset: {}, sandbox: { add: vi.fn() }, setAttribute: vi.fn(), removeAttribute: vi.fn(), remove: vi.fn(), addEventListener: frameEvents.addEventListener.bind(frameEvents), removeEventListener: frameEvents.removeEventListener.bind(frameEvents), inert: false };
   vi.stubGlobal('location', { origin: 'http://localhost:5173' });
   vi.stubGlobal('window', Object.assign(events, { setTimeout }));
   vi.stubGlobal('document', { createElement: () => frame });
-  const container = { append: () => queueMicrotask(() => dispatch({ kind: 'frame_ready' })) } as unknown as HTMLElement;
+  const container = { append: () => queueMicrotask(() => { frameEvents.dispatchEvent(new Event('load')); dispatch({ kind: 'frame_ready' }); }) } as unknown as HTMLElement;
   const runtime = new BrowserPreviewRuntime({ container, previewOrigin: 'http://p-00000000-0000-4000-8000-000000000000.preview.localhost:5174', frameUrl: 'http://p-00000000-0000-4000-8000-000000000000.preview.localhost:5174/frame.html', esbuildWasmUrl: 'http://localhost:5173/esbuild.wasm', entry: '/src/main.tsx' });
   vi.spyOn(runtime as any, 'compile').mockResolvedValue({ code: '', bundleMs: 1 });
   const files = { '/src/main.tsx': '' };
-  const input: BuildInput = { layers: { user: files }, manifest: fixture, token: { projectId: '00000000-0000-4000-8000-000000000000', revision: 1, attemptId: 'same-attempt', sourceDigest: await sourceDigest(files), manifestDigest: await digestJson(fixture) }, hostConfig: { toiFetch: { sessionToken: 'viewer-session', capabilityToken: 'read-capability', projectId: '00000000-0000-4000-8000-000000000000', proxyBaseUrl: 'http://localhost:7200', env: 'preview' } } };
+  const input: BuildInput = { layers: { user: files }, manifest: fixture, token: { projectId: '00000000-0000-4000-8000-000000000000', revision: 1, attemptId: 'same-attempt', sourceDigest: await sourceDigest(files), manifestDigest: await digestJson(fixture) }, hostConfig: { toiFetch: { transport: 'broker', projectId: '00000000-0000-4000-8000-000000000000', env: 'preview' } } };
   const expected = structuredClone(input.hostConfig);
   runtime.setDesiredRevision(input.token);
   try {
     const pending = runtime.build(input);
-    input.hostConfig!.toiFetch!.capabilityToken = 'caller-mutated-token';
+    input.hostConfig!.toiFetch!.env = 'live';
     expect((await pending).type).toBe('committed');
     expect(frameWindow.postMessage.mock.calls[0][0]).toMatchObject({ kind: 'load', token: input.token, hostConfig: expected });
     expect((await runtime.build(input)).type).toBe('committed');

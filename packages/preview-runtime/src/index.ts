@@ -1,3 +1,4 @@
+import { FrameBroker, type FetchBroker } from './broker.ts';
 import { projectIdFromPreviewOrigin } from '../../../contracts/src/runtime.ts';
 import type { BuildInput, Diagnostic, ParentToFrame, PreviewEvent, PreviewRuntime, PreviewRuntimeOptions, RevisionToken } from '../../../contracts/src/runtime.ts';
 import type { BundleRequest, BundleResponse } from './worker-protocol.ts';
@@ -8,8 +9,8 @@ export { canonicalJson, digestJson, mergeVfs, sourceDigest, isAllowedExternal } 
 export { commitDecision, sameToken } from './guard.ts';
 export type { BuildInput, PreviewHostConfig, PreviewRuntime, PreviewRuntimeOptions, RevisionToken, PreviewEvent } from '../../../contracts/src/runtime.ts';
 
-export function createPreviewRuntime(options: PreviewRuntimeOptions): PreviewRuntime {
-  return new BrowserPreviewRuntime(options);
+export function createPreviewRuntime(options: PreviewRuntimeOptions, broker?: FetchBroker): PreviewRuntime {
+  return new BrowserPreviewRuntime(options, broker);
 }
 
 export class BrowserPreviewRuntime implements PreviewRuntime {
@@ -22,10 +23,14 @@ export class BrowserPreviewRuntime implements PreviewRuntime {
   private active?: HTMLIFrameElement;
   private activeCleanup?: () => void;
   private candidates = new Map<HTMLIFrameElement, () => void>();
+  private frameBrokers = new Map<FrameBroker, RevisionToken>();
   private disposed = false;
   private options: PreviewRuntimeOptions;
 
-  constructor(options: PreviewRuntimeOptions) {
+  private navigationTimes: number[] = [];
+  private recovery?: { payload: ParentToFrame; bundle: BundleSource };
+  private committedPayload?: { payload: ParentToFrame; bundle: BundleSource };
+  constructor(options: PreviewRuntimeOptions, private broker?: FetchBroker) {
     this.options = { ...options };
     if (!projectIdFromPreviewOrigin(options.previewOrigin) || options.previewOrigin === location.origin) throw new Error('previewOrigin must be a project preview origin');
     if (new URL(options.frameUrl).origin !== options.previewOrigin) throw new Error('frameUrl must belong to previewOrigin');
@@ -33,7 +38,7 @@ export class BrowserPreviewRuntime implements PreviewRuntime {
   setDesiredRevision(token: RevisionToken) {
     if (token.projectId !== projectIdFromPreviewOrigin(this.options.previewOrigin)) throw new Error('preview project origin mismatch');
     this.desired = { ...token }; }
-  cancel(token: RevisionToken) { this.canceled.add(tokenKey(token)); }
+  cancel(token: RevisionToken) { this.canceled.add(tokenKey(token)); for (const [broker, revision] of this.frameBrokers) if (sameToken(token, revision)) broker.invalidate(); }
   on(listener: (event: PreviewEvent) => void) { this.listeners.add(listener); return () => { this.listeners.delete(listener); }; }
   private emit(event: PreviewEvent): PreviewEvent {
     for (const listener of this.listeners) {
@@ -98,6 +103,39 @@ export class BrowserPreviewRuntime implements PreviewRuntime {
       frame.inert = true;
       let settled = false;
       let loaded = false;
+      let ready = false;
+      let loadCount = 0;
+      let frameBroker: FrameBroker | undefined;
+      const cleanup = () => {
+        frameBroker?.invalidate(); if (frameBroker) this.frameBrokers.delete(frameBroker);
+        window.removeEventListener('message', onMessage);
+        frame.removeEventListener('load', onNavigation);
+      };
+      const sendLoad = () => {
+        if (!ready || loadCount === 0 || loaded) return;
+        loaded = true;
+        if (this.broker) { frameBroker = new FrameBroker(frame.contentWindow!, this.options.previewOrigin, payload.token, this.broker); this.frameBrokers.set(frameBroker, payload.token); }
+        frame.contentWindow!.postMessage(payload, this.options.previewOrigin);
+      };
+      const onNavigation = () => {
+        loadCount++;
+        // Wait for the loader's first load before replacing its document. The
+        // second load belongs to document.open; every later load is navigation.
+        if (loadCount === 1) { sendLoad(); return; }
+        if (loadCount === 2) return;
+        if (this.active !== frame) { if (!settled) finish(false, 0, { message: 'preview navigated away' }); return; }
+        cleanup(); frame.remove(); this.active = undefined; this.activeCleanup = undefined;
+        const now = Date.now(); this.navigationTimes = this.navigationTimes.filter(time => time > now - 60000); this.navigationTimes.push(now);
+        this.emit({ type: 'runtime_failed', token: payload.token, error: { message: 'preview navigated away' } });
+        const recovery = this.recovery ?? this.committedPayload;
+        this.committedPayload = undefined; this.recovery = undefined;
+        if (recovery && this.navigationTimes.length < 3 && !this.disposed && sameToken(payload.token, this.desired)) {
+          this.desired = { ...recovery.payload.token };
+          void this.stage(structuredClone(recovery.payload), 0, performance.now(), recovery.bundle);
+        } else if (this.navigationTimes.length >= 3) {
+          this.emit({ type: 'runtime_failed', token: payload.token, error: { message: 'preview navigated away: recovery limit reached (3/min)' } });
+        }
+      };
       const finish = (rendered: boolean, bootMs = 0, error: Diagnostic = { message: 'Preview boot timed out' }) => {
         if (settled) return;
         settled = true;
@@ -112,12 +150,14 @@ export class BrowserPreviewRuntime implements PreviewRuntime {
           frame.inert = false;
           frame.dataset.state = 'committed';
           this.activeCleanup?.();
-          this.activeCleanup = () => window.removeEventListener('message', onMessage);
+          this.activeCleanup = cleanup;
+          this.recovery = this.committedPayload;
+          this.committedPayload = { payload, bundle };
           this.active?.remove();
           this.active = frame;
           event = { type: 'committed', token: payload.token, timings: { bundleMs, bootMs, totalMs: performance.now() - start } };
         } else {
-          window.removeEventListener('message', onMessage);
+          cleanup();
           frame.remove();
           event = decision === 'runtime_failed' ? { type: 'runtime_failed', token: payload.token, error } : { type: 'stale_discarded', token: payload.token, reason: decision };
         }
@@ -125,9 +165,9 @@ export class BrowserPreviewRuntime implements PreviewRuntime {
       };
       const onMessage = (event: MessageEvent<RuntimeFrameMessage>) => {
         if (event.origin !== this.options.previewOrigin || event.source !== frame.contentWindow || !event.data) return;
+        if ((event.data as { kind: string }).kind === 'toi_fetch') { if (!this.canceled.has(tokenKey(payload.token))) void frameBroker?.receive(event); return; }
         if (event.data.kind === 'frame_ready' && !loaded) {
-          loaded = true;
-          frame.contentWindow!.postMessage(payload, this.options.previewOrigin);
+          ready = true; sendLoad();
         } else if (loaded && event.data.kind === 'rendered' && sameToken(event.data.token, payload.token)) {
           finish(true, event.data.bootMs);
         } else if (loaded && event.data.kind === 'error' && sameToken(event.data.token, payload.token)) {
@@ -142,6 +182,7 @@ export class BrowserPreviewRuntime implements PreviewRuntime {
       const url = new URL(this.options.frameUrl);
       url.searchParams.set('parentOrigin', location.origin);
       frame.src = url.href;
+      frame.addEventListener('load', onNavigation);
       this.options.container.append(frame);
     });
   }

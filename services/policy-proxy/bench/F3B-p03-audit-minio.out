@@ -1,0 +1,8 @@
+# temp audit bucket objectLock=Enabled (segment 1..5 replicated)
+# truncate below replicated boundary (7->4, seg covers 1..5): verify.ok=false brokenAt=5 => DETECTED via remote segment
+# object-lock-enabled bucket, object PUT without retention, root delete -> DELETED (S3Objects.put sets no ObjectLockRetainUntilDate)
+
+# policy user DeleteObject on AUDIT bucket (nonexistent key) -> AccessDenied  (expect AccessDenied = cannot delete audit)
+# policy user DeleteObject on DOWNLOAD bucket (nonexistent key) -> allowed  (expect success/NoSuchKey = delete allowed for cleanup)
+
+# wrote p03-audit-minio.out

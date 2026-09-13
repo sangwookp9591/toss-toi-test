@@ -91,9 +91,11 @@ iframe은 항상 preview origin의 실제 HTTP `frame.html`로 탐색합니다. 
 
 `load`를 받으면 `document.open/write/close`로 새 HTML 문서를 구성합니다. `BuildInput.hostConfig`는 입력 스냅샷에서 그대로 `ParentToFrame.load.hostConfig`로 전달합니다. `hostConfig.toiFetch`가 있으면 문서의 첫 스크립트에서 `globalThis.__TOI_FETCH_CONFIG__ = Object.freeze({ ...hostConfig.toiFetch })`를 설정하고, 그 뒤에 `<script type="importmap">`, 실행 bootstrap, 앱 모듈 순서로 진행합니다. hostConfig 또는 toiFetch 설정이 없으면 전역을 만들지 않습니다. 따라서 앱의 최초 모듈 평가 시점부터 설정을 읽을 수 있고, bare import가 해석되기 전에 import map도 파싱됩니다. iframe 문서에 blob URL이나 srcdoc을 사용하지 않으므로 실제 preview origin이 유지되어 양방향 origin 검증이 가능합니다.
 
-이 전역은 생성 코드가 읽을 수 있으며 `Object.freeze`는 설정 객체의 필드 변경을 막는 장치일 뿐 토큰을 숨기지 않습니다. viewer 역할만 가진 세션과 기본 **read capability·짧은 TTL**을 주입하고 editor 세션은 신뢰하는 host에만 둡니다. write capability는 명시적 승인 후 API 범위와 TTL을 제한해 전달합니다. hostConfig는 소스나 revision 식별자에 포함하지 않으므로 토큰 교체로 sourceDigest가 달라지지 않습니다.
+설정 전역은 `{ projectId, env, transport: "broker" }`만 포함합니다. 프리뷰 세션·capability는 스튜디오 메모리에만 두며 frame은 토큰 필드가 포함된 부팅 설정을 거부합니다. 별도 동결된 브로커 채널에는 부팅 시 검증한 부모 origin과 revision·attemptId만 있습니다. `createPreviewRuntime(options, broker)`의 콜백은 스튜디오가 제공하며 런타임은 frame별 source·origin·token, 동시 8건·초당 50건을 검사합니다. 교체·취소·내비게이션·dispose 시 진행 중 브로커 작업을 abort하고 늦은 응답을 버립니다.
 
-앱 번들 자체는 URI 인코딩된 `data:text/javascript` 모듈로 import합니다. 문서 URL은 계속 HTTP입니다. 이를 통해 앱 안의 `</script>`·한글·이모지가 HTML 태그나 손상된 코드로 해석되지 않습니다. hostConfig, import map과 bootstrap 인자는 같은 `json()` 경로로 `<`, U+2028, U+2029를 escape합니다. 문서 작성 뒤 등록한 오류/미처리 rejection handler가 모듈 평가와 React의 초기 render throw를 감지합니다. 모듈 import가 끝나고 **2 rAF** 뒤 오류가 없을 때만 `rendered`를 보냅니다.
+앱 번들은 nonce가 붙은 인라인 module의 `textContent`로 실행합니다. HTML 파서를 거치지 않아 `</script>`·Unicode가 안전하고, 부트 인자·import map은 기존 JSON escape를 유지합니다. 완료 콜백과 2 rAF 뒤 오류가 없을 때만 커밋합니다. CSP는 `connect-src 'none'`이며 `script-src`는 data:·blob:·unsafe-eval을 허용하지 않습니다.
+
+커밋 뒤 추가 load는 내비게이션으로 처리해 frame을 제거하고 `runtime_failed("preview navigated away")`를 냅니다. 이전 정상 payload를 새 frame으로 복구하며 1분 내 3회 이동이면 복구를 중단합니다. 화면에 렌더링된 마스킹 데이터의 내비게이션 쿼리 유출은 남지만 토큰은 frame에 존재하지 않습니다.
 
 ## 런타임 오류 위치 (QA-04)
 
@@ -119,11 +121,11 @@ npm run bench
 
 ```text
 npm run typecheck: tsc --noEmit — exit 0
-vitest: Test Files 3 passed (3), Tests 35 passed (35)
-Playwright: 24 passed (21.7s), system channel: chrome
+vitest: Test Files 4 passed (4), Tests 40 passed (40)
+Playwright: 26 passed (32.0s), system channel: chrome
 ```
 
-hostConfig 검증 시 기존 단위 22개·브라우저 12개를 유지했고, hostConfig load 메시지 전달/입력 스냅샷 단위 테스트 1개와 브라우저 테스트 3개를 추가했습니다. 추가 브라우저 검증은 초기 실행 전 projectId 렌더, frozen 객체 변경 차단, 토큰의 closing-script/U+2028/U+2029 보존, 설정 미제공 시 전역 부재, 동일 revision 토큰의 설정만 교체한 재커밋을 확인합니다.
+hostConfig 검증 시 기존 단위 22개·브라우저 12개를 유지했고, hostConfig load 메시지 전달/입력 스냅샷 단위 테스트 1개와 브라우저 테스트 3개를 추가했습니다. 추가 브라우저 검증은 초기 실행 전 projectId 렌더, frozen 객체 변경 차단, 번들의 closing-script/Unicode 보존과 토큰 필드 부팅 거부, 설정 미제공 시 전역 부재, 동일 revision 토큰의 설정만 교체한 재커밋을 확인합니다.
 
 QA-04는 기존 단위 23개·브라우저 15개를 모두 유지하고 단위 12개·브라우저 9개를 추가했습니다. App 동기 throw, React App/Table render, await 뒤 미처리 rejection, 외부 모듈만 있는 stack, 원시값 rejection, LF/CRLF·앞쪽 공백과 주석, 연속 revision의 서로 다른 오류 행, build 경로 정규화 및 원문/map 전송 부재를 확인합니다. 단위 검증은 외부·생성 전용 프레임 건너뛰기, 다른 후보 URL, 잘못된 위치·map과 실제 esbuild map의 행/열도 확인합니다.
 
@@ -155,7 +157,7 @@ QA-04는 기존 단위 23개·브라우저 15개를 모두 유지하고 단위 1
 - 프리뷰는 매번 새 realm으로 실행하므로 React 상태/Fast Refresh/HMR를 보존하지 않습니다. CSS/assets, Node builtin, CJS `require` 호환 레이어, tsconfig alias는 제공하지 않습니다. 계산식 dynamic import는 esbuild가 정적으로 해석할 수 없어 allowlist가 네트워크 접근 보안 경계가 되지 않습니다.
 - 초기 실행 검증 이후 발생한 지연 오류를 자동 롤백하지 않습니다. 실행 완료된 API 쓰기도 롤백하지 않습니다. 정책 프록시의 권한·capability 검증은 별도 시스템이 담당합니다. iframe은 악성 코드의 CPU 무한 루프나 모든 데이터 유출을 막는 하드 샌드박스가 아닙니다.
 - import map의 manifest digest는 확인하지만 각 외부 모듈의 sha256을 브라우저에서 별도로 검사하지 않습니다. 실제 산출물의 immutable URL/무결성/peer singleton은 deps-builder의 책임입니다. 공개 fixture의 `files:[]`는 이 검증을 대신하지 않습니다.
-- frame 배포 CSP는 bootstrap과 `data:` 모듈 및 승인 의존성 origin을 허용하도록 별도 설계해야 합니다. 기본 데모 서버는 CSP를 설정하지 않습니다. HTTPS 배포에서는 studio, preview, WASM 및 의존성 URL을 모두 적절히 HTTPS로 바꿉니다.
+- frame과 데모 서버는 nonce CSP를 사용하고 번들은 인라인 module로 실행합니다. data:·blob: 스크립트와 직접 네트워크 연결은 거부합니다. HTTPS 배포에서는 studio, preview, WASM 및 의존성 URL을 모두 적절히 HTTPS로 바꿉니다.
 - 취소된 토큰은 해당 런타임의 수명 동안 기억합니다. 프로젝트를 닫을 때 `dispose()`해야 합니다. 백그라운드 탭/숨겨진 상위 컨테이너의 rAF 억제로 boot timeout이 발생할 수 있습니다. 무제한 동시 후보 수를 제어하는 UI admission 정책은 소비 앱에서 추가해야 합니다.
 
 

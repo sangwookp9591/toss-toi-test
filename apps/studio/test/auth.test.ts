@@ -59,10 +59,10 @@ test('OIDC uses PKCE code flow, memory user store and only session-scoped transi
   assert.ok(await new WebStorageStateStore({ store: sessionStorage }).get('user') == null);
   assert.equal(await settings.userStore!.get('user'), 'secret');
 });
-test('preview host configuration includes only downgraded tokens, never Keycloak tokens or extra response fields', () => {
+test('preview host configuration includes only broker routing, never credentials or extra response fields', () => {
   const input = { sessionToken: 'preview-session', capabilityToken: 'preview-capability', access_token: 'identity-secret', refresh_token: 'refresh-secret', capability: {projectId: 'project', env: 'preview'}, sessionClaims: {projectId: 'project', aud: 'toi-preview', roles: ['viewer']} };
   const output = previewHostConfig(input as any, 'project', API.policy);
-  assert.deepEqual(output, { toiFetch: { sessionToken: 'preview-session', capabilityToken: 'preview-capability', projectId: 'project', proxyBaseUrl: API.policy, env: 'preview' } });
+  assert.deepEqual(output, { toiFetch: { projectId: 'project', env: 'preview', transport: 'broker' } });
   assert.ok(!JSON.stringify(output).includes('secret'));
 });
 test('parallel rejected requests coalesce refresh and each retry at most once', async () => {

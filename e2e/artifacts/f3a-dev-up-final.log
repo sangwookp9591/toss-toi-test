@@ -1,0 +1,76 @@
+[0.001s] development configuration: starting
+[0.007s] development configuration: ready (0.007s)
+[0.008s] Docker Compose: starting
+[3.134s]  Container toi-lite-verdaccio-init-1  Created
+[3.135s]  Container toi-lite-keycloak-1  Running
+[3.135s]  Container toi-lite-minio-1  Running
+[3.136s]  Container toi-lite-verdaccio-1  Running
+[6.159s]  Container toi-lite-verdaccio-init-1  Starting
+[6.292s]  Container toi-lite-verdaccio-init-1  Started
+[6.293s]  Container toi-lite-verdaccio-init-1  Waiting
+[6.799s]  Container toi-lite-verdaccio-init-1  Exited
+[7.008s] Docker Compose: ready (7.000s)
+[7.008s] Keycloak identity provisioning: starting
+[7.287s] Keycloak identity provisioning: ready (0.279s)
+[7.288s] registry and storage health: starting
+[7.291s] registry and storage health: ready (0.004s)
+[7.292s] packages/fake-tds install: starting
+[7.292s] packages/preview-runtime install: starting
+[7.292s] services/mock-backend install: starting
+[7.292s] packages/fake-tds: dependencies already installed
+[7.293s] packages/fake-tds install: ready (0.001s)
+[7.293s] services/policy-proxy install: starting
+[7.293s] packages/preview-runtime: dependencies already installed
+[7.294s] packages/preview-runtime install: ready (0.002s)
+[7.294s] services/deps-builder install: starting
+[7.294s] services/mock-backend: dependencies already installed
+[7.294s] services/mock-backend install: ready (0.002s)
+[7.294s] services/agent-server install: starting
+[7.295s] services/policy-proxy: dependencies already installed
+[7.295s] services/policy-proxy install: ready (0.002s)
+[7.295s] apps/studio install: starting
+[7.295s] services/deps-builder: dependencies already installed
+[7.295s] services/deps-builder install: ready (0.001s)
+[7.296s] services/agent-server: dependencies already installed
+[7.296s] services/agent-server install: ready (0.002s)
+[7.296s] apps/studio: dependencies already installed
+[7.296s] apps/studio install: ready (0.001s)
+[7.297s] download and audit storage provisioning: starting
+[17.096s] download and audit storage provisioning: ready (9.799s)
+[17.097s] registry setup: starting
+[17.237s] 
+[17.237s] > @toi/deps-builder@1.0.0 setup-registry
+[17.237s] > node scripts/setup-registry.mjs
+[17.237s] 
+[17.322s] Anonymous @toi/tds metadata blocked: HTTP 401
+[17.443s] fake-tds build: starting
+[18.214s] fake-tds build: ready (0.771s)
+[18.338s] @toi/tds@1.0.0 already published
+[18.451s] @toi/tds@1.1.0 already published
+[18.453s] Verified both versions published; anonymous access remains HTTP 401
+[18.461s] registry setup: ready (1.364s)
+[18.461s] fetch client publish: starting
+[18.583s] 
+[18.583s] > @toi/policy-proxy@1.0.0 publish:client
+[18.583s] > node scripts/publish-client.mjs
+[18.583s] 
+[19.501s] @toi/fetch@1.1.0 already published
+[19.509s] fetch client publish: ready (1.048s)
+[19.510s] mock-backend start: starting
+[19.513s] mock-backend: existing healthy service
+[19.514s] mock-backend start: ready (0.004s)
+[19.514s] policy-proxy start: starting
+[19.517s] policy-proxy: applying managed environment configuration
+[20.527s] policy-proxy start: ready (1.013s)
+[20.527s] deps-builder start: starting
+[20.529s] deps-builder: existing healthy service
+[20.529s] deps-builder start: ready (0.002s)
+[20.530s] agent-server start: starting
+[20.531s] agent-server: existing healthy service
+[20.531s] agent-server start: ready (0.002s)
+[20.531s] studio start: starting
+[20.533s] studio: existing healthy service
+[20.533s] studio start: ready (0.002s)
+[20.533s] preview origin health: starting
+[20.536s] preview origin health: ready (0.003s)
+[20.536s] TOI-lite ready: http://localhost:5173 (logs: scripts/.run)

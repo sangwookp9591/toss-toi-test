@@ -11,7 +11,7 @@ import { Access, type Actor } from './access.js';
 import { isService } from './identity.js';
 import type { PolicyConfig } from './config.js';
 import { PolicyStorage, publicApi, sanitize, validateApi } from './storage.js';
-import { HttpError, identifier, issueCapability, capabilityFromToken, signToken, verifyToken } from './tokens.js';
+import { HttpError, identifier, issueCapability, capabilityFromToken, signToken } from './tokens.js';
 import { maskJson, scanPii, type PolicyWarning } from './mask.js';
 import type { PolicyAuditRecord } from './storage.js';
 const studioOrigin = 'http://localhost:5173';
@@ -57,17 +57,9 @@ export function createPolicyProxy(config: PolicyConfig, storage: PolicyStorage, 
     try {
       // Keep this ordering aligned with contracts/src/policy.ts.
       session = await access.authenticate(header(req, 'authorization'), !download);
-      const previewProject = req.headers.origin ? projectIdFromPreviewOrigin(req.headers.origin) : null;
-      if (previewProject && (previewProject !== projectId || (session.preview && session.preview.projectId !== previewProject))) throw new HttpError(403, 'PREVIEW_ORIGIN_MISMATCH');
       if (download) { access.user(session); if (header(req, 'x-toi-project') !== projectId) throw new HttpError(403, 'PROJECT_MISMATCH'); }
       session = await access.member(session, projectId, download ? 'editor' : 'viewer');
       const api = storage.apis.get(apiId); if (!api) throw new HttpError(404, 'API_NOT_FOUND');
-      if (previewProject) {
-        let scoped: CapabilityClaims;
-        try { scoped = verifyToken(header(req, 'x-toi-capability'), config.capabilitySecret, 'capability') as unknown as CapabilityClaims; }
-        catch { throw new HttpError(403, 'CAPABILITY_INVALID'); }
-        if (scoped.projectId !== previewProject) throw new HttpError(403, 'PREVIEW_ORIGIN_MISMATCH');
-      }
       capability = capabilityFromToken(header(req, 'x-toi-capability'), config.capabilitySecret, projectId, session.sub);
       if (download && capability.mode !== 'read') throw new HttpError(403, 'READ_CAPABILITY_REQUIRED');
       access.validateLive(session, capability, apiId);
@@ -131,10 +123,11 @@ export function createPolicyProxy(config: PolicyConfig, storage: PolicyStorage, 
       const rawUrl = req.url ?? '/', url = new URL(rawUrl, 'http://policy.invalid');
       const proxyMatch = rawUrl.split('?')[0].match(/^\/proxy\/([^/]+)(\/.*)?$/);
       const origin = req.headers.origin;
-      if (req.method === 'GET' && url.pathname === '/healthz') return await reply(200, { status: storage.chain.health.ok ? 'ok' : 'degraded', audit: storage.chain.health });
+      if (origin && projectIdFromPreviewOrigin(origin)) return send(res, 403, { error: 'PREVIEW_DIRECT_FORBIDDEN' });
+      if (req.method === 'GET' && url.pathname === '/healthz') return await reply(200, { status: storage.chain.health.degraded ? 'degraded' : 'ok', audit: storage.chain.health });
       storage.chain.assertHealthy();
       // Reject on the server before executing even simple (non-preflighted) requests.
-      if (origin !== undefined && origin !== studioOrigin && !(projectIdFromPreviewOrigin(origin) && proxyMatch)) throw new HttpError(403, 'ORIGIN_FORBIDDEN');
+      if (origin !== undefined && origin !== studioOrigin) throw new HttpError(403, 'ORIGIN_FORBIDDEN');
       if (origin) {
         res.setHeader('Access-Control-Allow-Origin', origin); res.setHeader('Vary', 'Origin');
         res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS');
@@ -239,6 +232,6 @@ export function createPolicyProxy(config: PolicyConfig, storage: PolicyStorage, 
         return await reply(200, records);
       }
       throw new HttpError(404, 'NOT_FOUND');
-    } catch (error) { if (!res.headersSent) { try { await reply(error instanceof HttpError ? error.status : 500, { error: error instanceof HttpError ? error.code : 'INTERNAL_ERROR', ...(storage.chain.brokenAt !== undefined ? { brokenAt: storage.chain.brokenAt } : {}) }); } catch { send(res, 503, { error: 'AUDIT_CHAIN_BROKEN' }); } } else res.destroy(); }
+    } catch (error) { if (!res.headersSent) { try { await reply(error instanceof HttpError ? error.status : 500, { error: error instanceof HttpError ? error.code : 'INTERNAL_ERROR', ...(storage.chain.brokenAt !== undefined ? { brokenAt: storage.chain.brokenAt } : {}) }); } catch (auditError) { send(res, 503, { error: auditError instanceof HttpError ? auditError.code : 'AUDIT_CHAIN_BROKEN' }); } } else res.destroy(); }
   });
 }

@@ -1,0 +1,16 @@
+{
+  "scenario": "MinIO anchored but unreplicated tail truncated 5->3 whole records",
+  "ok": false,
+  "degraded": true,
+  "anchorSeq": 5,
+  "anchoredThrough": 0,
+  "anchorAvailable": true,
+  "anchorFailureMs": 0,
+  "lastSeq": 3,
+  "lastHash": "775c6a85ec087b9e755c878a083445acce3d99b298e766b68672248dd256c588",
+  "brokenAt": 4,
+  "replicationPending": 3,
+  "replicationLagMs": 51,
+  "replicationAvailable": true,
+  "remoteSegments": 0
+}

@@ -16,7 +16,7 @@ async function fixture(run: (chain: AuditChain, objects: MemoryObjects, dir: str
 test('concurrent durable appends have exactly continuous seq and valid chain after restart', () => fixture(async (chain, objects, dir) => {
   await Promise.all(Array.from({ length: 100 }, () => chain.append(input)));
   const records = await chain.read(undefined, 1000); expect(records.map(r => r.seq)).toEqual(Array.from({ length: 100 }, (_, i) => i + 1)); expect((await chain.verify()).ok).toBe(true);
-  await chain.flush(true); expect(objects.values.size).toBe(1); expect(chain.health.replicationPending).toBe(0);
+  await chain.flush(true); expect((await objects.list('audit/segments/')).length).toBe(1); expect(chain.health.replicationPending).toBe(0);
   const restarted = new AuditChain(dir, objects); try { await restarted.init(); expect(restarted.health.lastSeq).toBe(100); expect(restarted.health.ok).toBe(true); } finally { restarted.close(); }
 }));
 test('modified local line and truncation latch brokenAt and prevent appends', () => fixture(async (chain, _objects, dir) => {
@@ -25,7 +25,7 @@ test('modified local line and truncation latch brokenAt and prevent appends', ()
 }));
 test.each(['modified', 'deleted', 'local-truncation'])('replicated segment %s fails closed at startup', mode => fixture(async (chain, objects, dir) => {
   await chain.append(input); await chain.flush(true);
-  const key = [...objects.values.keys()][0];
+  const key = (await objects.list('audit/segments/'))[0];
   if (mode === 'modified') objects.values.set(key, Buffer.from('tampered'));
   else if (mode === 'deleted') objects.values.delete(key);
   else await writeFile(path.join(dir, 'audit.jsonl'), '');

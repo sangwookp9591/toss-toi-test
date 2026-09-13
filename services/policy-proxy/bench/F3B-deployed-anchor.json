@@ -1,0 +1,9 @@
+{
+  "observedAt": "2026-09-13T13:50:55.648Z",
+  "health": "ok",
+  "anchorSeq": 2201,
+  "anchoredThrough": 2201,
+  "mode": "COMPLIANCE",
+  "retainUntil": "2026-09-14T13:49:46.555Z",
+  "verification": "Read-only HEAD using policy-scoped credentials; no shared object writes or deletion probes"
+}

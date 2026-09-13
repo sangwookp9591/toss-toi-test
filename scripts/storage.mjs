@@ -1,5 +1,7 @@
 import { createRequire } from 'node:module';
 import { spawn } from 'node:child_process';
+import { randomUUID } from 'node:crypto';
+import { setTimeout as delay } from 'node:timers/promises';
 import { commandEnvironment } from './service-env.mjs';
 const quote = value => "'" + String(value).replaceAll("'", "'\\''") + "'";
 // Credentials travel on stdin, never command arguments or diagnostic output.
@@ -37,5 +39,36 @@ mc admin policy attach local toi-policy-storage --user ${quote(env.TOI_POLICY_MI
   const client = new Client({endPoint:endpoint.hostname, port:Number(endpoint.port || (endpoint.protocol === 'https:' ? 443 : 80)), useSSL:endpoint.protocol === 'https:', accessKey:env.TOI_POLICY_MINIO_USER, secretKey:env.TOI_POLICY_MINIO_PASSWORD});
   const lock = await client.getObjectLockConfig(audit);
   if (lock.objectLockEnabled !== 'Enabled') throw new Error('Audit bucket requires object lock');
+  await verifyStorageRetention(env);
 
+}
+
+// Never put a COMPLIANCE probe in the shared audit bucket. This short-lived,
+// isolated bucket proves enforcement and is removed after its retention expires.
+export async function verifyStorageRetention(env = process.env) {
+  const require = createRequire(new URL('../services/policy-proxy/package.json', import.meta.url));
+  const { S3Client, CreateBucketCommand, PutObjectCommand, GetObjectRetentionCommand, DeleteObjectCommand, DeleteBucketCommand } = require('@aws-sdk/client-s3');
+  const client = new S3Client({ endpoint: env.MINIO_ENDPOINT ?? 'http://localhost:9000', region: 'us-east-1', forcePathStyle: true,
+    credentials: { accessKeyId: env.MINIO_ROOT_USER ?? 'toi', secretAccessKey: env.MINIO_ROOT_PASSWORD ?? 'toi-local-secret' }, maxAttempts: 1 });
+  const Bucket = 'toi-retention-probe-' + randomUUID(), Key = 'retention-probe';
+  const send = command => client.send(command, { abortSignal: AbortSignal.timeout(10000) });
+  let versionId, retainUntil;
+  await send(new CreateBucketCommand({ Bucket, ObjectLockEnabledForBucket: true }));
+  try {
+    retainUntil = new Date(Date.now() + 5000);
+    const result = await send(new PutObjectCommand({ Bucket, Key, Body: 'retention verification', IfNoneMatch: '*', ObjectLockMode: 'COMPLIANCE', ObjectLockRetainUntilDate: retainUntil }));
+    versionId = result.VersionId;
+    if (!versionId) throw new Error('Retention probe requires object versioning');
+    const locked = await send(new GetObjectRetentionCommand({ Bucket, Key, VersionId: versionId }));
+    if (locked.Retention?.Mode !== 'COMPLIANCE' || Math.abs(locked.Retention.RetainUntilDate.getTime() - retainUntil.getTime()) > 1000) throw new Error('Object retention not applied');
+    let denied = false;
+    try { await send(new DeleteObjectCommand({ Bucket, Key, VersionId: versionId, BypassGovernanceRetention: true })); }
+    catch (error) { if (error.$metadata?.httpStatusCode !== 403 && !(error.name === 'InvalidRequest' && /WORM protected/.test(error.message))) throw error; denied = true; }
+    if (!denied) throw new Error('COMPLIANCE retention did not reject root version deletion');
+  } finally {
+    try {
+      if (versionId) { await delay(Math.max(0, retainUntil.getTime() - Date.now()) + 1100); await send(new DeleteObjectCommand({ Bucket, Key, VersionId: versionId })); }
+      await send(new DeleteBucketCommand({ Bucket }));
+    } finally { client.destroy(); }
+  }
 }

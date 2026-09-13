@@ -180,33 +180,23 @@ test('frame construction preserves closing-script strings and Unicode', async ({
   await expect(committed(page).locator('#root')).toHaveText(value);
 });
 
-test('host config exists before app execution, is frozen and safely preserves token text', async ({ page }) => {
+test('host config is credential-free, frozen and rejects legacy token fields', async ({ page }) => {
   await open(page);
-  const errors: string[] = [];
-  page.on('pageerror', error => errors.push(error.message));
-  const dangerousToken = 'viewer</script><script>globalThis.injected = true</script>\u2028한글\u2029';
-  const result = await page.evaluate(async sessionToken => {
-    const input = await window.demo.prepare(`
-      const config = (globalThis as any).__TOI_FETCH_CONFIG__;
-      try { config.projectId = 'tampered'; } catch {}
-      document.getElementById('root')!.textContent = config.projectId;
-    `);
-    input.hostConfig = { toiFetch: { sessionToken, capabilityToken: sessionToken, projectId: input.token.projectId, proxyBaseUrl: 'http://localhost:7200', env: 'preview' } };
+  const results = await page.evaluate(async () => {
+    const input = await window.demo.prepare("document.getElementById('root')!.textContent = 'safe</script>한글';");
+    input.hostConfig = { toiFetch: { transport: 'broker', projectId: input.token.projectId, env: 'preview' } };
     window.demo.runtime.setDesiredRevision(input.token);
-    return window.demo.runtime.build(input);
-  }, dangerousToken);
-  expect(result.type).toBe('committed');
-  await expect(committed(page).locator('#root')).toHaveText('00000000-0000-4000-8000-000000000000');
+    const good = await window.demo.runtime.build(input);
+    (input.hostConfig.toiFetch as any).sessionToken = 'synthetic-legacy';
+    const bad = await window.demo.runtime.build(input);
+    return [good.type, bad.type];
+  });
+  expect(results).toEqual(['committed', 'runtime_failed']);
+  await expect(committed(page).locator('#root')).toHaveText('safe</script>한글');
   expect(await committed(page).locator('#root').evaluate(() => {
     const config = (globalThis as any).__TOI_FETCH_CONFIG__;
-    return { frozen: Object.isFrozen(config), session: config.sessionToken, capability: config.capabilityToken, injected: (globalThis as any).injected };
-  })).toEqual({ frozen: true, session: dangerousToken, capability: dangerousToken, injected: undefined });
-  const scripts = await committed(page).locator('script').evaluateAll(nodes => nodes.map(node => ({ type: (node as HTMLScriptElement).type, text: node.textContent })));
-  expect(scripts[0].text).toContain('globalThis.__TOI_FETCH_CONFIG__');
-  expect(scripts[0].text).toContain('\\u003c/script>');
-  expect(scripts[0].text).toContain('\\u2028');
-  expect(scripts[1].type).toBe('importmap');
-  expect(errors).toEqual([]);
+    return { frozen: Object.isFrozen(config), keys: Object.keys(config).sort() };
+  })).toEqual({ frozen: true, keys: ['env', 'projectId', 'transport'] });
 });
 
 test('no host config creates no fetch global, including after a configured build', async ({ page }) => {
@@ -216,7 +206,7 @@ test('no host config creates no fetch global, including after a configured build
     const input = await window.demo.prepare(code);
     window.demo.runtime.setDesiredRevision(input.token);
     const first = await window.demo.runtime.build(input);
-    input.hostConfig = { toiFetch: { sessionToken: 'viewer', capabilityToken: 'read', projectId: input.token.projectId, proxyBaseUrl: 'http://localhost:7200', env: 'preview' } };
+    input.hostConfig = { toiFetch: { transport: 'broker', projectId: input.token.projectId, env: 'preview' } };
     const configured = await window.demo.runtime.build(input);
     delete input.hostConfig;
     const absent = await window.demo.runtime.build(input);
@@ -230,12 +220,12 @@ test('no host config creates no fetch global, including after a configured build
 test('replacing only hostConfig with the same revision token commits the new config', async ({ page }) => {
   await open(page);
   const result = await page.evaluate(async () => {
-    const input = await window.demo.prepare("document.getElementById('root')!.textContent = (globalThis as any).__TOI_FETCH_CONFIG__.capabilityToken;");
-    input.hostConfig = { toiFetch: { sessionToken: 'viewer', capabilityToken: 'read-old', projectId: input.token.projectId, proxyBaseUrl: 'http://localhost:7200', env: 'preview' } };
+    const input = await window.demo.prepare("document.getElementById('root')!.textContent = (globalThis as any).__TOI_FETCH_CONFIG__.env;");
+    input.hostConfig = { toiFetch: { transport: 'broker', projectId: input.token.projectId, env: 'preview' } };
     const token = { ...input.token };
     window.demo.runtime.setDesiredRevision(token);
     const first = await window.demo.runtime.build(input);
-    input.hostConfig.toiFetch = { ...input.hostConfig.toiFetch!, capabilityToken: 'read-new' };
+    input.hostConfig.toiFetch = { ...input.hostConfig.toiFetch!, env: 'live' };
     const second = await window.demo.runtime.build(input);
     return { first, second, token, finalToken: input.token };
   });
@@ -243,7 +233,7 @@ test('replacing only hostConfig with the same revision token commits the new con
   expect(result.second.type).toBe('committed');
   expect(result.finalToken).toEqual(result.token);
   expect(result.first.token).toEqual(result.second.token);
-  await expect(committed(page).locator('#root')).toHaveText('read-new');
+  await expect(committed(page).locator('#root')).toHaveText('live');
   expect(await page.locator('iframe').count()).toBe(1);
 });
 
@@ -276,4 +266,34 @@ test('boot timeout retains previous iframe and dispose settles a build during in
     return pending;
   });
   expect(disposed).toMatchObject({ type: 'stale_discarded', reason: 'canceled' });
+});
+
+test('navigation removes committed documents, restores a fresh good frame and stops at three per minute', async ({ page }) => {
+  await open(page); await run(page, plain('Safe revision'));
+  await run(page, plain('Navigating revision'));
+  const first = (await (await page.locator('iframe[data-state="committed"]').elementHandle())!.contentFrame())!;
+  await first.evaluate(() => { setTimeout(() => { location.href = location.href; }, 50); });
+  await expect.poll(() => first.isDetached()).toBe(true);
+  await expect(committed(page).locator('#root')).toHaveText('Safe revision');
+  for (let i = 0; i < 2; i++) {
+    const current = (await (await page.locator('iframe[data-state="committed"]').elementHandle())!.contentFrame())!;
+    await current.evaluate(() => { setTimeout(() => { location.href = location.href; }, 50); });
+    await expect.poll(() => current.isDetached()).toBe(true);
+    if (i === 0) await expect(committed(page).locator('#root')).toHaveText('Safe revision');
+  }
+  await expect(page.locator('iframe')).toHaveCount(0);
+  await expect(page.getByRole('status')).toContainText('recovery limit reached');
+});
+
+test('CSP rejects data and blob script modules while nonce inline code executes', async ({ page }) => {
+  await open(page); await run(page, plain('Nonce module'));
+  const blocked = await committed(page).locator('#root').evaluate(async () => {
+    const blob = URL.createObjectURL(new Blob(['globalThis.injected = true'], { type: 'text/javascript' }));
+    try {
+      return await Promise.all(['data:text/javascript,globalThis.injected=true', blob].map(url => import(url).then(() => false, () => true)));
+    } finally { URL.revokeObjectURL(blob); }
+  });
+  expect(blocked).toEqual([true, true]);
+  expect(await committed(page).locator('#root').evaluate(() => (globalThis as any).injected)).toBeUndefined();
+  await expect(committed(page).locator('#root')).toHaveText('Nonce module');
 });
