@@ -86,3 +86,14 @@ npm run bench
 | Manifest + 전체 자산 다운로드 | 12.537 ms |
 
 최종 cold 측정은 tarball뿐 아니라 Yarn metadata/globalFolder cache도 매회 비운 결과다. 앞서 metadata cache를 재사용한 탐색 측정과 구분한다. 실행 환경은 Apple M4 / macOS arm64 / Node 22.14.0이며 원시값과 정확한 정의는 results.json에 있다.
+
+
+## QA2: 실패 코드와 재시도
+
+HTTP 오류 및 artifact `failed` 상태에는 `PackageSetFailureCode`의 `code`를 기록한다. 입력 검증이나 정상 레지스트리가 확인한 패키지/버전 부재는 `input` (HTTP 400), 연결 거부·DNS·타임아웃·HTTP 5xx·레지스트리 health 실패는 `registry_unavailable` (503), MinIO 읽기/쓰기/연결 실패는 `storage_unavailable` (503), 나머지는 `internal` (500)이다. GET 상태/long poll은 정상 조회된 `failed` 객체와 코드를 반환한다. 설치 전에 실패하면 lockfile 기반 artifactKey가 아직 없으므로 HTTP 오류로 반환한다.
+
+Yarn 출력의 명확한 네트워크 오류를 먼저 분류한다. 그 외에는 `GET <registry>/-/ping`을 3초 제한으로 확인하며, 정상 응답일 때만 명확한 패키지 404/버전 부재를 input으로 판정한다. 건강한 레지스트리에서 원인을 알 수 없는 Yarn 실패는 internal이다. Yarn HTTP 요청은 10초 제한, 자동 재시도 0회이고 설치 전체 상한은 120초다. 로그는 토큰을 마스킹하고 HTTP 오류는 원문 로그를 반환하지 않는다.
+
+실패 요청은 single-flight 완료 시 제거하고 failed artifact는 다음 POST에서 다시 설치/빌드한다. 실패 산출물을 ready 캐시로 게시하지 않는다. 스튜디오는 코드로 레지스트리·구성 요소 저장소·패키지 입력을 구분하고 같은 revision의 “다시 시도”를 제공한다.
+
+`test/failure.test.ts`는 실제 Yarn과 연결 거부 서버, 정상 ping+패키지 404 서버, DNS/타임아웃/5xx, 모호한 오류의 health 검사, HTTP 코드, 비동기 failed 코드와 같은 요청 재시도를 검증한다. E2E M의 `test/registry-fixture.ts`는 별도 프로세스와 임시 포트의 레지스트리 프록시에서 503을 주입하고 복구한다. 공용 서비스나 캐시를 중단·삭제하지 않으며 private IPC로만 제어한다.

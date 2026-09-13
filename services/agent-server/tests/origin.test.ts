@@ -32,6 +32,7 @@ async function targets(app: App) {
     { method: 'POST', path: `/generations/${id}/answers`, body: { questionId: pending.questionId, answer: 'yes' } },
     { method: 'POST', path: `/generations/${id}/cancel`, body: {} },
     { method: 'GET', path: `/projects/${app.project.projectId}` },
+    { method: 'GET', path: `/projects/${app.project.projectId}/generations/active` },
     { method: 'GET', path: `/generations/${id}/events` },
   ];
 }

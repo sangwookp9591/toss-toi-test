@@ -11,7 +11,7 @@ export async function consumeGeneration(id: string, signal: AbortSignal, onEvent
   let lastSeq = initialSeq;
   while (!signal.aborted) {
     try {
-      const response = await fetch(`${API.agent}/generations/${id}/events`, { signal, headers: { 'Last-Event-ID': String(lastSeq) } });
+      const response = await fetch(`${API.agent}/generations/${id}/events`, { signal, headers: lastSeq > 0 ? { 'Last-Event-ID': String(lastSeq) } : {} });
       if (!response.ok) throw new HttpError(response.status, { error: 'Generation stream unavailable' });
       const reader = response.body!.getReader(); const decoder = new TextDecoder(); let buffer = '';
       while (true) {

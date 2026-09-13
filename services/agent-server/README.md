@@ -161,3 +161,10 @@ SSE 원문(id/event/data 포함): [`evidence/mock-sse.log`](evidence/mock-sse.lo
 모델 품질·실제 API 지연/요금·실제 server-side fallback 동작은 라이브 호출 없이 확인하지 않았습니다. 프롬프트의 exact import 규칙은 모델 생성에 대한 지침이며 모든 임의 코드의 정책 준수를 증명하지 않습니다. mock 산출물의 import와 구문은 정적으로 검사하지만 일반 Claude 출력에 타입 검사·브라우저 실행 성공 gate는 없습니다. 이후 preview-runtime이 별도로 검증합니다.
 
 서비스는 로컬 개발용 API이며 사용자 인증·프로젝트 권한 분리·rate limiting·event retention/압축·SSE backpressure 제한은 구현하지 않았습니다. 파일 JSON snapshot은 작은 실험 규모를 위한 것으로 매 이벤트마다 다시 기록합니다. 모델 반복은 최대 50회이며 finish 없이 종료되면 model_error입니다. ask_user는 답이나 취소가 올 때까지 기다리며 별도 자동 timeout은 두지 않습니다. 프록시의 최종 데이터/쓰기 정책은 모델이나 이 서버가 대신 보장하지 않습니다.
+
+
+## QA2: 다른 탭의 활성 생성 발견
+
+`GET /projects/:projectId/generations/active`는 해당 프로젝트의 종결되지 않은 최신 생성에 대해 `ActiveGeneration` (`generationId`, `state`, `lastSeq`, 원래 사용자 `prompt`, ISO `createdAt`)을 반환한다. 프로젝트가 없거나 활성 생성이 없으면 404다. 최신 생성이 종결되었고 이전 생성이 진행 중이면 그 이전 생성을 반환한다. 생성 레코드의 request에 prompt를, createdAt에 시작 시각을 저장한다. 서버 재시작 시 미완료 생성은 기존 규칙대로 failed 처리하므로 활성 목록에서 제외된다.
+
+F3b Origin 검사를 그대로 적용하여 정확한 studio Origin 또는 Origin 없는 서버 요청만 허용한다. preview Origin, null, 기타 Origin은 403이며 SSE와 동일하게 보호된다. 새 탭은 이 응답으로 사용자 요청을 복원하고 `Last-Event-ID` 없이 SSE 전체를 재생한다. 같은 generation의 어느 탭에서 답변해도 기존 `state: staging` 이벤트가 질문의 답변 완료를 알리고, 취소는 `state: canceled`와 `canceled` 이벤트가 모든 구독자에 전달된다. 스튜디오는 진행 중 생성 발견 시 새 생성 대신 해당 생성에 연결한다.

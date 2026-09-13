@@ -8,3 +8,5 @@
 /* Offscreen cross-origin frames throttle rAF. Keep the inert, transparent candidate
    in the viewport during validation, at the preview's actual dimensions. */
 #preview iframe[data-state="candidate"]{position:fixed!important;inset:0 auto auto 0!important;width:var(--preview-width)!important;height:var(--preview-height)!important}
+
+.answered-question{border:1px solid #dce8e2;background:#f4faf6;border-radius:10px;padding:15px;margin:14px 0;font-size:13px;line-height:1.8}.answered-question p{margin:6px 0 0;color:#397553}

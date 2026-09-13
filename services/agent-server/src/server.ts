@@ -47,6 +47,15 @@ export function createAgentServer(options: { dataDir: string; driver: AgentDrive
         const input = createProjectSchema.parse(await body(req));
         return json(res, 201, store.createProject(input.name, input.apiIds));
       }
+      const activeRoute = /^\/projects\/([^/]+)\/generations\/active$/.exec(pathname);
+      if (activeRoute && req.method === 'GET') {
+        const projectId = decodeURIComponent(activeRoute[1]);
+        store.project(projectId);
+        // Map insertion order is creation order; restarted runs are already terminal.
+        const active = [...store.generations.values()].reverse().find(record => record.request.projectId === projectId && !terminal(record.state));
+        if (!active) throw new HttpError(404, 'no active generation');
+        return json(res, 200, { generationId: active.generationId, state: active.state, lastSeq: active.events.length, prompt: active.request.prompt, createdAt: active.createdAt });
+      }
       const projectRoute = /^\/projects\/([^/]+)(\/source)?$/.exec(pathname);
       if (projectRoute) {
         const id = decodeURIComponent(projectRoute[1]);

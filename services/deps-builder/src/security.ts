@@ -1,6 +1,18 @@
 import { validRange } from 'semver';
-import type { PackageSetRequest } from '../../../contracts/src/package-set.js';
-export class InputError extends Error {}
+import type { PackageSetRequest, PackageSetFailureCode } from '../../../contracts/src/package-set.js';
+export class BuilderError extends Error {
+  constructor(readonly code: PackageSetFailureCode, message: string) { super(message); }
+}
+export class InputError extends BuilderError {
+  constructor(message: string) { super('input', message); }
+}
+export function failureCode(error: unknown): PackageSetFailureCode {
+  return error instanceof BuilderError ? error.code : 'internal';
+}
+export async function storageOperation<T>(operation: () => Promise<T>): Promise<T> {
+  try { return await operation(); }
+  catch { throw new BuilderError('storage_unavailable', 'Artifact storage unavailable'); }
+}
 export function redact(value: unknown, secrets: string[]): string {
   let result = value instanceof Error ? value.message : String(value);
   for (const secret of secrets.filter(Boolean)) {

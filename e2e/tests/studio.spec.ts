@@ -93,6 +93,9 @@ test('I: 문법 오류 위치, 금지 패키지 이름과 runtime 원인', async
   await expect(page.getByRole('status')).toContainText('허용되지 않은 패키지');
   await save(page, "throw new Error('QA runtime failure'); export default function App(){return <h1>실패</h1>}");
   await expect(errors).toContainText('QA runtime failure');
+  await expect(errors).toContainText('/src/App.tsx');
+  await expect(errors).toContainText(/1행.*열/);
+  await page.screenshot({ path: 'artifacts/runtime-location.png', fullPage: true });
   expect((await snapshot(page)).lastCommit.token.revision).toBe(1);
 });
 test('J: CAS 최신 불러오기 전에 파일별 내 편집 보관, 복사와 새로고침 유지', async ({ page, context }) => {
@@ -134,13 +137,14 @@ test('K: 존재하지 않는 패키지 버전의 실제 조합 실패와 동일 
   expect((await snapshot(page)).project.revision).toBe(2);
 });
 test('K: failed 응답·연결 실패·시간 초과 구분과 새로고침 없는 재빌드', async ({ page }) => {
-  let failure: 'failed' | 'connection' | 'timeout' | undefined = 'failed';
+  let failure: 'failed' | 'connection' | 'timeout' | 'registry_unavailable' | 'storage_unavailable' | 'input' | 'internal' | undefined = 'failed';
   let posts = 0;
   await page.route('http://localhost:7100/package-sets', async route => {
     posts++;
     if (failure === 'failed') await route.fulfill({ json: { status: 'failed', artifactKey: 'qa', error: 'Dependency build failed https://internal.example/private?token=do-not-display' } });
     else if (failure === 'connection') await route.abort('connectionrefused');
     else if (failure === 'timeout') await route.fulfill({ status: 202, json: { status: 'building', artifactKey: 'qa-timeout', startedAt: new Date().toISOString() } });
+    else if (failure) await route.fulfill({ json: { status: 'failed', artifactKey: 'qa-code', code: failure, error: 'untrusted package install text' } });
     else await route.continue();
   });
   await page.route('http://localhost:7100/package-sets/qa-timeout/wait?timeoutMs=30000', () => {});
@@ -148,6 +152,15 @@ test('K: failed 응답·연결 실패·시간 초과 구분과 새로고침 없�
   await expect(page.getByRole('status')).toContainText('구성 요소 빌드 실패');
   await expect(page.locator('body')).not.toContainText('internal.example');
   await expect(page.locator('body')).not.toContainText('do-not-display');
+  for (const [code, message] of [
+    ['registry_unavailable', '패키지 저장소에 연결하지 못했어요. 잠시 후 다시 시도하세요.'],
+    ['storage_unavailable', '구성 요소 저장소에 연결하지 못했어요. 잠시 후 다시 시도하세요.'],
+    ['input', '패키지 또는 버전 확인 필요'], ['internal', '구성 요소 빌드 실패'],
+  ] as const) {
+    failure = code;
+    await page.getByRole('status').getByRole('button', { name: '다시 시도' }).click();
+    await expect(page.getByRole('status')).toContainText(message);
+  }
   failure = 'connection';
   await page.getByRole('status').getByRole('button', { name: '다시 시도' }).click();
   await expect(page.getByRole('status')).toContainText('구성 요소 서비스 연결 실패');
@@ -159,7 +172,7 @@ test('K: failed 응답·연결 실패·시간 초과 구분과 새로고침 없�
   failure = undefined;
   await page.getByRole('status').getByRole('button', { name: '다시 시도' }).click();
   await commit(page, 1);
-  expect(posts).toBe(4);
+  expect(posts).toBe(8);
   await expect(page.getByRole('button', { name: '다시 시도' })).toHaveCount(0);
   failure = 'connection'; await save(page, plain('장애 뒤 재시도'));
   await expect(page.getByRole('status')).toContainText('이전 화면을 유지했어요: 구성 요소 준비 실패');
@@ -180,4 +193,70 @@ for (const width of [1600, 400]) test(`레이아웃: ${width}px 답변 버튼은
   expect(size.width).toBeGreaterThanOrEqual(48); expect(size.right).toBeLessThanOrEqual(width);
   await page.screenshot({ path: `artifacts/question-${width}.png`, fullPage: true });
   await page.getByRole('button', { name: '생성 중단' }).click();
+});
+
+test('L: 새 탭 활성 생성 전체 replay, 답변 동기화와 양쪽 취소 종결', async ({ page, context }) => {
+  await create(page);
+  // A stale checkpoint in the other tab must never supersede the server's active run.
+  const tab = await context.newPage(); await tab.goto(page.url()); await commit(tab, 1);
+  await pendingQuestion(page);
+  const before = await recovery(page);
+  await tab.evaluate(saved => sessionStorage.setItem(`toi-studio-generation-v1:${(window as any).studio.getSnapshot().project.projectId}`, JSON.stringify({ ...saved, generationId: crypto.randomUUID(), seq: 999, chats: [{ role: 'assistant', text: 'stale chat' }] })), before);
+  const replay = tab.waitForRequest(request => request.url().includes(`/generations/${before.generationId}/events`));
+  await tab.reload();
+  expect((await replay).headers()['last-event-id']).toBeUndefined();
+  await expect(tab.locator('.question strong')).toHaveText(before.question.question);
+  expect((await snapshot(tab)).chats).toEqual(before.chats);
+  await tab.screenshot({ path: 'artifacts/other-tab-restored.png', fullPage: true });
+  await expect(tab.locator('.generation-notice')).toContainText('다른 창에서 진행 중인 요청이 있어요');
+  await expect(tab.getByLabel('만들고 싶은 화면')).toBeDisabled();
+  const other = await context.newPage(); await other.goto(page.url());
+  await expect(other.locator('.question strong')).toHaveText(before.question.question);
+  expect(await other.evaluate(() => (window as any).studio.getSnapshot().chats)).toEqual(before.chats);
+  await tab.getByRole('button', { name: '아니요', exact: true }).click();
+  await expect(page.locator('.answered-question')).toHaveAttribute('data-state', 'answered');
+  await expect(page.locator('.answered-question')).toContainText('답변이 반영됐어요');
+  await expect(page.locator('.question')).toHaveCount(0);
+  await commit(page, 2); await commit(tab, 2); await commit(other, 2);
+  await pendingQuestion(page);
+  // An already-open idle tab checks the server immediately before sending.
+  let newRequests = 0;
+  tab.on('request', request => { if (request.url().endsWith('/generations') && request.method() === 'POST') newRequests++; });
+  await tab.getByLabel('만들고 싶은 화면').fill('중복 요청');
+  await tab.getByRole('button', { name: '보내기' }).click();
+  await expect(tab.locator('.question')).toBeVisible();
+  expect(newRequests).toBe(0);
+  await expect(tab.locator('.generation-notice')).toContainText('다른 창에서 진행 중인 요청이 있어요');
+  await page.getByRole('button', { name: '생성 중단' }).click();
+  await expect(tab.locator('.generation-notice')).toContainText('진행 중이던 생성이 끝났어요: 중단');
+  await expect(tab.getByLabel('만들고 싶은 화면')).toBeEnabled();
+  await tab.close(); await other.close();
+});
+
+test('M: 실제 Yarn 레지스트리 503 안내 후 저장소 복구와 동일 revision 재시도 성공', async ({ page }) => {
+  const { registryFixture } = await import('./registry-fixture');
+  const fixture = await registryFixture();
+  let failures = 0;
+  try {
+    await page.route('http://localhost:7100/package-sets**', async route => {
+      const url = route.request().url().replace('http://localhost:7100', fixture.url);
+      const response = await route.fetch({ url });
+      if (response.status() === 503) { expect((await response.json()).code).toBe('registry_unavailable'); failures++; }
+      await route.fulfill({ response });
+    });
+    await page.goto('/'); await page.getByRole('button', { name: '프로젝트 만들기' }).click();
+    const navigation = await page.evaluate(() => performance.timeOrigin);
+    await expect(page.getByRole('status')).toContainText('패키지 저장소에 연결하지 못했어요. 잠시 후 다시 시도하세요.');
+    await expect(page.getByRole('status')).not.toContainText('패키지 또는 버전 확인 필요');
+    expect(failures).toBe(1);
+    await page.screenshot({ path: 'artifacts/registry-unavailable.png', fullPage: true });
+    const project = (await snapshot(page)).project;
+    expect((await fixture.recover()).failedRequests).toBeGreaterThan(0);
+    await page.locator('.preview-pane').getByRole('button', { name: '다시 시도' }).click();
+    await commit(page, project.revision);
+    expect((await snapshot(page)).project).toEqual(project);
+    expect(await page.evaluate(() => performance.timeOrigin)).toBe(navigation);
+    await expect(page.getByRole('button', { name: '다시 시도' })).toHaveCount(0);
+    await page.screenshot({ path: 'artifacts/registry-recovered.png', fullPage: true });
+  } finally { await page.unrouteAll({ behavior: 'wait' }); await fixture.close(); }
 });

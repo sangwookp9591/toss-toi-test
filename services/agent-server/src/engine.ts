@@ -48,7 +48,7 @@ export class Engine {
     }
     const project = this.store.project(request.projectId);
     const generationId = randomUUID();
-    const record: GenerationRecord = { generationId, request: structuredClone(request), state: 'requested', files: project.files, packageSet: project.packageSet, events: [] };
+    const record: GenerationRecord = { generationId, createdAt: new Date().toISOString(), request: structuredClone(request), state: 'requested', files: project.files, packageSet: project.packageSet, events: [] };
     this.store.generations.set(generationId, record);
     this.store.requestIds.set(request.requestId, generationId);
     this.execution.set(generationId, { controller: new AbortController() });

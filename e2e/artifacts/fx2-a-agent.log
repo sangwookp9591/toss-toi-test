@@ -1,0 +1,17 @@
+
+> @toi/agent-server@0.1.0 typecheck
+> tsc --noEmit
+
+
+> @toi/agent-server@0.1.0 test
+> vitest run
+
+
+ RUN  v5.0.0 /Users/psw/Projects/toss-toi-test/services/agent-server
+
+
+ Test Files  6 passed (6)
+      Tests  90 passed | 1 skipped (91)
+   Start at  17:57:38
+   Duration  768ms (tests 55%, import 23%, transform 21%, worker 1%)
+

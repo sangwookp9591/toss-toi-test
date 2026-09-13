@@ -32,7 +32,7 @@ React 19 스튜디오가 채팅 생성, 파일 CAS 저장, 조합 빌드, 트랜
 
 ## QA1 복구와 오류 안내
 
-진행 중 생성은 프로젝트별 `sessionStorage` 키 `toi-studio-generation-v1:<projectId>`에 generationId, 마지막 처리 seq, 대화, 미답변 질문, 진행 문구와 staging 파일을 함께 저장한다. 프로젝트를 다시 열면 저장한 UI를 복원하고 `GET /generations/:id/events`에 `Last-Event-ID` 헤더를 보내 해당 seq 이후부터 이어 받는다. EventSource는 임의의 헤더를 지정할 수 없으므로 기존 fetch 스트리밍 SSE 파서를 사용한다. 서버의 헤더 replay 계약을 그대로 소비하며 agent-server 변경은 없다. 답변 후 staging 이벤트에서 질문을 지우고, done/failed/canceled에서는 저장값을 제거한다. 복구한 생성의 종결이나 404는 “진행 중이던 생성이 끝났어요: <결과>”로 안내한다. 탭 세션 종료 시 복구 기록도 끝나며, 브라우저가 저장을 차단하거나 용량이 가득 찬 경우 라이브 생성은 계속되지만 새로고침 복구는 보장하지 않는다.
+진행 중 생성은 프로젝트별 `sessionStorage` 키 `toi-studio-generation-v1:<projectId>`에 generationId, 마지막 처리 seq, 대화, 미답변 질문, 진행 문구와 staging 파일을 함께 저장한다. 프로젝트를 다시 열면 저장한 UI를 복원하고 `GET /generations/:id/events`에 `Last-Event-ID` 헤더를 보내 해당 seq 이후부터 이어 받는다. EventSource는 임의의 헤더를 지정할 수 없으므로 기존 fetch 스트리밍 SSE 파서를 사용한다. 서버의 헤더 replay 계약을 소비한다. 답변 후 staging 이벤트에서 질문을 답변 완료로 바꾸고, done/failed/canceled에서는 저장값을 제거한다. 복구한 생성의 종결이나 404는 “진행 중이던 생성이 끝났어요: <결과>”로 안내한다. 탭 세션 종료 시 복구 기록도 끝나며, 브라우저가 저장을 차단하거나 용량이 가득 찬 경우 라이브 생성은 계속되지만 서버 전체 replay로 복원한다.
 
 쓰기 capability를 발급받으면 서명된 응답 JWT의 `exp`를 읽어 실제 만료 시각과 남은 시간을 표시한다. 만료 시 토글을 끄고 “쓰기 허용 시간이 끝났어요. 다시 켜면 2분 동안 허용돼요.”를 남기며 같은 revision을 read capability로 재빌드한다. E2E는 페이지 로드 전에 `window.__STUDIO_TEST_CONFIG__ = { writeTtlSec: 4 }`를 주입할 수 있다. 기본값은 120초이며 이 설정은 1~120초로 줄이는 것만 허용한다. 토큰 원문은 상태 스냅샷이나 sessionStorage에 넣지 않는다.
 
@@ -52,3 +52,16 @@ CAS 충돌에서 “최신 내용 불러오기”를 누르면 현재 미저장 
 - J: 두 탭 CAS 충돌 → 최신 불러오기 → 로컬 파일 보관·클립보드 복사·새로고침 유지.
 - K: 새 프로젝트의 존재하지 않는 패키지 버전으로 실제 deps-builder 실패와 동일 revision 재시도. 별도 브라우저 라우팅으로 failed 응답·연결 실패·대기 시간 초과를 재현한 뒤, 정상 서비스로 복구하여 새로고침 없는 같은 revision commit 및 이전 화면 보존도 확인한다. 서비스 종료나 공용 캐시 삭제는 하지 않는다.
 - 레이아웃: 1600px·400px에서 답변 버튼의 한 줄 높이·최소 너비·뷰포트 안 위치를 측정하고 스크린샷을 남긴다.
+
+
+## QA2: 다른 탭과 외부 저장소 장애
+
+프로젝트를 열 때 `GET /projects/:projectId/generations/active`로 서버의 최신 진행 중 생성을 확인한다. 서버와 sessionStorage의 generationId가 같고 seq가 유효하면 기존 checkpoint 이후부터 이어 받는다. 기록이 없거나 다르면 `Last-Event-ID` 없이 전체 SSE를 구독하고 활성 응답의 `prompt`를 첫 사용자 메시지로, text 이벤트를 assistant 메시지로 복원한다. `createdAt`은 생성 시작 ISO 시각이다. 기존 세션 기록만 남고 활성 생성이 없으면 기록의 SSE를 이어 받아 종결/404 안내를 유지한다.
+
+다른 탭에서 찾은 생성은 “다른 창에서 진행 중인 요청이 있어요”를 표시하고 입력을 잠근다. 이미 열려 있던 탭도 보내기 직전에 서버를 다시 확인하여 기존 생성에 연결한다. 두 탭은 동일 SSE를 받으므로 어느 쪽에서 답변하든 `staging`에서 “답변이 반영됐어요”를 표시하고, 취소하면 양쪽 모두 종결 상태로 돌아간다.
+
+deps-builder HTTP 오류와 `failed` 상태의 `code`를 우선 사용한다. `registry_unavailable`은 “패키지 저장소에 연결하지 못했어요. 잠시 후 다시 시도하세요.”, `storage_unavailable`은 “구성 요소 저장소에 연결하지 못했어요. 잠시 후 다시 시도하세요.”, `input`은 “패키지 또는 버전 확인 필요”, `internal`은 “구성 요소 빌드 실패”다. 코드 없는 구버전 응답은 기존 상태/오류 범주 처리를 유지한다. 재시도는 파일·revision을 바꾸거나 새로고침하지 않는다.
+
+`runtime_failed.error`의 file/line/column도 빌드 진단과 동일한 공통 UI에서 `파일 · N행 M열`로 표시한다. 위치를 계산하는 주체는 preview-runtime이며 스튜디오는 제공된 위치를 사용한다.
+
+E2E L은 새 탭과 stale checkpoint의 전체 대화·질문 복원, 답변 완료 동기화, 중복 생성 차단과 취소를 확인한다. M은 별도 builder 프로세스의 레지스트리 프록시에서 실제 Yarn HTTP 503 실패를 일으키고 복구 후 동일 revision 재시도를 확인한다. 메모리 산출물과 임시 Yarn 캐시를 쓰며 공용 레지스트리·MinIO·서비스 포트는 변경하지 않는다.

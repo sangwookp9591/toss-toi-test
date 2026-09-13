@@ -8,6 +8,7 @@ import { HttpError } from './schema.ts';
 import { defaultPackageSet, templateFiles } from './templates.ts';
 export interface GenerationRecord {
   generationId: string; request: CreateGenerationRequest; state: GenerationState;
+  createdAt: string;
   files: VfsFiles; packageSet: PackageSetRequest; events: GenerationEvent[];
 }
 export class Store {

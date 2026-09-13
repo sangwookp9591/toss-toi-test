@@ -3,7 +3,7 @@ import { defaultProfile, settings } from './config.js';
 import { canonicalJson, hashes, sha256 } from './hash.js';
 import { install } from './installer.js';
 import { bundle } from './bundle.js';
-import { safeLogger, validateRequest } from './security.js';
+import { failureCode, safeLogger, storageOperation, validateRequest } from './security.js';
 import type { ObjectStore } from './store.js';
 
 export interface BuilderOptions {
@@ -23,7 +23,13 @@ export class PackageBuilder {
   private readonly artifacts = new Map<string, Promise<PackageSetStatus>>();
   private readonly log: (message: unknown) => void;
   readonly metrics = { installs: 0, builds: 0 };
-  constructor(readonly store: ObjectStore, readonly options: BuilderOptions = {}) {
+  readonly store: ObjectStore;
+  constructor(store: ObjectStore, readonly options: BuilderOptions = {}) {
+    this.store = {
+      get: key => storageOperation(() => store.get(key)),
+      put: (key, body, contentType) => storageOperation(() => store.put(key, body, contentType)),
+      stream: key => storageOperation(() => store.stream(key)),
+    };
     this.profile = options.profile ?? defaultProfile();
     this.publicUrl = options.publicUrl ?? settings().publicUrl;
     this.log = safeLogger([options.token ?? settings().token, settings().secretKey], options.log);
@@ -113,7 +119,7 @@ export class PackageBuilder {
         this.states.set(key, this.ready(manifest));
       } catch (error) {
         this.log(error);
-        this.states.set(key, { status: 'failed', artifactKey: key, error: 'Dependency build failed; check the masked worker log and retry the request' });
+        this.states.set(key, { status: 'failed', artifactKey: key, code: failureCode(error), error: 'Dependency build failed; check the masked worker log and retry the request' });
       } finally { await installed.cleanup(); this.builds.delete(key); }
     })();
     this.builds.set(key, work);

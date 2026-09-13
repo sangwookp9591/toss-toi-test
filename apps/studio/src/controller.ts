@@ -1,15 +1,23 @@
 import { createPreviewRuntime, sourceDigest } from '../../../packages/preview-runtime/src/index.ts';
 import type { PreviewRuntime, PreviewEvent, RevisionToken, PreviewHostConfig, Diagnostic } from '../../../contracts/src/runtime.ts';
-import type { Project, GenerationEvent } from '../../../contracts/src/generation.ts';
-import type { PackageSetStatus, PackageSetRequest } from '../../../contracts/src/package-set.ts';
+import type { Project, GenerationEvent, ActiveGeneration } from '../../../contracts/src/generation.ts';
+import type { PackageSetStatus, PackageSetRequest, PackageSetFailureCode } from '../../../contracts/src/package-set.ts';
 import type { AuditRecord } from '../../../contracts/src/policy.ts';
 import { API, json, HttpError, consumeGeneration } from './api.ts';
 interface GenerationRecovery {
   generationId: string; seq: number; chats: StudioState['chats'];
-  question?: StudioState['question']; status: string; files: Record<string, string>;
+  question?: StudioState['question']; answeredQuestion?: StudioState['answeredQuestion']; status: string; files: Record<string, string>;
 }
 interface EditBackup { id: string; createdAt: string; files: Record<string, string> }
 class DependencyError extends Error {}
+function dependencyReason(code?: PackageSetFailureCode): string | undefined {
+  switch (code) {
+    case 'registry_unavailable': return '패키지 저장소에 연결하지 못했어요. 잠시 후 다시 시도하세요.';
+    case 'storage_unavailable': return '구성 요소 저장소에 연결하지 못했어요. 잠시 후 다시 시도하세요.';
+    case 'input': return '패키지 또는 버전 확인 필요';
+    case 'internal': return '구성 요소 빌드 실패';
+  }
+}
 const generationKey = (id: string) => `toi-studio-generation-v1:${id}`;
 const backupKey = (id: string) => `toi-studio-backups-v1:${id}`;
 function stored<T>(key: string): T | undefined {
@@ -28,6 +36,7 @@ export interface StudioState {
   status: string; busy: boolean; saving: boolean; conflict: boolean; writeAllowed: boolean;
   chats: Array<{ role: 'user' | 'assistant'; text: string }>;
   question?: Extract<GenerationEvent, { type: 'question' }>;
+  answeredQuestion?: Extract<GenerationEvent, { type: 'question' }>;
   events: PreviewEvent[]; lastCommit?: Extract<PreviewEvent, { type: 'committed' }>;
   generationEvents: GenerationEvent[]; audit: AuditRecord[];
   generationNotice?: string; generationStatus?: string; diagnostics: Diagnostic[]; backups: EditBackup[];
@@ -81,21 +90,43 @@ export class StudioController {
   }
   async open(projectId?: string, name = '고객 어드민') {
     try {
-      this.update({ status: '프로젝트를 준비하고 있어요' });
+      this.update({ busy: true, status: '프로젝트를 준비하고 있어요' });
       await this.sessions();
       const project = projectId ? await json<Project>(`${API.agent}/projects/${projectId}`) : await json<Project>(API.agent + '/projects', { name, apiIds: ['customers'] });
       history.replaceState(null, '', '?project=' + project.projectId);
       this.update({ project, files: { ...project.files }, dirty: false, conflict: false, backups: stored<EditBackup[]>(backupKey(project.projectId)) ?? (this.#state.project?.projectId === project.projectId ? this.#state.backups : []) });
       void this.preview(project);
-      if (!this.#generationId) {
+      const active = await this.activeGeneration(project.projectId);
+      if (active && active.generationId !== this.#generationId) {
         const recovery = stored<GenerationRecovery>(generationKey(project.projectId));
-        if (recovery && typeof recovery.generationId === 'string' && Number.isSafeInteger(recovery.seq) && recovery.seq >= 0 && Array.isArray(recovery.chats)) {
-          this.#generationId = recovery.generationId; this.#lastSeq = recovery.seq; this.#recovering = true;
-          this.update({ busy: true, chats: recovery.chats, question: recovery.question, status: recovery.status, generationStatus: recovery.status, files: recovery.files ?? project.files });
-          void this.subscribeGeneration();
+        if (!recovery || recovery.generationId !== active.generationId || !this.validRecovery(recovery) || recovery.seq > active.lastSeq) {
+          this.followActive(active);
+          return;
         }
       }
-    } catch { this.update({ status: '프로젝트를 열지 못했어요. 서비스 연결을 확인해 주세요.' }); }
+      if (!this.#generationId) {
+        const recovery = stored<GenerationRecovery>(generationKey(project.projectId));
+        if (recovery && this.validRecovery(recovery)) {
+          this.#generationId = recovery.generationId; this.#lastSeq = recovery.seq; this.#recovering = true;
+          this.update({ busy: true, chats: recovery.chats, question: recovery.question, answeredQuestion: recovery.answeredQuestion, status: recovery.status, generationStatus: recovery.status, files: recovery.files ?? project.files });
+          void this.subscribeGeneration();
+        } else this.update({ busy: false });
+      }
+    } catch { this.update({ busy: false, status: '프로젝트를 열지 못했어요. 서비스 연결을 확인해 주세요.' }); }
+  }
+  private validRecovery(recovery: GenerationRecovery) {
+    return typeof recovery.generationId === 'string' && Number.isSafeInteger(recovery.seq) && recovery.seq >= 0 && Array.isArray(recovery.chats);
+  }
+  private async activeGeneration(projectId: string): Promise<ActiveGeneration | undefined> {
+    try { return await json<ActiveGeneration>(`${API.agent}/projects/${projectId}/generations/active`); }
+    catch (error) { if (error instanceof HttpError && error.status === 404) return undefined; throw error; }
+  }
+  private followActive(active: ActiveGeneration) {
+    this.#generationId = active.generationId; this.#lastSeq = 0; this.#recovering = true;
+    this.update({ busy: true, question: undefined, answeredQuestion: undefined, chats: [{ role: 'user', text: active.prompt }, { role: 'assistant', text: '' }], generationEvents: [],
+      generationNotice: '다른 창에서 진행 중인 요청이 있어요', generationStatus: '진행 중인 요청을 불러오고 있어요' });
+    this.saveGeneration();
+    void this.subscribeGeneration();
   }
   select(path: string) { this.update({ selected: path }); }
   edit(content: string) { this.update({ files: { ...this.#state.files, [this.#state.selected]: content }, dirty: true }); }
@@ -120,7 +151,7 @@ export class StudioController {
   }
   private saveGeneration() {
     if (!this.#generationId || !this.#state.project) return;
-    const recovery: GenerationRecovery = { generationId: this.#generationId, seq: this.#lastSeq, chats: this.#state.chats, question: this.#state.question, status: this.#state.generationStatus ?? this.#state.status, files: this.#state.files };
+    const recovery: GenerationRecovery = { generationId: this.#generationId, seq: this.#lastSeq, chats: this.#state.chats, question: this.#state.question, answeredQuestion: this.#state.answeredQuestion, status: this.#state.generationStatus ?? this.#state.status, files: this.#state.files };
     persist(generationKey(this.#state.project.projectId), recovery);
   }
   private finishGeneration(result: string) {
@@ -142,8 +173,12 @@ export class StudioController {
   }
   async generate(prompt: string) {
     const project = this.#state.project; if (!project || this.#state.busy || !prompt.trim()) return;
-    this.update({ busy: true, question: undefined, generationNotice: undefined, generationStatus: '화면을 만들고 있어요', status: '화면을 만들고 있어요', chats: [...this.#state.chats, { role: 'user', text: prompt }, { role: 'assistant', text: '' }] });
+    this.update({ busy: true });
     try {
+      // Recheck at send time: a tab opened earlier may have started a generation meanwhile.
+      const active = await this.activeGeneration(project.projectId);
+      if (active) { this.followActive(active); return; }
+      this.update({ question: undefined, answeredQuestion: undefined, generationNotice: undefined, generationStatus: '화면을 만들고 있어요', status: '화면을 만들고 있어요', chats: [...this.#state.chats, { role: 'user', text: prompt }, { role: 'assistant', text: '' }] });
       const { generationId } = await json<{ generationId: string }>(API.agent + '/generations', { projectId: project.projectId, baseRevision: project.revision, prompt, requestId: crypto.randomUUID() });
       this.#generationId = generationId; this.#lastSeq = 0; this.#recovering = false; this.saveGeneration();
       await this.subscribeGeneration();
@@ -153,7 +188,7 @@ export class StudioController {
     this.update({ generationEvents: [...this.#state.generationEvents, event] });
     this.#lastSeq = event.seq;
     if (event.type === 'state') {
-      if (event.state === 'staging') this.update({ question: undefined, generationStatus: '화면을 만들고 있어요', status: '화면을 만들고 있어요' });
+      if (event.state === 'staging') this.update({ answeredQuestion: this.#state.question ?? this.#state.answeredQuestion, question: undefined, generationStatus: '화면을 만들고 있어요', status: '화면을 만들고 있어요' });
       else if (event.state === 'awaiting_answer') this.update({ generationStatus: '한 가지만 더 알려 주세요', status: '한 가지만 더 알려 주세요' });
     } else if (event.type === 'text') {
       const chats = [...this.#state.chats]; const last = chats.at(-1);
@@ -173,9 +208,8 @@ export class StudioController {
   }
   async answer(answer: string) {
     if (!this.#generationId || !this.#state.question || !answer.trim()) return;
-    const questionId = this.#state.question.questionId;
     try { await json(`${API.agent}/generations/${this.#generationId}/answers`, { questionId: this.#state.question.questionId, answer });
-    if (this.#state.question?.questionId === questionId) this.update({ question: undefined, generationStatus: '답변을 반영하고 있어요', status: '답변을 반영하고 있어요' });
+    // The staging SSE event acknowledges the answer in every observing tab.
     this.saveGeneration();
     } catch { this.update({ status: '답변을 보내지 못했어요. 다시 시도해 주세요.' }); }
   }
@@ -246,14 +280,14 @@ export class StudioController {
       }
       if (result.status === 'failed') {
         // Map only known error categories. Never render raw builder logs/URLs/secrets.
-        const reason = /version|resolve|install|package set/i.test(result.error) ? '패키지 또는 버전 확인 필요' : '구성 요소 빌드 실패';
+        const reason = dependencyReason(result.code) ?? (/version|resolve|install|package set/i.test(result.error) ? '패키지 또는 버전 확인 필요' : '구성 요소 빌드 실패');
         throw new DependencyError(reason);
       }
       return result;
     } catch (error) {
       if (error instanceof DependencyError) throw error;
       if (abort.signal.aborted) throw new DependencyError('대기 시간 초과');
-      if (error instanceof HttpError) throw new DependencyError(error.status === 400 ? '패키지 또는 버전 확인 필요' : '구성 요소 서비스 응답 오류');
+      if (error instanceof HttpError) throw new DependencyError(dependencyReason(error.body?.code) ?? (error.status === 400 ? '패키지 또는 버전 확인 필요' : '구성 요소 서비스 응답 오류'));
       throw new DependencyError('구성 요소 서비스 연결 실패');
     } finally { clearTimeout(timeout); }
   }
