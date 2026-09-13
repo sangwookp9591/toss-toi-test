@@ -1,7 +1,8 @@
-import type { BuildInput, Diagnostic, FrameToParent, ParentToFrame, PreviewEvent, PreviewRuntime, PreviewRuntimeOptions, RevisionToken } from '../../../contracts/src/runtime.ts';
+import type { BuildInput, Diagnostic, ParentToFrame, PreviewEvent, PreviewRuntime, PreviewRuntimeOptions, RevisionToken } from '../../../contracts/src/runtime.ts';
 import type { BundleRequest, BundleResponse } from './worker-protocol.ts';
 import { digestJson, mergeVfs, sourceDigest } from './vfs.ts';
 import { commitDecision, sameToken, tokenKey } from './guard.ts';
+import { runtimeDiagnostic, type BundleSource, type RuntimeFrameMessage } from './runtime-diagnostic.ts';
 export { canonicalJson, digestJson, mergeVfs, sourceDigest, isAllowedExternal } from './vfs.ts';
 export { commitDecision, sameToken } from './guard.ts';
 export type { BuildInput, PreviewHostConfig, PreviewRuntime, PreviewRuntimeOptions, RevisionToken, PreviewEvent } from '../../../contracts/src/runtime.ts';
@@ -72,12 +73,15 @@ export class BrowserPreviewRuntime implements PreviewRuntime {
       const result = await this.compile({ files, imports: manifest.importMap.imports, entry: this.options.entry, wasmUrl: this.options.esbuildWasmUrl });
       if ('diagnostics' in result) return failed(result.diagnostics);
       if (this.disposed) return this.emit({ type: 'stale_discarded', token, reason: 'canceled' });
-      return await this.stage({ kind: 'load', token, importMap: manifest.importMap, code: result.code, mountId: this.options.mountId ?? 'root', ...(snapshot.hostConfig ? { hostConfig: snapshot.hostConfig } : {}) }, result.bundleMs, start);
+      // A unique sourceURL labels stack frames without embedding the data module
+      // (and its code) in the stack. It is a label, never a fetched resource.
+      const bundle: BundleSource = { url: new URL('/__toi_preview__/' + crypto.randomUUID() + '.js', location.origin).href, map: result.map, files: new Set(Object.keys(files)) };
+      return await this.stage({ kind: 'load', token, importMap: manifest.importMap, code: result.code + '\n//# sourceURL=' + bundle.url, mountId: this.options.mountId ?? 'root', ...(snapshot.hostConfig ? { hostConfig: snapshot.hostConfig } : {}) }, result.bundleMs, start, bundle);
     } catch (error) {
       return this.disposed ? this.emit({ type: 'stale_discarded', token, reason: 'canceled' }) : failed([{ message: String(error) }]);
     }
   }
-  private stage(payload: ParentToFrame, bundleMs: number, start: number): Promise<PreviewEvent> {
+  private stage(payload: ParentToFrame, bundleMs: number, start: number, bundle: BundleSource): Promise<PreviewEvent> {
     return new Promise(resolve => {
       const frame = document.createElement('iframe');
       frame.title = `Preview revision ${payload.token.revision}`;
@@ -111,7 +115,7 @@ export class BrowserPreviewRuntime implements PreviewRuntime {
         }
         resolve(this.emit(event));
       };
-      const onMessage = (event: MessageEvent<FrameToParent>) => {
+      const onMessage = (event: MessageEvent<RuntimeFrameMessage>) => {
         if (event.origin !== this.options.previewOrigin || event.source !== frame.contentWindow || !event.data) return;
         if (event.data.kind === 'frame_ready' && !loaded) {
           loaded = true;
@@ -119,7 +123,7 @@ export class BrowserPreviewRuntime implements PreviewRuntime {
         } else if (loaded && event.data.kind === 'rendered' && sameToken(event.data.token, payload.token)) {
           finish(true, event.data.bootMs);
         } else if (loaded && event.data.kind === 'error' && sameToken(event.data.token, payload.token)) {
-          finish(false, 0, event.data.error);
+          finish(false, 0, runtimeDiagnostic(event.data.error.message, event.data.stack, bundle));
         }
       };
       const timer = window.setTimeout(() => finish(false), this.options.bootTimeoutMs ?? 5000);

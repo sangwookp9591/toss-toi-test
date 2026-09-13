@@ -1,15 +1,18 @@
 import { chromium } from '@playwright/test';
 import { spawn } from 'node:child_process';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import { fileURLToPath } from 'node:url';
 process.chdir(fileURLToPath(new URL('..', import.meta.url)));
-const studioUrl = 'http://localhost:5173';
+const studioUrl = 'http://localhost:5273';
 let server;
 let browser;
 try {
-  try { await fetch(studioUrl); } catch {
-    server = spawn(process.execPath, ['scripts/dev.mjs'], { stdio: 'inherit' });
+  let occupied = false;
+  try { await fetch(studioUrl); occupied = true; } catch {}
+  if (occupied) throw new Error('Benchmark port 5273 is already in use; stop the package test server before running the benchmark.');
+  {
+    server = spawn(process.execPath, ['scripts/dev.mjs'], { stdio: 'inherit', env: { ...process.env, STUDIO_PORT: '5273', PREVIEW_PORT: '5274' } });
     for (let attempt = 0; ; attempt++) {
       try { if ((await fetch(studioUrl)).ok) break; } catch {}
       if (attempt >= 100 || server.exitCode !== null) throw new Error('Demo server did not start');
@@ -58,8 +61,18 @@ try {
     samples,
     medians: { firstCommitMs: median(samples.map(s => s.firstCommitMs)), editCommitMs: median(samples.map(s => s.editCommitMs)) }
   };
+  const baseline = JSON.parse(await readFile('bench/before-source-mapping.json', 'utf8'));
+  const changes = reference => Object.fromEntries(Object.entries(result.medians).map(([key, value]) => [key, (value / reference[key] - 1) * 100]));
+  result.baseline = baseline;
+  result.comparison = {
+    baseline: 'Same-session pre-mapping run; same 5273/5274 ports, Chrome and fixture.',
+    changePercent: changes(baseline.medians),
+    historicalChangePercent: changes(baseline.historicalBaseline.medians),
+    maximumRegressionPercent: 20,
+    withinBudget: [baseline.medians, baseline.historicalBaseline.medians].every(reference => Object.values(changes(reference)).every(change => change <= 20)),
+  };
   await mkdir('bench', { recursive: true });
-  await writeFile('bench/results.json', JSON.stringify(result, null, 2) + '\n');
+  await writeFile(process.env.BENCH_OUTPUT ?? 'bench/results.json', JSON.stringify(result, null, 2) + '\n');
   console.log('Medians:', result.medians);
 } finally {
   await browser?.close();

@@ -7,7 +7,7 @@ function boot(payload: ParentToFrame, parentOrigin: string) {
   const report = (error: unknown) => {
     if (failed) return;
     failed = true;
-    parent.postMessage({ kind: 'error', token: payload.token, error: { message: error instanceof Error ? error.message : String(error) } }, parentOrigin);
+    parent.postMessage({ kind: 'error', token: payload.token, error: { message: error instanceof Error ? error.message : String(error) }, ...(error instanceof Error && typeof error.stack === 'string' ? { stack: error.stack } : {}) }, parentOrigin);
   };
   window.addEventListener('error', event => report(event.error ?? event.message));
   window.addEventListener('unhandledrejection', event => report(event.reason));

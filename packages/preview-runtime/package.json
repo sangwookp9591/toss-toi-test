@@ -19,6 +19,7 @@
     "bench": "node scripts/bench.mjs"
   },
   "dependencies": {
+    "@jridgewell/trace-mapping": "0.3.31",
     "esbuild-wasm": "0.28.2"
   },
   "devDependencies": {

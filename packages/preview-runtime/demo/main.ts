@@ -20,7 +20,8 @@ async function init() {
     const data = await response.json();
     manifest = data.manifest ?? data;
   } else manifest = fixture;
-  runtime = createPreviewRuntime({ container: document.querySelector('#preview')!, previewOrigin: 'http://localhost:5174', frameUrl: 'http://localhost:5174/frame.html', esbuildWasmUrl: new URL('/esbuild.wasm', location.origin).href, entry: '/src/main.tsx', bootTimeoutMs: 15000 });
+  const previewOrigin = document.querySelector<HTMLMetaElement>('meta[name="preview-origin"]')?.content ?? 'http://localhost:5174';
+  runtime = createPreviewRuntime({ container: document.querySelector('#preview')!, previewOrigin, frameUrl: previewOrigin + '/frame.html', esbuildWasmUrl: new URL('/esbuild.wasm', location.origin).href, entry: '/src/main.tsx', bootTimeoutMs: 15000 });
   runtime.on(event => {
     events.push(event);
     status.textContent = JSON.stringify(event, null, 2);

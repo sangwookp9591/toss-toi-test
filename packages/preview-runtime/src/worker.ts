@@ -20,7 +20,7 @@ async function bundle(request: BundleRequest) {
     context ??= await esbuild.context({
       entryPoints: [request.entry], absWorkingDir: '/', bundle: true, write: false,
       format: 'esm', platform: 'browser', target: 'es2022', jsx: 'automatic',
-      sourcemap: 'inline', outfile: '/bundle.js', logLevel: 'silent',
+      sourcemap: 'external', sourcesContent: false, outfile: '/bundle.js', logLevel: 'silent',
       plugins: [{ name: 'memory-vfs', setup(build) {
         build.onResolve({ filter: /.*/ }, args => {
           if (isAllowedExternal(args.path, current.imports)) return { path: args.path, external: true };
@@ -38,10 +38,10 @@ async function bundle(request: BundleRequest) {
       } }]
     });
     const result = await context.rebuild();
-    scope.postMessage({ id: request.id, code: result.outputFiles![0].text, bundleMs: performance.now() - start });
+    scope.postMessage({ id: request.id, code: result.outputFiles!.find(file => file.path === '/bundle.js')!.text, map: result.outputFiles!.find(file => file.path === '/bundle.js.map')!.text, bundleMs: performance.now() - start });
   } catch (error) {
     const messages = (error as BuildFailure).errors;
-    scope.postMessage({ id: request.id, diagnostics: messages?.map(item => ({ message: item.text, file: item.location?.file, line: item.location?.line, column: item.location?.column })) ?? [{ message: String(error) }] });
+    scope.postMessage({ id: request.id, diagnostics: messages?.map(item => ({ message: item.text, file: item.location?.file.replace(/^vfs:/, ''), line: item.location?.line, column: item.location?.column })) ?? [{ message: String(error) }] });
   }
 }
 scope.onmessage = event => { queue = queue.then(() => bundle(event.data)); };
