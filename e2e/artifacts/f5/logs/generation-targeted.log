@@ -1,0 +1,14 @@
+
+> test
+> playwright test --grep G: 복구한 질문
+
+
+Running 1 test using 1 worker
+
+(node:24539) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24539) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/studio.spec.ts:50:1 › G: 복구한 질문 취소와 이미 끝난 생성·404 안내 (3.9s)
+
+  1 passed (5.4s)

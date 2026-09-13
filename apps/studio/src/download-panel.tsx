@@ -1,7 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { API, authenticatedFetch, json } from './api.ts';
 import type { DownloadFormat, DownloadTicket } from '../../../contracts/src/policy.ts';
+export const VIEWER_DOWNLOAD_NOTICE = '암호화 다운로드는 editor 이상만 할 수 있어요. 프로젝트 owner에게 권한을 요청하세요.';
 export function DownloadPanel({ projectId, apiIds, disabled }: { projectId: string; apiIds: string[]; disabled: boolean }) {
+  const permissionId = useId();
   const [format, setFormat] = useState<DownloadFormat>('csv');
   const [apiId, setApiId] = useState(apiIds[0] ?? '');
   const [path, setPath] = useState('/customers');
@@ -12,6 +14,7 @@ export function DownloadPanel({ projectId, apiIds, disabled }: { projectId: stri
   const active = useRef(true);
   useEffect(() => () => { active.current = false; }, []);
   async function create() {
+    if (disabled || busy) return;
     setBusy(true); setNotice('');
     try {
       const capability = await json<{ token: string }>(API.policy + '/capabilities', { projectId, mode: 'read', env: 'preview', ttlSec: 120 });
@@ -36,7 +39,9 @@ export function DownloadPanel({ projectId, apiIds, disabled }: { projectId: stri
     finally { if (active.current) setBusy(false); }
   }
   return <details className="access-panel" onToggle={event => { if (!event.currentTarget.open) setTicket(undefined); }}><summary>암호화 다운로드</summary>
+    <p id={permissionId}>{disabled ? VIEWER_DOWNLOAD_NOTICE : '편집자·소유자는 사유를 입력해 암호화 파일을 만들 수 있어요.'}</p>
     {ticket ? <div role="dialog" aria-label="다운로드 비밀번호">
+      <p>AES-256 ZIP은 macOS 기본 압축 해제 도구로 열 수 없어요. 7-Zip, Keka 또는 <code>7z x</code>를 사용하세요.</p>
       <p>비밀번호는 이번에만 표시돼요. 닫으면 다시 볼 수 없어요.</p>
       <output aria-label="ZIP 비밀번호" style={{ overflowWrap: 'anywhere' }}>{ticket.zipPassword}</output>
       <button type="button" onClick={async () => { try { await navigator.clipboard.writeText(ticket.zipPassword); setNotice('비밀번호를 복사했어요.'); } catch { setNotice('복사하지 못했어요. 비밀번호를 직접 선택해 주세요.'); } }}>비밀번호 복사</button>
@@ -48,7 +53,7 @@ export function DownloadPanel({ projectId, apiIds, disabled }: { projectId: stri
       <label>조회 경로<input aria-label="다운로드 조회 경로" value={path} onChange={event => setPath(event.target.value)} required/></label>
       <label>파일 형식<select aria-label="다운로드 형식" value={format} onChange={event => setFormat(event.target.value as DownloadFormat)}><option value="csv">CSV</option><option value="xlsx">XLSX</option></select></label>
       <label>다운로드 사유<input aria-label="다운로드 사유" value={reason} onChange={event => setReason(event.target.value)} minLength={5} maxLength={500} required/></label>
-      <button disabled={disabled || busy || reason.trim().length < 5 || !apiId}>{busy ? '준비 중…' : '암호화 파일 만들기'}</button>
+      <button aria-describedby={disabled ? permissionId : undefined} disabled={disabled || busy || reason.trim().length < 5 || !apiId}>{busy ? '준비 중…' : '암호화 파일 만들기'}</button>
     </form>}
     {notice ? <p role="status">{notice}</p> : null}
   </details>;

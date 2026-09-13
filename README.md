@@ -63,7 +63,7 @@ Docker Desktop, Node.js 22, npm, 시스템 Google Chrome이 필요하다. Docker
 node scripts/dev-up.mjs
 ```
 
-스크립트는 Docker Compose의 Keycloak(8080)/Verdaccio/MinIO, 사내 패키지 등록, mock-backend(7300), policy-proxy(7200), deps-builder(7100), agent-server(7400), 스튜디오(5173)와 프리뷰 origin(5174)을 순서대로 확인한다. fake-tds·preview-runtime과 모든 실행 서비스·스튜디오의 의존성을 각 폴더의 lockfile로 설치하며 정상 실행 중인 서비스는 재사용한다. `node scripts/dev-up.mjs --check`로 설치 대상과 lockfile을 서비스 기동 없이 검사할 수 있다.
+스크립트는 Docker Compose의 Keycloak(8080)/Verdaccio/MinIO, 사내 패키지 등록, mock-backend(7300), policy-proxy(7200), deps-builder(7100), agent-server(7400), 스튜디오(5173)와 프로젝트별 프리뷰 origin(`p-<projectId>.preview.localhost:5174`)을 순서대로 확인한다. fake-tds·preview-runtime과 모든 실행 서비스·스튜디오의 의존성을 각 폴더의 lockfile로 설치하며 정상 실행 중인 서비스는 재사용한다. `node scripts/dev-up.mjs --check`로 설치 대상과 lockfile을 서비스 기동 없이 검사할 수 있다.
 
 기동 출력에는 단계별 소요 시간이 표시된다. 실패하면 `registry setup failed: fake-tds build failed: tsc not found`처럼 실패 단계와 원인 요약, 로그 경로를 표시한다. 전체 기동 로그는 `scripts/.run/dev-up.log`, 서비스별 로그는 `scripts/.run/<서비스 이름>.log`, 직접 시작한 프로세스 목록은 `scripts/.run/processes.json`에 보관한다. 기동 로그는 비밀값을 가리고 레지스트리 설정 오류는 안전한 원인 요약만 출력한다. 원인을 해결한 뒤 같은 dev-up 명령을 다시 실행한다.
 
@@ -80,9 +80,9 @@ Keycloak admin 또는 MinIO root 인증이 실패하면 대상 `<프로젝트>_k
 
 감사 버킷의 COMPLIANCE 객체는 보존 기한 전 S3/`mc` 삭제가 거부된다. 보존 만료를 기다리면 객체를 삭제할 수 있다. 개발 데이터를 전부 폐기하는 `dev-down --volumes`는 컨테이너를 내린 뒤 Docker 볼륨 자체를 제거하므로 S3 object lock의 보호 대상이 아니다. 볼륨 사용 중 오류가 나면 해당 프로젝트의 남은 컨테이너를 확인하고 종료한 뒤 같은 명령을 재시도하며, 다른 프로젝트 볼륨은 제거하지 않는다.
 
-[스튜디오](http://localhost:5173)에서 Keycloak 사용자 alice로 로그인한다. 비밀번호는 dev-up이 무작위 생성한 `.env`의 `TOI_PASSWORD_ALICE`를 확인한다(bob/carol/dana/root도 `TOI_PASSWORD_*`). 로그인 후 프로젝트를 만들고 “고객 목록 화면 만들어줘”를 입력한다. 조회 사유 질문에 답하면 생성된 코드와 미리보기를 볼 수 있다. 조회 사유를 입력한 뒤 조회하면 마스킹된 고객 데이터가 표시된다. 코드 편집 후 “저장하고 반영”으로 저장하며 오류가 있으면 마지막 정상 화면을 유지한다. 쓰기 작업은 기본 차단되고 “쓰기 테스트 허용”을 켰을 때 현재 프로젝트의 API에 2분간 허용된다. 프리뷰에는 `/preview-sessions`로 발급한 프로젝트 한정 viewer 세션과 capability만 전달하며 Keycloak 토큰은 전달하지 않는다. `/dev/session`은 제거했다.
+[스튜디오](http://localhost:5173)에서 Keycloak 사용자 alice로 로그인한다. 비밀번호는 dev-up이 무작위 생성한 `.env`의 `TOI_PASSWORD_ALICE`를 확인한다(bob/carol/dana/root도 `TOI_PASSWORD_*`). 로그인 후 프로젝트를 만들고 “고객 목록 화면 만들어줘”를 입력한다. 조회 사유 질문에 답하면 생성된 코드와 미리보기를 볼 수 있다. 조회 사유를 입력한 뒤 조회하면 마스킹된 고객 데이터가 표시된다. 코드 편집 후 “저장하고 반영”으로 저장하며 오류가 있으면 마지막 정상 화면을 유지한다. 쓰기 작업은 기본 차단되고 “쓰기 테스트 허용”을 켰을 때 현재 프로젝트의 API에 2분간 허용된다. 프리뷰에는 자격 증명 없는 `{ projectId, env, transport: "broker" }` 설정만 전달한다. Keycloak 토큰과 `/preview-sessions`의 viewer 세션·capability는 스튜디오 메모리에만 두며 검증된 postMessage 요청을 브로커가 policy-proxy로 보낸다. `/dev/session`은 제거했다.
 
-프로젝트 viewer는 열기·preview read, editor는 생성·저장·preview write, owner는 멤버 관리·live 승인 요청을 할 수 있다. 비멤버는 404이며 멤버 제거는 다음 proxy 요청부터 적용된다. live 쓰기는 owner 요청 후 해당 API api-owner(dana)의 4-eyes 승인이 필요하고 본인 승인은 금지한다. 승인은 기본 5분 후 만료된다. preview/live는 서로 다른 upstream 경로·데이터셋·서비스 토큰을 사용한다. 자세한 API와 역할표는 [policy-proxy README](services/policy-proxy/README.md)에 있다.
+프로젝트 viewer는 열기·preview read, editor는 생성·저장·preview write, owner는 멤버 관리·live 승인 요청을 할 수 있다. 비멤버는 404이며 멤버 제거는 다음 proxy 요청부터 적용된다. 스튜디오는 프로젝트를 연 동안 30초마다, 창에 포커스가 돌아올 때도 멤버십을 확인한다. 접근 거부 시 프리뷰를 내리고 편집·생성·저장을 잠근다. live 쓰기는 owner 요청 후 해당 API api-owner(dana)의 4-eyes 승인이 필요하고 본인 승인은 금지한다. 승인은 기본 5분 후 만료된다. preview/live는 서로 다른 upstream 경로·데이터셋·서비스 토큰을 사용한다. 자세한 API와 역할표는 [policy-proxy README](services/policy-proxy/README.md)에 있다.
 
 기본 에이전트는 키가 필요 없는 mock 모드다. 실제 Claude 모드는 루트 `.env`에 `ANTHROPIC_API_KEY`를 설정하고 `AGENT_MODE=claude node scripts/dev-up.mjs`로 시작한다. 이미 agent-server가 실행 중이면 해당 프로세스를 먼저 종료해야 새 모드가 적용된다. 모델/SDK 설정과 실제 모드 검증 범위는 [agent-server README](services/agent-server/README.md)를 참고한다. 비밀 값은 브라우저 코드에 넣지 않는다.
 
@@ -97,17 +97,17 @@ npm --prefix bench run run
 node scripts/dev-down.mjs
 ```
 
-E2E는 시스템 Chrome의 실제 Keycloak 로그인으로 A–S를 세 번 반복한다. `dev-up --e2e`는 승인 만료 테스트를 위해 TTL을 8초로 줄이고 관리 중인 policy-proxy를 필요하면 재시작한다. 일반 `dev-up`은 기본 300초를 다시 적용한다(명시적 `TOI_APPROVAL_TTL_SEC` 설정은 유지). 옵션 없이도 E2E는 실제 만료 시각까지 기다리지만 반복마다 최대 5분이 추가된다. 결과와 화면은 [e2e/README.md](e2e/README.md), 비교 조건과 3회 원시 측정값은 [bench/README.md](bench/README.md), 구현 구조는 [스튜디오 README](apps/studio/README.md)에 있다. `dev-down`은 dev-up이 직접 시작한 프로세스와 Docker Compose를 종료하며, 외부에서 시작해 재사용한 서비스는 종료하지 않는다. Docker 볼륨은 보존한다.
+E2E는 시스템 Chrome의 실제 Keycloak 로그인으로 기존 39개 시나리오와 접근 철회·viewer 다운로드 안내(AI·AJ)를 세 번 반복한다. `dev-up --e2e`는 승인 만료 테스트를 위해 TTL을 8초로 줄이고 관리 중인 policy-proxy를 필요하면 재시작한다. 일반 `dev-up`은 기본 300초를 다시 적용한다(명시적 `TOI_APPROVAL_TTL_SEC` 설정은 유지). 옵션 없이도 E2E는 실제 만료 시각까지 기다리지만 반복마다 최대 5분이 추가된다. 결과와 화면은 [e2e/README.md](e2e/README.md), 비교 조건과 3회 원시 측정값은 [bench/README.md](bench/README.md), 구현 구조는 [스튜디오 README](apps/studio/README.md)에 있다. `dev-down`은 dev-up이 직접 시작한 프로세스와 Docker Compose를 종료하며, 외부에서 시작해 재사용한 서비스는 종료하지 않는다. Docker 볼륨은 보존한다.
 
 ### 프리뷰 네트워크·환경변수 격리 (P0-2)
 
-프로젝트 UUID마다 `http://p-<projectId>.preview.localhost:5174` origin을 만든다. 프로젝트를 바꾸면 런타임·iframe을 새로 만들고, 해당 프로젝트의 viewer 프리뷰 세션과 capability만 주입한다. 스튜디오 부모는 `http://localhost:5173` 하나다. 로그인 복원은 iframe 대신 최상위 `prompt=none` PKCE 리다이렉트를 사용하고, 이후 토큰 갱신은 메모리의 refresh token grant만 사용한다. 5174는 정확한 프로젝트 Host에서 `/frame.html`과 `/frame.js`만 제공하며 잘못된 Host는 421, 다른 경로는 404다. 스튜디오에서는 frame 자산을 제공하지 않으며, 벤치는 `TOI_ENABLE_BENCH=true`로 시작했을 때만 열린다.
+프로젝트 UUID마다 `http://p-<projectId>.preview.localhost:5174` origin을 만든다. 프로젝트를 바꾸면 런타임·iframe을 새로 만들고, 해당 프로젝트의 토큰 없는 브로커 설정만 주입한다. viewer 프리뷰 세션과 capability는 스튜디오가 보관한다. 스튜디오 부모는 `http://localhost:5173` 하나다. 로그인 복원은 iframe 대신 최상위 `prompt=none` PKCE 리다이렉트를 사용하고, 이후 토큰 갱신은 메모리의 refresh token grant만 사용한다. 5174는 정확한 프로젝트 Host에서 `/frame.html`과 `/frame.js`만 제공하며 잘못된 Host는 421, 다른 경로는 404다. 스튜디오에서는 frame 자산을 제공하지 않으며, 벤치는 `TOI_ENABLE_BENCH=true`로 시작했을 때만 열린다.
 
 | 프리뷰 CSP 지시문 | 허용 범위 |
 |---|---|
 | `default-src` | `'none'` |
-| `connect-src` | `http://localhost:7200` — 상대 URL·다른 origin 통신 차단 |
-| `script-src` | `'self' http://localhost:7100 data:` 및 응답마다 새 nonce |
+| `connect-src` | `'none'` — frame의 직접 네트워크 연결 차단, 허용 요청은 부모 브로커 경유 |
+| `script-src` | `'self' http://localhost:7100` 및 응답마다 새 nonce |
 | `style-src` | `'self' 'unsafe-inline'` |
 | `img-src` / `font-src` | `data: blob:` / `data:` |
 | `frame-ancestors` | `http://localhost:5173` |

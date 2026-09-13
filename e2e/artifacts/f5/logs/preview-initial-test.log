@@ -1,0 +1,80 @@
+
+> @toi/preview-runtime@0.1.0 test
+> npm run test:unit && npm run test:browser
+
+
+> @toi/preview-runtime@0.1.0 test:unit
+> vitest run
+
+
+ RUN  v5.0.0 /Users/psw/Projects/toss-toi-test/packages/preview-runtime
+
+
+ Test Files  4 passed (4)
+      Tests  43 passed (43)
+   Start at  23:49:52
+   Duration  366ms (transform 60%, tests 23%, import 14%, worker 2%)
+
+
+> @toi/preview-runtime@0.1.0 test:browser
+> playwright test
+
+[WebServer] (node:93063) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 26 tests using 1 worker
+
+(node:93085) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:93085) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/runtime-diagnostic.browser.test.ts:26:3 › sync throw maps App source after comments and "\n" (1.0s)
+  ✓   2 tests/runtime-diagnostic.browser.test.ts:26:3 › sync throw maps App source after comments and "\r\n" (755ms)
+  ✓   3 tests/runtime-diagnostic.browser.test.ts:36:1 › React render failure maps App instead of React internals and keeps the previous screen (938ms)
+  ✓   4 tests/runtime-diagnostic.browser.test.ts:47:1 › nested Table render failure returns the child file and nearest user frame (851ms)
+  ✓   5 tests/runtime-diagnostic.browser.test.ts:57:1 › unhandled async rejection maps the original throw after await (808ms)
+  ✓   6 tests/runtime-diagnostic.browser.test.ts:66:1 › errors originating only in an import-map external have no VFS location (777ms)
+  ✓   7 tests/runtime-diagnostic.browser.test.ts:75:1 › primitive rejection has no invented position (778ms)
+  ✓   8 tests/runtime-diagnostic.browser.test.ts:84:1 › successive revisions use their own maps and normalize build diagnostic paths (866ms)
+  ✓   9 tests/runtime-diagnostic.browser.test.ts:98:1 › mapping stays in studio memory and never requests a map or transmits source text (760ms)
+  ✘  10 tests/runtime.browser.test.ts:20:1 › first commit, edit commit and no COOP/COEP (181ms)
+(node:93364) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:93364) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  11 tests/runtime.browser.test.ts:33:1 › syntax and runtime failures retain the same last successful iframe (1.1s)
+  ✓  12 tests/runtime.browser.test.ts:46:1 › React render throw retains previous screen (952ms)
+  ✓  13 tests/runtime.browser.test.ts:54:1 › r10 starts, r11 starts and succeeds, late successful r10 is discarded (2.5s)
+  ✓  14 tests/runtime.browser.test.ts:74:1 › failed r11 and late successful r10 leave r9 visible (1.8s)
+  ✓  15 tests/runtime.browser.test.ts:88:1 › cancel followed by late successful execution is discarded (1.5s)
+  ✓  16 tests/runtime.browser.test.ts:101:1 › only exact allowlist imports pass, including generated JSX imports (813ms)
+  ✓  17 tests/runtime.browser.test.ts:111:1 › manifest and source digest mismatches are rejected (229ms)
+  ✓  18 tests/runtime.browser.test.ts:130:1 › forged messages from wrong origin or source cannot commit a candidate (822ms)
+  ✓  19 tests/runtime.browser.test.ts:152:1 › merged VFS extension/index resolution and changed external set use the retained context (844ms)
+  ✓  20 tests/runtime.browser.test.ts:176:1 › frame construction preserves closing-script strings and Unicode (819ms)
+  ✓  21 tests/runtime.browser.test.ts:183:1 › host config is credential-free, frozen and rejects legacy token fields (875ms)
+  ✓  22 tests/runtime.browser.test.ts:202:1 › no host config creates no fetch global, including after a configured build (946ms)
+  ✓  23 tests/runtime.browser.test.ts:220:1 › replacing only hostConfig with the same revision token commits the new config (875ms)
+  ✓  24 tests/runtime.browser.test.ts:240:1 › boot timeout retains previous iframe and dispose settles a build during input preparation (1.9s)
+  ✓  25 tests/runtime.browser.test.ts:271:1 › navigation removes committed documents, restores a fresh good frame and stops at three per minute (1.3s)
+  ✓  26 tests/runtime.browser.test.ts:288:1 › CSP rejects data and blob script modules while nonce inline code executes (794ms)
+
+
+  1) tests/runtime.browser.test.ts:20:1 › first commit, edit commit and no COOP/COEP ───────────────
+
+    AggregateError: apiRequestContext.get: connect ECONNREFUSED ::1:5173
+    connect ECONNREFUSED 127.0.0.1:5173
+    Call log:
+      - → GET http://localhost:5173/
+        - user-agent: Playwright/1.63.0 (arm64; macOS 26.6) node/22.14
+        - accept: */*
+        - accept-encoding: gzip,deflate,br
+
+        at apiRequestContext.get: connect ECONNREFUSED ::1:5173
+        at /Users/psw/Projects/toss-toi-test/packages/preview-runtime/tests/runtime.browser.test.ts:21:34
+
+    Error Context: test-results/runtime.browser-first-commit-edit-commit-and-no-COOP-COEP/error-context.md
+
+  1 failed
+    tests/runtime.browser.test.ts:20:1 › first commit, edit commit and no COOP/COEP ────────────────
+  25 passed (29.6s)

@@ -1,6 +1,6 @@
 import { afterEach, expect, it, vi } from 'vitest';
 import { FrameBroker, brokerFailure } from '../src/broker.ts';
-import { configureToiFetch, toiFetch, clearToiFetch } from '../../../services/policy-proxy/client/toi-fetch.ts';
+import { configureToiFetch, toiFetch, clearToiFetch, ToiAccessRevokedError, ToiFetchError } from '../../../services/policy-proxy/client/toi-fetch.ts';
 const token = { projectId: 'p', revision: 1, attemptId: 'a', sourceDigest: 's', manifestDigest: 'm' };
 const request = { kind: 'toi_fetch', token, requestId: 'r', apiId: 'customers', path: '/customers', method: 'GET' };
 const origin = 'http://p.preview.localhost';
@@ -60,4 +60,21 @@ it('client times out at 30 seconds and refuses legacy credentials', async () => 
   await vi.advanceTimersByTimeAsync(30000); await assertion;
   configureToiFetch({ projectId: 'p', sessionToken: 'synthetic', capabilityToken: 'synthetic' } as any);
   await expect(toiFetch('customers', '/customers')).rejects.toMatchObject({ status: 0, code: 'CLIENT_NOT_CONFIGURED' });
+});
+
+it.each([{ error: 'PROJECT_NOT_FOUND' }, { code: 'PROJECT_NOT_FOUND' }])('membership 404 throws ToiAccessRevokedError with status/code: %j', async body => {
+  const { parent, receive } = clientHarness();
+  const pending = toiFetch('customers', '/customers');
+  const requestId = parent.postMessage.mock.calls[0][0].requestId;
+  receive({ kind: 'toi_fetch_result', requestId, status: 404, body: JSON.stringify(body) });
+  await expect(pending).rejects.toBeInstanceOf(ToiAccessRevokedError);
+  await expect(pending).rejects.toMatchObject({ status: 404, code: 'PROJECT_NOT_FOUND' });
+});
+it('resource 404 keeps its ordinary error type', async () => {
+  const { parent, receive } = clientHarness();
+  const pending = toiFetch('customers', '/customers/missing');
+  receive({ kind: 'toi_fetch_result', requestId: parent.postMessage.mock.calls[0][0].requestId, status: 404, body: '{"error":"NOT_FOUND"}' });
+  const error = await pending.catch(error => error);
+  expect(error).toBeInstanceOf(ToiFetchError); expect(error).not.toBeInstanceOf(ToiAccessRevokedError);
+  expect(error).toMatchObject({ status: 404, code: 'NOT_FOUND' });
 });

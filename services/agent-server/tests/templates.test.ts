@@ -84,6 +84,8 @@ for (const prompt of ['고객 목록', '고객 상세', '고객 상태 변경'])
     expect(app.tables()).toHaveLength(0);
   });
   it.each([
+    ['membership revoked', new client.ToiAccessRevokedError(), '이 프로젝트에 접근할 수 없어요.'],
+    ['membership code', new client.ToiFetchError(404, 'PROJECT_NOT_FOUND'), '이 프로젝트에 접근할 수 없어요.'],
     ['typed 428', new client.ToiReasonRequiredError(), '조회 사유를 5자 이상 입력하세요.'],
     ['HTTP 428', new client.ToiFetchError(428, 'REASON_REQUIRED'), '조회 사유를 5자 이상 입력하세요.'],
     ['typed 403', new client.ToiForbiddenError(), '조회 권한이 없어요.'],
@@ -98,6 +100,7 @@ for (const prompt of ['고객 목록', '고객 상세', '고객 상태 변경'])
     app.query.mockRejectedValueOnce(error);
     await app.button().props.onClick();
     expect(app.text()).toContain(message);
+    expect(app.text()).not.toContain('조건에 맞는 고객이 없어요');
     expect(app.text()).not.toContain('private internal detail');
     expect(app.tables()).toHaveLength(0);
     expect(app.button().props.disabled).toBe(false);

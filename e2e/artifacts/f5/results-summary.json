@@ -1,0 +1,17 @@
+{
+  "stats": {
+    "startTime": "2026-09-13T15:12:12.942Z",
+    "duration": 584560.866,
+    "expected": 123,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "scenarios": 41,
+  "executionsPerScenario": 3,
+  "passedByWorker": {
+    "0": 41,
+    "1": 41,
+    "2": 41
+  }
+}

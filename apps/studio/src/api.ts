@@ -2,9 +2,10 @@ import { auth, LoginRequired, LOGIN_MESSAGE } from './auth.ts';
 import type { GenerationEvent } from '../../../contracts/src/generation.ts';
 export const API = { agent: 'http://localhost:7400', deps: 'http://localhost:7100', policy: 'http://localhost:7200' };
 export class HttpError extends Error { constructor(readonly status: number, readonly body: any) { super(body.error ?? `HTTP ${status}`); } }
+export const ACCESS_REVOKED_MESSAGE = '이 프로젝트에 접근할 수 없어요. 멤버에서 제거되었거나 권한이 바뀌었을 수 있어요';
 export function accessMessage(error: unknown, fallback: string): string {
   if (error instanceof LoginRequired || error instanceof HttpError && error.status === 401) return LOGIN_MESSAGE;
-  if (error instanceof HttpError && error.status === 404) return '프로젝트를 찾을 수 없거나 멤버가 아니에요.';
+  if (error instanceof HttpError && error.status === 404) return ACCESS_REVOKED_MESSAGE;
   if (error instanceof HttpError && error.status === 403) return '이 작업을 할 권한이 없어요. 프로젝트 소유자에게 문의해 주세요.';
   if (error instanceof HttpError && error.status === 409 && /owner/i.test(JSON.stringify(error.body))) return '마지막 소유자는 제거하거나 역할을 낮출 수 없어요.';
   return fallback;

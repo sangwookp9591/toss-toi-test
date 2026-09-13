@@ -102,6 +102,8 @@
 | 실패 원인과 복구 | 공개 글의 오류 overlay → input/registry/storage/internal 코드와 동일 revision 재시도 | 잘못된 버전과 실제 저장소 장애를 구분한다. [security.ts](../../services/deps-builder/src/security.ts):12–26, [QA3](../qa/qa3/QA3-REPORT.md):40 | health probe는 설치 실패 이후 관측이라 완전한 근본 원인 분석이 아니다. 토스에 같은 진단이 없는지는 모른다. |
 | 다른 탭 복원 | 토스 프로토콜 비공개 → active generation 발견+seq replay+CAS 보관본 | 새 탭에서 질문 발견/답변·취소 동기화, 중복 생성 요청 차단. [controller.ts](../../apps/studio/src/controller.ts):114–167, [generation.ts](../../contracts/src/generation.ts):53–57, E2E G/J/L | 서버 재시작 시 진행 모델은 재개하지 않고 실패 종결한다. multi-instance CAS나 협업 CRDT가 아니다. |
 
+> preview write 부작용 항목 — 이후 변경(7665546, R3-M2): frame에는 토큰이 없고 @toi/fetch는 스튜디오 브로커로 요청한다. 멤버십·환경은 policy-proxy가 매 요청 검증한다.
+
 기존 [astra-critique](../../astra-critique.md)의 관점도 유지한다. 패키지별 ESM 자체가 원리적으로 불가능한 것은 아니며 peer external과 일관된 해석 manifest로 singleton을 지킬 수도 있다. 조합 빌드는 의존성 호환성 검증을 묶기 쉽지만 조합이 늘면 중복 바이트·빌드·GC 비용이 커진다. 어느 쪽이 운영상 유리한지는 실제 조합 분포/재사용률이 필요하다.
 
 ## 3. 성능 비교

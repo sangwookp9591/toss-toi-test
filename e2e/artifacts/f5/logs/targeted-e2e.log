@@ -1,0 +1,17 @@
+
+> test
+> playwright test --grep AI:|AJ:|N:|O:
+
+
+Running 4 tests using 1 worker
+
+(node:3261) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:3261) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/identity.spec.ts:17:1 › N: carol nonmember receives 404 and cannot mint or use preview/capability (2.9s)
+  ✓  2 tests/identity.spec.ts:28:1 › O: owner member UI protects last owner; viewer read only, editor generation, removal revokes proxy within 5s (4.2s)
+  ✓  3 tests/identity.spec.ts:180:1 › AI: removed bob sees access revoked on broker query and periodic check without preview requests (32.6s)
+  ✓  4 tests/identity.spec.ts:225:1 › AJ: viewer download panel explains role restriction with aria-describedby (1.7s)
+
+  4 passed (43.0s)

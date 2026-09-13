@@ -28,7 +28,7 @@ Keycloak 그룹은 alice/bob `/team-a`, carol `/team-b`, dana `/risk`, root `/pl
 
 - `GET /apis`, `GET /apis/:apiId`: 사용자 또는 `toi-agent-server` 서비스 계정. 공개 응답에는 `environments`와 OpenAPI 내부 서버·인증 정보가 없다.
 - `POST /apis`: platform-admin. 환경별 upstream은 `TOI_UPSTREAM_ALLOWLIST`에 정확히 일치해야 한다.
-- `POST /preview-sessions`: 정확한 스튜디오 Origin과 사용자 액세스 토큰 필요. `{projectId, write?:{apiIds,ttlSec}}`를 받아 `{sessionToken,sessionClaims,capabilityToken,capability}`를 반환한다. write는 editor 이상, 최대 120초다. 프리뷰 세션은 `aud=toi-preview`, `roles=["viewer"]`, projectId에 제한되며 `/proxy/*`에서만 쓸 수 있다. Keycloak 토큰은 프리뷰에 전달하지 않는다.
+- `POST /preview-sessions`: 정확한 스튜디오 Origin과 사용자 액세스 토큰 필요. `{projectId, write?:{apiIds,ttlSec}}`를 받아 `{sessionToken,sessionClaims,capabilityToken,capability}`를 반환한다. write는 editor 이상, 최대 120초다. 프리뷰 세션은 `aud=toi-preview`, `roles=["viewer"]`, projectId에 제한되며 `/proxy/*`에서만 쓸 수 있다. Keycloak 토큰과 프리뷰 세션·capability는 스튜디오 메모리에만 두며 frame에는 전달하지 않는다.
 - `POST /capabilities`: `{projectId,mode,env,apiIds?,ttlSec}`. preview write는 editor 이상, live는 owner가 필요하다. live write는 현재 유효한 승인이 추가로 필요하다.
 - `POST /approvals`: owner가 `{projectId,apiId,scope:"live-write",justification}`로 요청한다. 사유는 5~500자다.
 - `POST /approvals/:id/decision`: `{decision:"approved"|"rejected"}`. 요청자 본인의 승인은 금지한다. 해당 API `owners`에 속하며 realm role api-owner를 가진 다른 사용자만 결정한다. 요청자도 여전히 프로젝트 owner여야 한다.
@@ -43,7 +43,7 @@ Keycloak 그룹은 alice/bob `/team-a`, carol `/team-b`, dana `/risk`, root `/pl
 
 등록 API는 `environments.preview.upstreamBaseUrl`과 `environments.live.upstreamBaseUrl`, `owners`를 보관한다. customers seed는 각각 `http://localhost:7300/preview`, `http://localhost:7300/live`를 사용한다. 프록시는 서명된 capability.env로만 upstream과 서비스 토큰을 선택한다. preview 토큰은 live에서 401이고, 프리뷰 세션과 live capability를 조합해도 403이다. 목록 응답의 `dataset` 표식으로 데이터 경계를 검증할 수 있다.
 
-판정 순서는 인증 → 멤버십 → API 존재 → capability 검증 → 환경 → 역할·메서드 → 조회 사유 → 정규화한 등록 경로 → upstream → 마스킹 → 감사다. Origin은 서버에서 검사하며 프로젝트별 `previewOriginForProject(projectId)` Origin만 프리뷰로 인정하고 `/proxy/*`만 허용한다. CORS preflight도 같은 경계를 따른다. 경로 중첩 인코딩·dot segment·구분자·등록되지 않은 메서드와 redirect는 거부한다. 내부 주소·서비스 토큰·서명 키는 응답·감사에서 제거한다. 이름·전화·이메일·주민번호·계좌 마스킹, 등록되지 않은 PII 탐지와 스키마 드리프트 경고를 유지한다.
+판정 순서는 인증 → 멤버십 → API 존재 → capability 검증 → 환경 → 역할·메서드 → 조회 사유 → 정규화한 등록 경로 → upstream → 마스킹 → 감사다. Origin은 서버에서 검사하며 스튜디오 브로커 Origin의 요청만 허용한다. 프로젝트별 프리뷰 Origin의 직접 요청은 모든 경로와 CORS preflight에서 거부한다. 경로 중첩 인코딩·dot segment·구분자·등록되지 않은 메서드와 redirect는 거부한다. 내부 주소·서비스 토큰·서명 키는 응답·감사에서 제거한다. 이름·전화·이메일·주민번호·계좌 마스킹, 등록되지 않은 PII 탐지와 스키마 드리프트 경고를 유지한다.
 
 감사는 프로세스 내 직렬 append-only JSONL·fdatasync·해시 체인·MinIO 불변 세그먼트 복제로 기록하고 append 실패 시 성공 응답을 보내지 않는다. 암호화 다운로드와 복구 절차는 아래 P0-3 절을 따른다. 이미 완료된 upstream 변경을 감사 저장 실패가 되돌리지는 못한다. 기존 익명 프로젝트는 자동으로 임의 사용자에게 귀속시키지 않으며, 로그인 후 새 프로젝트를 만든다.
 
@@ -111,3 +111,7 @@ R3-M2: 프리뷰 origin의 모든 경로(health, OPTIONS 포함)는 CORS 헤더 
 검증은 `test/downloads.test.ts`, `test/audit.test.ts`와 기존 정책 테스트를 포함한다. 로컬 한 줄 변조·원격 불일치·삭제·truncation fail-closed 테스트는 모두 임시 디렉터리와 격리 HTTP 인스턴스에서 실행해 공용 서비스를 손상시키지 않는다. `npm test`의 retention/SIGTERM/SIGINT 통합 테스트는 Docker와 고정 MinIO 이미지를 사용해 격리 container·named volume을 생성하고 제거하므로 Docker 실행이 필요하다. 기존 브라우저 테스트는 Chrome을 사용한다. 실제 Keycloak·MinIO·브라우저 T–W는 `e2e/tests/downloads.spec.ts`가 담당한다.
 
 라이브러리/프로토콜 근거: [zip.js AE-2와 AES](https://gildas-lormeau.github.io/zip.js/), [ZIP 암호화 옵션](https://gildas-lormeau.github.io/zip.js/api/interfaces/ZipWriterAddDataOptions.html), [S3 조건부 생성](https://docs.aws.amazon.com/AmazonS3/latest/userguide/conditional-writes.html).
+
+AES-256 ZIP은 macOS 기본 압축 해제 도구로 열 수 없다. 7-Zip, Keka 또는 `7z x download.zip`을 사용하고 표시된 비밀번호를 입력한다.
+
+`@toi/fetch@1.1.1`은 `404 PROJECT_NOT_FOUND`를 `ToiAccessRevokedError`로 던진다. 일반 upstream 리소스 404와 구분해 접근 오류를 표시해야 하며 빈 조회 결과로 처리하지 않는다. 프리뷰는 토큰 없이 스튜디오 브로커를 통해 요청한다.

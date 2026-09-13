@@ -104,7 +104,7 @@ R1 M2 보강: 두 레지스트리 도구의 결과는 `{"untrusted_api_registry_
 
 레지스트리 도구는 Keycloak `toi-agent-server` client credentials로 받은 audience `toi-api` 액세스 토큰으로 GET `/apis`, `/apis/:apiId`를 호출합니다. 토큰은 메모리에 만료 전까지 캐시하고 401이면 한 번 새로 발급합니다. `TOI_AGENT_CLIENT_SECRET`은 dev-up이 루트 `.env`에 무작위 생성합니다. `/dev/session`은 제거했습니다. 토큰을 모델 도구 결과·SSE·프로젝트 소스에 넣지 않습니다.
 
-템플릿의 `/src/api.ts`는 **trusted host**가 번들 실행 전에 넣은 `globalThis.__TOI_FETCH_CONFIG__`를 읽어 `configureToiFetch()`를 한 번 호출합니다. 필드는 sessionToken, capabilityToken, projectId, proxyBaseUrl, env이며 값이 없으면 명확한 오류를 던집니다. 이 global은 coordinator가 채택한 `BuildInput.hostConfig.toiFetch` → preview frame 주입 계약과 같습니다. 생성 코드가 세션·capability를 발급하거나 값을 하드코딩하지 않습니다. `toiFetch(apiId,path,{reason})`는 Response를 반환하므로 `.json()`을 await합니다. reason 옵션은 W3 client가 UTF-8로 인코딩해 X-Toi-Reason으로 보냅니다.
+템플릿의 `/src/api.ts`는 **trusted host**가 번들 실행 전에 넣은 `globalThis.__TOI_FETCH_CONFIG__`를 읽어 `configureToiFetch()`를 한 번 호출합니다. 필드는 projectId, env, transport: "broker"뿐이며 값이 없으면 명확한 오류를 던집니다. 이 global은 coordinator가 채택한 `BuildInput.hostConfig.toiFetch` → preview frame 주입 계약과 같습니다. 세션·capability와 Keycloak 토큰은 스튜디오 메모리에만 있고 frame에는 전달하지 않습니다. 생성 코드는 postMessage 브로커로 요청합니다. `toiFetch(apiId,path,{reason})`는 Response를 반환하므로 `.json()`을 await합니다. reason 옵션은 스튜디오 브로커가 UTF-8로 인코딩해 X-Toi-Reason으로 보냅니다. `@toi/fetch@1.1.1`의 `ToiAccessRevokedError`(404, PROJECT_NOT_FOUND)는 접근 오류로 표시하며 빈 결과로 처리하지 않습니다.
 
 mock은 고객 목록·상세·상태 변경 키워드에 따라 서로 다른 결정적 App을 생성합니다. TDS의 실제 Button/TextField/Table export를 사용하고, 조회 사유 UI를 요구하며, 상태 변경은 쓰기 권한이 없는 기본 preview에서 비활성화해 둡니다. mock은 임의 API 스키마에 맞춘 범용 생성기가 아니라 고객 API fixture입니다. 실제 수정/저장·capability 승인 UX는 후속 studio 작업 범위입니다.
 

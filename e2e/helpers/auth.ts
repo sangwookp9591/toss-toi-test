@@ -6,6 +6,7 @@ export const issuer = env.VITE_OIDC_ISSUER ?? 'http://localhost:8080/realms/toi'
 export const studio = 'http://localhost:5173';
 export const agent = 'http://localhost:7400';
 export const policy = 'http://localhost:7200';
+export const policyDataDir = env.TOI_POLICY_DATA_DIR;
 export type Username = 'alice' | 'bob' | 'carol' | 'dana' | 'root';
 export function required(key: string) { const value = env[key]; if (!value) throw new Error('Missing required .env entry: ' + key); return value; }
 type Tokens = { access_token: string; refresh_token: string; expires_in: number };

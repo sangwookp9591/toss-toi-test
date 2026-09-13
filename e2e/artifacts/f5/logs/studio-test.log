@@ -1,0 +1,148 @@
+
+> @toi/studio@1.0.0 test
+> node --experimental-transform-types --test test/*.test.ts
+
+TAP version 13
+# (node:3292) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:3292) ExperimentalWarning: The MockTimers API is an experimental feature and might change at any time
+# Subtest: policy membership denial uses body code, never a bare/resource 404
+ok 1 - policy membership denial uses body code, never a bare/resource 404
+  ---
+  duration_ms: 0.736042
+  ...
+# Subtest: loadMembership: user API 404 locks editing, generation, saving and writes
+ok 2 - loadMembership: user API 404 locks editing, generation, saving and writes
+  ---
+  duration_ms: 44.15075
+  ...
+# Subtest: saveFiles: user API 404 locks editing, generation, saving and writes
+ok 3 - saveFiles: user API 404 locks editing, generation, saving and writes
+  ---
+  duration_ms: 5.856125
+  ...
+# Subtest: generate: user API 404 locks editing, generation, saving and writes
+ok 4 - generate: user API 404 locks editing, generation, saving and writes
+  ---
+  duration_ms: 4.825875
+  ...
+# Subtest: 30-second membership checks detect removal without preview requests and stop on dispose
+ok 5 - 30-second membership checks detect removal without preview requests and stop on dispose
+  ---
+  duration_ms: 4.21675
+  ...
+# Subtest: focus checks membership; transient failure does not revoke; disposal removes listener
+ok 6 - focus checks membership; transient failure does not revoke; disposal removes listener
+  ---
+  duration_ms: 4.043334
+  ...
+# Subtest: returning home clears only the denied project recovery and backups
+ok 7 - returning home clears only the denied project recovery and backups
+  ---
+  duration_ms: 4.174625
+  ...
+# (node:3293) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: anonymous state and refresh failure erase identity and require login
+ok 8 - anonymous state and refresh failure erase identity and require login
+  ---
+  duration_ms: 1.320459
+  ...
+# Subtest: SSO restores memory state; concurrent renewal shares one request; snapshot has no tokens
+ok 9 - SSO restores memory state; concurrent renewal shares one request; snapshot has no tokens
+  ---
+  duration_ms: 16.734792
+  ...
+# Subtest: agent/policy Bearer injection, one renewal and retry preserve method, body, abort and SSE headers
+ok 10 - agent/policy Bearer injection, one renewal and retry preserve method, body, abort and SSE headers
+  ---
+  duration_ms: 30.007416
+  ...
+# Subtest: second 401 stops retrying and clears login, while 403 never refreshes
+ok 11 - second 401 stops retrying and clears login, while 403 never refreshes
+  ---
+  duration_ms: 6.587166
+  ...
+# Subtest: credentials never go to builder or lookalike origin
+ok 12 - credentials never go to builder or lookalike origin
+  ---
+  duration_ms: 0.898541
+  ...
+# Subtest: OIDC uses PKCE code flow, memory user store and only session-scoped transient state
+ok 13 - OIDC uses PKCE code flow, memory user store and only session-scoped transient state
+  ---
+  duration_ms: 0.427625
+  ...
+# Subtest: preview host configuration includes only broker routing, never credentials or extra response fields
+ok 14 - preview host configuration includes only broker routing, never credentials or extra response fields
+  ---
+  duration_ms: 0.213167
+  ...
+# Subtest: parallel rejected requests coalesce refresh and each retry at most once
+ok 15 - parallel rejected requests coalesce refresh and each retry at most once
+  ---
+  duration_ms: 6.816
+  ...
+# Subtest: failed refresh after 401 never retries with stale credentials
+ok 16 - failed refresh after 401 never retries with stale credentials
+  ---
+  duration_ms: 1.021583
+  ...
+# Subtest: expiry during renewal preserves authenticated workspace state until renewal settles
+ok 17 - expiry during renewal preserves authenticated workspace state until renewal settles
+  ---
+  duration_ms: 0.722375
+  ...
+# Subtest: failed pending renewal logs out once, while a late expiry event ignores a fresh token
+ok 18 - failed pending renewal logs out once, while a late expiry event ignores a fresh token
+  ---
+  duration_ms: 0.356
+  ...
+# Subtest: signout cannot be undone by an in-flight renewal response
+ok 19 - signout cannot be undone by an in-flight renewal response
+  ---
+  duration_ms: 0.166583
+  ...
+# Subtest: preview config rejects another project session, capability, or privileged session
+ok 20 - preview config rejects another project session, capability, or privileged session
+  ---
+  duration_ms: 0.183125
+  ...
+# (node:3294) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: viewer download explains restriction and associates the disabled button with its reason
+ok 21 - viewer download explains restriction and associates the disabled button with its reason
+  ---
+  duration_ms: 8.754542
+  ...
+# Subtest: editor download explains eligible roles without viewer restriction
+ok 22 - editor download explains eligible roles without viewer restriction
+  ---
+  duration_ms: 0.713792
+  ...
+# (node:3295) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: broker validates API allowlist, normalized prefix, methods, write, headers and UTF-8 body sizes
+ok 23 - broker validates API allowlist, normalized prefix, methods, write, headers and UTF-8 body sizes
+  ---
+  duration_ms: 6.30025
+  ...
+# Subtest: broker attaches only trusted credentials, Content-Type and encoded reason, forces redirect error
+ok 24 - broker attaches only trusted credentials, Content-Type and encoded reason, forces redirect error
+  ---
+  duration_ms: 19.724667
+  ...
+# Subtest: broker streams a maximum of 5 MiB, cancels excess, and sanitizes network errors
+ok 25 - broker streams a maximum of 5 MiB, cancels excess, and sanitizes network errors
+  ---
+  duration_ms: 0.886708
+  ...
+1..25
+# tests 25
+# suites 0
+# pass 25
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 252.401333

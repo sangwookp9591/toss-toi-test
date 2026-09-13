@@ -1,0 +1,22 @@
+{
+  "composeProject": "toi-f5",
+  "environmentBackupRestored": true,
+  "temporaryServiceDataRemoved": true,
+  "portsFree": {
+    "4873": true,
+    "5173": true,
+    "5174": true,
+    "7100": true,
+    "7200": true,
+    "7300": true,
+    "7400": true,
+    "8080": true,
+    "9000": true,
+    "9001": true
+  },
+  "remainingComposeResources": {
+    "containers": [],
+    "volumes": [],
+    "networks": []
+  }
+}

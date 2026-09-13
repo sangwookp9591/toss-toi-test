@@ -62,9 +62,12 @@ test('G: 복구한 질문 취소와 이미 끝난 생성·404 안내', async ({ 
   await expect.poll(() => recovery(page)).toBeNull();
   await setRecovery(page, { ...saved, generationId: crypto.randomUUID() });
   await page.reload();
-  await expect(page.locator('.generation-notice')).toContainText('진행 중이던 생성이 끝났어요: 기록을 찾을 수 없어요');
-  await expect.poll(() => recovery(page)).toBeNull();
-  await expect(page.getByLabel('만들고 싶은 화면')).toBeEnabled();
+  await expect(page.locator('.access-notice[role="alert"]')).toContainText('이 프로젝트에 접근할 수 없어요. 멤버에서 제거되었거나 권한이 바뀌었을 수 있어요');
+  await expect(page.getByLabel('만들고 싶은 화면')).toBeDisabled();
+  await expect(page.locator('#preview iframe')).toHaveCount(0);
+  await page.getByRole('button', { name: '처음 화면으로', exact: true }).click();
+  await expect(page.getByRole('button', { name: '프로젝트 만들기', exact: true })).toBeVisible();
+  expect(await page.evaluate(projectId => sessionStorage.getItem(`toi-studio-generation-v1:${projectId}`), new URL(url).searchParams.get('project'))).toBeNull();
 });
 test('H: 쓰기 권한 만료 시 토글 off, 안내와 read capability 재반영', async ({ page }) => {
   await page.addInitScript(() => { (window as any).__STUDIO_TEST_CONFIG__ = { writeTtlSec: 4 }; });

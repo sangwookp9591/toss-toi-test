@@ -9,6 +9,7 @@ export function clearToiFetch(): void { current = undefined; }
 export class ToiFetchError extends Error {
   constructor(readonly status: number, readonly code: string) { super(code); this.name = 'ToiFetchError'; }
 }
+export class ToiAccessRevokedError extends ToiFetchError { constructor() { super(404, 'PROJECT_NOT_FOUND'); this.name = 'ToiAccessRevokedError'; } }
 export class ToiForbiddenError extends ToiFetchError { constructor(code = 'FORBIDDEN') { super(403, code); this.name = 'ToiForbiddenError'; } }
 export class ToiReasonRequiredError extends ToiFetchError { constructor() { super(428, 'REASON_REQUIRED'); this.name = 'ToiReasonRequiredError'; } }
 interface Bridge { parentOrigin: string; token: { revision: number; attemptId: string } }
@@ -45,6 +46,6 @@ export async function toiFetch(apiId: string, path: string, init: ToiFetchInit =
       ...(init.body != null ? { body: init.body } : {}), reason: init.reason ?? current!.reason }, bridge.parentOrigin);
   });
   if (response.status === 428) throw new ToiReasonRequiredError();
-  if (!response.ok) { let code = 'REQUEST_FAILED'; try { const error = await response.json(); if (typeof error.error === 'string') code = error.error; } catch { /* Generic typed error. */ } if (response.status === 403) throw new ToiForbiddenError(code); throw new ToiFetchError(response.status, code); }
+  if (!response.ok) { let code = 'REQUEST_FAILED'; try { const error = await response.json(); if (typeof (error?.code ?? error?.error) === 'string') code = error.code ?? error.error; } catch { /* Generic typed error. */ } if (response.status === 404 && code === 'PROJECT_NOT_FOUND') throw new ToiAccessRevokedError(); if (response.status === 403) throw new ToiForbiddenError(code); throw new ToiFetchError(response.status, code); }
   return response;
 }

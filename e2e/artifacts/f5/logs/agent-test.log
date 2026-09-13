@@ -1,0 +1,13 @@
+
+> @toi/agent-server@0.1.0 test
+> vitest run
+
+
+ RUN  v5.0.0 /Users/psw/Projects/toss-toi-test/services/agent-server
+
+
+ Test Files  8 passed (8)
+      Tests  125 passed | 1 skipped (126)
+   Start at  23:49:54
+   Duration  2.48s (import 54%, tests 36%, transform 10%)
+

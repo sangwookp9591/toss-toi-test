@@ -1,0 +1,15 @@
+
+> test
+> playwright test --grep V:|download UI
+
+
+Running 2 tests using 1 worker
+
+(node:8981) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:8981) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/downloads.spec.ts:59:1 › V: MinIO bytes hide row values and password; successful delivery deletes ciphertext and wrapped key (1.6s)
+  ✓  2 tests/downloads.spec.ts:81:1 › download UI shows password once, saves using Bearer and clears it on close (1.3s)
+
+  2 passed (4.5s)

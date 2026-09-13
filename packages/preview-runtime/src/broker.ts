@@ -3,6 +3,12 @@ export type FetchBroker = (request: FrameToHostFetch, signal: AbortSignal) => Pr
 export function brokerFailure(requestId: string, status: number, brokerError: NonNullable<HostToFrameFetch['brokerError']>): HostToFrameFetch {
   return { kind: 'toi_fetch_result', requestId, status, brokerError, contentType: 'application/json', body: JSON.stringify({ error: brokerError }) };
 }
+/** Policy membership denial is distinct from an upstream resource 404. */
+export function isProjectAccessDenied(result: Pick<HostToFrameFetch, 'status' | 'body'>): boolean {
+  if (result.status !== 404) return false;
+  try { const body = JSON.parse(result.body); return (body?.code ?? body?.error) === 'PROJECT_NOT_FOUND'; }
+  catch { return false; }
+}
 /** One lifetime per document. Invalidation also aborts upstream work and drops late replies. */
 export class FrameBroker {
   private valid = true;

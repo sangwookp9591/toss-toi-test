@@ -1,3 +1,5 @@
+import { mockFiles } from '../../services/agent-server/src/templates';
+import { mkdir } from 'node:fs/promises';
 import { test, expect, api, admin, login, issuer, studio, agent, policy } from '../helpers/auth';
 import type { Page } from '@playwright/test';
 const snapshot = (page: Page) => page.evaluate(() => (window as any).studio?.getSnapshot());
@@ -20,7 +22,7 @@ test('N: carol nonmember receives 404 and cannot mint or use preview/capability'
   const session = await preview(alice, p.projectId);
   expect((await proxy({ ...session, sessionToken: await carol.token() }, p.projectId)).status).toBe(404);
   const context = await browser.newContext({ storageState: carol.state });
-  try { const page = await context.newPage(); await page.goto(studio + '/?project=' + p.projectId); await expect(page.getByRole('status')).toContainText('프로젝트를 찾을 수 없거나 멤버가 아니에요'); await expect(page.locator('#preview iframe')).toHaveCount(0); }
+  try { const page = await context.newPage(); await page.goto(studio + '/?project=' + p.projectId); await expect(page.getByRole('status')).toContainText('이 프로젝트에 접근할 수 없어요'); await expect(page.locator('#preview iframe')).toHaveCount(0); }
   finally { await context.close(); }
 });
 test('O: owner member UI protects last owner; viewer read only, editor generation, removal revokes proxy within 5s', async ({ page, browser, accounts }) => {
@@ -172,4 +174,70 @@ test('S: iframe globals/storage/messages/URLs contain no Keycloak token', async 
   expect(Object.keys(result.config).sort()).toEqual(['env', 'projectId', 'transport']);
   const studioState = await page.evaluate(() => JSON.stringify({ ...localStorage, ...sessionStorage, snapshot: (window as any).studio.getSnapshot() }));
   expect([...identityTokens].some(token => studioState.includes(token))).toBe(false);
+});
+
+const revokedNotice = '이 프로젝트에 접근할 수 없어요. 멤버에서 제거되었거나 권한이 바뀌었을 수 있어요';
+test('AI: removed bob sees access revoked on broker query and periodic check without preview requests', async ({ browser, accounts }, testInfo) => {
+  const alice = await accounts('alice'), bob = await accounts('bob');
+  const p = await project(alice);
+  expect((await api(alice, `/projects/${p.projectId}/members/${bob.sub}`, { role: 'editor' }, 'PUT')).status).toBe(200);
+  const updated = await api(alice, `/projects/${p.projectId}/source`, { baseRevision: p.revision, files: { ...p.files, ...mockFiles('고객 목록', '멤버 제거 확인 테스트') } }, 'PUT');
+  expect(updated.status).toBe(200);
+  const context = await browser.newContext({ storageState: bob.state, viewport: { width: 1600, height: 1000 } });
+  try {
+    const idle = await context.newPage(); let idleQueries = 0, membershipChecks = 0;
+    idle.on('request', request => { if (request.url().includes('/proxy/')) idleQueries++; if (request.url().endsWith('/membership')) membershipChecks++; });
+    await idle.goto(studio + '/?project=' + p.projectId);
+    await expect(idle.getByRole('button', { name: '로그아웃', exact: true })).toBeVisible();
+    await expect.poll(async () => (await snapshot(idle))?.lastCommit?.token.revision).toBe(2);
+    const query = await context.newPage(); await query.goto(studio + '/?project=' + p.projectId);
+    await expect(query.getByRole('button', { name: '로그아웃', exact: true })).toBeVisible();
+    await expect.poll(async () => (await snapshot(query))?.lastCommit?.token.revision).toBe(2);
+    await expect(query.getByLabel('만들고 싶은 화면')).toBeEnabled();
+    const frame = query.frameLocator('#preview iframe');
+    await frame.getByRole('button', { name: '조회', exact: true }).click();
+    await expect(frame.getByRole('cell', { name: 'C001', exact: true })).toBeVisible();
+    const beforeChecks = membershipChecks;
+    expect((await api(alice, `/projects/${p.projectId}/members/${bob.sub}`, {}, 'DELETE')).status).toBe(200);
+    const denied = query.waitForResponse(response => response.url().includes('/proxy/customers') && response.status() === 404);
+    await frame.getByRole('button', { name: '조회', exact: true }).click();
+    expect((await (await denied).json()).error).toBe('PROJECT_NOT_FOUND');
+    for (const view of [query, idle]) {
+      await expect(view.locator('.access-notice[role="alert"]')).toContainText(revokedNotice, { timeout: 40000 });
+      await expect(view.locator('#preview iframe')).toHaveCount(0);
+      await expect(view.getByText('조건에 맞는 고객이 없어요', { exact: true })).toHaveCount(0);
+      await expect(view.getByLabel('만들고 싶은 화면')).toBeDisabled();
+      await expect(view.getByLabel('소스 코드')).toBeDisabled();
+      await expect(view.getByRole('button', { name: '저장하고 반영' })).toBeDisabled();
+      await expect(view.getByRole('checkbox', { name: '쓰기 테스트 허용' })).toBeDisabled();
+    }
+    expect(idleQueries).toBe(0); expect(membershipChecks).toBeGreaterThan(beforeChecks);
+    if (testInfo.repeatEachIndex === 0) { await mkdir('artifacts/f5/shots', { recursive: true }); await query.screenshot({ path: 'artifacts/f5/shots/removed-member-after.png', fullPage: true }); await idle.screenshot({ path: 'artifacts/f5/shots/removed-member-periodic-after.png', fullPage: true }); }
+    await query.evaluate(projectId => {
+      sessionStorage.setItem(`toi-studio-generation-v1:${projectId}`, '{}');
+      sessionStorage.setItem(`toi-studio-backups-v1:${projectId}`, '[]');
+    }, p.projectId);
+    await query.getByRole('button', { name: '처음 화면으로', exact: true }).click();
+    await expect(query.getByRole('button', { name: '프로젝트 만들기', exact: true })).toBeVisible();
+    expect(await query.evaluate(projectId => [sessionStorage.getItem(`toi-studio-generation-v1:${projectId}`), sessionStorage.getItem(`toi-studio-backups-v1:${projectId}`)], p.projectId)).toEqual([null, null]);
+  } finally { await context.close(); }
+});
+test('AJ: viewer download panel explains role restriction with aria-describedby', async ({ browser, accounts }, testInfo) => {
+  const alice = await accounts('alice'), bob = await accounts('bob'), p = await project(alice);
+  expect((await api(alice, `/projects/${p.projectId}/members/${bob.sub}`, { role: 'viewer' }, 'PUT')).status).toBe(200);
+  const context = await browser.newContext({ storageState: bob.state, viewport: { width: 1600, height: 1000 } });
+  try {
+    const view = await context.newPage(); await view.goto(studio + '/?project=' + p.projectId);
+    await expect(view.getByRole('button', { name: '로그아웃', exact: true })).toBeVisible();
+    await expect.poll(async () => (await snapshot(view))?.lastCommit?.token.revision).toBe(1);
+    await view.getByText('암호화 다운로드', { exact: true }).click();
+    await view.getByLabel('다운로드 사유').fill('viewer 다운로드 권한 확인');
+    const button = view.getByRole('button', { name: '암호화 파일 만들기', exact: true });
+    const reason = '암호화 다운로드는 editor 이상만 할 수 있어요. 프로젝트 owner에게 권한을 요청하세요.';
+    await expect(button).toBeDisabled(); await expect(button).toHaveAccessibleDescription(reason);
+    const id = await button.getAttribute('aria-describedby'); expect(id).toBeTruthy();
+    await expect(view.locator(`[id="${id}"]`)).toBeVisible();
+    await expect(view.locator('.access-notice')).toContainText('암호화 다운로드');
+    if (testInfo.repeatEachIndex === 0) { await mkdir('artifacts/f5/shots', { recursive: true }); await view.screenshot({ path: 'artifacts/f5/shots/viewer-download-after.png', fullPage: true }); }
+  } finally { await context.close(); }
 });

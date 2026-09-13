@@ -2,7 +2,7 @@ import type { VfsFiles } from '../../../contracts/src/runtime.ts';
 import type { PackageSetRequest } from '../../../contracts/src/package-set.ts';
 export const defaultPackageSet: PackageSetRequest = {
   entries: ['react', 'react-dom/client', 'react/jsx-runtime', '@tanstack/react-query', '@toi/tds', '@toi/fetch'],
-  dependencies: { react: '19.3.0', 'react-dom': '19.3.0', '@tanstack/react-query': '^5.0.0', '@toi/tds': '1.0.0', '@toi/fetch': '1.1.0' }
+  dependencies: { react: '19.3.0', 'react-dom': '19.3.0', '@tanstack/react-query': '^5.0.0', '@toi/tds': '1.0.0', '@toi/fetch': '1.1.1' }
 };
 export function templateFiles(apiId = 'customers'): VfsFiles {
   return {
@@ -38,10 +38,11 @@ export function mockFiles(prompt: string, defaultReason: string): VfsFiles {
   const title = write ? '고객 상태 변경' : detail ? '고객 상세' : '고객 목록';
   return { '/src/App.tsx': `import { useRef, useState } from 'react';
 import { Button, TextField, Table } from '@toi/tds';
-import { ToiFetchError, ToiForbiddenError, ToiReasonRequiredError } from '@toi/fetch';
+import { ToiAccessRevokedError, ToiFetchError, ToiForbiddenError, ToiReasonRequiredError } from '@toi/fetch';
 import { listRecords, getRecord, updateStatus } from './api';
 function errorMessage(error: unknown, writing = false) {
   const status = error instanceof ToiFetchError ? error.status : undefined;
+  if (error instanceof ToiAccessRevokedError || (error instanceof ToiFetchError && error.code === 'PROJECT_NOT_FOUND')) return '이 프로젝트에 접근할 수 없어요. 멤버에서 제거되었거나 권한이 바뀌었을 수 있어요';
   if (error instanceof ToiReasonRequiredError || status === 428) return '조회 사유를 5자 이상 입력하세요.';
   if (error instanceof ToiForbiddenError || status === 403) return writing
     ? '쓰기 권한이 없거나 허용 시간이 끝났어요. 스튜디오에서 쓰기 테스트를 다시 허용하세요.'
@@ -75,7 +76,7 @@ export default function App() {
       const data = await ${detail ? 'getRecord(customerId, reason)' : 'listRecords(reason)'};
       setRows(data == null ? [] : Array.isArray(data.items) ? data.items : [data]); setQueryState('success');
     } catch (e) {
-      if (e instanceof ToiFetchError && e.status === 404) { setRows([]); setQueryState('success'); }
+      if (e instanceof ToiFetchError && e.status === 404 && e.code !== 'PROJECT_NOT_FOUND') { setRows([]); setQueryState('success'); }
       else { setError(errorMessage(e)); setQueryState('error'); }
     } finally { queryPending.current = false; }
   }

@@ -1,6 +1,6 @@
 # TOI Studio
 
-React 19 스튜디오가 채팅 생성, 파일 CAS 저장, 조합 빌드, 트랜잭션 프리뷰를 연결한다. 스튜디오 origin은 `http://localhost:5173`, 프리뷰 origin은 `http://localhost:5174`다.
+React 19 스튜디오가 채팅 생성, 파일 CAS 저장, 조합 빌드, 트랜잭션 프리뷰를 연결한다. 스튜디오 origin은 `http://localhost:5173`, 프리뷰 origin은 프로젝트 UUID마다 다른 `http://p-<projectId>.preview.localhost:5174`다.
 
 ## 실행
 
@@ -26,11 +26,11 @@ OIDC 클라이언트는 버전을 고정한 `oidc-client-ts@3.3.0`이며 Authori
 
 access·refresh·ID 토큰은 `InMemoryWebStorage` 기반 OIDC user store와 비공개 인증 객체 메모리에만 둔다. localStorage에 토큰을 쓰지 않는다. sessionStorage에는 리다이렉트 왕복에 필요한 일회용 PKCE verifier·state·nonce와 복귀 경로만 잠깐 저장하며 callback 처리 뒤 소비한다. 새로고침·새 탭은 Keycloak의 HttpOnly SSO 쿠키와 `prompt=none` 인증 코드 흐름으로 새 메모리 토큰을 얻는다. silent callback(`/?oidc=silent`)은 인증 코드 응답만 부모에 전달하며 토큰을 교환하거나 스튜디오를 렌더링하지 않는다. 따라서 Playwright storageState의 SSO 쿠키만으로도 새 탭을 복구할 수 있다. 브라우저가 이 SSO 쿠키 사용을 막거나 세션이 끝났으면 로그인 버튼을 안내한다. 토큰을 디스크에 지속하지 않아 탈취 가능한 저장 범위를 줄이지만 같은 스튜디오 origin의 악성 스크립트에 대한 방어를 대신하지는 않는다. [oidc-client-ts 저장소 설정](https://authts.github.io/oidc-client-ts/interfaces/UserManagerSettings.html)을 따른다.
 
-모든 agent-server·policy-proxy 요청과 fetch SSE에 Bearer를 붙인다. 401이면 동시 요청이 하나의 갱신을 공유하고 원래 요청을 딱 한 번 재시도한다. 재실패나 갱신 실패에는 토큰과 프리뷰를 폐기하고 로그인 안내를 표시한다. builder에는 Keycloak 토큰을 보내지 않는다. 404에는 “프로젝트를 찾을 수 없거나 멤버가 아니에요”, 403에는 권한 부족을 안내한다.
+모든 agent-server·policy-proxy 요청과 fetch SSE에 Bearer를 붙인다. 401이면 동시 요청이 하나의 갱신을 공유하고 원래 요청을 딱 한 번 재시도한다. 재실패나 갱신 실패에는 토큰과 프리뷰를 폐기하고 로그인 안내를 표시한다. builder에는 Keycloak 토큰을 보내지 않는다. 404에는 “이 프로젝트에 접근할 수 없어요. 멤버에서 제거되었거나 권한이 바뀌었을 수 있어요”, 403에는 권한 부족을 안내한다.
 
 ## 멤버와 live 승인
 
-“멤버 · live 쓰기 승인”에서 프로젝트 소유자는 사용자 이름으로 멤버를 추가하고 owner(소유자)·editor(편집자)·viewer(조회자) 역할을 바꾸거나 제거한다. 마지막 소유자의 제거·강등은 서버에서 거부하며 화면에 이유를 표시한다. viewer는 조회 프리뷰만 사용할 수 있고 생성·소스 저장·쓰기 테스트는 editor 이상이 필요하다.
+“멤버 · live 쓰기 승인”에서 프로젝트 소유자는 사용자 이름으로 멤버를 추가하고 owner(소유자)·editor(편집자)·viewer(조회자) 역할을 바꾸거나 제거한다. 마지막 소유자의 제거·강등은 서버에서 거부하며 화면에 이유를 표시한다. viewer는 조회 프리뷰만 사용할 수 있고 생성·소스 저장·쓰기 테스트·암호화 다운로드는 editor 이상이 필요하다.
 
 프로젝트 owner는 API와 사유로 live 쓰기 승인을 요청한다. dana 같은 해당 API의 api-owner는 프로젝트 ID로 승인 요청을 조회하고 승인·거절한다. 요청자 본인은 승인할 수 없으며 승인 상태와 유효 기한을 표시한다. 승인은 live capability 발급의 전제이며 스튜디오 프리뷰를 live로 전환하지 않는다.
 
@@ -85,3 +85,5 @@ E2E L은 새 탭과 stale checkpoint의 전체 대화·질문 복원, 답변 완
 ## 인증 E2E N–S
 
 `npm run typecheck`, `npm test`, `npm run build`로 인증 상태·Bearer 주입·401 갱신 공유/재시도 상한·프리뷰 토큰 격리를 검증한다. `npm --prefix e2e run test:repeat`는 A–M과 N–S(비멤버 404, 멤버 역할/제거, 4-eyes 승인/만료, preview/live 분리, 계정 비활성화, 프리뷰 토큰 미전달)를 각각 3회 실행한다. 자세한 실행 조건과 비밀값 처리 규칙은 `e2e/README.md`를 따른다.
+
+멤버십은 열린 프로젝트에서 30초마다, 창 포커스가 돌아올 때 확인한다. policy-proxy의 `404 PROJECT_NOT_FOUND`는 upstream 리소스 404와 구별하며, 접근 철회 시 프리뷰를 종료하고 편집·생성·저장을 잠근다. 생성·저장·멤버십 사용자 API의 404도 동일한 존재 비공개 안내를 표시한다. viewer의 암호화 다운로드 제한 사유는 패널에서 보이고 비활성 버튼의 `aria-describedby`에 연결한다.

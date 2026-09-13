@@ -1,0 +1,32 @@
+Stopped agent-server
+Stopped policy-proxy
+Stopped studio
+Stopped deps-builder
+Stopped mock-backend
+ Container toi-f5-minio-1  Stopping
+ Container toi-f5-verdaccio-1  Stopping
+ Container toi-f5-keycloak-1  Stopping
+ Container toi-f5-verdaccio-1  Stopped
+ Container toi-f5-verdaccio-1  Removing
+ Container toi-f5-verdaccio-1  Removed
+ Container toi-f5-verdaccio-init-1  Stopping
+ Container toi-f5-verdaccio-init-1  Stopped
+ Container toi-f5-verdaccio-init-1  Removing
+ Container toi-f5-verdaccio-init-1  Removed
+ Container toi-f5-keycloak-1  Stopped
+ Container toi-f5-keycloak-1  Removing
+ Container toi-f5-keycloak-1  Removed
+ Container toi-f5-minio-1  Stopped
+ Container toi-f5-minio-1  Removing
+ Container toi-f5-minio-1  Removed
+ Volume toi-f5_keycloak-data  Removing
+ Volume toi-f5_verdaccio-auth  Removing
+ Volume toi-f5_minio-data  Removing
+ Volume toi-f5_verdaccio-storage  Removing
+ Network toi-f5_default  Removing
+ Volume toi-f5_minio-data  Removed
+ Volume toi-f5_verdaccio-storage  Removed
+ Volume toi-f5_verdaccio-auth  Removed
+ Volume toi-f5_keycloak-data  Removed
+ Network toi-f5_default  Removed
+Managed processes stopped; externally started services are left running.

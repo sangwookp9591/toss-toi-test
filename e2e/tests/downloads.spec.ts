@@ -1,6 +1,8 @@
-import { test, expect, api, policy, studio, required, type Account } from '../helpers/auth';
+import { test, expect, api, policy, policyDataDir, studio, required, type Account } from '../helpers/auth';
 import { createRequire } from 'node:module';
 import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { S3Objects } from '../../services/policy-proxy/src/objects';
 import { previewOriginForProject } from '../../contracts/src/runtime';
 // Reuse the policy service's pinned ZIP/XLSX readers without editing shared E2E dependencies.
@@ -61,7 +63,7 @@ test('V: MinIO bytes hide row values and password; successful delivery deletes c
   const fetched = await fetchZip(alice, ticket.url); expect(fetched.status).toBe(200); await fetched.arrayBuffer();
   await expect.poll(async () => (await objects.list('downloads/')).includes(key)).toBe(false);
   await expect.poll(async () => {
-    const record = JSON.parse(await readFile(new URL(`../../services/policy-proxy/data/downloads/${ticket.downloadId}.json`, import.meta.url), 'utf8'));
+    const record = JSON.parse(await readFile(join(policyDataDir ?? fileURLToPath(new URL('../../services/policy-proxy/data', import.meta.url)), 'downloads', `${ticket.downloadId}.json`), 'utf8'));
     return record.wrappedDataKey === '' && record.fetchCount === 1;
   }).toBe(true);
 });
@@ -83,6 +85,8 @@ test('download UI shows password once, saves using Bearer and clears it on close
   await page.getByLabel('다운로드 사유', { exact: true }).fill('Customer support UI download');
   await page.getByRole('button', { name: '암호화 파일 만들기', exact: true }).click();
   await expect(page.getByRole('dialog', { name: '다운로드 비밀번호' })).toBeVisible();
+  await expect(page.getByRole('dialog', { name: '다운로드 비밀번호' })).toContainText('macOS 기본 압축 해제 도구로 열 수 없어요.');
+  await expect(page.getByRole('dialog', { name: '다운로드 비밀번호' })).toContainText('7-Zip, Keka 또는 7z x');
   const password = await page.getByLabel('ZIP 비밀번호', { exact: true }).textContent(); expect((password?.length ?? 0) >= 24).toBe(true);
   const request = page.waitForRequest(r => /\/downloads\//.test(r.url()));
   const download = page.waitForEvent('download'); await page.getByRole('button', { name: 'ZIP 저장', exact: true }).click();
