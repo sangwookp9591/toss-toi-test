@@ -1,0 +1,22 @@
+# 로컬 "사내 레지스트리". @toi/* 는 인증 없이는 읽을 수 없고, 그 외 패키지는 npmjs를 프록시한다.
+storage: /verdaccio/storage
+auth:
+  htpasswd:
+    file: /verdaccio/auth/htpasswd
+    max_users: 10
+uplinks:
+  npmjs:
+    url: https://registry.npmjs.org/
+packages:
+  "@toi/*":
+    access: $authenticated
+    publish: $authenticated
+    unpublish: $authenticated
+  "**":
+    access: $all
+    publish: $authenticated
+    proxy: npmjs
+server:
+  keepAliveTimeout: 60
+listen: 0.0.0.0:4873
+log: { type: stdout, format: pretty, level: warn }

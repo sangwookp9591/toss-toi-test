@@ -12,3 +12,7 @@ poc/evidence/toss-*.html
 poc/evidence/source-*.txt
 transcript-*.txt
 .DS_Store
+
+.env
+*.local
+dist/
