@@ -57,6 +57,11 @@ export interface PreviewRuntimeOptions {
  */
 export interface PreviewHostConfig {
   toiFetch?: {
+    /**
+     * 반드시 viewer 역할만 가진 세션. editor 세션은 호스트(스튜디오)에만 둔다.
+     * 생성 코드가 editor 세션을 받으면 POST /capabilities로 스스로 write capability를 발급할 수 있다.
+     * 쓰기 허용은 호스트가 editor 세션으로 범위·TTL을 제한한 write capability를 발급해 capabilityToken으로만 넘긴다.
+     */
     sessionToken: string;
     /** 기본 read capability. write는 사용자가 명시적으로 허용했을 때만 */
     capabilityToken: string;

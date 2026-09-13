@@ -10,7 +10,10 @@
    - 좌: 채팅(`POST /generations` → SSE 구독, text 스트리밍 표시, question에 답변 UI, cancel 버튼, 재연결 시 Last-Event-ID).
    - 중: 파일 트리 + 코드 보기(편집 시 `PUT /projects/:id/source` CAS, 409면 최신 revision 불러오기 안내).
    - 우: `packages/preview-runtime` 프리뷰. `revision_ready` → packageSet을 deps-builder에 요청(ready까지 대기, building이면 상태 표시) → `setDesiredRevision` → `build`. 이벤트(build_failed, runtime_failed, stale_discarded, committed + timings)를 상태 바에 표시.
-   - capability: 프리뷰 시작 시 policy-proxy에서 read capability 발급 → `ParentToFrame.capabilityToken`으로 전달. "쓰기 테스트 허용" 토글을 켰을 때만 write capability 발급.
+   - 세션·capability 경계(`contracts/src/runtime.ts` `PreviewHostConfig`, `services/policy-proxy/README.md`):
+     스튜디오는 editor 세션과 **별도의 viewer 전용 세션**을 발급한다. 프리뷰에는 viewer 세션 + read capability만 `BuildInput.hostConfig.toiFetch`로 넘긴다(프레임이 `globalThis.__TOI_FETCH_CONFIG__`로 주입).
+     "쓰기 테스트 허용" 토글을 켰을 때만 스튜디오가 **editor 세션으로** apiIds·짧은 TTL을 제한한 write capability를 발급해 capabilityToken만 교체한다. editor 세션은 절대 프리뷰로 넘기지 않는다.
+     E2E D에 "프리뷰 코드가 `POST /capabilities`를 호출해도 403" 검증을 추가한다.
    - 사용자 문구는 사용자 관점으로(예: "화면을 만들고 있어요", "이전 화면을 유지했어요: 문법 오류 3건").
 2. **scripts/dev-up.mjs**: infra(docker compose) → 레지스트리 준비 → 서비스 4개 → 스튜디오를 순서대로 띄우고 healthz 대기. `scripts/dev-down.mjs`.
 3. **E2E (Playwright, 시스템 Chrome)** — `e2e/`
