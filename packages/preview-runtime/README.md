@@ -64,7 +64,7 @@ await runtime.build(input);
 // runtime.dispose();          // iframe, Worker, 대기 Promise, 이벤트 리스너 해제
 ```
 
-`manifest`는 fetch한 `PackageSetManifest`입니다. 프리뷰 컨테이너에는 `position: relative`와 원하는 높이를 지정합니다. caller가 최신 의도를 `setDesiredRevision()`으로 먼저 설정해야 하며, 실패한 최신 의도를 과거 성공 결과로 자동 되돌리지 않습니다. 재시도는 새 `attemptId`를 사용합니다. `sourceDigest()` 인자는 **병합된 VFS**입니다. 경로는 POSIX 절대 경로로 정규화하고 JSON object key를 재귀 정렬해 SHA-256을 계산합니다. 배열 순서는 보존합니다. 런타임이 실제 소스·manifest digest를 재검증하고 입력/토큰을 복제하므로 caller의 사후 mutation이 진행 중 작업을 바꾸지 않습니다.
+`manifest`는 fetch한 `PackageSetManifest`입니다. 프리뷰 컨테이너에는 `position: relative`와 원하는 높이를 지정합니다. caller가 최신 의도를 `setDesiredRevision()`으로 먼저 설정해야 하며, 실패한 최신 의도를 과거 성공 결과로 자동 되돌리지 않습니다. 재시도는 새 `attemptId`를 사용합니다. `hostConfig`만 교체하는 빌드는 같은 revision 토큰으로도 커밋할 수 있습니다. hostConfig는 sourceDigest와 revision guard 입력에 포함하지 않습니다. `sourceDigest()` 인자는 **병합된 VFS**입니다. 경로는 POSIX 절대 경로로 정규화하고 JSON object key를 재귀 정렬해 SHA-256을 계산합니다. 배열 순서는 보존합니다. 런타임이 실제 소스·manifest digest를 재검증하고 입력/토큰을 복제하므로 caller의 사후 mutation이 진행 중 작업을 바꾸지 않습니다.
 
 ## 구조와 실행 경계
 
@@ -86,9 +86,11 @@ VFS의 상대 경로와 `.tsx .ts .jsx .js`, `index.*`를 순서대로 찾습니
 
 iframe은 항상 preview origin의 실제 HTTP `frame.html`로 탐색합니다. 최초 loader가 `frame_ready`를 보내고 부모가 `load`를 보냅니다. 부모는 **event.origin + 후보 iframe.contentWindow**, frame은 **서버 설정의 부모 origin + event.source === parent**를 확인합니다. 토큰이 다른 응답도 무시합니다. `postMessage`의 targetOrigin은 양방향 모두 명시하며 `*`를 쓰지 않습니다. iframe은 `sandbox="allow-scripts allow-same-origin"`이고 studio와 다른 origin을 강제합니다.
 
-`load`를 받으면 `document.open/write/close`로 새 HTML 문서를 구성합니다. 문서의 첫 실행 관련 요소는 `<script type="importmap">`이고 그 뒤에 실행 bootstrap을 둡니다. 따라서 앱 모듈의 bare import가 해석되기 전에 import map이 파싱됩니다. iframe 문서에 blob URL이나 srcdoc을 사용하지 않으므로 실제 preview origin이 유지되어 양방향 origin 검증이 가능합니다.
+`load`를 받으면 `document.open/write/close`로 새 HTML 문서를 구성합니다. `BuildInput.hostConfig`는 입력 스냅샷에서 그대로 `ParentToFrame.load.hostConfig`로 전달합니다. `hostConfig.toiFetch`가 있으면 문서의 첫 스크립트에서 `globalThis.__TOI_FETCH_CONFIG__ = Object.freeze({ ...hostConfig.toiFetch })`를 설정하고, 그 뒤에 `<script type="importmap">`, 실행 bootstrap, 앱 모듈 순서로 진행합니다. hostConfig 또는 toiFetch 설정이 없으면 전역을 만들지 않습니다. 따라서 앱의 최초 모듈 평가 시점부터 설정을 읽을 수 있고, bare import가 해석되기 전에 import map도 파싱됩니다. iframe 문서에 blob URL이나 srcdoc을 사용하지 않으므로 실제 preview origin이 유지되어 양방향 origin 검증이 가능합니다.
 
-앱 번들 자체는 URI 인코딩된 `data:text/javascript` 모듈로 import합니다. 문서 URL은 계속 HTTP입니다. 이를 통해 앱 안의 `</script>`·한글·이모지가 HTML 태그나 손상된 코드로 해석되지 않습니다. import map과 bootstrap 인자의 JSON도 `<`를 escape합니다. 문서 작성 뒤 등록한 오류/미처리 rejection handler가 모듈 평가와 React의 초기 render throw를 감지합니다. 모듈 import가 끝나고 **2 rAF** 뒤 오류가 없을 때만 `rendered`를 보냅니다.
+이 전역은 생성 코드가 읽을 수 있으며 `Object.freeze`는 설정 객체의 필드 변경을 막는 장치일 뿐 토큰을 숨기지 않습니다. viewer 역할만 가진 세션과 기본 **read capability·짧은 TTL**을 주입하고 editor 세션은 신뢰하는 host에만 둡니다. write capability는 명시적 승인 후 API 범위와 TTL을 제한해 전달합니다. hostConfig는 소스나 revision 식별자에 포함하지 않으므로 토큰 교체로 sourceDigest가 달라지지 않습니다.
+
+앱 번들 자체는 URI 인코딩된 `data:text/javascript` 모듈로 import합니다. 문서 URL은 계속 HTTP입니다. 이를 통해 앱 안의 `</script>`·한글·이모지가 HTML 태그나 손상된 코드로 해석되지 않습니다. hostConfig, import map과 bootstrap 인자는 같은 `json()` 경로로 `<`, U+2028, U+2029를 escape합니다. 문서 작성 뒤 등록한 오류/미처리 rejection handler가 모듈 평가와 React의 초기 render throw를 감지합니다. 모듈 import가 끝나고 **2 rAF** 뒤 오류가 없을 때만 `rendered`를 보냅니다.
 
 후보는 컨테이너 안에서 `opacity:0; pointer-events:none`으로 숨기고 `aria-hidden`과 `inert`를 붙여 키보드 포커스도 차단합니다. 화면 밖 배치 또는 `visibility:hidden`은 Chrome이 cross-origin iframe의 rAF를 억제해 timeout을 유발하는 것을 실제 테스트에서 확인했습니다. 후보의 layout과 rAF는 살아 있어야 합니다. 성공한 후보만 표시하고 기존 iframe을 제거합니다. `rendered`가 와도 취소 또는 desired 전체 토큰 불일치면 후보를 버립니다.
 
@@ -104,9 +106,11 @@ npm run bench
 
 ```text
 npm run typecheck: tsc --noEmit — exit 0
-vitest: Test Files 1 passed (1), Tests 22 passed (22)
-Playwright: 12 passed (14.9s), system channel: chrome
+vitest: Test Files 2 passed (2), Tests 23 passed (23)
+Playwright: 15 passed (15.8s), system channel: chrome
 ```
+
+기존 단위 22개·브라우저 12개를 유지했고, hostConfig load 메시지 전달/입력 스냅샷 단위 테스트 1개와 브라우저 테스트 3개를 추가했습니다. 추가 브라우저 검증은 초기 실행 전 projectId 렌더, frozen 객체 변경 차단, 토큰의 closing-script/U+2028/U+2029 보존, 설정 미제공 시 전역 부재, 동일 revision 토큰의 설정만 교체한 재커밋을 확인합니다.
 
 브라우저 검증은 첫 React 커밋/수정, 문법·모듈 throw·React render throw 시 동일 정상 화면 유지, r10→r11→r11 성공→r10 성공 경합, 최신 실패 뒤 과거 성공 폐기, 취소 뒤 늦은 성공, exact import 거부, digest 불일치, 상대/index 경로 및 계층 병합, allowlist 변경 뒤 context 재사용, closing-script/Unicode 보존, timeout/dispose, 잘못된 origin/source 메시지 무시를 포함합니다. COOP/COEP 헤더 부재와 `crossOriginIsolated=false`에서도 첫 커밋이 성공함을 확인합니다. 경합 테스트는 실제 번들 내부 top-level await로 이전 후보의 **실행 완료**를 지연시킵니다. 런타임의 성공 결과를 모킹하지 않습니다.
 

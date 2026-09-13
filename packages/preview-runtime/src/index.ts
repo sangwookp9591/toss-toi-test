@@ -4,7 +4,7 @@ import { digestJson, mergeVfs, sourceDigest } from './vfs.ts';
 import { commitDecision, sameToken, tokenKey } from './guard.ts';
 export { canonicalJson, digestJson, mergeVfs, sourceDigest, isAllowedExternal } from './vfs.ts';
 export { commitDecision, sameToken } from './guard.ts';
-export type { BuildInput, PreviewRuntime, PreviewRuntimeOptions, RevisionToken, PreviewEvent } from '../../../contracts/src/runtime.ts';
+export type { BuildInput, PreviewHostConfig, PreviewRuntime, PreviewRuntimeOptions, RevisionToken, PreviewEvent } from '../../../contracts/src/runtime.ts';
 
 export function createPreviewRuntime(options: PreviewRuntimeOptions): PreviewRuntime {
   return new BrowserPreviewRuntime(options);
@@ -72,7 +72,7 @@ export class BrowserPreviewRuntime implements PreviewRuntime {
       const result = await this.compile({ files, imports: manifest.importMap.imports, entry: this.options.entry, wasmUrl: this.options.esbuildWasmUrl });
       if ('diagnostics' in result) return failed(result.diagnostics);
       if (this.disposed) return this.emit({ type: 'stale_discarded', token, reason: 'canceled' });
-      return await this.stage({ kind: 'load', token, importMap: manifest.importMap, code: result.code, mountId: this.options.mountId ?? 'root' }, result.bundleMs, start);
+      return await this.stage({ kind: 'load', token, importMap: manifest.importMap, code: result.code, mountId: this.options.mountId ?? 'root', ...(snapshot.hostConfig ? { hostConfig: snapshot.hostConfig } : {}) }, result.bundleMs, start);
     } catch (error) {
       return this.disposed ? this.emit({ type: 'stale_discarded', token, reason: 'canceled' }) : failed([{ message: String(error) }]);
     }

@@ -180,6 +180,73 @@ test('frame construction preserves closing-script strings and Unicode', async ({
   await expect(committed(page).locator('#root')).toHaveText(value);
 });
 
+test('host config exists before app execution, is frozen and safely preserves token text', async ({ page }) => {
+  await open(page);
+  const errors: string[] = [];
+  page.on('pageerror', error => errors.push(error.message));
+  const dangerousToken = 'viewer</script><script>globalThis.injected = true</script>\u2028한글\u2029';
+  const result = await page.evaluate(async sessionToken => {
+    const input = await window.demo.prepare(`
+      const config = (globalThis as any).__TOI_FETCH_CONFIG__;
+      try { config.projectId = 'tampered'; } catch {}
+      document.getElementById('root')!.textContent = config.projectId;
+    `);
+    input.hostConfig = { toiFetch: { sessionToken, capabilityToken: sessionToken, projectId: 'host-project', proxyBaseUrl: 'http://localhost:7200', env: 'preview' } };
+    window.demo.runtime.setDesiredRevision(input.token);
+    return window.demo.runtime.build(input);
+  }, dangerousToken);
+  expect(result.type).toBe('committed');
+  await expect(committed(page).locator('#root')).toHaveText('host-project');
+  expect(await committed(page).locator('#root').evaluate(() => {
+    const config = (globalThis as any).__TOI_FETCH_CONFIG__;
+    return { frozen: Object.isFrozen(config), session: config.sessionToken, capability: config.capabilityToken, injected: (globalThis as any).injected };
+  })).toEqual({ frozen: true, session: dangerousToken, capability: dangerousToken, injected: undefined });
+  const scripts = await committed(page).locator('script').evaluateAll(nodes => nodes.map(node => ({ type: (node as HTMLScriptElement).type, text: node.textContent })));
+  expect(scripts[0].text).toContain('globalThis.__TOI_FETCH_CONFIG__');
+  expect(scripts[0].text).toContain('\\u003c/script>');
+  expect(scripts[0].text).toContain('\\u2028');
+  expect(scripts[1].type).toBe('importmap');
+  expect(errors).toEqual([]);
+});
+
+test('no host config creates no fetch global, including after a configured build', async ({ page }) => {
+  await open(page);
+  const results = await page.evaluate(async () => {
+    const code = "document.getElementById('root')!.textContent = typeof (globalThis as any).__TOI_FETCH_CONFIG__;";
+    const input = await window.demo.prepare(code);
+    window.demo.runtime.setDesiredRevision(input.token);
+    const first = await window.demo.runtime.build(input);
+    input.hostConfig = { toiFetch: { sessionToken: 'viewer', capabilityToken: 'read', projectId: 'p', proxyBaseUrl: 'http://localhost:7200', env: 'preview' } };
+    const configured = await window.demo.runtime.build(input);
+    delete input.hostConfig;
+    const absent = await window.demo.runtime.build(input);
+    return [first.type, configured.type, absent.type];
+  });
+  expect(results).toEqual(['committed', 'committed', 'committed']);
+  await expect(committed(page).locator('#root')).toHaveText('undefined');
+  expect(await committed(page).locator('#root').evaluate(() => Object.hasOwn(globalThis, '__TOI_FETCH_CONFIG__'))).toBe(false);
+});
+
+test('replacing only hostConfig with the same revision token commits the new config', async ({ page }) => {
+  await open(page);
+  const result = await page.evaluate(async () => {
+    const input = await window.demo.prepare("document.getElementById('root')!.textContent = (globalThis as any).__TOI_FETCH_CONFIG__.projectId;");
+    input.hostConfig = { toiFetch: { sessionToken: 'viewer', capabilityToken: 'read-old', projectId: 'before', proxyBaseUrl: 'http://localhost:7200', env: 'preview' } };
+    const token = { ...input.token };
+    window.demo.runtime.setDesiredRevision(token);
+    const first = await window.demo.runtime.build(input);
+    input.hostConfig.toiFetch = { ...input.hostConfig.toiFetch!, capabilityToken: 'read-new', projectId: 'after' };
+    const second = await window.demo.runtime.build(input);
+    return { first, second, token, finalToken: input.token };
+  });
+  expect(result.first.type).toBe('committed');
+  expect(result.second.type).toBe('committed');
+  expect(result.finalToken).toEqual(result.token);
+  expect(result.first.token).toEqual(result.second.token);
+  await expect(committed(page).locator('#root')).toHaveText('after');
+  expect(await page.locator('iframe').count()).toBe(1);
+});
+
 test('boot timeout retains previous iframe and dispose settles a build during input preparation', async ({ page }) => {
   await open(page);
   const result = await page.evaluate(async () => {
