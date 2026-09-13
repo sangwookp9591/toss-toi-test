@@ -50,10 +50,28 @@ export interface PreviewRuntimeOptions {
   bootTimeoutMs?: number;
 }
 
+/**
+ * 호스트(스튜디오)가 프리뷰 실행 전에 주입하는 설정.
+ * frame은 번들을 실행하기 전에 `globalThis.__TOI_FETCH_CONFIG__ = Object.freeze({...toiFetch})`를 설정한다.
+ * 생성 코드(@toi/fetch configureToiFetch)는 이 전역만 읽고 토큰을 하드코딩하지 않는다.
+ */
+export interface PreviewHostConfig {
+  toiFetch?: {
+    sessionToken: string;
+    /** 기본 read capability. write는 사용자가 명시적으로 허용했을 때만 */
+    capabilityToken: string;
+    projectId: string;
+    /** 예: "http://localhost:7200" */
+    proxyBaseUrl: string;
+    env: "preview" | "live";
+  };
+}
+
 export interface BuildInput {
   token: RevisionToken;
   layers: Partial<Record<VfsLayer, VfsFiles>>;
   manifest: PackageSetManifest;
+  hostConfig?: PreviewHostConfig;
 }
 
 export interface PreviewRuntime {
@@ -84,8 +102,8 @@ export type ParentToFrame = {
   /** esbuild 산출 ESM 번들 */
   code: string;
   mountId: string;
-  /** 정책 프록시 호출용 capability 토큰(read-only 기본) */
-  capabilityToken?: string;
+  /** BuildInput.hostConfig 그대로. frame이 번들 실행 전에 전역으로 주입한다 */
+  hostConfig?: PreviewHostConfig;
 };
 
 export type FrameToParent =
