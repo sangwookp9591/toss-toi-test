@@ -1,0 +1,77 @@
+{
+  "measuredAt": "2026-09-13T05:08:10.726Z",
+  "environment": {
+    "node": "v22.14.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M4"
+  },
+  "request": {
+    "entries": [
+      "react",
+      "react/jsx-runtime",
+      "react-dom/client",
+      "@toi/tds"
+    ],
+    "dependencies": {
+      "react": "19.3.0",
+      "react-dom": "19.3.0",
+      "@toi/tds": "1.0.0"
+    }
+  },
+  "buildProfile": {
+    "builder": "esbuild",
+    "builderVersion": "0.25.12",
+    "packageManager": "yarn-berry",
+    "packageManagerVersion": "4.18.0",
+    "target": "es2022",
+    "nodeEnv": "production",
+    "conditions": [
+      "browser",
+      "import",
+      "module",
+      "default"
+    ],
+    "configDigest": "7237c1cffbec54a377e24e193de5f9f3b55e6507337166afc4f2013ef67284a5",
+    "registryNamespace": "verdaccio-local-v1"
+  },
+  "methodology": {
+    "cold": "New MinIO bucket, empty local Yarn cache and temporary workspace each trial; HTTP POST through ready includes resolution, install, build, upload and readback verification; Verdaccio upstream and OS caches not cleared",
+    "warm": "Same request HTTP POST through body consumption; persistent request index plus manifest cache",
+    "download": "Fetch manifest then all assets concurrently over local HTTP, consume bytes and verify SHA256; no browser cache or compression"
+  },
+  "samples": [
+    {
+      "repeat": 1,
+      "coldMs": 2060.235958,
+      "warmMs": 4.767499999999927,
+      "downloadMs": 30.99683300000015,
+      "bytes": 687757,
+      "files": 7,
+      "artifactKey": "fdb8bec9f732da45316717582a932c84b4fd63d0c1f201e1599968f1347822fa"
+    },
+    {
+      "repeat": 2,
+      "coldMs": 1809.908708,
+      "warmMs": 2.059082999999191,
+      "downloadMs": 12.537415999999212,
+      "bytes": 687757,
+      "files": 7,
+      "artifactKey": "fdb8bec9f732da45316717582a932c84b4fd63d0c1f201e1599968f1347822fa"
+    },
+    {
+      "repeat": 3,
+      "coldMs": 1852.5243330000003,
+      "warmMs": 3.4047920000002705,
+      "downloadMs": 12.023666000000048,
+      "bytes": 687757,
+      "files": 7,
+      "artifactKey": "fdb8bec9f732da45316717582a932c84b4fd63d0c1f201e1599968f1347822fa"
+    }
+  ],
+  "medians": {
+    "coldMs": 1852.5243330000003,
+    "warmMs": 3.4047920000002705,
+    "downloadMs": 12.537415999999212
+  }
+}
