@@ -63,7 +63,16 @@ export type ManifestDigest = string;
 export type PackageSetStatus =
   | { status: "ready"; artifactKey: string; manifestDigest: ManifestDigest; manifestUrl: string; manifest: PackageSetManifest }
   | { status: "building"; artifactKey: string; startedAt: string }
-  | { status: "failed"; artifactKey: string; error: string };
+  | { status: "failed"; artifactKey: string; error: string; code?: PackageSetFailureCode };
+
+/**
+ * 실패 원인 분류. 스튜디오는 이 값으로 사용자 안내를 고른다.
+ * - input: 요청한 패키지·버전·entries가 해석되지 않음(사용자가 고칠 수 있음)
+ * - registry_unavailable: 레지스트리 연결 실패·타임아웃·5xx(재시도 대상)
+ * - storage_unavailable: 산출물 저장소(MinIO) 오류(재시도 대상)
+ * - internal: 그 밖의 빌더 내부 오류
+ */
+export type PackageSetFailureCode = "input" | "registry_unavailable" | "storage_unavailable" | "internal";
 
 /**
  * HTTP API (services/deps-builder, 포트 7100)
@@ -71,7 +80,8 @@ export type PackageSetStatus =
  * POST /package-sets                body: PackageSetRequest
  *   → 200 PackageSetStatus(ready)   캐시 적중
  *   → 202 PackageSetStatus(building) 새 조합. 같은 artifactKey 동시 요청은 single-flight로 합친다.
- *   → 400 { error }                  entries가 dependencies로 해석되지 않음
+ *   → 400 { error, code: "input" }   entries·dependencies가 해석되지 않음(레지스트리가 정상일 때만)
+ *   → 503 { error, code: "registry_unavailable" | "storage_unavailable" }  외부 의존 서비스 장애(재시도 대상)
  * GET  /package-sets/:artifactKey    → PackageSetStatus
  * GET  /package-sets/:artifactKey/wait?timeoutMs=  → ready/failed가 될 때까지 대기(최대 timeoutMs)
  * GET  /assets/:artifactKey/*         → 산출물. Cache-Control: immutable, CORS: 스튜디오·프리뷰 origin 허용
