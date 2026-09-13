@@ -1,0 +1,28 @@
+{
+  "name": "@toi/agent-server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch --env-file-if-exists=.env src/main.ts",
+    "start": "tsx --env-file-if-exists=.env src/main.ts",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "smoke": "tsx scripts/smoke.ts",
+    "smoke:policy": "tsx scripts/policy-smoke.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "0.125.0",
+    "zod": "4.6.4"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.2",
+    "esbuild": "0.28.2",
+    "tsx": "4.23.13",
+    "typescript": "7.0.2",
+    "vitest": "5.0.0"
+  },
+  "engines": {
+    "node": ">=22 <23"
+  }
+}

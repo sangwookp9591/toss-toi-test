@@ -1,0 +1,63 @@
+{
+  "recordedAt": "2026-09-13T05:28:35.400Z",
+  "agentMode": "mock",
+  "curlExit": 0,
+  "answerStatus": 204,
+  "revision": 2,
+  "events": [
+    {
+      "seq": 1,
+      "type": "state",
+      "state": "requested"
+    },
+    {
+      "seq": 2,
+      "type": "state",
+      "state": "staging"
+    },
+    {
+      "seq": 3,
+      "type": "text"
+    },
+    {
+      "seq": 4,
+      "type": "text"
+    },
+    {
+      "seq": 5,
+      "type": "state",
+      "state": "awaiting_answer"
+    },
+    {
+      "seq": 6,
+      "type": "question"
+    },
+    {
+      "seq": 7,
+      "type": "state",
+      "state": "staging"
+    },
+    {
+      "seq": 8,
+      "type": "file"
+    },
+    {
+      "seq": 9,
+      "type": "state",
+      "state": "revision_ready"
+    },
+    {
+      "seq": 10,
+      "type": "revision_ready"
+    },
+    {
+      "seq": 11,
+      "type": "state",
+      "state": "done"
+    },
+    {
+      "seq": 12,
+      "type": "done"
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+# curl --no-buffer http://127.0.0.1:7400/generations/8526fe06-b83a-45ed-a571-b291952d4ba6/events
+id: 1
+event: state
+data: {"type":"state","state":"requested","generationId":"8526fe06-b83a-45ed-a571-b291952d4ba6","seq":1}
+
+id: 2
+event: state
+data: {"type":"state","state":"staging","generationId":"8526fe06-b83a-45ed-a571-b291952d4ba6","seq":2}
+
+id: 3
+event: text
+data: {"type":"text","delta":"요청을 확인했습니다. ","generationId":"8526fe06-b83a-45ed-a571-b291952d4ba6","seq":3}
+
+id: 4
+event: text
+data: {"type":"text","delta":"등록된 API를 사용하는 화면을 준비합니다. ","generationId":"8526fe06-b83a-45ed-a571-b291952d4ba6","seq":4}
+
+id: 5
+event: state
+data: {"type":"state","state":"awaiting_answer","generationId":"8526fe06-b83a-45ed-a571-b291952d4ba6","seq":5}
+
+id: 6
+event: question
+data: {"type":"question","questionId":"d15fab02-943a-43b3-b325-9c0897ee0886","question":"조회 사유 기본값을 넣을까요?","options":["예","아니요"],"generationId":"8526fe06-b83a-45ed-a571-b291952d4ba6","seq":6}
+
+id: 7
+event: state
+data: {"type":"state","state":"staging","generationId":"8526fe06-b83a-45ed-a571-b291952d4ba6","seq":7}
+
+id: 8
+event: file
+data: {"type":"file","path":"/src/App.tsx","content":"import { useState } from 'react';\nimport { Button, TextField, Table } from '@toi/tds';\nimport { listRecords, getRecord } from './api';\nexport default function App() {\n  const [reason, setReason] = useState(\"고객 문의 확인\");\n  const [rows, setRows] = useState<Record<string, unknown>[]>([]);\n  const [customerId, setCustomerId] = useState('1');\n  const [error, setError] = useState('');\n  async function load() {\n    if (reason.trim().length < 5) { setError('조회 사유를 5자 이상 입력하세요.'); return; }\n    try { const data = await listRecords(reason); setRows(data.items ?? [data]); setError(''); } catch { setError('조회 권한과 연결 상태를 확인하세요.'); }\n  }\n  return <main><h1>고객 목록</h1><TextField label=\"조회 사유\" value={reason} onChange={e => setReason(e.target.value)} />\n    <Button onClick={load}>조회</Button><p role=\"alert\">{error}</p>\n    \n    \n    <Table columns={[{key:'id',header:'ID'},{key:'name',header:'이름'},{key:'status',header:'상태'}]} rows={rows} rowKey=\"id\" /></main>;\n}\n","generationId":"8526fe06-b83a-45ed-a571-b291952d4ba6","seq":8}
+
+id: 9
+event: state
+data: {"type":"state","state":"revision_ready","generationId":"8526fe06-b83a-45ed-a571-b291952d4ba6","seq":9}
+
+id: 10
+event: revision_ready
+data: {"type":"revision_ready","revision":2,"sourceDigest":"63710ccc47a68c33dd596402e61c1788a347d9b8c4e8d4f7da5fef6579b1df02","files":{"/src/main.tsx":"import { createRoot } from 'react-dom/client';\nimport App from './App';\ncreateRoot(document.getElementById('root')!).render(<App />);\n","/src/App.tsx":"import { useState } from 'react';\nimport { Button, TextField, Table } from '@toi/tds';\nimport { listRecords, getRecord } from './api';\nexport default function App() {\n  const [reason, setReason] = useState(\"고객 문의 확인\");\n  const [rows, setRows] = useState<Record<string, unknown>[]>([]);\n  const [customerId, setCustomerId] = useState('1');\n  const [error, setError] = useState('');\n  async function load() {\n    if (reason.trim().length < 5) { setError('조회 사유를 5자 이상 입력하세요.'); return; }\n    try { const data = await listRecords(reason); setRows(data.items ?? [data]); setError(''); } catch { setError('조회 권한과 연결 상태를 확인하세요.'); }\n  }\n  return <main><h1>고객 목록</h1><TextField label=\"조회 사유\" value={reason} onChange={e => setReason(e.target.value)} />\n    <Button onClick={load}>조회</Button><p role=\"alert\">{error}</p>\n    \n    \n    <Table columns={[{key:'id',header:'ID'},{key:'name',header:'이름'},{key:'status',header:'상태'}]} rows={rows} rowKey=\"id\" /></main>;\n}\n","/src/api.ts":"import { configureToiFetch, toiFetch } from '@toi/fetch';\n// The trusted preview host injects runtime credentials; generated code never mints them.\ntype HostConfig = Parameters<typeof configureToiFetch>[0];\nconst hostConfig = (globalThis as typeof globalThis & { __TOI_FETCH_CONFIG__?: HostConfig }).__TOI_FETCH_CONFIG__;\nif (!hostConfig) throw new Error('Preview host configuration missing: __TOI_FETCH_CONFIG__');\nconfigureToiFetch(hostConfig);\nexport async function listRecords(reason: string) {\n  const response = await toiFetch(\"customers\", '/customers', { reason });\n  return response.json();\n}\nexport async function getRecord(id: string, reason: string) {\n  const response = await toiFetch(\"customers\", '/customers/' + encodeURIComponent(id), { reason });\n  return response.json();\n}\n"},"packageSet":{"entries":["react","react-dom/client","react/jsx-runtime","@tanstack/react-query","@toi/tds","@toi/fetch"],"dependencies":{"react":"19.3.0","react-dom":"19.3.0","@tanstack/react-query":"^5.0.0","@toi/tds":"1.0.0","@toi/fetch":"1.0.0"}},"generationId":"8526fe06-b83a-45ed-a571-b291952d4ba6","seq":10}
+
+id: 11
+event: state
+data: {"type":"state","state":"done","generationId":"8526fe06-b83a-45ed-a571-b291952d4ba6","seq":11}
+
+id: 12
+event: done
+data: {"type":"done","summary":"조회 사유를 입력하는 고객 어드민 화면을 생성했습니다.","generationId":"8526fe06-b83a-45ed-a571-b291952d4ba6","seq":12}
+

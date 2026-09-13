@@ -1,0 +1,16 @@
+{
+  "recordedAt": "2026-09-13T05:31:38.446Z",
+  "passed": true,
+  "transport": "Engine tools -> PolicyClient -> live :7200",
+  "serviceSessionUser": "agent-server",
+  "roles": [
+    "viewer"
+  ],
+  "apiIds": [
+    "customers"
+  ],
+  "schemaVersion": 1,
+  "requireReason": true,
+  "upstreamBaseUrlExcluded": true,
+  "generationState": "done"
+}
