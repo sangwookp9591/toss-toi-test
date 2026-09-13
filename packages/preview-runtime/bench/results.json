@@ -1,0 +1,77 @@
+{
+  "recordedAt": "2026-09-13T05:08:10.488Z",
+  "units": "ms",
+  "environment": {
+    "platform": "darwin",
+    "release": "25.6.0",
+    "arch": "arm64",
+    "cpu": "Apple M4",
+    "node": "v22.14.0",
+    "chrome": "153.0.8010.36",
+    "esbuildWasm": "0.28.2",
+    "headless": true
+  },
+  "boundaries": {
+    "start": "Immediately before demo.run: token/digest preparation, Worker creation and JS load, WASM fetch/initialize, context creation and first rebuild included.",
+    "end": "Parent receives rendered after module evaluation and two iframe requestAnimationFrame callbacks, checks full revision token, swaps iframe and resolves build.",
+    "excluded": "npm install, development server startup, host asset prebuild, HTML navigation, demo helper JS and manifest fetch before demo.ready.",
+    "warmup": "No probe transform, no warmup bundle. Each of 3 samples has a fresh browser context and a fresh Worker; one Chrome process. Edit keeps the same esbuild context and browser HTTP cache.",
+    "dependencyFixture": "Public esm.sh React 19.3.0; actual network module fetches included in boot, no route mocks.",
+    "cache": "Local host assets served no-store. Public CDN responses may be cached on edit. OS/DNS/TLS/CDN/WASM compilation caches are not forcibly cleared.",
+    "limitations": "2 rAF is a render proxy, not verified compositor paint. Tiny one-file fixture, 3 medians, not p95 or a reproduction of TOI 1.3 seconds."
+  },
+  "samples": [
+    {
+      "trial": 1,
+      "crossOriginIsolated": false,
+      "firstCommitMs": 1195.0999999940395,
+      "editCommitMs": 49.80000001192093,
+      "first": {
+        "bundleMs": 237.59999999403954,
+        "bootMs": 920.5999999940395,
+        "totalMs": 1194.5
+      },
+      "edit": {
+        "bundleMs": 9.899999991059303,
+        "bootMs": 25.399999991059303,
+        "totalMs": 49.5
+      }
+    },
+    {
+      "trial": 2,
+      "crossOriginIsolated": false,
+      "firstCommitMs": 1006.2000000029802,
+      "editCommitMs": 49.099999994039536,
+      "first": {
+        "bundleMs": 219.20000000298023,
+        "bootMs": 762.2999999970198,
+        "totalMs": 1005.4000000059605
+      },
+      "edit": {
+        "bundleMs": 10.200000002980232,
+        "bootMs": 25.200000002980232,
+        "totalMs": 48.900000005960464
+      }
+    },
+    {
+      "trial": 3,
+      "crossOriginIsolated": false,
+      "firstCommitMs": 1030.7999999970198,
+      "editCommitMs": 49.900000005960464,
+      "first": {
+        "bundleMs": 212.59999999403954,
+        "bootMs": 787.2999999970198,
+        "totalMs": 1030.0999999940395
+      },
+      "edit": {
+        "bundleMs": 12.599999994039536,
+        "bootMs": 22.200000002980232,
+        "totalMs": 49.70000000298023
+      }
+    }
+  ],
+  "medians": {
+    "firstCommitMs": 1030.7999999970198,
+    "editCommitMs": 49.80000001192093
+  }
+}
