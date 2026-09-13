@@ -1,0 +1,16 @@
+{
+  "devDownExit": 0,
+  "portsFree": {
+    "4873": true,
+    "9000": true,
+    "5173": true,
+    "5174": true,
+    "7100": true,
+    "7200": true,
+    "7300": true,
+    "7400": true
+  },
+  "toiFxbContainersRemaining": 0,
+  "copyRemoved": true,
+  "volumes": "preserved; toi-lite_* and toi-qa_* untouched"
+}

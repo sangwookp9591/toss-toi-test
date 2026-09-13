@@ -1,0 +1,11 @@
+{
+  "copy": "/Users/psw/Projects/toi-lite-fx-verify",
+  "method": "rsync (uncommitted source included; no git worktree)",
+  "excluded_found": {
+    "node_modules": [],
+    ".env": [],
+    "data": [],
+    ".run": [],
+    "dist": []
+  }
+}

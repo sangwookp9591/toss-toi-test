@@ -1,15 +1,29 @@
 import { randomBytes } from 'node:crypto';
-import { readFile, writeFile, mkdir, mkdtemp, cp, rm, chmod } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, mkdtemp, cp, rm, chmod, access } from 'node:fs/promises';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { config } from 'dotenv';
+import { summarizeFailure } from '../../../scripts/dev-diagnostics.mjs';
 const run = promisify(execFile), root = fileURLToPath(new URL('../../../', import.meta.url));
 const envPath = path.join(root, '.env');
 config({ path: envPath, quiet: true });
 const registry = process.env.TOI_REGISTRY_URL ?? 'http://localhost:4873';
 let token = process.env.TOI_REGISTRY_TOKEN;
+let stage = 'registry configuration';
+async function packageCommand(name, args, cwd) {
+  stage = name;
+  const started = performance.now();
+  console.log(`${name}: starting`);
+  try { await run('npm', args, { cwd }); }
+  catch (error) {
+    throw Object.assign(new Error('Package command failed'), {
+      safeSummary: summarizeFailure(`${error.stderr ?? ''}\n${error.stdout ?? ''}`, `npm exited ${Number.isInteger(error.code) ? error.code : 1}`)
+    });
+  }
+  console.log(`${name}: ready (${((performance.now() - started) / 1000).toFixed(3)}s)`);
+}
 async function metadata(auth) { return fetch(`${registry}/@toi%2ftds`, { headers: auth ? { Authorization: `Bearer ${auth}` } : {} }); }
 try {
   const anonymous = await metadata();
@@ -28,7 +42,13 @@ try {
     console.log('Registry token stored in gitignored root .env (mode 0600)');
   }
   const packageRoot = path.join(root, 'packages/fake-tds');
-  await run('npm', ['run', 'build'], { cwd: packageRoot });
+  try { await access(path.join(packageRoot, 'node_modules')); }
+  catch (error) {
+    if (error.code !== 'ENOENT') throw error;
+    await packageCommand('fake-tds install', ['ci'], packageRoot);
+  }
+  await packageCommand('fake-tds build', ['run', 'build'], packageRoot);
+  stage = 'registry publication';
   const packageJson = JSON.parse(await readFile(path.join(packageRoot, 'package.json'), 'utf8'));
   const serviceCache = path.join(root, 'services/deps-builder/.cache'); await mkdir(serviceCache, { recursive: true });
   for (const version of ['1.0.0', '1.1.0']) {
@@ -53,6 +73,6 @@ try {
   console.log(`Verified both versions published; anonymous access remains HTTP ${finalAnonymous.status}`);
 } catch (error) {
   // Subprocess errors can contain npm configuration; do not serialize them.
-  console.error(`Registry setup failed (${error instanceof Error ? error.name : 'unknown error'}); inspect registry health and configuration`);
+  console.error(`${stage} failed: ${error.safeSummary ?? summarizeFailure(error.message)}; inspect registry health and configuration`);
   process.exitCode = 1;
 }

@@ -1,0 +1,8 @@
+PASS initial: guidance visible; no table
+PASS loading → result: disabled button, one request, real masked backend data
+PASS empty: 조건에 맞는 고객이 없어요
+PASS reason: 조회 사유를 5자 이상 입력하세요.
+PASS forbidden: 조회 권한이 없어요.
+PASS backend: 고객 시스템이 응답하지 않아요. 잠시 후 다시 시도하세요.
+PASS network: 정책 서버에 연결하지 못했어요. 잠시 후 다시 시도하세요.
+PASS retry: real backend rows restored after all injected errors

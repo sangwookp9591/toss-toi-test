@@ -1,0 +1,20 @@
+Stopped studio
+Stopped agent-server
+Stopped deps-builder
+Stopped policy-proxy
+Stopped mock-backend
+ Container toi-fxb-minio-1  Stopping
+ Container toi-fxb-verdaccio-1  Stopping
+ Container toi-fxb-verdaccio-1  Stopped
+ Container toi-fxb-verdaccio-1  Removing
+ Container toi-fxb-verdaccio-1  Removed
+ Container toi-fxb-verdaccio-init-1  Stopping
+ Container toi-fxb-verdaccio-init-1  Stopped
+ Container toi-fxb-verdaccio-init-1  Removing
+ Container toi-fxb-verdaccio-init-1  Removed
+ Container toi-fxb-minio-1  Stopped
+ Container toi-fxb-minio-1  Removing
+ Container toi-fxb-minio-1  Removed
+ Network toi-fxb_default  Removing
+ Network toi-fxb_default  Removed
+Managed processes stopped; externally started services are left running.

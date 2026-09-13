@@ -1,0 +1,14 @@
+PRECONDITION: packages/fake-tds/node_modules removed from disposable copy
+
+> @toi/deps-builder@1.0.0 setup-registry
+> node scripts/setup-registry.mjs
+
+Anonymous @toi/tds metadata blocked: HTTP 401
+fake-tds install: starting
+fake-tds install: ready (0.608s)
+fake-tds build: starting
+fake-tds build: ready (1.079s)
+@toi/tds@1.0.0 already published
+@toi/tds@1.1.0 already published
+Verified both versions published; anonymous access remains HTTP 401
+EXIT=0

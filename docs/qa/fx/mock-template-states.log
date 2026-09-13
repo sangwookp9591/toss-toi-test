@@ -1,0 +1,101 @@
+
+> @toi/agent-server@0.1.0 test
+> vitest run --reporter=verbose
+
+
+ RUN  v5.0.0 /Users/psw/Projects/toss-toi-test/services/agent-server
+
+ ✓ tests/templates.test.ts > 고객 목록: initial guidance → loading/duplicate prevention → result → empty → retry 49ms
+ ✓ tests/templates.test.ts > 고객 목록: short reason prevents API calls 4ms
+ ✓ tests/templates.test.ts > 고객 목록: typed 428 → specific error → successful retry 3ms
+ ✓ tests/templates.test.ts > 고객 목록: HTTP 428 → specific error → successful retry 3ms
+ ✓ tests/templates.test.ts > 고객 목록: typed 403 → specific error → successful retry 4ms
+ ✓ tests/templates.test.ts > 고객 목록: HTTP 403 → specific error → successful retry 3ms
+ ✓ tests/templates.test.ts > 고객 목록: network failure → specific error → successful retry 3ms
+ ✓ tests/templates.test.ts > 고객 목록: HTTP 500 → specific error → successful retry 3ms
+ ✓ tests/templates.test.ts > 고객 목록: HTTP 502 → specific error → successful retry 4ms
+ ✓ tests/templates.test.ts > 고객 목록: HTTP 503 → specific error → successful retry 5ms
+ ✓ tests/templates.test.ts > 고객 목록: unknown error → specific error → successful retry 3ms
+ ✓ tests/templates.test.ts > 고객 목록: HTTP 404 displays empty state 3ms
+ ✓ tests/templates.test.ts > 고객 상세: initial guidance → loading/duplicate prevention → result → empty → retry 3ms
+ ✓ tests/templates.test.ts > 고객 상세: short reason prevents API calls 4ms
+ ✓ tests/templates.test.ts > 고객 상세: typed 428 → specific error → successful retry 3ms
+ ✓ tests/templates.test.ts > 고객 상세: HTTP 428 → specific error → successful retry 5ms
+ ✓ tests/source-policy.test.ts > rejects raw fetch at HTTP save and finish without committing a revision 45ms
+ ✓ tests/source-policy.test.ts > rejects raw fetch with whitespace at HTTP save and finish without committing a revision 22ms
+ ✓ tests/source-policy.test.ts > rejects XMLHttpRequest at HTTP save and finish without committing a revision 17ms
+ ✓ tests/origin.test.ts > rejects Origin "http://localhost:5174" for every protected route without changing storage or events 82ms
+ ✓ tests/server.test.ts > same baseRevision concurrent writes have exactly one CAS winner 38ms
+ ✓ tests/server.test.ts > requestId is idempotent and cannot be reused with different input 24ms
+ ✓ tests/server.test.ts > mock question/answer + SSE reconnect replays without gaps or duplicates 34ms
+ ✓ tests/claude.test.ts > real SDK streaming toolRunner + betaZodTool converts fake model tool calls into file/revision events 67ms
+ ✓ tests/claude.test.ts > wraps injected registry descriptions and returns a finish tool error before accepting repaired fake-stream output 27ms
+ ✓ tests/templates.test.ts > 고객 상세: typed 403 → specific error → successful retry 10ms
+ ✓ tests/templates.test.ts > 고객 상세: HTTP 403 → specific error → successful retry 5ms
+ ✓ tests/templates.test.ts > 고객 상세: network failure → specific error → successful retry 4ms
+ ✓ tests/templates.test.ts > 고객 상세: HTTP 500 → specific error → successful retry 3ms
+ ✓ tests/templates.test.ts > 고객 상세: HTTP 502 → specific error → successful retry 2ms
+ ✓ tests/templates.test.ts > 고객 상세: HTTP 503 → specific error → successful retry 4ms
+ ✓ tests/templates.test.ts > 고객 상세: unknown error → specific error → successful retry 9ms
+ ✓ tests/templates.test.ts > 고객 상세: HTTP 404 displays empty state 2ms
+ ✓ tests/templates.test.ts > 고객 상태 변경: initial guidance → loading/duplicate prevention → result → empty → retry 3ms
+ ✓ tests/templates.test.ts > 고객 상태 변경: short reason prevents API calls 3ms
+ ✓ tests/templates.test.ts > 고객 상태 변경: typed 428 → specific error → successful retry 2ms
+ ✓ tests/templates.test.ts > 고객 상태 변경: HTTP 428 → specific error → successful retry 3ms
+ ✓ tests/templates.test.ts > 고객 상태 변경: typed 403 → specific error → successful retry 2ms
+ ✓ tests/templates.test.ts > 고객 상태 변경: HTTP 403 → specific error → successful retry 3ms
+ ✓ tests/templates.test.ts > 고객 상태 변경: network failure → specific error → successful retry 3ms
+ ✓ tests/templates.test.ts > 고객 상태 변경: HTTP 500 → specific error → successful retry 2ms
+ ✓ tests/templates.test.ts > 고객 상태 변경: HTTP 502 → specific error → successful retry 3ms
+ ✓ tests/templates.test.ts > 고객 상태 변경: HTTP 503 → specific error → successful retry 2ms
+ ✓ tests/templates.test.ts > 고객 상태 변경: unknown error → specific error → successful retry 2ms
+ ✓ tests/templates.test.ts > 고객 상태 변경: HTTP 404 displays empty state 2ms
+ ✓ tests/templates.test.ts > status update: denied/expired write permission offers reauthorization 2ms
+ ✓ tests/templates.test.ts > status update: denied/expired write permission offers reauthorization 2ms
+ ✓ tests/templates.test.ts > status update: duplicate prevention and existing success text survive refresh 2ms
+ ✓ tests/claude.test.ts > pause_turn pushes the exact assistant content before resuming the outer runner 13ms
+ ✓ tests/claude.test.ts > refusal is a terminal model_error 12ms
+ ✓ tests/claude.test.ts > auto mode falls back on the first authentication error and reports mock health 25ms
+ ✓ tests/claude.test.ts > specific SDK error classes are classified before APIError without leaking provider details 1ms
+ ↓ tests/claude.test.ts > live Claude smoke (explicit opt in only)
+ ✓ tests/claude.test.ts > a CAS conflict inside an SDK finish tool is terminal conflict, not a swallowed tool retry 13ms
+ ✓ tests/source-policy.test.ts > rejects WebSocket at HTTP save and finish without committing a revision 17ms
+ ✓ tests/source-policy.test.ts > rejects EventSource at HTTP save and finish without committing a revision 9ms
+ ✓ tests/source-policy.test.ts > rejects navigator.sendBeacon at HTTP save and finish without committing a revision 13ms
+ ✓ tests/source-policy.test.ts > rejects http URL at HTTP save and finish without committing a revision 6ms
+ ✓ tests/source-policy.test.ts > rejects https URL at HTTP save and finish without committing a revision 7ms
+ ✓ tests/source-policy.test.ts > rejects /dev/session at HTTP save and finish without committing a revision 7ms
+ ✓ tests/source-policy.test.ts > rejects /capabilities at HTTP save and finish without committing a revision 11ms
+ ✓ tests/source-policy.test.ts > rejects /audit at HTTP save and finish without committing a revision 8ms
+ ✓ tests/source-policy.test.ts > rejects host config assignment at HTTP save and finish without committing a revision 7ms
+ ✓ tests/source-policy.test.ts > rejects host config compound assignment at HTTP save and finish without committing a revision 6ms
+ ✓ tests/source-policy.test.ts > rejects host config bracket assignment at HTTP save and finish without committing a revision 6ms
+ ✓ tests/source-policy.test.ts > rejects host config property assignment at HTTP save and finish without committing a revision 7ms
+ ✓ tests/source-policy.test.ts > allows the normal template and mock: 고객 목록 화면 만들어줘 5ms
+ ✓ tests/source-policy.test.ts > allows the normal template and mock: 고객 상세 4ms
+ ✓ tests/source-policy.test.ts > allows the normal template and mock: 고객 상태 변경 4ms
+ ✓ tests/source-policy.test.ts > allows toiFetch and host config reads/comparisons 0ms
+ ✓ tests/server.test.ts > finish conflicts after concurrent editor save, without overwriting the editor 24ms
+ ✓ tests/server.test.ts > cancel aborts a waiting question immediately, is idempotent and rejects late answers 20ms
+ ✓ tests/server.test.ts > a late registry tool result and malicious late write/finish cannot save or emit after cancel 14ms
+ ✓ tests/server.test.ts > mock files use only allowed exact imports and match the browser source digest 38ms
+ ✓ tests/server.test.ts > rejects traversal and packages outside the approved catalog 9ms
+ ✓ tests/origin.test.ts > rejects Origin "null" for every protected route without changing storage or events 56ms
+ ✓ tests/origin.test.ts > rejects Origin "https://unknown.example" for every protected route without changing storage or events 31ms
+ ✓ tests/origin.test.ts > rejects Origin "" for every protected route without changing storage or events 28ms
+ ✓ tests/server.test.ts > persists source, idempotency and replay events across a restart; incomplete runs terminate 16ms
+ ✓ tests/server.test.ts > policy client obtains a service session and refreshes it once on 401 4ms
+ ✓ tests/server.test.ts > completed generations keep their exact replay and requestId after a clean restart 23ms
+ ✓ tests/origin.test.ts > rejects Origin "http://localhost:5173.evil.example" for every protected route without changing storage or events 27ms
+ ✓ tests/origin.test.ts > rejects Origin "http://127.0.0.1:5173" for every protected route without changing storage or events 26ms
+ ✓ tests/origin.test.ts > requires JSON on every mutation for allowed Origin undefined 29ms
+ ✓ tests/origin.test.ts > requires JSON on every mutation for allowed Origin "http://localhost:5173" 24ms
+ ✓ tests/origin.test.ts > preserves projects, generation, answers, cancel and SSE for allowed Origin undefined 34ms
+ ✓ tests/origin.test.ts > preserves projects, generation, answers, cancel and SSE for allowed Origin "http://localhost:5173" 27ms
+ ✓ tests/origin.test.ts > uses the configured studio origin as the exact allowlist 3ms
+
+ Test Files  5 passed (5)
+      Tests  87 passed | 1 skipped (88)
+   Start at  17:12:26
+   Duration  662ms (tests 54%, import 24%, transform 21%, worker 1%)
+

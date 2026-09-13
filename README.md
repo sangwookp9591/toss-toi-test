@@ -57,13 +57,15 @@ Apple M4 한 대, 작은 fixture, 3회 중앙값입니다. 큰 모듈 그래프,
 
 ## TOI-lite 실행
 
-Docker Desktop, Node.js 22, npm, 시스템 Google Chrome이 필요하다. Docker를 실행한 뒤 저장소 루트에서 다음 명령을 실행한다.
+Docker Desktop, Node.js 22, npm, 시스템 Google Chrome이 필요하다. Docker를 실행한 뒤 저장소 루트에서 다음 명령을 실행한다. 새 클론에서도 별도의 패키지 설치나 환경 파일 작성 없이 이 한 줄로 첫 기동한다.
 
 ```sh
 node scripts/dev-up.mjs
 ```
 
-스크립트는 Docker Compose의 Verdaccio/MinIO, 사내 패키지 등록, mock-backend(7300), policy-proxy(7200), deps-builder(7100), agent-server(7400), 스튜디오(5173)와 프리뷰 origin(5174)을 순서대로 확인한다. 필요한 패키지는 각 폴더의 lockfile로 설치하며 정상 실행 중인 서비스는 재사용한다. 로그와 직접 시작한 프로세스 목록은 `scripts/.run/`에 보관한다.
+스크립트는 Docker Compose의 Verdaccio/MinIO, 사내 패키지 등록, mock-backend(7300), policy-proxy(7200), deps-builder(7100), agent-server(7400), 스튜디오(5173)와 프리뷰 origin(5174)을 순서대로 확인한다. fake-tds·preview-runtime과 모든 실행 서비스·스튜디오의 의존성을 각 폴더의 lockfile로 설치하며 정상 실행 중인 서비스는 재사용한다. `node scripts/dev-up.mjs --check`로 설치 대상과 lockfile을 서비스 기동 없이 검사할 수 있다.
+
+기동 출력에는 단계별 소요 시간이 표시된다. 실패하면 `registry setup failed: fake-tds build failed: tsc not found`처럼 실패 단계와 원인 요약, 로그 경로를 표시한다. 전체 기동 로그는 `scripts/.run/dev-up.log`, 서비스별 로그는 `scripts/.run/<서비스 이름>.log`, 직접 시작한 프로세스 목록은 `scripts/.run/processes.json`에 보관한다. 기동 로그는 비밀값을 가리고 레지스트리 설정 오류는 안전한 원인 요약만 출력한다. 원인을 해결한 뒤 같은 dev-up 명령을 다시 실행한다.
 
 [스튜디오](http://localhost:5173)에서 프로젝트를 만들고 “고객 목록 화면 만들어줘”를 입력한다. 조회 사유 질문에 답하면 생성된 코드와 미리보기를 볼 수 있다. 조회 사유를 입력한 뒤 조회하면 마스킹된 고객 데이터가 표시된다. 코드 편집 후 “저장하고 반영”으로 저장하며 오류가 있으면 마지막 정상 화면을 유지한다. 쓰기 작업은 기본 차단되고 “쓰기 테스트 허용”을 켰을 때 현재 프로젝트의 API에 2분간 허용된다. 프리뷰에는 viewer 세션만 전달한다.
 
