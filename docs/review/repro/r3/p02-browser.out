@@ -1,0 +1,24 @@
+# Project A (aaaaaaaa-0000-4000-8000-000000000001) generated-code egress attempts:
+{
+ "project": "aaaaaaaa-0000-4000-8000-000000000001",
+ "origin": "http://p-aaaaaaaa-0000-4000-8000-000000000001.preview.localhost:5174",
+ "csp": [],
+ "img": "attempted",
+ "beacon": "queued",
+ "ws": "constructed",
+ "fetchExt": "blocked",
+ "fetchAgent": "blocked",
+ "fetchSelfRelative": "blocked",
+ "parentDom": "blocked:SecurityError",
+ "topDom": "blocked:SecurityError",
+ "bc": "posted",
+ "lsOwn": "aaaaaaaa-0000-4000-8000-000000000001",
+ "lsForeign": null,
+ "winopen": "null"
+}
+
+# Project B origin: http://p-bbbbbbbb-0000-4000-8000-000000000002.preview.localhost:5174  (distinct from A: true)
+# Parent BroadcastChannel cross-delivery observed: [] (parent origin differs from preview origin, so none expected)
+
+# Local egress receiver hits (MUST be empty for containment): []
+# CSP active after document.write (violations from post-write app code): false directives=[]

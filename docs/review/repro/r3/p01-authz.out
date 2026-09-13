@@ -1,0 +1,23 @@
+carol GET membership (non-member)                        -> 404 {"error":"project not found"}
+carol GET project (non-member)                           -> 404 {"error":"project not found"}
+carol GET /audit?projectId (non-member via policy)       -> 404 {"error":"PROJECT_NOT_FOUND"}
+carol GET membership of NONEXISTENT project              -> 404 {"error":"project not found"}
+timing: nonmember-existing=0.7ms status=404; member?-nonexistent=0.5ms status=404
+alice PUT bob=editor                                     -> 200 {"projectId":"49b369de-e389-44f3-97af-777e7a73a427","teamId":"/team-a","version":2,"member
+bob (editor) GET membership                              -> 200 {"projectId":"49b369de-e389-44f3-97af-777e7a73a427","teamId":"/team-a","version":2,"member
+bob (editor) PUT carol=viewer (owner-only)               -> 403 {"error":"project role forbidden"}
+bob (editor) GET /audit (should see own only, owner=false) -> 200 []
+alice demote self to editor (last owner)                 -> 409 {"error":"last owner required"}
+alice DELETE self (last owner)                           -> 415 {"error":"Content-Type must be application/json"}
+alice PUT bob=viewer                                     -> 200 {"projectId":"49b369de-e389-44f3-97af-777e7a73a427","teamId":"/team-a","version":3,"member
+bob viewer -> preview-session WRITE (immediately)        -> 403 {"error":"PROJECT_ROLE_FORBIDDEN"}
+alice PUT bob=editor (restore)                           -> 200 {"projectId":"49b369de-e389-44f3-97af-777e7a73a427","teamId":"/team-a","version":4,"member
+bob editor -> preview-session WRITE (immediately)        -> 200 {"sessionToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NTQ1Njk3Mi0yMjcxLTQ4NDEt
+preview-session from PREVIEW origin (forbidden)          -> 403 {"error":"ORIGIN_FORBIDDEN"}
+preview-session no origin (server-to-server)             -> 403 {"error":"STUDIO_ORIGIN_REQUIRED"}
+preview-session ttlSec 999 (write, >120)                 -> 400 {"error":"INVALID_PREVIEW_REQUEST"}
+alice preview read /proxy/customers                      -> 200 {"dataset":"preview","items":[{"id":"C001","name":"홍*동","phone":"010-****-5678","email":"h
+bob session + alice capability (sub mismatch)            -> 403 {"error":"CAPABILITY_INVALID"}
+P capability against P2 (projectId mismatch)             -> 403 {"error":"PREVIEW_ORIGIN_MISMATCH"}
+P capability, header project=P2, preview origin=P        -> 403 {"error":"PREVIEW_ORIGIN_MISMATCH"}
+preview read cap + X-Toi-Env: live                       -> 403 {"error":"ENV_MISMATCH"}

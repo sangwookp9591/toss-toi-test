@@ -1,0 +1,28 @@
+# CSV formula-injection cells (leading char must be neutralized):
+  "=cmd|calc"                  -> "'=cmd|calc"
+  "+1+1"                       -> "'+1+1"
+  "-2+3"                       -> "'-2+3"
+  "@SUM(A1)"                   -> "'@SUM(A1)"
+  "\t=1+1"                     -> "'	=1+1"
+  "\r=1+1"                     -> "'=1+1"
+  " =1+1"                      -> "' =1+1"
+  "=HYPERLINK(\"http://x\")"   -> "'=HYPERLINK(""http://x"")"
+  "normal"                     -> "normal"
+  "0date"                      -> "0date"
+  "=1\"quote"                  -> "'=1""quote"
+
+# XLSX sheet1.xml contains <f> formula element: false ; contains "=1+1" as literal string: false
+  sheet snippet: <?xml version="1.0" encoding="UTF-8" standalone="yes"?> <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="x14a
+
+# row limit 10001 -> DOWNLOAD_ROW_LIMIT 413
+# row limit 10000 -> ok len=10000
+
+# envelope IV distinct across two encrypts of same data: true
+# ciphertext distinct: true
+# wrappedDataKey distinct (fresh data key each time): true
+# roundtrip decrypt matches: true
+# GCM ciphertext tamper -> rejected (sha256 or auth tag)
+# wrong context (AAD) -> rejected
+# wrong KEK -> rejected
+
+# captured live download zip present (602 bytes); it is AES-256 encrypted (needs one-time password, not stored). Masking is applied on the /proxy path before generateFile (server.ts:99-102).

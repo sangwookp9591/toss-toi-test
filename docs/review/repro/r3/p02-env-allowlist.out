@@ -1,0 +1,6 @@
+# Per-service process env: presence of sensitive key NAMES only (values never printed).
+# Expectation (L6): only policy-proxy holds session/capability/kek/urlSecret/minio; agent-server holds none of those; mock-backend holds only preview/live service tokens.
+== policy-proxy (pid 52772) ==
+== agent-server (pid 56353) ==
+== deps-builder (pid 44445) ==
+== mock-backend (pid 33191) ==

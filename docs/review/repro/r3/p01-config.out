@@ -1,0 +1,22 @@
+# Non-development NODE_ENV values with dev/default/missing secrets (must all be REJECTED):
+NODE_ENV="production" + default secret                   -> REJECTED (Production requires non-default secrets of at leas)
+NODE_ENV="Production" + default secret                   -> REJECTED (Production requires non-default secrets of at leas)
+NODE_ENV="prod" + default secret                         -> REJECTED (Production requires non-default secrets of at leas)
+NODE_ENV="staging" + default secret                      -> REJECTED (Production requires non-default secrets of at leas)
+NODE_ENV="PRODUCTION" + default secret                   -> REJECTED (Production requires non-default secrets of at leas)
+NODE_ENV="production " + default secret                  -> REJECTED (Production requires non-default secrets of at leas)
+NODE_ENV=undefined + default secret                      -> REJECTED (Production requires non-default secrets of at leas)
+NODE_ENV="" + default secret                             -> REJECTED (Production requires non-default secrets of at leas)
+
+# production hardening variants:
+production + missing secrets                             -> REJECTED (Production requires non-default secrets of at leas)
+production + short (<32B) secrets                        -> REJECTED (Production requires non-default secrets of at leas)
+production + duplicate secrets                           -> REJECTED (Production requires distinct secrets)
+production + strong distinct + TOI_DEV_AUTH_ENABLED=true -> REJECTED (Production requires TOI_DEV_AUTH_ENABLED=false)
+production + strong distinct + TOI_DEV_ADMIN_TOKEN set   -> REJECTED (Production forbids TOI_DEV_ADMIN_TOKEN)
+production + strong distinct (clean)  [should ACCEPT]    -> ACCEPTED devAuth=false devAdminToken=false
+
+# development / test skip the guard but dev-auth is removed entirely (devAuth always false):
+development + default secrets                            -> ACCEPTED devAuth=false devAdminToken=false
+test + no secrets                                        -> ACCEPTED devAuth=false devAdminToken=false
+development + TOI_DEV_AUTH_ENABLED=true                  -> ACCEPTED devAuth=false devAdminToken=true

@@ -1,0 +1,26 @@
+# /proxy Origin header variants (control=exact preview origin should 200; others 403):
+  exact preview origin       -> 200 {"dataset":"preview","items":[{"id":"C00
+  UPPERCASE scheme           -> 403 {"error":"ORIGIN_FORBIDDEN"}
+  uppercase host label       -> 403 {"error":"ORIGIN_FORBIDDEN"}
+  port omitted               -> 403 {"error":"ORIGIN_FORBIDDEN"}
+  wrong port                 -> 403 {"error":"ORIGIN_FORBIDDEN"}
+  trailing dot in host       -> 403 {"error":"ORIGIN_FORBIDDEN"}
+  suffix hijack              -> 403 {"error":"ORIGIN_FORBIDDEN"}
+  different project uuid     -> 403 {"error":"PREVIEW_ORIGIN_MISMATCH"}
+  studio origin              -> 200 {"dataset":"preview","items":[{"id":"C00
+  null literal               -> 403 {"error":"ORIGIN_FORBIDDEN"}
+  extra subdomain            -> 403 {"error":"ORIGIN_FORBIDDEN"}
+
+# X-Toi-Project vs preview-session/capability mismatch:
+  header project != session/cap project -> 403 {"error":"PREVIEW_ORIGIN_MISMATCH"}
+
+# 5174 Host header variants (only exact lowercase p-<uuid>.preview.localhost:5174 -> 200):
+  exact                        -> 200
+  uppercase                    -> 421
+  trailing dot                 -> 421
+  suffix hijack (rebinding)    -> 421
+  missing port                 -> 421
+  IPv6 loopback                -> 421
+  plain localhost              -> 421
+  bad uuid                     -> 421
+  extra label                  -> 421

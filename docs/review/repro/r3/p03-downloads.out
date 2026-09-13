@@ -1,0 +1,13 @@
+POST /downloads (csv)                                -> 201 {"downloadId":"740b0666-7f91-405f-984f-1633065e0157","zipPassword":"JO1z6wacQcp0
+fetch with tampered exp (+3600)                      -> 403 {"error":"DOWNLOAD_SIGNATURE_INVALID"}
+fetch with tampered sig                              -> 403 {"error":"DOWNLOAD_SIGNATURE_INVALID"}
+fetch missing sig                                    -> 403 {"error":"DOWNLOAD_SIGNATURE_INVALID"}
+fetch duplicate exp/sig params                       -> 403 {"error":"DOWNLOAD_SIGNATURE_INVALID"}
+fetch as OTHER user (bob)                            -> 404 {"error":"DOWNLOAD_NOT_FOUND"}
+fetch from PREVIEW origin                            -> 403 {"error":"ORIGIN_FORBIDDEN"}
+fetch no auth                                        -> 401 {"error":"SESSION_REQUIRED"}
+minio object bytes                                   -> 602 bytes; plaintext-markers-found=["@"] first16hex=1fadb7c6690080ec24ae7ec9bbee174e
+concurrent double-fetch statuses                     -> [200,410]
+third fetch after consumption                        -> 410 {"error":"DOWNLOAD_GONE"}
+minio object after fetch                             -> gone (NoSuchKey)
+zip                                                  -> size=602 localSig=0x4034b50 encryptedBit=yes AE-2 strength=3(1=128,2=192,3=256)

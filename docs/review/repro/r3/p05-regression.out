@@ -1,0 +1,24 @@
+# H2/N4 path traversal & injection variants (expect 400/404, never upstream traversal):
+  /customers/%252e%252e/admin        -> 400 {"error":"INVALID_PATH"}
+  /customers/%2e%2e/x                -> 404 {"error":"OPERATION_NOT_REGISTERED"}
+  /reports/..;/admin                 -> 400 {"error":"INVALID_PATH"}
+  /reports/..%3b/admin               -> 400 {"error":"INVALID_PATH"}
+  /customers/2024./admin.            -> 400 {"error":"INVALID_PATH"}
+  /customers/%2f/x                   -> 400 {"error":"INVALID_PATH"}
+  /customers/..%2f..%2fadmin         -> 400 {"error":"INVALID_PATH"}
+  /customers/x%00y                   -> 400 {"error":"INVALID_PATH"}
+  /customers/x%5cy                   -> 400 {"error":"INVALID_PATH"}
+  /customers/%c0%ae%c0%ae/admin      -> 400 {"error":"INVALID_PATH"}
+
+# N3 upstream base-path prefix preserved (customers env=preview => upstream /preview/...):
+  GET /customers -> 200 dataset=preview (preview means the /preview prefix survived)
+
+# N2 ISO-date must NOT be masked as account (orders.createdAt):
+  GET /customers/C001/orders -> 200 firstCreatedAt="2026-08-01T00:00:00.000Z" maskedStar=false
+  body sample: {"items":[{"id":"C001-O1","customerId":"C001","total":10100,"status":"completed","createdAt":"2026-08-01T00:00:00.000Z"},{"id":"C001-O2","cu
+
+# M1 masking on registered fields (name/phone/email/rrn/account):
+  first item: {"id":"C001","name":"홍*동","phone":"010-****-5678","email":"ho***@example.com","rrn":"900101-*******","account":"****-****-1234","grade":"standard","status":"sus
+
+# L3 non-ASCII path parameter accepted (not 400 INVALID_PATH):
+  GET /customers/홍길동 -> 404 {"error":"UPSTREAM_REJECTED"}

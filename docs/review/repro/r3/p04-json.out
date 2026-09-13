@@ -1,0 +1,11 @@
+plain single object                            -> PARSED name="list_registered_apis"
+fenced json                                    -> PARSED name="finish"
+prose + embedded object (must reject)          -> REJECTED (Expected exactly one JSON tool call, without )
+two objects (must reject)                      -> REJECTED (Expected exactly one JSON tool call, without )
+array of calls (must reject)                   -> REJECTED (Tool JSON must contain only name and argument)
+object with extra key (must reject)            -> REJECTED (Tool JSON must contain only name and argument)
+nested code fences (must reject or parse whole) -> REJECTED (Expected exactly one JSON tool call, without )
+unicode-escaped tool name accepted as string   -> PARSED name="finish"
+injection instruction in prose (must reject)   -> REJECTED (Expected exactly one JSON tool call, without )
+arguments as array (must reject)               -> REJECTED (Tool name must be a string and arguments must)
+name not string (must reject)                  -> REJECTED (Tool name must be a string and arguments must)

@@ -1,0 +1,15 @@
+root register customers2 (owner=dana)                      -> 201 {"apiId":"customers2","name":"고객 관리","description":"고객 검색·조회·상태 변경과 주문 조회; 민감정보 마스킹 및 조회 사
+alice request approval (customers)                         -> 201 {"projectId":"af45f223-1693-42cc-9ffa-18401ebc6540","apiId":"customers","scope":"live-writ
+alice self-approve (four-eyes)                             -> 403 {"error":"FOUR_EYES_REQUIRED"}
+carol decide (not api-owner)                               -> 403 {"error":"API_OWNER_REQUIRED"}
+bob decide (member editor, not api-owner)                  -> 403 {"error":"API_OWNER_REQUIRED"}
+dana approve (api-owner, four-eyes ok)                     -> 200 {"projectId":"af45f223-1693-42cc-9ffa-18401ebc6540","apiId":"customers","scope":"live-writ
+dana re-decide already-approved                            -> 409 {"error":"APPROVAL_NOT_PENDING"}
+alice issue LIVE write cap for customers (approved)        -> 200 {"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhNmI1ZjVhMy01ODc0LTQ3ZmEtYWY4OS1
+alice issue LIVE write cap for customers2 (approval is for customers) -> 403 {"error":"LIVE_APPROVAL_REQUIRED"}
+alice issue LIVE write cap [customers,customers2] (partial) -> 403 {"error":"LIVE_APPROVAL_REQUIRED"}
+alice LIVE write cap for customers in P2 (approval was for P) -> 403 {"error":"LIVE_APPROVAL_REQUIRED"}
+alice re-issue LIVE write cap (reuse approval)             -> 200 {"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhNmI1ZjVhMy01ODc0LTQ3ZmEtYWY4OS1
+cap right after approve                                    -> 200 {"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhNmI1ZjVhMy01ODc0LTQ3ZmEtYWY4OS1
+approvals after 9s: [{"projectId":"af45f223-1693-42cc-9ffa-18401ebc6540","apiId":"customers","scope":"live-write","justification":"r3 review live write test","approvalId":"add73d7f-bef6-4c54-8a29-6847e97df284","requested
+cap after TTL (expired approval)                           -> 403 {"error":"LIVE_APPROVAL_REQUIRED"}

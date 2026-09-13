@@ -1,0 +1,15 @@
+valid alice token                                    -> 200 []
+alg=none forged platform-admin                       -> 401 {"error":"SESSION_REQUIRED"}
+HS256 confusion (SPKI as secret)                     -> 401 {"error":"SESSION_REQUIRED"}
+HS256 confusion (modulus as secret)                  -> 401 {"error":"SESSION_REQUIRED"}
+RS256 attacker key + real kid                        -> 401 {"error":"SESSION_REQUIRED"}
+RS256 attacker key + jku/jwk header                  -> 401 {"error":"SESSION_REQUIRED"}
+policy-proxy service token as user (audit)           -> 403 {"error":"USER_IDENTITY_REQUIRED"}
+agent service token -> policy /audit                 -> 403 {"error":"USER_IDENTITY_REQUIRED"}
+agent service token -> agent GET /projects/:id       -> 403 {"error":"user identity required"}
+agent svc -> agent internal membership               -> 403 {"error":"service identity required"}
+policy svc -> agent internal membership (no origin)  -> 200 {"projectId":"da880029-ad19-4d24-b6b3-4c4fbb809f8c","teamId":"/team-a","version"
+policy svc -> agent internal membership (studio origin) -> 403 {"error":"service identity required"}
+empty bearer                                         -> 401 {"error":"SESSION_REQUIRED"}
+garbage bearer                                       -> 401 {"error":"SESSION_REQUIRED"}
+expired real token (exp in past, re-signed w/ attacker) -> 401 {"error":"SESSION_REQUIRED"}
