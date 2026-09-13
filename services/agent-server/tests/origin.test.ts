@@ -45,7 +45,7 @@ it.each(['http://localhost:5174', 'null', 'https://unknown.example', '', 'http:/
     for (const target of routes) {
       // Both JSON/preflighted writes and the original text/plain simple request must fail.
       for (const contentType of ['application/json', 'text/plain']) {
-        const response = await fetch(app.url + target.path, {
+        const response = await app.fetch(app.url + target.path, {
           method: target.method, headers: { Origin: origin, 'Content-Type': contentType },
           ...(target.body === undefined ? {} : { body: JSON.stringify(target.body) }),
         });
@@ -57,10 +57,10 @@ it.each(['http://localhost:5174', 'null', 'https://unknown.example', '', 'http:/
     }
     // Rejection precedes URL decoding, resource lookup and JSON parsing.
     for (const path of ['/projects/%zz/source', '/generations/missing/cancel', '/unknown']) {
-      expect((await fetch(app.url + path, { method: 'POST', headers: { Origin: origin }, body: '{' })).status).toBe(403);
+      expect((await app.fetch(app.url + path, { method: 'POST', headers: { Origin: origin }, body: '{' })).status).toBe(403);
     }
-    expect((await fetch(app.url + '/generations', { method: 'OPTIONS', headers: { Origin: origin, 'Access-Control-Request-Method': 'POST' } })).status).toBe(403);
-    expect((await fetch(app.url + '/healthz', { headers: { Origin: origin } })).status).toBe(200);
+    expect((await app.fetch(app.url + '/generations', { method: 'OPTIONS', headers: { Origin: origin, 'Access-Control-Request-Method': 'POST' } })).status).toBe(403);
+    expect((await app.fetch(app.url + '/healthz', { headers: { Origin: origin } })).status).toBe(200);
     expect(snapshot(app)).toEqual(before);
   },
 );
@@ -75,7 +75,7 @@ it.each([undefined, 'http://localhost:5173'])('requires JSON on every mutation f
       if (origin !== undefined) headers.set('Origin', origin);
       if (contentType !== undefined) headers.set('Content-Type', contentType);
       // Buffer prevents fetch from implicitly adding text/plain when testing an absent header.
-      const response = await fetch(app.url + target.path, { method: target.method, headers, body: Buffer.from(JSON.stringify(target.body)) });
+      const response = await app.fetch(app.url + target.path, { method: target.method, headers, body: Buffer.from(JSON.stringify(target.body)) });
       expect(response.status, `${target.method} ${target.path}: ${contentType}`).toBe(415);
       expect(snapshot(app)).toEqual(before);
     }
@@ -86,7 +86,7 @@ it.each([undefined, 'http://localhost:5173'])('preserves projects, generation, a
   const app = await setup();
   const headers = new Headers({ 'Content-Type': 'Application/JSON; charset=utf-8' });
   if (origin !== undefined) headers.set('Origin', origin);
-  const request = (path: string, method = 'GET', body?: unknown) => fetch(app.url + path, {
+  const request = (path: string, method = 'GET', body?: unknown) => app.fetch(app.url + path, {
     method, headers, ...(body === undefined ? {} : { body: JSON.stringify(body) }),
   });
   const preflight = await request('/generations', 'OPTIONS');
@@ -122,9 +122,9 @@ it('uses the configured studio origin as the exact allowlist', async () => {
   const origin = 'https://studio.example';
   const app = await setup(origin);
   const path = `/projects/${app.project.projectId}`;
-  const allowed = await fetch(app.url + path, { headers: { Origin: origin } });
+  const allowed = await app.fetch(app.url + path, { headers: { Origin: origin } });
   expect(allowed.status).toBe(200);
   expect(allowed.headers.get('access-control-allow-origin')).toBe(origin);
-  expect((await fetch(app.url + path, { headers: { Origin: 'http://localhost:5173' } })).status).toBe(403);
-  expect((await fetch(app.url + path)).status).toBe(200);
+  expect((await app.fetch(app.url + path, { headers: { Origin: 'http://localhost:5173' } })).status).toBe(403);
+  expect((await app.fetch(app.url + path)).status).toBe(200);
 });

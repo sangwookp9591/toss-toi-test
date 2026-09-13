@@ -63,21 +63,25 @@ Docker Desktop, Node.js 22, npm, 시스템 Google Chrome이 필요하다. Docker
 node scripts/dev-up.mjs
 ```
 
-스크립트는 Docker Compose의 Verdaccio/MinIO, 사내 패키지 등록, mock-backend(7300), policy-proxy(7200), deps-builder(7100), agent-server(7400), 스튜디오(5173)와 프리뷰 origin(5174)을 순서대로 확인한다. fake-tds·preview-runtime과 모든 실행 서비스·스튜디오의 의존성을 각 폴더의 lockfile로 설치하며 정상 실행 중인 서비스는 재사용한다. `node scripts/dev-up.mjs --check`로 설치 대상과 lockfile을 서비스 기동 없이 검사할 수 있다.
+스크립트는 Docker Compose의 Keycloak(8080)/Verdaccio/MinIO, 사내 패키지 등록, mock-backend(7300), policy-proxy(7200), deps-builder(7100), agent-server(7400), 스튜디오(5173)와 프리뷰 origin(5174)을 순서대로 확인한다. fake-tds·preview-runtime과 모든 실행 서비스·스튜디오의 의존성을 각 폴더의 lockfile로 설치하며 정상 실행 중인 서비스는 재사용한다. `node scripts/dev-up.mjs --check`로 설치 대상과 lockfile을 서비스 기동 없이 검사할 수 있다.
 
 기동 출력에는 단계별 소요 시간이 표시된다. 실패하면 `registry setup failed: fake-tds build failed: tsc not found`처럼 실패 단계와 원인 요약, 로그 경로를 표시한다. 전체 기동 로그는 `scripts/.run/dev-up.log`, 서비스별 로그는 `scripts/.run/<서비스 이름>.log`, 직접 시작한 프로세스 목록은 `scripts/.run/processes.json`에 보관한다. 기동 로그는 비밀값을 가리고 레지스트리 설정 오류는 안전한 원인 요약만 출력한다. 원인을 해결한 뒤 같은 dev-up 명령을 다시 실행한다.
 
-[스튜디오](http://localhost:5173)에서 프로젝트를 만들고 “고객 목록 화면 만들어줘”를 입력한다. 조회 사유 질문에 답하면 생성된 코드와 미리보기를 볼 수 있다. 조회 사유를 입력한 뒤 조회하면 마스킹된 고객 데이터가 표시된다. 코드 편집 후 “저장하고 반영”으로 저장하며 오류가 있으면 마지막 정상 화면을 유지한다. 쓰기 작업은 기본 차단되고 “쓰기 테스트 허용”을 켰을 때 현재 프로젝트의 API에 2분간 허용된다. 프리뷰에는 viewer 세션만 전달한다.
+[스튜디오](http://localhost:5173)에서 Keycloak 사용자 alice로 로그인한다. 비밀번호는 dev-up이 무작위 생성한 `.env`의 `TOI_PASSWORD_ALICE`를 확인한다(bob/carol/dana/root도 `TOI_PASSWORD_*`). 로그인 후 프로젝트를 만들고 “고객 목록 화면 만들어줘”를 입력한다. 조회 사유 질문에 답하면 생성된 코드와 미리보기를 볼 수 있다. 조회 사유를 입력한 뒤 조회하면 마스킹된 고객 데이터가 표시된다. 코드 편집 후 “저장하고 반영”으로 저장하며 오류가 있으면 마지막 정상 화면을 유지한다. 쓰기 작업은 기본 차단되고 “쓰기 테스트 허용”을 켰을 때 현재 프로젝트의 API에 2분간 허용된다. 프리뷰에는 `/preview-sessions`로 발급한 프로젝트 한정 viewer 세션과 capability만 전달하며 Keycloak 토큰은 전달하지 않는다. `/dev/session`은 제거했다.
+
+프로젝트 viewer는 열기·preview read, editor는 생성·저장·preview write, owner는 멤버 관리·live 승인 요청을 할 수 있다. 비멤버는 404이며 멤버 제거는 다음 proxy 요청부터 적용된다. live 쓰기는 owner 요청 후 해당 API api-owner(dana)의 4-eyes 승인이 필요하고 본인 승인은 금지한다. 승인은 기본 5분 후 만료된다. preview/live는 서로 다른 upstream 경로·데이터셋·서비스 토큰을 사용한다. 자세한 API와 역할표는 [policy-proxy README](services/policy-proxy/README.md)에 있다.
 
 기본 에이전트는 키가 필요 없는 mock 모드다. 실제 Claude 모드는 루트 `.env`에 `ANTHROPIC_API_KEY`를 설정하고 `AGENT_MODE=claude node scripts/dev-up.mjs`로 시작한다. 이미 agent-server가 실행 중이면 해당 프로세스를 먼저 종료해야 새 모드가 적용된다. 모델/SDK 설정과 실제 모드 검증 범위는 [agent-server README](services/agent-server/README.md)를 참고한다. 비밀 값은 브라우저 코드에 넣지 않는다.
 
 ```sh
 npm --prefix apps/studio run typecheck
 npm --prefix e2e ci
+node scripts/dev-up.mjs --e2e
 npm --prefix e2e run test:repeat
+node scripts/dev-up.mjs # 승인 TTL 기본 300초 복원
 npm --prefix bench ci
 npm --prefix bench run run
 node scripts/dev-down.mjs
 ```
 
-E2E는 시스템 Chrome으로 A–F를 세 번 반복한다. 결과와 화면은 [e2e/README.md](e2e/README.md), 비교 조건과 3회 원시 측정값은 [bench/README.md](bench/README.md), 구현 구조는 [스튜디오 README](apps/studio/README.md)에 있다. `dev-down`은 dev-up이 직접 시작한 프로세스와 Docker Compose를 종료하며, 외부에서 시작해 재사용한 서비스는 종료하지 않는다. Docker 볼륨은 보존한다.
+E2E는 시스템 Chrome의 실제 Keycloak 로그인으로 A–S를 세 번 반복한다. `dev-up --e2e`는 승인 만료 테스트를 위해 TTL을 8초로 줄이고 관리 중인 policy-proxy를 필요하면 재시작한다. 일반 `dev-up`은 기본 300초를 다시 적용한다(명시적 `TOI_APPROVAL_TTL_SEC` 설정은 유지). 옵션 없이도 E2E는 실제 만료 시각까지 기다리지만 반복마다 최대 5분이 추가된다. 결과와 화면은 [e2e/README.md](e2e/README.md), 비교 조건과 3회 원시 측정값은 [bench/README.md](bench/README.md), 구현 구조는 [스튜디오 README](apps/studio/README.md)에 있다. `dev-down`은 dev-up이 직접 시작한 프로세스와 Docker Compose를 종료하며, 외부에서 시작해 재사용한 서비스는 종료하지 않는다. Docker 볼륨은 보존한다.

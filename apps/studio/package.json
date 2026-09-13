@@ -1,1 +1,24 @@
-{"name":"@toi/studio","version":"1.0.0","private":true,"type":"module","scripts":{"dev":"node scripts/dev.mjs","build":"node scripts/build.mjs","typecheck":"tsc --noEmit"},"dependencies":{"react":"19.3.0","react-dom":"19.3.0"},"devDependencies":{"esbuild":"0.28.2","typescript":"7.0.2","@types/react":"19.3.0","@types/react-dom":"19.3.0","@types/node":"22.20.2"}}
+{
+  "name": "@toi/studio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "node scripts/build.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "node --experimental-transform-types --test test/*.test.ts"
+  },
+  "dependencies": {
+    "oidc-client-ts": "3.3.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "esbuild": "0.28.2",
+    "typescript": "7.0.2"
+  }
+}

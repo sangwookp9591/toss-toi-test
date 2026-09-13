@@ -14,9 +14,10 @@ test('dev-up persists independent random secrets, replaces defaults, and reuses 
   await ensureDevelopmentSecrets(file,env);expect(env.NODE_ENV).toBe('development');
   const content=await readFile(file,'utf8'),saved=parseEnv(content);
   expect(saved.UNRELATED).toBe('keep');expect((await stat(file)).mode&0o777).toBe(0o600);
-  const values=['TOI_SESSION_SECRET','TOI_CAPABILITY_SECRET','TOI_UPSTREAM_SERVICE_TOKEN'].map(key=>saved[key]);
-  expect(new Set(values).size).toBe(3);for(const value of values){expect(value).toMatch(/^[a-f0-9]{64}$/);expect(knownDevelopmentSecrets.has(value!)).toBe(false);}
-  for(const key of ['TOI_SESSION_SECRET','TOI_CAPABILITY_SECRET','TOI_UPSTREAM_SERVICE_TOKEN'])expect(saved[key]).toBe(env[key]);
+  const keys=['TOI_SESSION_SECRET','TOI_CAPABILITY_SECRET','TOI_PREVIEW_SERVICE_TOKEN','TOI_LIVE_SERVICE_TOKEN','TOI_AGENT_CLIENT_SECRET','TOI_POLICY_CLIENT_SECRET','TOI_KEYCLOAK_ADMIN_PASSWORD',...['ALICE','BOB','CAROL','DANA','ROOT'].map(u=>'TOI_PASSWORD_'+u)];
+  const values=keys.map(key=>saved[key]);
+  expect(new Set(values).size).toBe(keys.length);for(const value of values){expect(value).toMatch(/^[a-f0-9]{64}$/);expect(knownDevelopmentSecrets.has(value!)).toBe(false);}
+  for(const key of ['TOI_SESSION_SECRET','TOI_CAPABILITY_SECRET','TOI_PREVIEW_SERVICE_TOKEN'])expect(saved[key]).toBe(env[key]);
   await ensureDevelopmentSecrets(file,{...saved});expect(await readFile(file,'utf8')).toBe(content);
   await ensureDevelopmentSecrets(file,{NODE_ENV:'production'});expect(await readFile(file,'utf8')).toBe(content);
  }finally{await rm(directory,{recursive:true,force:true});}

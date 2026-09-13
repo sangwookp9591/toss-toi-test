@@ -1,28 +1,21 @@
-# 스튜디오 전체 E2E
+# Studio integration tests
 
-실제 로컬 서비스와 시스템 Google Chrome을 사용하는 Playwright 테스트다. mock 에이전트를 사용하며 네트워크 API를 테스트용 가짜 구현으로 대체하지 않는다.
+Run the full stack with `node scripts/dev-up.mjs` from the repository root, then run `npm --prefix e2e run test:repeat`. The suite runs 23 cases (A–S plus recovery/layout variants) three times with one browser worker.
 
-```sh
-node scripts/dev-up.mjs
-npm --prefix e2e ci
-npm --prefix e2e run test:repeat
-```
+`helpers/auth.ts` reads `.env` through Node's env parser: `TOI_PASSWORD_ALICE/BOB/CAROL/DANA/ROOT` and `TOI_KEYCLOAK_ADMIN_PASSWORD`. The admin username is `toi-bootstrap`. The issuer defaults to `http://localhost:8080/realms/toi` and accepts `VITE_OIDC_ISSUER`. Never copy credential values into fixtures, logs, reports or screenshots.
 
-`test:repeat`는 worker 1개로 A–F 전체를 세 번 연속 실행한다. 각 테스트는 새 브라우저 컨텍스트와 새 프로젝트를 만든다. policy-proxy와 mock-backend의 개발용 고객 데이터 및 감사 로그는 보존된다. D는 C001 상태를 suspended로 설정하므로 로컬 모의 데이터가 변경된다.
+The helper logs in through Keycloak's real username/password UI and PKCE callback once per user and worker, retaining SSO cookie storageState in memory for browser contexts. API tokens also remain in memory and refresh through Keycloak. The account revocation scenario uses a fresh bob login because it invalidates bob sessions. Trace, automatic screenshots and video are disabled so authorization headers, token responses and password fields cannot appear in test artifacts. Existing explicit screenshots run only after returning to the studio and contain no tokens. Do not enable Playwright API debug logging for this suite.
 
-## 검증 결과
+N–S cover nonmember 404, owner/member UI and role enforcement, live approval separation and expiry, preview-only dataset selection, disabled-account refresh and expired-access rejection, and absence of Keycloak tokens in preview globals/storage/URLs. R runs in a serial group and requires one worker because user APIs bind the authorized client to `toi-studio`. It temporarily shortens that client TTL to four seconds, delays a real refresh beyond expiry while a dependency request is pending, checks that the same workspace survives, and then verifies disabled bob cannot refresh or use expired access. Its `finally` explicitly restores the TTL attribute (null deletes a key that was originally absent), reads it back, and restores bob; sending only the old attribute map would leak the temporary TTL because Keycloak merges maps.
 
-2026-09-13, 시스템 Chrome, Node 22.14.0에서 **18 passed (43.6s), 실패 0, 재시도 0**. 세 라운드 모두 A–F 6/6 통과했다. 원시 Playwright 결과는 [`artifacts/results.json`](artifacts/results.json), A의 정상 커밋·마스킹 조회 직후 화면은 [`artifacts/studio.png`](artifacts/studio.png)다. `npm --prefix apps/studio run typecheck` 및 `npm --prefix apps/studio run build`도 통과했다.
+P uses the server approval expiration timestamp and works with the default 300-second TTL; to speed integration runs, start policy-proxy with `TOI_APPROVAL_TTL_SEC=8`. It waits for actual server-time expiration, never bypassing approval validation. The worker that owns service startup must coordinate this override. Do not run concurrent suites against this shared realm while R changes bob/client state.
 
-| 시나리오 | 검증 |
-| --- | --- |
-| A | UI 프로젝트 생성 → “고객 목록 화면 만들어줘” 요청 → 역질문 “아니요” → revision 2 커밋 → 사유 누락 입력 요구 → 사유 입력 → `010-****-5678` 표시 → allowed 감사 기록 |
-| B | 문법 오류를 UI로 저장 → 이전 화면 유지 안내 → 기존 iframe 본문 동일, 마지막 커밋 revision 유지 |
-| C | revision 2에 2초 top-level await를 넣어 실행 검증을 지연 → 숨김 프레임 생성 확인 후 revision 3 저장 → revision 3만 커밋, revision 2 stale_discarded |
-| D | 프리뷰의 viewer 세션으로 POST /capabilities 시 403 및 roles 확인 → read capability의 PATCH 차단 안내 → 쓰기 토글 → viewer 세션 토큰 동일 확인 → PATCH 성공과 감사 기록 |
-| E | 같은 프로젝트를 두 탭에서 열고 동일 baseRevision으로 동시 저장 → 정확히 한 탭 409 안내 → 최신 내용 불러오기 |
-| F | 앱의 React 본체와 TDS의 React 본체 identity 확인 → TDS ToastProvider/useToast 동작 → pageerror 및 runtime_failed 0 |
+A checks generation, questions, masking and audit; B preserves the last good frame after syntax failure; C delays an actual module evaluation to reject stale revision commits; D probes preview issuance restrictions and constrained writes; E/J check CAS and edit backups; F checks the shared React instance. G/L cover SSE recovery across reloads and tabs, H checks real write expiry, I preserves diagnostics, and K/M cover dependency failures and recovery. The two layout cases measure 1600px and 400px answer buttons. D mutates preview customer C001 to suspended; synthetic backend data and audit records are retained between cases.
 
-React ESM namespace wrapper 자체는 비교하지 않는다. 공개 CJS facade의 React default 본체와 `reactInstance.default ?? reactInstance`를 비교하여 실제 singleton을 확인한다. C는 Worker 연산을 흉내 내지 않고 실제 프레임의 모듈 평가를 지연한다.
+The suite uses system Google Chrome (`channel: 'chrome'`); no global browser installation is needed. The app remains outside cross-origin isolation. Results are written to `artifacts/results.json`; explicit studio screenshots remain under `artifacts/`. Historical pre-identity A–F results are superseded by this authenticated suite.
 
-`playwright.config.ts`는 `channel: 'chrome'`을 지정한다. Playwright 번들 Chromium을 다운로드할 필요가 없다. `npm --prefix e2e test`는 한 라운드를 실행한다. 실패 시 trace는 `test-results/`에 보관된다. 스튜디오는 COOP/COEP를 설정하지 않는다.
+Earlier full authenticated validation (2026-09-13, Node 22.14.0, system Chrome): **69 passed (6.2 minutes), 0 failed, 0 skipped, 0 flaky**. Studio typecheck/build and 9 authentication unit tests also pass. See `P0A2-REPORT.md` for scope and configuration details.
+
+K installs its virtual clock before navigation and waits for the intercepted dependency long-poll before advancing 90001ms. It does not freeze Date or replace identity responses. The renewal/expiry race and shared TTL cleanup follow-up are documented in `P0A2-K-FIX.md`.
+
+The K/identity cleanup follow-up passes K 20/20 (10 repetitions), identity 6/6 and studio unit tests 12/12, with typecheck/build passing. Dedicated results are `artifacts/k-fix-results.json` and `artifacts/identity-fix-results.json`; the temporary TTL attribute is removed and the realm default remains 300 seconds.

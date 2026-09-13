@@ -1,6 +1,19 @@
 name: toi-lite
 
 services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.3.3
+    command: start-dev --import-realm
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: toi-bootstrap
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${TOI_KEYCLOAK_ADMIN_PASSWORD:?Run scripts/dev-up.mjs to generate identity secrets}
+      KC_HOSTNAME: http://localhost:8080
+    volumes:
+      - keycloak-data:/opt/keycloak/data
+      - ./keycloak/realm-toi.json:/opt/keycloak/data/import/realm-toi.json:ro
+
   # 이름 있는 볼륨은 root 소유로 만들어진다. verdaccio(uid 10001)가 htpasswd·storage를 쓸 수 있게 먼저 소유권을 맞춘다.
   verdaccio-init:
     image: verdaccio/verdaccio:6
@@ -40,3 +53,4 @@ volumes:
   verdaccio-storage:
   verdaccio-auth:
   minio-data:
+  keycloak-data:

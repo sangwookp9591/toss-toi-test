@@ -1,3 +1,4 @@
+import { identity } from './identity-fixture.ts';
 import { afterEach, describe, expect, it } from 'vitest';
 import { createServer } from 'node:http';
 import { readFileSync } from 'node:fs';
@@ -31,7 +32,7 @@ it('requestId is idempotent and cannot be reused with different input', async ()
 it('mock question/answer + SSE reconnect replays without gaps or duplicates', async () => {
   const app = await setup(); const id = await app.generate();
   const abort = new AbortController();
-  const response = await fetch(`${app.url}/generations/${id}/events`, { signal: abort.signal });
+  const response = await app.fetch(`${app.url}/generations/${id}/events`, { signal: abort.signal });
   const reader = response.body!.getReader(); const decoder = new TextDecoder(); let received = '';
   while (!parseEvents(received).some(event => event.type === 'question')) {
     const { value, done } = await reader.read(); if (done) throw new Error('closed before question'); received += decoder.decode(value, { stream: true });
@@ -40,7 +41,7 @@ it('mock question/answer + SSE reconnect replays without gaps or duplicates', as
   abort.abort();
   const pending = await question(app, id);
   expect((await app.request(`/generations/${id}/answers`, { questionId: pending.questionId, answer: '예' })).status).toBe(204);
-  const replay = await fetch(`${app.url}/generations/${id}/events`, { headers: { 'Last-Event-ID': String(last) } });
+  const replay = await app.fetch(`${app.url}/generations/${id}/events`, { headers: { 'Last-Event-ID': String(last) } });
   const after = parseEvents(await replay.text());
   expect([...before, ...after].map(event => event.seq)).toEqual(app.store.generation(id).events.map(event => event.seq));
   expect(after.at(-1)?.type).toBe('done');
@@ -48,14 +49,14 @@ it('mock question/answer + SSE reconnect replays without gaps or duplicates', as
   const saved = app.store.project(app.project.projectId);
   expect(saved.files['/src/App.tsx']).toContain('고객 문의 확인');
   expect(saved.revision).toBe(2);
-  expect(parseEvents(await (await fetch(`${app.url}/generations/${id}/events`, { headers: { 'Last-Event-ID': String(app.store.generation(id).events.length) } })).text())).toEqual([]);
+  expect(parseEvents(await (await app.fetch(`${app.url}/generations/${id}/events`, { headers: { 'Last-Event-ID': String(app.store.generation(id).events.length) } })).text())).toEqual([]);
 });
 
 it('finish conflicts after concurrent editor save, without overwriting the editor', async () => {
   const app = await setup(); const id = await app.generate(); const pending = await question(app, id);
   await app.request(`/projects/${app.project.projectId}/source`, { baseRevision: 1, files: { '/src/App.tsx': 'editor wins' } }, 'PUT');
   await app.request(`/generations/${id}/answers`, { questionId: pending.questionId, answer: '예' });
-  const events = parseEvents(await (await fetch(`${app.url}/generations/${id}/events`)).text());
+  const events = parseEvents(await (await app.fetch(`${app.url}/generations/${id}/events`)).text());
   expect(events.at(-1)).toMatchObject({ type: 'failed', code: 'conflict' });
   expect(events.some(event => event.type === 'revision_ready')).toBe(false);
   expect(app.store.project(app.project.projectId).files['/src/App.tsx']).toBe('editor wins');
@@ -65,7 +66,7 @@ it('cancel aborts a waiting question immediately, is idempotent and rejects late
   const app = await setup(); const id = await app.generate(); const pending = await question(app, id);
   await app.request(`/generations/${id}/cancel`); await app.request(`/generations/${id}/cancel`);
   expect((await app.request(`/generations/${id}/answers`, { questionId: pending.questionId, answer: 'late' })).status).toBe(409);
-  const events = parseEvents(await (await fetch(`${app.url}/generations/${id}/events`)).text());
+  const events = parseEvents(await (await app.fetch(`${app.url}/generations/${id}/events`)).text());
   expect(events.at(-1)?.type).toBe('canceled'); expect(events.filter(event => event.type === 'canceled')).toHaveLength(1);
   expect(app.store.project(app.project.projectId).revision).toBe(1);
 });
@@ -121,14 +122,14 @@ it('persists source, idempotency and replay events across a restart; incomplete 
   // Simulate a process disappearing without Engine.close canceling the generation.
   await new Promise<void>(resolve => first.server.close(() => resolve()));
   const second = await start(new MockDriver(1), undefined, first.directory); apps.push(second);
-  const replay = parseEvents(await (await fetch(`${second.url}/generations/${id}/events`)).text());
+  const replay = parseEvents(await (await second.fetch(`${second.url}/generations/${id}/events`)).text());
   expect(replay.at(-1)).toMatchObject({ type: 'failed', code: 'internal' });
   expect(second.store.project(first.project.projectId).revision).toBe(1);
   expect(second.store.requestIds.get('persisted')).toBe(id);
   expect(JSON.parse(readFileSync(`${first.directory}/generations/${id}.json`, 'utf8')).events).toEqual(replay);
 });
 
-it('policy client obtains a service session and refreshes it once on 401', async () => {
+it('policy client obtains a service identity and retries once on 401', async () => {
   let sessions = 0; let firstRegistry = true; const seen: string[] = [];
   const fake = createServer(async (req, res) => {
     if (req.url === '/dev/session') { sessions++; res.setHeader('Content-Type', 'application/json'); res.end(JSON.stringify({ token: `session-${sessions}` })); return; }
@@ -139,10 +140,10 @@ it('policy client obtains a service session and refreshes it once on 401', async
   await new Promise<void>(resolve => fake.listen(0, '127.0.0.1', resolve));
   try {
     const address = fake.address() as { port: number };
-    const client = new PolicyClient(`http://127.0.0.1:${address.port}`);
+    const client = new PolicyClient(`http://127.0.0.1:${address.port}`, fetch, undefined, identity());
     expect(await client.get('/apis', new AbortController().signal)).toEqual([{ apiId: 'customers' }]);
     expect(await client.get('/apis/customers', new AbortController().signal)).toEqual({ apiId: 'customers' });
-    expect(sessions).toBe(2); expect(seen).toEqual(['Bearer session-1', 'Bearer session-2', 'Bearer session-2']);
+    expect(sessions).toBe(0); expect(seen).toHaveLength(3); for (const header of seen) expect((await identity().verify(header)).azp).toBe('toi-agent-server');
   } finally { await new Promise<void>(resolve => fake.close(() => resolve())); }
 });
 
@@ -154,7 +155,7 @@ it('completed generations keep their exact replay and requestId after a clean re
   await first.cleanup(false);
   const second = await start(new MockDriver(1), undefined, first.directory); apps.push(second);
   expect((await (await second.request('/generations', original.request)).json()).generationId).toBe(id);
-  const replay = parseEvents(await (await fetch(`${second.url}/generations/${id}/events`, { headers: { 'Last-Event-ID': '4' } })).text());
+  const replay = parseEvents(await (await second.fetch(`${second.url}/generations/${id}/events`, { headers: { 'Last-Event-ID': '4' } })).text());
   expect(replay).toEqual(original.events.filter(event => event.seq > 4));
   expect(second.store.project(first.project.projectId).revision).toBe(2);
 });

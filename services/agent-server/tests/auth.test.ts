@@ -1,0 +1,36 @@
+import { afterEach, expect, test } from 'vitest';
+import { start } from './helpers.ts';
+import { token } from './identity-fixture.ts';
+const apps: Awaited<ReturnType<typeof start>>[] = [];
+afterEach(async()=>{for(const app of apps.splice(0))await app.cleanup();});
+test('real JWKS signatures, issuer, audience, expiration and user/service distinction are required',async()=>{
+ const app=await start();apps.push(app);const url=app.url+'/projects/'+app.project.projectId;
+ expect((await fetch(url)).status).toBe(401);
+ const good=await token('alice');
+ for(const bad of [good.slice(0,-8)+'invalid0','invalid',await token('alice',{iss:'http://wrong'}),await token('alice',{aud:'wrong'}),await token('alice',{exp:Math.floor(Date.now()/1000)-1})]) expect((await fetch(url,{headers:{Authorization:'Bearer '+bad}})).status).toBe(401);
+ expect((await fetch(url,{headers:{Authorization:'Bearer '+await token('alice',{azp:'foreign-client'})}})).status).toBe(403);
+ const service=await token('service-account-toi-policy-proxy',{azp:'toi-policy-proxy'});
+ expect((await fetch(url,{headers:{Authorization:'Bearer '+service}})).status).toBe(403);
+ expect((await fetch(app.url+'/internal/projects/'+app.project.projectId+'/membership',{headers:{Authorization:'Bearer '+service}})).status).toBe(200);
+ const agent=await token('service-account-toi-agent-server',{azp:'toi-agent-server'});
+ for(const t of [good,agent,await token('alice',{azp:'toi-policy-proxy'})]) expect((await fetch(app.url+'/internal/projects/'+app.project.projectId+'/membership',{headers:{Authorization:'Bearer '+t}})).status).toBe(403);
+});
+test('nonmembers get 404, owner alone manages membership, role changes take effect immediately and last owner is preserved',async()=>{
+ const app=await start();apps.push(app);const p=app.project.projectId;
+ const bob=await token('bob'),carol=await token('carol');
+ const call=(path:string, t:string, method='GET',body?:unknown)=>fetch(app.url+path,{method,headers:{Authorization:'Bearer '+t,'Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{})});
+ for(const path of [`/projects/${p}`,`/projects/${p}/membership`,`/projects/${p}/generations/active`]) expect((await call(path,carol)).status).toBe(404);
+ expect((await call('/generations',carol,'POST',{projectId:p,baseRevision:1,prompt:'test',requestId:crypto.randomUUID()})).status).toBe(404);
+ const add=await app.request(`/projects/${p}/members/bob`,{role:'viewer'},'PUT');expect(add.status).toBe(200);
+ expect((await call(`/projects/${p}`,bob)).status).toBe(200);
+ expect((await call(`/projects/${p}/source`,bob,'PUT',{baseRevision:1,files:app.project.files})).status).toBe(403);
+ expect((await call('/generations',bob,'POST',{projectId:p,baseRevision:1,prompt:'test',requestId:crypto.randomUUID()})).status).toBe(403);
+ expect((await call(`/projects/${p}/members/carol`,bob,'PUT',{role:'editor'})).status).toBe(403);
+ expect((await app.request(`/projects/${p}/members/alice`,{role:'viewer'},'PUT')).status).toBe(409);
+ expect((await app.request(`/projects/${p}/members/alice`,{},'DELETE')).status).toBe(409);
+ expect((await app.request(`/projects/${p}/members/bob`,{role:'editor'},'PUT')).status).toBe(200);
+ expect((await call('/generations',bob,'POST',{projectId:p,baseRevision:1,prompt:'test',requestId:crypto.randomUUID()})).status).toBe(202);
+ expect((await app.request(`/projects/${p}/members/bob`,{},'DELETE')).status).toBe(200);
+ expect((await call(`/projects/${p}`,bob)).status).toBe(404);
+ expect(app.store.membership(p).version).toBe(4);
+});

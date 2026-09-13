@@ -1,5 +1,6 @@
-import { test, expect, type Page } from '@playwright/test';
-const snapshot=(page:Page)=>page.evaluate(()=> (window as any).studio.getSnapshot());
+import type { Page } from '@playwright/test';
+import { test, expect } from '../helpers/auth';
+const snapshot=(page:Page)=>page.evaluate(()=> (window as any).studio?.getSnapshot() ?? {});
 async function commit(page:Page,revision:number){await expect.poll(async()=> (await snapshot(page)).lastCommit?.token.revision).toBe(revision);}
 async function create(page:Page){await page.goto('/');expect(await page.evaluate(()=>crossOriginIsolated)).toBe(false);await page.getByRole('button',{name:'프로젝트 만들기'}).click();await commit(page,1);}
 const frame=(page:Page)=>page.frameLocator('#preview iframe');
@@ -19,9 +20,9 @@ globalThis.__TOI_BOUNDARY_PROBE__=await Promise.all([
 // Run an adversarial generated module in the actual preview realm. This reaches
 // the proxy boundary even when the agent-server rejects raw fetch at save time.
 await frame(page).locator('body').evaluate(async (_element,code)=>{await import('data:text/javascript;charset=utf-8,'+encodeURIComponent(code));},attackCode);
-const security=await frame(page).locator('body').evaluate(async()=>{const config=(globalThis as any).__TOI_FETCH_CONFIG__;const session=JSON.parse(atob(config.sessionToken.split('.')[1]));let blocked=false;try{const response=await fetch(config.proxyBaseUrl+'/capabilities',{method:'POST',headers:{Authorization:'Bearer '+config.sessionToken,'Content-Type':'application/json'},body:JSON.stringify({projectId:config.projectId,mode:'write',env:'preview',apiIds:['customers'],ttlSec:60})});blocked=response.status===403;}catch{blocked=true;}return {blocked,probes:(globalThis as any).__TOI_BOUNDARY_PROBE__,roles:session.roles,sessionToken:config.sessionToken};});
+const security=await frame(page).locator('body').evaluate(async()=>{const config=(globalThis as any).__TOI_FETCH_CONFIG__;const session=JSON.parse(atob(config.sessionToken.split('.')[1]));let blocked=false;try{const response=await fetch(config.proxyBaseUrl+'/capabilities',{method:'POST',headers:{Authorization:'Bearer '+config.sessionToken,'Content-Type':'application/json'},body:JSON.stringify({projectId:config.projectId,mode:'write',env:'preview',apiIds:['customers'],ttlSec:60})});blocked=[401,403].includes(response.status);}catch{blocked=true;}return {blocked,probes:(globalThis as any).__TOI_BOUNDARY_PROBE__,roles:session.roles,sessionToken:config.sessionToken};});
 console.log('D preview issuance boundary:',JSON.stringify({roles:security.roles,probes:security.probes,authenticatedCapabilityBlocked:security.blocked}));
-expect(security.probes).toHaveLength(2);expect(security.probes.map((probe:any)=>probe.endpoint)).toEqual(['/dev/session','/capabilities']);for(const probe of security.probes){expect(probe.tokenObtained).toBe(false);expect(probe.blocked).toBe(true);}expect(security.blocked).toBe(true);expect(security.roles).toEqual(['viewer']);await frame(page).getByLabel('조회 사유').fill('고객 문의 확인');await frame(page).getByRole('button',{name:'고객 상태를 정지로 변경'}).click();await expect(frame(page).getByRole('alert')).toContainText('쓰기 권한');const attempt=(await snapshot(page)).lastCommit.token.attemptId;await page.getByRole('checkbox',{name:'쓰기 테스트 허용'}).check();await expect.poll(async()=> (await snapshot(page)).lastCommit.token.attemptId).not.toBe(attempt);expect(await frame(page).locator('body').evaluate(()=> (globalThis as any).__TOI_FETCH_CONFIG__.sessionToken)).toBe(security.sessionToken);await frame(page).getByLabel('조회 사유').fill('고객 상태 변경 확인');await frame(page).getByRole('button',{name:'고객 상태를 정지로 변경'}).click();await expect(frame(page).getByRole('status')).toContainText('상태를 정지로 바꿨어요');await expect.poll(async()=>{await page.evaluate(()=> (window as any).studio.loadAudit());return (await snapshot(page)).audit.some((x:any)=>x.method==='PATCH'&&x.decision==='allowed');}).toBe(true);});
+expect(security.probes).toHaveLength(2);expect(security.probes.map((probe:any)=>probe.endpoint)).toEqual(['/dev/session','/capabilities']);for(const probe of security.probes){expect(probe.tokenObtained).toBe(false);expect(probe.blocked).toBe(true);}expect(security.blocked).toBe(true);expect(security.roles).toEqual(['viewer']);await frame(page).getByLabel('조회 사유').fill('고객 문의 확인');await frame(page).getByRole('button',{name:'고객 상태를 정지로 변경'}).click();await expect(frame(page).getByRole('alert')).toContainText('쓰기 권한');const attempt=(await snapshot(page)).lastCommit.token.attemptId;await page.getByRole('checkbox',{name:'쓰기 테스트 허용'}).check();await expect.poll(async()=> (await snapshot(page)).lastCommit.token.attemptId).not.toBe(attempt);expect(await frame(page).locator('body').evaluate(()=> JSON.parse(atob((globalThis as any).__TOI_FETCH_CONFIG__.sessionToken.split('.')[1])).aud)).toBe('toi-preview');await frame(page).getByLabel('조회 사유').fill('고객 상태 변경 확인');await frame(page).getByRole('button',{name:'고객 상태를 정지로 변경'}).click();await expect(frame(page).getByRole('status')).toContainText('상태를 정지로 바꿨어요');await expect.poll(async()=>{await page.evaluate(()=> (window as any).studio.loadAudit());return (await snapshot(page)).audit.some((x:any)=>x.method==='PATCH'&&x.decision==='allowed');}).toBe(true);});
 test('E: 두 탭 CAS 충돌과 최신 내용 다시 불러오기',async({page,context})=>{await create(page);const tab=await context.newPage();await tab.goto(page.url());await commit(tab,1);await Promise.all([page.getByLabel('소스 코드').fill(plain('첫 탭')),tab.getByLabel('소스 코드').fill(plain('둘째 탭'))]);await Promise.all([page.getByRole('button',{name:'저장하고 반영'}).click(),tab.getByRole('button',{name:'저장하고 반영'}).click()]);await expect.poll(async()=>Number((await snapshot(page)).conflict)+Number((await snapshot(tab)).conflict)).toBe(1);const loser=(await snapshot(page)).conflict?page:tab;await expect(loser.getByRole('alert')).toContainText('다른 탭에서 먼저 저장');await loser.getByRole('button',{name:'최신 내용 불러오기'}).click();await expect.poll(async()=> (await snapshot(loser)).project.revision).toBe(2);await tab.close();});
 test('F: 사내 useToast와 앱 React 인스턴스 공유',async({page})=>{const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));await create(page);await save(page,`import React from 'react';import {ToastProvider,useToast,reactInstance} from '@toi/tds';function Content(){const {toast}=useToast();return <><p>{React===(reactInstance.default??reactInstance)?'동일 React':'React 불일치'}</p><button onClick={()=>toast('토스트 성공')}>알림 띄우기</button></>}export default function App(){return <ToastProvider><Content/></ToastProvider>}`);await commit(page,2);await expect(frame(page).getByText('동일 React')).toBeVisible();await frame(page).getByRole('button',{name:'알림 띄우기'}).click();await expect(frame(page).getByText('토스트 성공')).toBeVisible();expect(errors).toEqual([]);expect((await snapshot(page)).events.filter((x:any)=>x.type==='runtime_failed')).toEqual([]);});
 
@@ -142,8 +143,11 @@ test('K: 존재하지 않는 패키지 버전의 실제 조합 실패와 동일 
   expect((await snapshot(page)).project.revision).toBe(2);
 });
 test('K: failed 응답·연결 실패·시간 초과 구분과 새로고침 없는 재빌드', async ({ page }) => {
+  // Install before navigation so OIDC and app timers share one clock from startup.
+  // Replacing the clock after those timers exist has undefined behavior.
+  await page.clock.install();
   let failure: 'failed' | 'connection' | 'timeout' | 'registry_unavailable' | 'storage_unavailable' | 'input' | 'internal' | undefined = 'failed';
-  let posts = 0;
+  let posts = 0; let timeoutWaits = 0;
   await page.route('http://localhost:7100/package-sets', async route => {
     posts++;
     if (failure === 'failed') await route.fulfill({ json: { status: 'failed', artifactKey: 'qa', error: 'Dependency build failed https://internal.example/private?token=do-not-display' } });
@@ -152,7 +156,7 @@ test('K: failed 응답·연결 실패·시간 초과 구분과 새로고침 없�
     else if (failure) await route.fulfill({ json: { status: 'failed', artifactKey: 'qa-code', code: failure, error: 'untrusted package install text' } });
     else await route.continue();
   });
-  await page.route('http://localhost:7100/package-sets/qa-timeout/wait?timeoutMs=30000', () => {});
+  await page.route('http://localhost:7100/package-sets/qa-timeout/wait?timeoutMs=30000', () => { timeoutWaits++; });
   await page.goto('/'); await page.getByRole('button', { name: '프로젝트 만들기' }).click();
   await expect(page.getByRole('status')).toContainText('구성 요소 빌드 실패');
   await expect(page.locator('body')).not.toContainText('internal.example');
@@ -169,9 +173,12 @@ test('K: failed 응답·연결 실패·시간 초과 구분과 새로고침 없�
   failure = 'connection';
   await page.getByRole('status').getByRole('button', { name: '다시 시도' }).click();
   await expect(page.getByRole('status')).toContainText('구성 요소 서비스 연결 실패');
-  await page.clock.install(); failure = 'timeout';
+  failure = 'timeout';
   await page.getByRole('status').getByRole('button', { name: '다시 시도' }).click();
   await expect(page.getByRole('status')).toContainText('처음 사용하는 구성 요소');
+  // Observe the actual pending fetch before advancing time; rendered status alone
+  // does not synchronize the browser's network interception with the fake clock.
+  await expect.poll(() => timeoutWaits).toBe(1);
   await page.clock.runFor(90001);
   await expect(page.getByRole('status')).toContainText('대기 시간 초과');
   failure = undefined;

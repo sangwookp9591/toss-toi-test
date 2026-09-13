@@ -2,8 +2,10 @@ import { createPreviewRuntime, sourceDigest } from '../../../packages/preview-ru
 import type { PreviewRuntime, PreviewEvent, RevisionToken, PreviewHostConfig, Diagnostic } from '../../../contracts/src/runtime.ts';
 import type { Project, GenerationEvent, ActiveGeneration } from '../../../contracts/src/generation.ts';
 import type { PackageSetStatus, PackageSetRequest, PackageSetFailureCode } from '../../../contracts/src/package-set.ts';
-import type { AuditRecord, CapabilityClaims } from '../../../contracts/src/policy.ts';
-import { API, json, HttpError, consumeGeneration, isTerminal } from './api.ts';
+import type { AuditRecord } from '../../../contracts/src/policy.ts';
+import type { PreviewSession, ProjectMembership, ProjectRole, Approval } from '../../../contracts/src/auth.ts';
+import { previewHostConfig } from './preview-auth.ts';
+import { API, json, HttpError, consumeGeneration, isTerminal, accessMessage } from './api.ts';
 interface GenerationRecovery {
   generationId: string; seq: number; chats: StudioState['chats'];
   question?: StudioState['question']; answeredQuestion?: StudioState['answeredQuestion']; status: string; files: Record<string, string>;
@@ -38,6 +40,7 @@ export function diagnosticMessage(message: string) {
   return match ? `‘${match[1]}’ 패키지는 이 프로젝트에서 쓸 수 없어요` : message;
 }
 export interface StudioState {
+  membership?: ProjectMembership; approvals: Approval[]; accessNotice?: string;
   project?: Project; files: Record<string, string>; selected: string; dirty: boolean;
   status: string; busy: boolean; saving: boolean; conflict: boolean; writeAllowed: boolean;
   chats: Array<{ role: 'user' | 'assistant'; text: string }>;
@@ -50,9 +53,8 @@ export interface StudioState {
   writeExpiresAt?: number; writeRemaining: number; writeNotice?: string;
 }
 export class StudioController {
-  #state: StudioState = { files: {}, selected: '/src/App.tsx', dirty: false, status: '어떤 화면이 필요한가요?', busy: false, saving: false, conflict: false, writeAllowed: false, chats: [], events: [], generationEvents: [], audit: [], diagnostics: [], backups: [], previewPending: false, writeRemaining: 0 };
+  #state: StudioState = { approvals: [], files: {}, selected: '/src/App.tsx', dirty: false, status: '어떤 화면이 필요한가요?', busy: false, saving: false, conflict: false, writeAllowed: false, chats: [], events: [], generationEvents: [], audit: [], diagnostics: [], backups: [], previewPending: false, writeRemaining: 0 };
   #listeners = new Set<() => void>(); #runtime?: PreviewRuntime;
-  #editorSession = ''; #viewerSession = ''; #sessions?: Promise<void>;
   #intent = 0; #attempt?: RevisionToken; #generationId?: string; #stream?: AbortController;
   #lastSeq = 0; #recovering = false; #writeTimer?: ReturnType<typeof setInterval>; #writeEpoch = 0;
   getSnapshot = () => this.#state;
@@ -86,24 +88,13 @@ export class StudioController {
   }
   private generationProgress(text: string, extra: Partial<StudioState> = {}) { this.update({ ...extra, generationStatus: text, status: text }); }
   private failurePrefix() { return this.#state.lastCommit ? '이전 화면을 유지했어요' : '화면을 처음 준비하지 못했어요'; }
-  private async sessions() {
-    this.#sessions ??= (async () => {
-      let user = localStorage.getItem('toi-studio-user-v1');
-      if (!user) { user = 'studio-' + crypto.randomUUID(); localStorage.setItem('toi-studio-user-v1', user); }
-      const [editor, viewer] = await Promise.all([
-        json<{ token: string }>(API.policy + '/dev/session', { user, roles: ['viewer', 'editor'] }),
-        json<{ token: string }>(API.policy + '/dev/session', { user, roles: ['viewer'] }),
-      ]);
-      this.#editorSession = editor.token; this.#viewerSession = viewer.token;
-    })();
-    return this.#sessions;
-  }
   async open(projectId?: string, name = '고객 어드민') {
     try {
       this.update({ busy: true, status: '프로젝트를 준비하고 있어요' });
-      await this.sessions();
       const project = projectId ? await json<Project>(`${API.agent}/projects/${projectId}`) : await json<Project>(API.agent + '/projects', { name, apiIds: ['customers'] });
+      const membership = await json<ProjectMembership>(`${API.agent}/projects/${project.projectId}/membership`);
       history.replaceState(null, '', '?project=' + project.projectId);
+      this.update({ membership, accessNotice: undefined });
       this.update({ project, files: { ...project.files }, dirty: false, conflict: false, backups: stored<EditBackup[]>(backupKey(project.projectId)) ?? (this.#state.project?.projectId === project.projectId ? this.#state.backups : []) });
       void this.preview(project);
       const active = await this.activeGeneration(project.projectId);
@@ -120,7 +111,7 @@ export class StudioController {
           void this.subscribeGeneration();
         } else this.update({ busy: false });
       }
-    } catch { this.update({ busy: false, status: '프로젝트를 열지 못했어요. 서비스 연결을 확인해 주세요.' }); }
+    } catch (error) { this.update({ busy: false, accessNotice: accessMessage(error, '프로젝트를 열지 못했어요. 서비스 연결을 확인해 주세요.'), status: accessMessage(error, '프로젝트를 열지 못했어요. 서비스 연결을 확인해 주세요.') }); }
   }
   private validRecovery(recovery: GenerationRecovery) {
     return typeof recovery.generationId === 'string' && Number.isSafeInteger(recovery.seq) && recovery.seq >= 0 && Array.isArray(recovery.chats);
@@ -146,7 +137,7 @@ export class StudioController {
       this.update({ project, files: { ...project.files }, dirty: false, saving: false });
       void this.preview(project); return project;
     } catch (error) {
-      this.update({ saving: false, conflict: error instanceof HttpError && error.status === 409, status: error instanceof HttpError && error.status === 409 ? '다른 탭에서 먼저 저장했어요. 최신 내용을 불러온 뒤 다시 저장해 주세요.' : '저장하지 못했어요. 다시 시도해 주세요.' });
+      this.update({ saving: false, conflict: error instanceof HttpError && error.status === 409, status: error instanceof HttpError && error.status === 409 ? '다른 탭에서 먼저 저장했어요. 최신 내용을 불러온 뒤 다시 저장해 주세요.' : accessMessage(error, '저장하지 못했어요. 다시 시도해 주세요.') });
     }
   }
   async reload() {
@@ -176,7 +167,7 @@ export class StudioController {
     } catch (error) {
       if (stream.signal.aborted) return;
       if (error instanceof HttpError && error.status === 404) this.finishGeneration('기록을 찾을 수 없어요');
-      else this.update({ status: '생성 연결을 복구하지 못했어요. 다시 열어 주세요.' });
+      else this.update({ busy: false, status: accessMessage(error, '생성 연결을 복구하지 못했어요. 다시 열어 주세요.') });
     }
   }
   async generate(prompt: string) {
@@ -190,7 +181,7 @@ export class StudioController {
       const { generationId } = await json<{ generationId: string }>(API.agent + '/generations', { projectId: project.projectId, baseRevision: project.revision, prompt, requestId: crypto.randomUUID() });
       this.#generationId = generationId; this.#lastSeq = 0; this.#recovering = false; this.saveGeneration();
       await this.subscribeGeneration();
-    } catch { this.update({ busy: false, status: '화면 생성을 시작하지 못했어요. 다시 시도해 주세요.' }); }
+    } catch (error) { this.update({ busy: false, status: accessMessage(error, '화면 생성을 시작하지 못했어요. 다시 시도해 주세요.') }); }
   }
   private handleGeneration(event: GenerationEvent) {
     this.update({ generationEvents: [...this.#state.generationEvents, event] });
@@ -220,12 +211,12 @@ export class StudioController {
     try { await json(`${API.agent}/generations/${this.#generationId}/answers`, { questionId: this.#state.question.questionId, answer });
     // The staging SSE event acknowledges the answer in every observing tab.
     this.saveGeneration();
-    } catch { this.update({ status: '답변을 보내지 못했어요. 다시 시도해 주세요.' }); }
+    } catch (error) { this.update({ status: accessMessage(error, '답변을 보내지 못했어요. 다시 시도해 주세요.') }); }
   }
   async cancel() {
     ++this.#intent; if (this.#attempt) this.#runtime?.cancel(this.#attempt);
     try { if (this.#generationId) await json(`${API.agent}/generations/${this.#generationId}/cancel`, {}, 'POST'); }
-    catch { this.update({ status: '중단 요청을 보내지 못했어요. 다시 시도해 주세요.' }); }
+    catch (error) { this.update({ status: accessMessage(error, '중단 요청을 보내지 못했어요. 다시 시도해 주세요.') }); }
   }
   async setWriteAllowed(allowed: boolean) {
     ++this.#writeEpoch; clearInterval(this.#writeTimer);
@@ -233,11 +224,10 @@ export class StudioController {
     if (this.#state.project) await this.preview(this.#state.project);
   }
   private async capability(project: Project): Promise<PreviewHostConfig> {
-    await this.sessions(); const write = this.#state.writeAllowed; const epoch = this.#writeEpoch;
-    const ttlSec = write ? WRITE_TTL_SEC : 300;
-    const capability = await json<{ token: string; claims: CapabilityClaims }>(API.policy + '/capabilities', { projectId: project.projectId, mode: write ? 'write' : 'read', env: 'preview', ttlSec, ...(write ? { apiIds: project.apiIds } : {}) }, 'POST', write ? this.#editorSession : this.#viewerSession);
+    const write = this.#state.writeAllowed; const epoch = this.#writeEpoch;
+    const session = await json<PreviewSession>(API.policy + '/preview-sessions', { projectId: project.projectId, ...(write ? { write: { apiIds: project.apiIds, ttlSec: WRITE_TTL_SEC } } : {}) });
     if (write && this.#state.writeAllowed && epoch === this.#writeEpoch) {
-      const expiresAt = capability.claims.exp * 1000;
+      const expiresAt = session.capability.exp * 1000;
       clearInterval(this.#writeTimer);
       const tick = () => {
         const remaining = Math.max(0, Math.ceil((expiresAt - Date.now()) / 1000));
@@ -250,7 +240,7 @@ export class StudioController {
       };
       this.#writeTimer = setInterval(tick, 1000); tick();
     }
-    return { toiFetch: { sessionToken: this.#viewerSession, capabilityToken: capability.token, projectId: project.projectId, proxyBaseUrl: API.policy, env: 'preview' } };
+    return previewHostConfig(session, project.projectId, API.policy);
   }
   async retryPreview() { if (this.#state.project && !this.#state.previewPending) await this.preview(this.#state.project); }
   async preview(project: Project) {
@@ -269,7 +259,7 @@ export class StudioController {
       return await this.#runtime.build({ token, layers: { project: project.files }, manifest: ready.manifest, hostConfig });
     } catch (error) {
       if (intent === this.#intent) {
-        const reason = error instanceof DependencyError ? error.message : '프리뷰 연결 준비 실패';
+        const reason = error instanceof DependencyError ? error.message : accessMessage(error, '프리뷰 연결 준비 실패');
         const previewError = `${this.failurePrefix()}: 구성 요소 준비 실패 · ${reason}`;
         this.update({ status: previewError, previewError, previewPending: false });
       }
@@ -297,5 +287,45 @@ export class StudioController {
       throw new DependencyError('구성 요소 서비스 연결 실패');
     } finally { clearTimeout(timeout); }
   }
-  async loadAudit() { await this.sessions(); if (this.#state.project) this.update({ audit: await json<AuditRecord[]>(`${API.policy}/audit?projectId=${this.#state.project.projectId}`, undefined, 'GET', this.#editorSession) }); }
+  dispose() { ++this.#intent; this.#stream?.abort(); clearInterval(this.#writeTimer); this.#runtime?.dispose(); this.#runtime = undefined; }
+  async loadMembership() {
+    if (!this.#state.project) return;
+    try { this.update({ membership: await json<ProjectMembership>(`${API.agent}/projects/${this.#state.project.projectId}/membership`), accessNotice: undefined }); }
+    catch (error) { this.update({ accessNotice: accessMessage(error, '멤버를 불러오지 못했어요.') }); }
+  }
+  async addMember(username: string, role: ProjectRole) {
+    if (!this.#state.project) return;
+    try {
+      const users = await json<Array<{ sub: string; username: string }>>(`${API.agent}/projects/${this.#state.project.projectId}/users?username=${encodeURIComponent(username.trim())}`);
+      const user = users.find(user => user.username === username.trim());
+      if (!user) { this.update({ accessNotice: '사용자를 찾을 수 없어요. 정확한 사용자 이름을 입력해 주세요.' }); return; }
+      await this.changeMember(user.sub, role);
+    } catch (error) { this.update({ accessNotice: accessMessage(error, '사용자를 찾지 못했어요.') }); }
+  }
+  async changeMember(sub: string, role?: ProjectRole) {
+    if (!this.#state.project || !sub.trim()) return;
+    try {
+      const membership = await json<ProjectMembership>(`${API.agent}/projects/${this.#state.project.projectId}/members/${encodeURIComponent(sub.trim())}`, role ? { role } : {}, role ? 'PUT' : 'DELETE');
+      this.update({ membership, accessNotice: undefined });
+    } catch (error) { this.update({ accessNotice: accessMessage(error, '멤버를 변경하지 못했어요. 사용자 ID를 확인해 주세요.') }); }
+  }
+  async loadApprovals(projectId = this.#state.project?.projectId) {
+    if (!projectId) return;
+    try { this.update({ approvals: await json<Approval[]>(`${API.policy}/approvals?projectId=${encodeURIComponent(projectId)}`), accessNotice: undefined }); }
+    catch (error) { this.update({ approvals: [], accessNotice: accessMessage(error, '승인 요청을 불러오지 못했어요.') }); }
+  }
+  async requestApproval(apiId: string, justification: string) {
+    if (!this.#state.project) return;
+    try { await json(API.policy + '/approvals', { projectId: this.#state.project.projectId, apiId, scope: 'live-write', justification }); await this.loadApprovals(); }
+    catch (error) { this.update({ accessNotice: accessMessage(error, '승인을 요청하지 못했어요.') }); }
+  }
+  async decideApproval(approval: Approval, decision: 'approved' | 'rejected') {
+    try { await json(`${API.policy}/approvals/${encodeURIComponent(approval.approvalId)}/decision`, { decision }); await this.loadApprovals(approval.projectId); }
+    catch (error) { this.update({ accessNotice: accessMessage(error, '승인을 처리하지 못했어요.') }); }
+  }
+  async loadAudit() {
+    if (!this.#state.project) return;
+    try { this.update({ audit: await json<AuditRecord[]>(`${API.policy}/audit?projectId=${this.#state.project.projectId}`) }); }
+    catch (error) { this.update({ status: accessMessage(error, '활동 기록을 불러오지 못했어요.') }); }
+  }
 }

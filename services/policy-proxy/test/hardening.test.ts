@@ -1,3 +1,4 @@
+import { token, member, identityConfig } from './identity-fixture.js';
 import { beforeAll, afterAll, test, expect } from 'vitest';
 import { createServer, request, type Server } from 'node:http';
 import { spawnSync } from 'node:child_process';
@@ -21,13 +22,13 @@ beforeAll(async () => {
  dir = await mkdtemp(path.join(os.tmpdir(), 'policy-hardening-'));
  upstream = createServer((req,res) => { seen.push(req.url!); res.setHeader('Content-Type',contentType); res.end(contentType === 'application/json' ? JSON.stringify(response) : String(response)); });
  const up = await listen(upstream);
- cfg = {...configuration({NODE_ENV:'test'}), dataDir:dir, upstreamUrl:up, upstreamAllowlist:[up], devAuth:true, devAdminToken:'private-bootstrap-token'};
+ cfg = {...configuration({NODE_ENV:'test'}), ...identityConfig, dataDir:dir, upstreamUrl:up, upstreamAllowlist:[up], devAuth:true, devAdminToken:'private-bootstrap-token'};
  store = new PolicyStorage(dir); await store.init();
- await store.save({apiId:'reports',name:'reports',description:'test',upstreamBaseUrl:up,schemaVersion:1,openapi:{openapi:'3.1.0',paths:{'/reports/{year}/{month}':{get:{}},'/customers':{get:{}}}},policy:{mask:{'/items/*/phone':'phone'},requireReason:false,allowedRoles:['viewer'],allowWrite:false}});
+ await store.save({apiId:'reports',name:'reports',description:'test',environments:{preview:{upstreamBaseUrl:up},live:{upstreamBaseUrl:up}},owners:[],schemaVersion:1,openapi:{openapi:'3.1.0',paths:{'/reports/{year}/{month}':{get:{}},'/customers':{get:{}}}},policy:{mask:{'/items/*/phone':'phone'},requireReason:false,allowedRoles:['viewer'],allowWrite:false}});
  proxy = createPolicyProxy(cfg,store); base = await listen(proxy);
  const exp = Math.floor(Date.now()/1000)+600;
- viewer = signToken({sub:'owner',roles:['viewer'],exp},cfg.sessionSecret,'session');
- admin = signToken({sub:'admin',roles:['platform-admin'],exp},cfg.sessionSecret,'session');
+ viewer = await token('owner'); member('p','owner','viewer');
+ admin = await token('admin',['platform-admin']);
  cap = signToken({sub:'owner',projectId:'p',mode:'read',env:'preview',ttlSec:600,exp,jti:'test'},cfg.capabilitySecret,'capability');
 });
 afterAll(async()=>{await close(proxy);await close(upstream);await rm(dir,{recursive:true,force:true});});
@@ -43,18 +44,7 @@ test.each(['/dev/session','/capabilities'])('C1 %s requires application/json bef
   const r=await fetch(base+endpoint,{method:'POST',headers:{...(origin?{Origin:origin}:{}),...(type?{'Content-Type':type}:{})},body:'{}'});expect(r.status).toBe(415);
  }
 });
-test('C1 browser admin issuance denied even with bootstrap token; server admin requires correct token',async()=>{
- for(const authorization of [undefined,'Bearer wrong',`Bearer ${cfg.devAdminToken}`]) {
-  const r=await post('/dev/session',{user:'u',roles:['platform-admin']},{Origin:'http://localhost:5173',...(authorization?{Authorization:authorization}:{})});expect(r.status).toBe(403);
- }
- for(const authorization of [undefined,'Bearer wrong']) expect((await post('/dev/session',{user:'u',roles:['platform-admin']},authorization?{Authorization:authorization}:{})).status).toBe(403);
- expect((await post('/dev/session',{user:'u',roles:['platform-admin']},{Authorization:`Bearer ${cfg.devAdminToken}`})).status).toBe(200);
- for(const origin of [undefined,'http://localhost:5173']) {
-  const r=await post('/dev/session',{user:'u',roles:['viewer','editor']},origin?{Origin:origin}:{});expect(r.status).toBe(200);
-  const {token}=await r.json(); expect((await post('/capabilities',{projectId:'p',mode:'write',env:'preview',apiIds:['reports'],ttlSec:60},{Authorization:`Bearer ${token}`,...(origin?{Origin:origin}:{})})).status).toBe(200);
- }
- expect((await post('/dev/session',{user:'u',roles:['viewer']},{Origin:'null'})).status).toBe(403);
-});
+test('dev session is removed even with a valid identity',async()=>{expect((await post('/dev/session',{user:'u',roles:['platform-admin']},{Authorization:`Bearer ${admin}`})).status).toBe(404);});
 test('C1 audit requires project and filters subject before applying limit',async()=>{
  response={ok:true};await fetch(base+'/proxy/reports/customers',{headers:headers()});
  const record=(await store.audit('p',1))[0];await store.append({...record,user:'other'});
@@ -62,13 +52,13 @@ test('C1 audit requires project and filters subject before applying limit',async
  const scoped=await fetch(base+'/audit?projectId=p&limit=1',{headers:headers()});expect(scoped.status).toBe(200);expect((await scoped.json()).map((r:any)=>r.user)).toEqual(['owner']);
  expect((await fetch(base+'/audit',{headers:{Authorization:`Bearer ${admin}`}})).status).toBe(200);
 });
-const production: NodeJS.ProcessEnv={NODE_ENV:'production',TOI_DEV_AUTH_ENABLED:'false',TOI_SESSION_SECRET:'s'.repeat(32),TOI_CAPABILITY_SECRET:'c'.repeat(32),TOI_UPSTREAM_SERVICE_TOKEN:'u'.repeat(32)};
+const production: NodeJS.ProcessEnv={NODE_ENV:'production',TOI_DEV_AUTH_ENABLED:'false',TOI_SESSION_SECRET:'s'.repeat(32),TOI_CAPABILITY_SECRET:'c'.repeat(32),TOI_UPSTREAM_SERVICE_TOKEN:'u'.repeat(32),TOI_PREVIEW_SERVICE_TOKEN:'p'.repeat(32),TOI_LIVE_SERVICE_TOKEN:'l'.repeat(32)};
 const badProduction: [string,NodeJS.ProcessEnv][]=[];
-for(const key of ['TOI_SESSION_SECRET','TOI_CAPABILITY_SECRET','TOI_UPSTREAM_SERVICE_TOKEN']) {
+for(const key of ['TOI_SESSION_SECRET','TOI_CAPABILITY_SECRET','TOI_PREVIEW_SERVICE_TOKEN','TOI_LIVE_SERVICE_TOKEN']) {
  badProduction.push([`${key} missing`,{...production,[key]:''}],[`${key} short`,{...production,[key]:'x'.repeat(31)}]);
  for(const value of knownDevelopmentSecrets) badProduction.push([`${key} known ${value}`,{...production,[key]:value}]);
 }
-for(const value of [undefined,'true','FALSE']) badProduction.push([`dev auth ${value}`,{...production,TOI_DEV_AUTH_ENABLED:value}]);
+for(const value of ['true']) badProduction.push([`dev auth ${value}`,{...production,TOI_DEV_AUTH_ENABLED:value}]);
 for(const value of ['','present']) badProduction.push([`admin token ${value}`,{...production,TOI_DEV_ADMIN_TOKEN:value}]);
 test.each(badProduction)('H1 production rejects %s',(_name,env)=>{expect(()=>configuration(env)).toThrow();});
 test('H1 valid production disables dev auth; explicit development generates unpredictable process secrets',()=>{
@@ -130,15 +120,15 @@ test.each(guardedEnvironments)('N5 NODE_ENV=%s applies production guards', NODE_
 });
 test.each(['development','test'])('N5 %s development auth requires exact opt-in', NODE_ENV => {
  for(const TOI_DEV_AUTH_ENABLED of [undefined,'false','TRUE','true ','']) expect(configuration({NODE_ENV,TOI_DEV_AUTH_ENABLED}).devAuth).toBe(false);
- expect(configuration({NODE_ENV,TOI_DEV_AUTH_ENABLED:'true'}).devAuth).toBe(true);
+ expect(configuration({NODE_ENV,TOI_DEV_AUTH_ENABLED:'true'}).devAuth).toBe(false);
 });
 test.each([
  {TOI_CAPABILITY_SECRET:production.TOI_SESSION_SECRET},
- {TOI_UPSTREAM_SERVICE_TOKEN:production.TOI_SESSION_SECRET},
- {TOI_UPSTREAM_SERVICE_TOKEN:production.TOI_CAPABILITY_SECRET},
- {TOI_CAPABILITY_SECRET:production.TOI_SESSION_SECRET,TOI_UPSTREAM_SERVICE_TOKEN:production.TOI_SESSION_SECRET},
+ {TOI_PREVIEW_SERVICE_TOKEN:production.TOI_SESSION_SECRET},
+ {TOI_PREVIEW_SERVICE_TOKEN:production.TOI_CAPABILITY_SECRET},
+ {TOI_CAPABILITY_SECRET:production.TOI_SESSION_SECRET,TOI_PREVIEW_SERVICE_TOKEN:production.TOI_SESSION_SECRET},
 ])('N5 production requires independent secrets: %j', overrides => {
- expect(() => configuration({...production,...overrides})).toThrow('three distinct secrets');
+ expect(() => configuration({...production,...overrides})).toThrow('distinct secrets');
 });
 const negativePii = [
  ['date','2026-08-01'], ['minute','2026-08-01T00:00'], ['createdAt','2026-08-01T00:00:00.000Z'],
@@ -175,7 +165,7 @@ test.each(['..;/admin','..%3b/admin','2024./admin.','.../admin','2024/a.b','2024
 });
 test.each(['','/'])('N3 and L3 registered base prefix survives with trailing slash %j and Unicode id',async trailing=>{
  const prefixed=cfg.upstreamUrl+'/tenant-a/api'+trailing;cfg.upstreamAllowlist.push(prefixed);
- const registration={...store.apis.get('reports')!,apiId:'tenant',upstreamBaseUrl:prefixed,openapi:{openapi:'3.1.0',paths:{'/items/{id}':{get:{}}}}};
+ const registration={...store.apis.get('reports')!,apiId:'tenant',environments:{preview:{upstreamBaseUrl:prefixed},live:{upstreamBaseUrl:prefixed}},openapi:{openapi:'3.1.0',paths:{'/items/{id}':{get:{}}}}};
  expect((await post('/apis',registration,{Authorization:`Bearer ${admin}`})).status).toBe(201);
  response={ok:true};
  for (const id of ['42','홍길동','abc_123-xyz']) {

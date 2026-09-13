@@ -66,6 +66,690 @@
   },
   "suites": [
     {
+      "title": "identity.spec.ts",
+      "file": "identity.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "N: carol nonmember receives 404 and cannot mint or use preview/capability",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5658,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T11:34:56.224Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc384e94f5cb1e491b4d-b73a014b2a41d5502dc3",
+          "file": "identity.spec.ts",
+          "line": 15,
+          "column": 1
+        },
+        {
+          "title": "O: owner member UI protects last owner; viewer read only, editor generation, removal revokes proxy within 5s",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7289,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T11:35:02.658Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc384e94f5cb1e491b4d-ab821109e61c892dba62",
+          "file": "identity.spec.ts",
+          "line": 26,
+          "column": 1
+        },
+        {
+          "title": "P: live write requires another API owner approval and expires",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 380000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12504,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T11:35:09.967Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc384e94f5cb1e491b4d-2aca4a986734970b2e08",
+          "file": "identity.spec.ts",
+          "line": 49,
+          "column": 1
+        },
+        {
+          "title": "Q: preview capability never selects live upstream",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 44,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T11:35:22.496Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc384e94f5cb1e491b4d-a6b7805879646fba24c3",
+          "file": "identity.spec.ts",
+          "line": 75,
+          "column": 1
+        },
+        {
+          "title": "S: iframe globals/storage/messages/URLs contain no Keycloak token",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2616,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T11:35:37.350Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc384e94f5cb1e491b4d-22b661a57b5ddb23e4c4",
+          "file": "identity.spec.ts",
+          "line": 147,
+          "column": 1
+        },
+        {
+          "title": "N: carol nonmember receives 404 and cannot mint or use preview/capability",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4164,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T11:37:03.341Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc384e94f5cb1e491b4d-1dd33d2596aba91d9422",
+          "file": "identity.spec.ts",
+          "line": 15,
+          "column": 1
+        },
+        {
+          "title": "O: owner member UI protects last owner; viewer read only, editor generation, removal revokes proxy within 5s",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5779,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T11:37:08.181Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc384e94f5cb1e491b4d-cf731cce1ea48c97e27a",
+          "file": "identity.spec.ts",
+          "line": 26,
+          "column": 1
+        },
+        {
+          "title": "P: live write requires another API owner approval and expires",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 380000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11982,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T11:37:13.972Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc384e94f5cb1e491b4d-10996f0b298c661c20f7",
+          "file": "identity.spec.ts",
+          "line": 49,
+          "column": 1
+        },
+        {
+          "title": "Q: preview capability never selects live upstream",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 41,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T11:37:25.972Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc384e94f5cb1e491b4d-7e55705144b08659c63f",
+          "file": "identity.spec.ts",
+          "line": 75,
+          "column": 1
+        },
+        {
+          "title": "S: iframe globals/storage/messages/URLs contain no Keycloak token",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2781,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T11:37:40.340Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc384e94f5cb1e491b4d-b48c1515b52b027ed547",
+          "file": "identity.spec.ts",
+          "line": 147,
+          "column": 1
+        },
+        {
+          "title": "N: carol nonmember receives 404 and cannot mint or use preview/capability",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4333,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T11:39:05.849Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc384e94f5cb1e491b4d-705b291980567d0041a1",
+          "file": "identity.spec.ts",
+          "line": 15,
+          "column": 1
+        },
+        {
+          "title": "O: owner member UI protects last owner; viewer read only, editor generation, removal revokes proxy within 5s",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6039,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T11:39:11.011Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc384e94f5cb1e491b4d-79fb41c6d32bd79adad6",
+          "file": "identity.spec.ts",
+          "line": 26,
+          "column": 1
+        },
+        {
+          "title": "P: live write requires another API owner approval and expires",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 380000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10972,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T11:39:17.067Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc384e94f5cb1e491b4d-f237155e804838598c3e",
+          "file": "identity.spec.ts",
+          "line": 49,
+          "column": 1
+        },
+        {
+          "title": "Q: preview capability never selects live upstream",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 43,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T11:39:28.048Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc384e94f5cb1e491b4d-784040adba0229ffdfb7",
+          "file": "identity.spec.ts",
+          "line": 75,
+          "column": 1
+        },
+        {
+          "title": "S: iframe globals/storage/messages/URLs contain no Keycloak token",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3137,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T11:39:41.346Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc384e94f5cb1e491b4d-5bc3a3365dd9a98a79de",
+          "file": "identity.spec.ts",
+          "line": 147,
+          "column": 1
+        }
+      ],
+      "suites": [
+        {
+          "title": "R isolated serial mutation",
+          "file": "identity.spec.ts",
+          "line": 83,
+          "column": 6,
+          "specs": [
+            {
+              "title": "R: short-token renewal preserves a pending build; disabled bob cannot refresh or use expired access",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [
+                    {
+                      "type": "serial",
+                      "location": {
+                        "file": "/Users/psw/Projects/toss-toi-test/e2e/tests/identity.spec.ts",
+                        "line": 83,
+                        "column": 6
+                      }
+                    }
+                  ],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 14794,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-13T11:35:22.548Z",
+                      "annotations": [
+                        {
+                          "type": "serial",
+                          "location": {
+                            "file": "/Users/psw/Projects/toss-toi-test/e2e/tests/identity.spec.ts",
+                            "line": 83,
+                            "column": 6
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bc384e94f5cb1e491b4d-bbea6060824053cafce1",
+              "file": "identity.spec.ts",
+              "line": 85,
+              "column": 3
+            },
+            {
+              "title": "R: short-token renewal preserves a pending build; disabled bob cannot refresh or use expired access",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [
+                    {
+                      "type": "serial",
+                      "location": {
+                        "file": "/Users/psw/Projects/toss-toi-test/e2e/tests/identity.spec.ts",
+                        "line": 83,
+                        "column": 6
+                      }
+                    }
+                  ],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 14312,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-13T11:37:26.021Z",
+                      "annotations": [
+                        {
+                          "type": "serial",
+                          "location": {
+                            "file": "/Users/psw/Projects/toss-toi-test/e2e/tests/identity.spec.ts",
+                            "line": 83,
+                            "column": 6
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bc384e94f5cb1e491b4d-b7530e4a842c6d5c5c48",
+              "file": "identity.spec.ts",
+              "line": 85,
+              "column": 3
+            },
+            {
+              "title": "R: short-token renewal preserves a pending build; disabled bob cannot refresh or use expired access",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [
+                    {
+                      "type": "serial",
+                      "location": {
+                        "file": "/Users/psw/Projects/toss-toi-test/e2e/tests/identity.spec.ts",
+                        "line": 83,
+                        "column": 6
+                      }
+                    }
+                  ],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13238,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-13T11:39:28.099Z",
+                      "annotations": [
+                        {
+                          "type": "serial",
+                          "location": {
+                            "file": "/Users/psw/Projects/toss-toi-test/e2e/tests/identity.spec.ts",
+                            "line": 83,
+                            "column": 6
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bc384e94f5cb1e491b4d-067537e581ac9a9380ec",
+              "file": "identity.spec.ts",
+              "line": 85,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
       "title": "studio.spec.ts",
       "file": "studio.spec.ts",
       "column": 0,
@@ -87,12 +771,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2165,
+                  "duration": 3603,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:55:38.114Z",
+                  "startTime": "2026-09-13T11:35:40.036Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -102,7 +786,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-8733163736a83ecbbf59",
           "file": "studio.spec.ts",
-          "line": 9,
+          "line": 10,
           "column": 1
         },
         {
@@ -121,12 +805,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1460,
+                  "duration": 2985,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:55:40.753Z",
+                  "startTime": "2026-09-13T11:35:43.661Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -136,7 +820,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-a4d6c92837139147d20d",
           "file": "studio.spec.ts",
-          "line": 10,
+          "line": 11,
           "column": 1
         },
         {
@@ -155,12 +839,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 3752,
+                  "duration": 5913,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:55:42.223Z",
+                  "startTime": "2026-09-13T11:35:46.663Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -170,7 +854,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-831539f9987adec9fa50",
           "file": "studio.spec.ts",
-          "line": 11,
+          "line": 12,
           "column": 1
         },
         {
@@ -189,7 +873,7 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2501,
+                  "duration": 3263,
                   "errors": [],
                   "stdout": [
                     {
@@ -198,7 +882,7 @@
                   ],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:55:45.984Z",
+                  "startTime": "2026-09-13T11:35:52.594Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -208,7 +892,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-394d5a6fe3915dfd5b71",
           "file": "studio.spec.ts",
-          "line": 12,
+          "line": 13,
           "column": 1
         },
         {
@@ -227,12 +911,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2249,
+                  "duration": 3812,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:55:48.493Z",
+                  "startTime": "2026-09-13T11:35:55.868Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -242,7 +926,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-34118f2408e9be774440",
           "file": "studio.spec.ts",
-          "line": 25,
+          "line": 26,
           "column": 1
         },
         {
@@ -261,12 +945,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1319,
+                  "duration": 2314,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:55:50.753Z",
+                  "startTime": "2026-09-13T11:35:59.696Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -276,7 +960,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-12ab9d20c94ec765290d",
           "file": "studio.spec.ts",
-          "line": 26,
+          "line": 27,
           "column": 1
         },
         {
@@ -295,12 +979,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2105,
+                  "duration": 3627,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:55:52.082Z",
+                  "startTime": "2026-09-13T11:36:02.032Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -310,7 +994,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-d5e55d82a515c594b071",
           "file": "studio.spec.ts",
-          "line": 37,
+          "line": 43,
           "column": 1
         },
         {
@@ -329,12 +1013,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2070,
+                  "duration": 3822,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:55:54.199Z",
+                  "startTime": "2026-09-13T11:36:05.675Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -344,7 +1028,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-f824ed686dfa9a511533",
           "file": "studio.spec.ts",
-          "line": 54,
+          "line": 60,
           "column": 1
         },
         {
@@ -363,12 +1047,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 5121,
+                  "duration": 6724,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:55:56.281Z",
+                  "startTime": "2026-09-13T11:36:09.512Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -378,7 +1062,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-6751c35e3b5db59ac0cc",
           "file": "studio.spec.ts",
-          "line": 73,
+          "line": 79,
           "column": 1
         },
         {
@@ -397,12 +1081,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1589,
+                  "duration": 2716,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:56:01.413Z",
+                  "startTime": "2026-09-13T11:36:16.250Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -412,7 +1096,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-5cd82d245e7d7aed83f7",
           "file": "studio.spec.ts",
-          "line": 84,
+          "line": 90,
           "column": 1
         },
         {
@@ -431,12 +1115,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2875,
+                  "duration": 6914,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:56:03.010Z",
+                  "startTime": "2026-09-13T11:36:18.977Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -446,7 +1130,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-b8e39e525b14bcfc2235",
           "file": "studio.spec.ts",
-          "line": 101,
+          "line": 107,
           "column": 1
         },
         {
@@ -465,12 +1149,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2347,
+                  "duration": 4844,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:56:05.896Z",
+                  "startTime": "2026-09-13T11:36:25.933Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -480,7 +1164,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-b12b401434ed730562ef",
           "file": "studio.spec.ts",
-          "line": 121,
+          "line": 127,
           "column": 1
         },
         {
@@ -499,12 +1183,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2378,
+                  "duration": 6431,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:56:08.253Z",
+                  "startTime": "2026-09-13T11:36:30.813Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -514,7 +1198,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-0ed9cbc225e1f3b6ee7b",
           "file": "studio.spec.ts",
-          "line": 139,
+          "line": 145,
           "column": 1
         },
         {
@@ -533,12 +1217,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1511,
+                  "duration": 4202,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:56:10.641Z",
+                  "startTime": "2026-09-13T11:36:37.280Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -548,7 +1232,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-8c2733647c2d925d6171",
           "file": "studio.spec.ts",
-          "line": 183,
+          "line": 195,
           "column": 34
         },
         {
@@ -567,12 +1251,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1306,
+                  "duration": 3201,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:56:12.161Z",
+                  "startTime": "2026-09-13T11:36:41.533Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -582,7 +1266,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-01fff78adf46c6b51ea9",
           "file": "studio.spec.ts",
-          "line": 183,
+          "line": 195,
           "column": 34
         },
         {
@@ -601,12 +1285,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 3480,
+                  "duration": 9420,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:56:13.477Z",
+                  "startTime": "2026-09-13T11:36:44.775Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -616,7 +1300,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-c9dcf33db18dd8939d3b",
           "file": "studio.spec.ts",
-          "line": 198,
+          "line": 210,
           "column": 1
         },
         {
@@ -635,12 +1319,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 4466,
+                  "duration": 8091,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:56:16.966Z",
+                  "startTime": "2026-09-13T11:36:54.217Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -650,7 +1334,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-a9284135c006b485efce",
           "file": "studio.spec.ts",
-          "line": 236,
+          "line": 248,
           "column": 1
         },
         {
@@ -669,12 +1353,12 @@
                   "workerIndex": 1,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2308,
+                  "duration": 3840,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:56:22.088Z",
+                  "startTime": "2026-09-13T11:37:43.167Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -684,7 +1368,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-1e4fc2524073232df892",
           "file": "studio.spec.ts",
-          "line": 9,
+          "line": 10,
           "column": 1
         },
         {
@@ -703,12 +1387,12 @@
                   "workerIndex": 1,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1271,
+                  "duration": 2730,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:56:24.869Z",
+                  "startTime": "2026-09-13T11:37:47.025Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -718,7 +1402,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-2ec9047b500f6430bb7f",
           "file": "studio.spec.ts",
-          "line": 10,
+          "line": 11,
           "column": 1
         },
         {
@@ -737,12 +1421,12 @@
                   "workerIndex": 1,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 3783,
+                  "duration": 5259,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:56:26.150Z",
+                  "startTime": "2026-09-13T11:37:49.775Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -752,7 +1436,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-4f660569d40dea5785b3",
           "file": "studio.spec.ts",
-          "line": 11,
+          "line": 12,
           "column": 1
         },
         {
@@ -771,7 +1455,7 @@
                   "workerIndex": 1,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2275,
+                  "duration": 3902,
                   "errors": [],
                   "stdout": [
                     {
@@ -780,7 +1464,7 @@
                   ],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:56:29.943Z",
+                  "startTime": "2026-09-13T11:37:55.054Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -790,7 +1474,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-f8a3bc6343380c81dcb3",
           "file": "studio.spec.ts",
-          "line": 12,
+          "line": 13,
           "column": 1
         },
         {
@@ -809,12 +1493,12 @@
                   "workerIndex": 1,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2232,
+                  "duration": 5265,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:56:32.227Z",
+                  "startTime": "2026-09-13T11:37:58.978Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -824,7 +1508,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-4a1978ccdf3ab823649a",
           "file": "studio.spec.ts",
-          "line": 25,
+          "line": 26,
           "column": 1
         },
         {
@@ -843,12 +1527,12 @@
                   "workerIndex": 1,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1309,
+                  "duration": 2881,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:56:34.469Z",
+                  "startTime": "2026-09-13T11:38:04.270Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -858,7 +1542,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-8dacaa6999ffdb001752",
           "file": "studio.spec.ts",
-          "line": 26,
+          "line": 27,
           "column": 1
         },
         {
@@ -877,12 +1561,12 @@
                   "workerIndex": 1,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2209,
+                  "duration": 3595,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:56:35.787Z",
+                  "startTime": "2026-09-13T11:38:07.178Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -892,7 +1576,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-3d0a5d3cd56fea00e757",
           "file": "studio.spec.ts",
-          "line": 37,
+          "line": 43,
           "column": 1
         },
         {
@@ -911,12 +1595,12 @@
                   "workerIndex": 1,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2214,
+                  "duration": 4161,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:56:38.009Z",
+                  "startTime": "2026-09-13T11:38:10.810Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -926,7 +1610,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-1fecd2ab7ea7874c40ab",
           "file": "studio.spec.ts",
-          "line": 54,
+          "line": 60,
           "column": 1
         },
         {
@@ -945,12 +1629,12 @@
                   "workerIndex": 1,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 5117,
+                  "duration": 7158,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:56:40.233Z",
+                  "startTime": "2026-09-13T11:38:15.019Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -960,7 +1644,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-31b9fe3d02210cedeb9b",
           "file": "studio.spec.ts",
-          "line": 73,
+          "line": 79,
           "column": 1
         },
         {
@@ -979,12 +1663,12 @@
                   "workerIndex": 1,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1679,
+                  "duration": 3732,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:56:45.360Z",
+                  "startTime": "2026-09-13T11:38:22.190Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -994,7 +1678,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-292aaccaf9fce03f35e0",
           "file": "studio.spec.ts",
-          "line": 84,
+          "line": 90,
           "column": 1
         },
         {
@@ -1013,12 +1697,12 @@
                   "workerIndex": 1,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2826,
+                  "duration": 7662,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:56:47.047Z",
+                  "startTime": "2026-09-13T11:38:25.939Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1028,7 +1712,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-79408440567dfbf2150b",
           "file": "studio.spec.ts",
-          "line": 101,
+          "line": 107,
           "column": 1
         },
         {
@@ -1047,12 +1731,12 @@
                   "workerIndex": 1,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2401,
+                  "duration": 4255,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:56:49.884Z",
+                  "startTime": "2026-09-13T11:38:33.616Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1062,7 +1746,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-347f5c84f5a14afa0b3f",
           "file": "studio.spec.ts",
-          "line": 121,
+          "line": 127,
           "column": 1
         },
         {
@@ -1081,12 +1765,12 @@
                   "workerIndex": 1,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2437,
+                  "duration": 3337,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:56:52.295Z",
+                  "startTime": "2026-09-13T11:38:37.890Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1096,7 +1780,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-0b809ae6ce2d092eb565",
           "file": "studio.spec.ts",
-          "line": 139,
+          "line": 145,
           "column": 1
         },
         {
@@ -1115,12 +1799,12 @@
                   "workerIndex": 1,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1470,
+                  "duration": 2965,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:56:54.741Z",
+                  "startTime": "2026-09-13T11:38:41.240Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1130,7 +1814,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-a7846fb0ef6c71cae354",
           "file": "studio.spec.ts",
-          "line": 183,
+          "line": 195,
           "column": 34
         },
         {
@@ -1149,12 +1833,12 @@
                   "workerIndex": 1,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1363,
+                  "duration": 2983,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:56:56.220Z",
+                  "startTime": "2026-09-13T11:38:44.226Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1164,7 +1848,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-d3df1227add94f2e3e10",
           "file": "studio.spec.ts",
-          "line": 183,
+          "line": 195,
           "column": 34
         },
         {
@@ -1183,12 +1867,12 @@
                   "workerIndex": 1,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 3470,
+                  "duration": 9301,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:56:57.594Z",
+                  "startTime": "2026-09-13T11:38:47.234Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1198,7 +1882,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-db7078014afe85f6bb07",
           "file": "studio.spec.ts",
-          "line": 198,
+          "line": 210,
           "column": 1
         },
         {
@@ -1217,12 +1901,12 @@
                   "workerIndex": 1,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 4439,
+                  "duration": 7968,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:57:01.073Z",
+                  "startTime": "2026-09-13T11:38:56.555Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1232,7 +1916,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-15b2191df711e266a14c",
           "file": "studio.spec.ts",
-          "line": 236,
+          "line": 248,
           "column": 1
         },
         {
@@ -1251,12 +1935,12 @@
                   "workerIndex": 2,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2144,
+                  "duration": 3528,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:57:06.148Z",
+                  "startTime": "2026-09-13T11:39:44.515Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1266,7 +1950,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-f516bf88587d856127c3",
           "file": "studio.spec.ts",
-          "line": 9,
+          "line": 10,
           "column": 1
         },
         {
@@ -1285,12 +1969,12 @@
                   "workerIndex": 2,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1259,
+                  "duration": 2380,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:57:08.730Z",
+                  "startTime": "2026-09-13T11:39:48.056Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1300,7 +1984,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-d42d749d6c452a8cad4e",
           "file": "studio.spec.ts",
-          "line": 10,
+          "line": 11,
           "column": 1
         },
         {
@@ -1319,12 +2003,12 @@
                   "workerIndex": 2,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 3911,
+                  "duration": 6070,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:57:09.999Z",
+                  "startTime": "2026-09-13T11:39:50.457Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1334,7 +2018,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-f56c3359babcd45bcd2b",
           "file": "studio.spec.ts",
-          "line": 11,
+          "line": 12,
           "column": 1
         },
         {
@@ -1353,7 +2037,7 @@
                   "workerIndex": 2,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2452,
+                  "duration": 3640,
                   "errors": [],
                   "stdout": [
                     {
@@ -1362,7 +2046,7 @@
                   ],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:57:13.918Z",
+                  "startTime": "2026-09-13T11:39:56.540Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1372,7 +2056,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-2005c8a0cebf1f86daf4",
           "file": "studio.spec.ts",
-          "line": 12,
+          "line": 13,
           "column": 1
         },
         {
@@ -1391,12 +2075,12 @@
                   "workerIndex": 2,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2162,
+                  "duration": 5151,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:57:16.379Z",
+                  "startTime": "2026-09-13T11:40:00.194Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1406,7 +2090,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-9b73ef5f98d6055f1464",
           "file": "studio.spec.ts",
-          "line": 25,
+          "line": 26,
           "column": 1
         },
         {
@@ -1425,12 +2109,12 @@
                   "workerIndex": 2,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1337,
+                  "duration": 3210,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:57:18.552Z",
+                  "startTime": "2026-09-13T11:40:05.373Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1440,7 +2124,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-e0ee9de85982c8a6f271",
           "file": "studio.spec.ts",
-          "line": 26,
+          "line": 27,
           "column": 1
         },
         {
@@ -1459,12 +2143,12 @@
                   "workerIndex": 2,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2242,
+                  "duration": 4062,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:57:19.899Z",
+                  "startTime": "2026-09-13T11:40:08.607Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1474,7 +2158,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-86ade82b29553eef5602",
           "file": "studio.spec.ts",
-          "line": 37,
+          "line": 43,
           "column": 1
         },
         {
@@ -1493,12 +2177,12 @@
                   "workerIndex": 2,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1990,
+                  "duration": 4683,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:57:22.152Z",
+                  "startTime": "2026-09-13T11:40:12.739Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1508,7 +2192,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-9ca4da7081cbae5d9211",
           "file": "studio.spec.ts",
-          "line": 54,
+          "line": 60,
           "column": 1
         },
         {
@@ -1527,12 +2211,12 @@
                   "workerIndex": 2,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 5315,
+                  "duration": 6946,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:57:24.151Z",
+                  "startTime": "2026-09-13T11:40:17.461Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1542,7 +2226,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-8ceb8bd6893d46001c66",
           "file": "studio.spec.ts",
-          "line": 73,
+          "line": 79,
           "column": 1
         },
         {
@@ -1561,12 +2245,12 @@
                   "workerIndex": 2,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1509,
+                  "duration": 3030,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:57:29.476Z",
+                  "startTime": "2026-09-13T11:40:24.423Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1576,7 +2260,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-925d1bb09926061253c1",
           "file": "studio.spec.ts",
-          "line": 84,
+          "line": 90,
           "column": 1
         },
         {
@@ -1595,12 +2279,12 @@
                   "workerIndex": 2,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 3023,
+                  "duration": 7269,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:57:30.994Z",
+                  "startTime": "2026-09-13T11:40:27.466Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1610,7 +2294,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-4fa48f6484db115870ca",
           "file": "studio.spec.ts",
-          "line": 101,
+          "line": 107,
           "column": 1
         },
         {
@@ -1629,12 +2313,12 @@
                   "workerIndex": 2,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2394,
+                  "duration": 3521,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:57:34.026Z",
+                  "startTime": "2026-09-13T11:40:34.752Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1644,7 +2328,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-503659794f76e680186a",
           "file": "studio.spec.ts",
-          "line": 121,
+          "line": 127,
           "column": 1
         },
         {
@@ -1663,12 +2347,12 @@
                   "workerIndex": 2,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2546,
+                  "duration": 3495,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:57:36.432Z",
+                  "startTime": "2026-09-13T11:40:38.290Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1678,7 +2362,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-2402927ea303d8265146",
           "file": "studio.spec.ts",
-          "line": 139,
+          "line": 145,
           "column": 1
         },
         {
@@ -1697,12 +2381,12 @@
                   "workerIndex": 2,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1464,
+                  "duration": 3285,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:57:38.987Z",
+                  "startTime": "2026-09-13T11:40:41.799Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1712,7 +2396,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-2ab00802f94558104b9b",
           "file": "studio.spec.ts",
-          "line": 183,
+          "line": 195,
           "column": 34
         },
         {
@@ -1731,12 +2415,12 @@
                   "workerIndex": 2,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1346,
+                  "duration": 2880,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:57:40.459Z",
+                  "startTime": "2026-09-13T11:40:45.111Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1746,7 +2430,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-de060d72d967d0241f00",
           "file": "studio.spec.ts",
-          "line": 183,
+          "line": 195,
           "column": 34
         },
         {
@@ -1765,12 +2449,12 @@
                   "workerIndex": 2,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 3369,
+                  "duration": 8905,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:57:41.814Z",
+                  "startTime": "2026-09-13T11:40:48.018Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1780,7 +2464,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-c49863a791697991c447",
           "file": "studio.spec.ts",
-          "line": 198,
+          "line": 210,
           "column": 1
         },
         {
@@ -1799,12 +2483,12 @@
                   "workerIndex": 2,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 4484,
+                  "duration": 7858,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T08:57:45.192Z",
+                  "startTime": "2026-09-13T11:40:56.958Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1814,7 +2498,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-0e081fe09b940e8a4624",
           "file": "studio.spec.ts",
-          "line": 236,
+          "line": 248,
           "column": 1
         }
       ]
@@ -1822,9 +2506,9 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-09-13T08:55:37.482Z",
-    "duration": 132451.34100000001,
-    "expected": 51,
+    "startTime": "2026-09-13T11:34:55.478Z",
+    "duration": 369982.468,
+    "expected": 69,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0

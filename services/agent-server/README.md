@@ -102,7 +102,7 @@ R1 M2 보강: 두 레지스트리 도구의 결과는 `{"untrusted_api_registry_
 
 ## 정책 프록시와 생성 UI 연결
 
-레지스트리 도구는 `POST :7200/dev/session {user:"agent-server",roles:["viewer"]}`로 서비스 세션을 받고 GET `/apis`, `/apis/:apiId`에 Bearer 인증을 씁니다. 토큰은 메모리에 캐시하고 401이면 한 번 갱신합니다. 운영 환경은 `POLICY_SESSION_TOKEN` 또는 별도 인증 어댑터로 교체합니다. 토큰을 모델 도구 결과·SSE·프로젝트 소스에 넣지 않습니다.
+레지스트리 도구는 Keycloak `toi-agent-server` client credentials로 받은 audience `toi-api` 액세스 토큰으로 GET `/apis`, `/apis/:apiId`를 호출합니다. 토큰은 메모리에 만료 전까지 캐시하고 401이면 한 번 새로 발급합니다. `TOI_AGENT_CLIENT_SECRET`은 dev-up이 루트 `.env`에 무작위 생성합니다. `/dev/session`은 제거했습니다. 토큰을 모델 도구 결과·SSE·프로젝트 소스에 넣지 않습니다.
 
 템플릿의 `/src/api.ts`는 **trusted host**가 번들 실행 전에 넣은 `globalThis.__TOI_FETCH_CONFIG__`를 읽어 `configureToiFetch()`를 한 번 호출합니다. 필드는 sessionToken, capabilityToken, projectId, proxyBaseUrl, env이며 값이 없으면 명확한 오류를 던집니다. 이 global은 coordinator가 채택한 `BuildInput.hostConfig.toiFetch` → preview frame 주입 계약과 같습니다. 생성 코드가 세션·capability를 발급하거나 값을 하드코딩하지 않습니다. `toiFetch(apiId,path,{reason})`는 Response를 반환하므로 `.json()`을 await합니다. reason 옵션은 W3 client가 UTF-8로 인코딩해 X-Toi-Reason으로 보냅니다.
 
@@ -168,3 +168,21 @@ SSE 원문(id/event/data 포함): [`evidence/mock-sse.log`](evidence/mock-sse.lo
 `GET /projects/:projectId/generations/active`는 해당 프로젝트의 종결되지 않은 최신 생성에 대해 `ActiveGeneration` (`generationId`, `state`, `lastSeq`, 원래 사용자 `prompt`, ISO `createdAt`)을 반환한다. 프로젝트가 없거나 활성 생성이 없으면 404다. 최신 생성이 종결되었고 이전 생성이 진행 중이면 그 이전 생성을 반환한다. 생성 레코드의 request에 prompt를, createdAt에 시작 시각을 저장한다. 서버 재시작 시 미완료 생성은 기존 규칙대로 failed 처리하므로 활성 목록에서 제외된다.
 
 F3b Origin 검사를 그대로 적용하여 정확한 studio Origin 또는 Origin 없는 서버 요청만 허용한다. preview Origin, null, 기타 Origin은 403이며 SSE와 동일하게 보호된다. 새 탭은 이 응답으로 사용자 요청을 복원하고 `Last-Event-ID` 없이 SSE 전체를 재생한다. 같은 generation의 어느 탭에서 답변해도 기존 `state: staging` 이벤트가 질문의 답변 완료를 알리고, 취소는 `state: canceled`와 `canceled` 이벤트가 모든 구독자에 전달된다. 스튜디오는 진행 중 생성 발견 시 새 생성 대신 해당 생성에 연결한다.
+
+## P0-1 identity와 프로젝트 멤버십
+
+모든 사용자 엔드포인트는 Keycloak `toi-studio` 사용자 액세스 토큰을 요구합니다. `jose@6.1.3`의 RS256 JWKS 검증으로 issuer·audience(`toi-api`)·서명·만료·필수 클레임을 검사합니다. `GET /healthz`와 OPTIONS는 공개이며 기존 정확한 Origin 및 JSON 규칙을 유지합니다. SSE도 Bearer 토큰을 요구하고 열려 있는 스트림은 매초 멤버십·액세스 토큰 만료를 확인해 종료합니다.
+
+프로젝트 생성은 builder 역할과 그룹이 필요하고 생성자가 owner, 첫 그룹이 teamId가 됩니다. 멤버십은 `data/memberships/` 아래 원자적으로 저장하며 변경마다 version이 증가합니다. 기존 익명 프로젝트는 자동 귀속하지 않으므로 로그인 후 새 프로젝트를 만드세요.
+
+| 역할 | 권한 |
+|---|---|
+| viewer | 프로젝트·활성 생성·이벤트·멤버십 열기, preview read |
+| editor | viewer + 생성·답변·취소·소스 저장, preview write |
+| owner | editor + 멤버 추가·변경·제거, live 쓰기 승인 요청 |
+
+비멤버에게는 모든 프로젝트·생성 경로가 404를 반환합니다. realm role이나 같은 팀 그룹만으로 프로젝트에 접근할 수 없습니다. `GET /projects/:id/membership`은 멤버만, `PUT /projects/:id/members/:sub {role}`와 DELETE는 owner만 허용하며 마지막 owner의 제거·강등은 409입니다. `GET /projects/:id/users?username=bob`은 owner에게 Keycloak의 활성 사용자 `{sub,username}[]`를 돌려줍니다. 사용자 이름과 sub는 클라이언트 입력을 신뢰하지 않고 IdP에서 확인합니다. agent 서비스 계정에만 realm-management view-users 권한을 부여합니다.
+
+`GET /internal/projects/:id/membership`은 Origin 없는 `toi-policy-proxy` 서비스 계정 토큰만 허용합니다. 일반 사용자, 다른 서비스 계정, azp만 서비스 이름인 사용자 토큰은 거부합니다. policy-proxy는 이를 매번 조회하므로 멤버 제거는 다음 proxy 요청부터 적용됩니다. Keycloak 계정 비활성화는 갱신 실패와 최대 5분 액세스 토큰 만료로 반영됩니다.
+
+실제 로그인은 루트 `node scripts/dev-up.mjs` 후 스튜디오에서 합니다. alice/bob/carol/dana/root 비밀번호는 `.env`의 `TOI_PASSWORD_*` 값입니다. 테스트 헬퍼도 인증을 생략하지 않고 실제 RS256 서명과 HTTP JWKS를 사용하며 실제 Keycloak UI 로그인 검증은 e2e가 담당합니다.

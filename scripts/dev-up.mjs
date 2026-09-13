@@ -1,3 +1,4 @@
+import { provisionIdentity } from './keycloak.mjs';
 import { createWriteStream } from 'node:fs';
 import { createInterface } from 'node:readline';
 import { redact, summarizeFailure } from './dev-diagnostics.mjs';
@@ -12,7 +13,7 @@ export async function ensureDevelopmentSecrets(envFile, env = process.env) {
  const known = new Set(['toi-dev-session-secret-change-before-production','toi-dev-capability-secret-change-before-production','dev-session-secret-change-me','dev-capability-secret-change-me','toi-dev-upstream-secret']);
  let contents = ''; try { contents = await readFile(envFile, 'utf8'); } catch(e) { if(e.code !== 'ENOENT') throw e; }
  let changed = false;
- for (const key of ['TOI_SESSION_SECRET','TOI_CAPABILITY_SECRET','TOI_UPSTREAM_SERVICE_TOKEN']) {
+ for (const key of ['TOI_SESSION_SECRET','TOI_CAPABILITY_SECRET','TOI_PREVIEW_SERVICE_TOKEN','TOI_LIVE_SERVICE_TOKEN','TOI_KEYCLOAK_ADMIN_PASSWORD','TOI_AGENT_CLIENT_SECRET','TOI_POLICY_CLIENT_SECRET', ...['ALICE','BOB','CAROL','DANA','ROOT'].map(user=>'TOI_PASSWORD_'+user)]) {
   if (env[key] && !known.has(env[key])) continue;
   const value = randomBytes(32).toString('hex'); env[key] = value;
   const line = new RegExp('^(?:export\\s+)?'+key+'=.*$', 'gm');
@@ -87,16 +88,18 @@ async function main() {
  });
  const healthy=async(url,headers={})=>{try{return (await fetch(url,{headers,signal:AbortSignal.timeout(1500)})).ok;}catch{return false;}};
  async function wait(url,headers={}) {
-  for(let i=0;i<120;i++){if(await healthy(url,headers))return;await new Promise(r=>setTimeout(r,500));}
+  for(let i=0;i<360;i++){if(await healthy(url,headers))return;await new Promise(r=>setTimeout(r,500));}
   throw Object.assign(new Error('Health check timed out'),{safeSummary:`health check timed out: ${url}`});
  }
  await stage('development configuration',async()=>{
   try{process.loadEnvFile(path.join(root,'.env'));}catch(e){if(e.code!=='ENOENT')throw e;}
-  process.env.NODE_ENV='development'; process.env.TOI_DEV_AUTH_ENABLED='true';
+  process.env.NODE_ENV='development'; process.env.TOI_DEV_AUTH_ENABLED='false';
+  process.env.TOI_APPROVAL_TTL_SEC = process.argv.includes('--e2e') ? '8' : (process.env.TOI_APPROVAL_TTL_SEC || '300');
   await ensureDevelopmentSecrets(path.join(root,'.env'));
   await checkInstallDirectories(root);
  });
  await stage('Docker Compose',()=>command('docker',['compose','-f','infra/docker-compose.yml','up','-d']));
+ await stage('Keycloak identity provisioning', async()=>{ await wait('http://localhost:8080/realms/toi/.well-known/openid-configuration'); await provisionIdentity(path.join(root,'.env')); });
  await stage('registry and storage health',()=>Promise.all([wait('http://localhost:4873/-/ping'),wait('http://localhost:9000/minio/health/live')]));
  // Each directory has its own lockfile, so installs are independent; run a few at a time.
  const pending=[...installDirectories];
@@ -112,14 +115,27 @@ async function main() {
  await stage('fetch client publish',()=>command('npm',['run','publish:client'],path.join(root,'services/policy-proxy')));
  let managed=[];try{managed=JSON.parse(await readFile(path.join(run,'processes.json'),'utf8'));}catch{}
  for(const {name,dir,url,args=['start']} of services) {
-  const headers=name==='mock-backend'?{'X-Service-Token':process.env.TOI_UPSTREAM_SERVICE_TOKEN}:{};
+  const headers=name==='mock-backend'?{'X-Service-Token':process.env.TOI_PREVIEW_SERVICE_TOKEN}:{};
   const serviceLog=path.join(run,name+'.log');
   await stage(`${name} start`,async()=>{
-   if(await healthy(url,headers)){log(`${name}: existing healthy service`);return;}
+   const approvalTtlSec = Number(process.env.TOI_APPROVAL_TTL_SEC);
+   const existing = managed.find(service => service.name === name);
+   if (name === 'policy-proxy' && existing && existing.approvalTtlSec !== approvalTtlSec) {
+    try { process.kill(-existing.pid, 'SIGTERM'); } catch (error) { if (error.code !== 'ESRCH') throw error; }
+    for (let attempt=0; attempt<50 && await healthy(url,headers); attempt++) await new Promise(resolve=>setTimeout(resolve,100));
+    if (await healthy(url,headers)) throw new Error('Managed policy did not stop for approval TTL change');
+    managed = managed.filter(service => service !== existing);
+    await writeFile(path.join(run,'processes.json'),JSON.stringify(managed,null,2));
+    log(`policy-proxy: applying approval TTL ${approvalTtlSec}s`);
+   }
+   if(await healthy(url,headers)) {
+    if (name === 'policy-proxy' && process.argv.includes('--e2e') && !existing) throw Object.assign(new Error('External policy process cannot be reconfigured'), {safeSummary:'stop externally started policy-proxy before using --e2e'});
+    log(`${name}: existing healthy service`);return;
+   }
    const file=await open(serviceLog,'a');
    const child=spawn('npm',args,{cwd:path.join(root,dir),detached:true,stdio:['ignore',file.fd,file.fd],env:{...process.env,AGENT_MODE:process.env.AGENT_MODE??'mock'}});
    await new Promise((resolve,reject)=>{child.once('spawn',resolve);child.once('error',reject);}).finally(()=>file.close());
-   child.unref(); managed.push({name,pid:child.pid});
+   child.unref(); managed.push({name,pid:child.pid,...(name==='policy-proxy'?{approvalTtlSec}:{})});
    await writeFile(path.join(run,'processes.json'),JSON.stringify(managed,null,2));
    try { await wait(url,headers); }
    catch(error) { error.safeSummary=summarizeFailure(await readFile(serviceLog,'utf8'),error.safeSummary); throw error; }

@@ -3,13 +3,13 @@ import type { CapabilityClaims, CapabilityRequest } from '../../../contracts/src
 export interface SessionClaims { sub: string; roles: string[]; exp: number }
 export class HttpError extends Error { constructor(readonly status: number, readonly code: string) { super(code); } }
 export const identifier = (value: unknown): value is string => typeof value === 'string' && /^[a-zA-Z0-9][a-zA-Z0-9_-]{0,99}$/.test(value);
-export function signToken(claims: object, secret: string, audience: 'session' | 'capability'): string {
+export function signToken(claims: object, secret: string, audience: 'session' | 'capability' | 'toi-preview'): string {
   const header = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url');
   const payload = Buffer.from(JSON.stringify({ ...claims, iss: 'toi-policy-proxy', aud: audience })).toString('base64url');
   const signed = `${header}.${payload}`;
   return `${signed}.${createHmac('sha256', secret).update(signed).digest('base64url')}`;
 }
-export function verifyToken(token: string, secret: string, audience: 'session' | 'capability'): Record<string, unknown> {
+export function verifyToken(token: string, secret: string, audience: 'session' | 'capability' | 'toi-preview'): Record<string, unknown> {
   if (token.length > 8192) throw new Error('Invalid token');
   const parts = token.split('.'); if (parts.length !== 3 || parts.some(part => !/^[A-Za-z0-9_-]+$/.test(part))) throw new Error('Invalid token');
   const expected = createHmac('sha256', secret).update(`${parts[0]}.${parts[1]}`).digest();
@@ -39,7 +39,7 @@ export function issueCapability(input: unknown, session: SessionClaims, secret: 
   const body = (input ?? {}) as CapabilityRequest;
   const mode = body.mode ?? 'read', env = body.env ?? 'preview', ttlSec = body.ttlSec ?? 300;
   if (!identifier(body.projectId) || !['read', 'write'].includes(mode) || !['preview', 'live'].includes(env) || !Number.isInteger(ttlSec) || ttlSec < 1 || ttlSec > 3600 || (body.apiIds !== undefined && (!Array.isArray(body.apiIds) || body.apiIds.length > 100 || !body.apiIds.every(identifier)))) throw new HttpError(400, 'INVALID_CAPABILITY_REQUEST');
-  if (mode === 'write' && !session.roles.includes('editor')) throw new HttpError(403, 'EDITOR_REQUIRED');
+  if (mode === 'write' && !session.roles.some(role => ['editor','owner'].includes(role))) throw new HttpError(403, 'EDITOR_REQUIRED');
   if (mode === 'write' && !body.apiIds?.length) throw new HttpError(400, 'WRITE_API_IDS_REQUIRED');
   const claims: CapabilityClaims = { sub: session.sub, projectId: body.projectId, mode, env, ttlSec, ...(body.apiIds ? { apiIds: [...new Set(body.apiIds)] } : {}), exp: Math.min(session.exp, Math.floor(Date.now() / 1000) + ttlSec), jti: randomUUID() };
   return { token: signToken(claims, secret, 'capability'), claims };

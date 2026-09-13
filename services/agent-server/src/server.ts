@@ -1,4 +1,5 @@
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
+import { Identity, isService, isUser } from './identity.ts';
 import { z } from 'zod';
 import { Engine, terminal, type AgentDriver } from './engine.ts';
 import { Store, type GenerationRecord } from './store.ts';
@@ -7,7 +8,8 @@ import { createProjectSchema, generationSchema, saveSchema, HttpError } from './
 import { PolicyClient } from './policy-client.ts';
 import { assertSourcePolicy } from './source-policy.ts';
 import { ToolError } from './schema.ts';
-export function createAgentServer(options: { dataDir: string; driver: AgentDriver; policy?: PolicyClient; studioOrigin?: string }) {
+export function createAgentServer(options: { dataDir: string; driver: AgentDriver; policy?: PolicyClient; studioOrigin?: string; identity?: Identity }) {
+  const identity = options.identity ?? new Identity({ clientId: 'toi-agent-server', clientSecret: process.env.TOI_AGENT_CLIENT_SECRET });
   const studioOrigin = options.studioOrigin ?? 'http://localhost:5173';
   const store = new Store(options.dataDir);
   const engine = new Engine(store, options.driver, options.policy);
@@ -33,8 +35,8 @@ export function createAgentServer(options: { dataDir: string; driver: AgentDrive
       if (origin === studioOrigin) {
         res.setHeader('Access-Control-Allow-Origin', origin);
         res.setHeader('Vary', 'Origin');
-        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Last-Event-ID');
-        res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Last-Event-ID, Authorization');
+        res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
       }
       if (req.method === 'OPTIONS') { res.writeHead(204).end(); return; }
       // Include bodyless mutations such as cancel so browser writes require preflight.
@@ -44,9 +46,45 @@ export function createAgentServer(options: { dataDir: string; driver: AgentDrive
       }
       const pathname = new URL(req.url ?? '/', 'http://localhost').pathname;
       if (pathname === '/healthz' && req.method === 'GET') return json(res, 200, { ok: true, agentMode: options.driver.mode });
+      let actor;
+      try { actor = await identity.verify(req.headers.authorization); } catch { throw new HttpError(401, 'authentication required'); }
+      const internal = /^\/internal\/projects\/([^/]+)\/membership$/.exec(pathname);
+      if (internal && req.method === 'GET') {
+        if (!isService(actor, 'toi-policy-proxy') || origin !== undefined) throw new HttpError(403, 'service identity required');
+        return json(res, 200, store.membership(decodeURIComponent(internal[1])));
+      }
+      if (!isUser(actor)) throw new HttpError(403, 'user identity required');
+      const memberRoute = /^\/projects\/([^/]+)\/(membership|members\/([^/]+)|users)$/.exec(pathname);
+      if (memberRoute) {
+        const projectId = decodeURIComponent(memberRoute[1]);
+        store.requireMember(projectId, actor.sub, memberRoute[2] === 'membership' ? 'viewer' : 'owner');
+        if (memberRoute[2] === 'membership' && req.method === 'GET') return json(res, 200, store.membership(projectId));
+        if (memberRoute[2] === 'users' && req.method === 'GET') {
+          const username = new URL(req.url!, 'http://localhost').searchParams.get('username') ?? '';
+          if (!/^[a-zA-Z0-9_.@-]{1,100}$/.test(username)) throw new HttpError(400, 'invalid username');
+          const response = await fetch(identity.issuer.replace('/realms/', '/admin/realms/') + '/users?exact=true&username=' + encodeURIComponent(username), { headers: { Authorization: `Bearer ${await identity.serviceToken()}` }, signal: AbortSignal.timeout(3000), redirect: 'error' });
+          if (!response.ok) throw new HttpError(502, 'identity directory unavailable');
+          const users = await response.json() as {id:string;username:string;enabled:boolean}[];
+          return json(res, 200, users.filter(u => u.enabled && !u.username.startsWith('service-account-')).map(u => ({ sub: u.id, username: u.username })));
+        }
+        if (memberRoute[3] && ['PUT','DELETE'].includes(req.method!)) {
+          const sub = decodeURIComponent(memberRoute[3]);
+          if (!/^[a-zA-Z0-9_-]{1,100}$/.test(sub)) throw new HttpError(400, 'invalid subject');
+          if (req.method === 'DELETE') return json(res, 200, store.updateMember(projectId, actor.sub, sub, ''));
+          const { role } = z.object({ role: z.enum(['owner','editor','viewer']) }).parse(await body(req));
+          const response = await fetch(identity.issuer.replace('/realms/', '/admin/realms/') + '/users/' + encodeURIComponent(sub), { headers: { Authorization: `Bearer ${await identity.serviceToken()}` }, signal: AbortSignal.timeout(3000), redirect: 'error' });
+          if (!response.ok) throw new HttpError(response.status === 404 ? 400 : 502, 'identity lookup failed');
+          const user = await response.json() as { username: string; enabled: boolean };
+          if (!user.enabled || user.username.startsWith('service-account-')) throw new HttpError(400, 'invalid member');
+          return json(res, 200, store.updateMember(projectId, actor.sub, sub, user.username, role));
+        }
+      }
+      const scopedProject = /^\/projects\/([^/]+)/.exec(pathname);
+      if (scopedProject) store.requireMember(decodeURIComponent(scopedProject[1]), actor.sub, req.method === 'GET' ? 'viewer' : 'editor');
       if (pathname === '/projects' && req.method === 'POST') {
+        if (!actor.realm_access.roles.includes('builder') || !actor.groups.length) throw new HttpError(403, 'builder and team required');
         const input = createProjectSchema.parse(await body(req));
-        return json(res, 201, store.createProject(input.name, input.apiIds));
+        return json(res, 201, store.createProject(input.name, input.apiIds, actor));
       }
       const activeRoute = /^\/projects\/([^/]+)\/generations\/active$/.exec(pathname);
       if (activeRoute && req.method === 'GET') {
@@ -69,13 +107,16 @@ export function createAgentServer(options: { dataDir: string; driver: AgentDrive
         }
       }
       if (pathname === '/generations' && req.method === 'POST') {
-        const generationId = engine.create(generationSchema.parse(await body(req)));
+        const input = generationSchema.parse(await body(req));
+        store.requireMember(input.projectId, actor.sub, 'editor');
+        const generationId = engine.create(input);
         return json(res, 202, { generationId });
       }
       const generationRoute = /^\/generations\/([^/]+)\/(events|answers|cancel)$/.exec(pathname);
       if (generationRoute) {
         const [, id, action] = generationRoute;
         const record = store.generation(id);
+        store.requireMember(record.request.projectId, actor.sub, req.method === 'GET' ? 'viewer' : 'editor');
         if (action === 'cancel' && req.method === 'POST') { engine.cancel(id); return json(res, 204); }
         if (action === 'answers' && req.method === 'POST') {
           const input = z.object({ questionId: z.string(), answer: z.string().max(100000) }).parse(await body(req));
@@ -94,7 +135,9 @@ export function createAgentServer(options: { dataDir: string; driver: AgentDrive
           for (const event of record.events) if (event.seq > Number(raw)) send(event);
           if (terminal(record.state)) { res.end(); return; }
           const unsubscribe = engine.subscribe(id, send);
-          const keepalive = setInterval(() => res.write(': keep-alive\n\n'), 15000);
+          const keepalive = setInterval(() => {
+            try { if (actor.exp <= Date.now() / 1000) throw new Error(); store.requireMember(record.request.projectId, actor.sub); res.write(': keep-alive\n\n'); } catch { res.end(); }
+          }, 1000);
           keepalive.unref();
           res.on('close', () => { clearInterval(keepalive); unsubscribe(); });
           return;

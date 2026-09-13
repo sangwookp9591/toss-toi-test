@@ -2,9 +2,14 @@ import { randomUUID } from 'node:crypto';
 import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { serviceRoot } from '../src/config.js';
-const base = 'http://localhost:7200', projectId = `smoke-${randomUUID()}`;
-const post = (path: string, body: unknown, token?: string) => fetch(base + path, { method: 'POST', headers: token ? { Authorization: `Bearer ${token}` } : {}, body: JSON.stringify(body) });
-const session = await (await post('/dev/session', { user: 'smoke-user', roles: ['viewer', 'editor'] })).json();
+const base = 'http://localhost:7200';
+const identityToken = process.env.TOI_ACCESS_TOKEN;
+if (!identityToken) throw new Error('Set TOI_ACCESS_TOKEN to a current Keycloak builder access token');
+const created = await fetch('http://localhost:7400/projects', { method:'POST', headers:{Authorization:`Bearer ${identityToken}`,'Content-Type':'application/json'}, body:JSON.stringify({name:'Policy smoke',apiIds:['customers']}) });
+if (!created.ok) throw new Error('Smoke project creation failed');
+const {projectId} = await created.json();
+const post = (path: string, body: unknown, token?: string) => fetch(base + path, { method: 'POST', headers: { 'Content-Type':'application/json', ...(token ? {Authorization:`Bearer ${token}`} : {}) }, body: JSON.stringify(body) });
+const session = { token: identityToken };
 const read = await (await post('/capabilities', { projectId, mode: 'read', env: 'preview', ttlSec: 300 }, session.token)).json();
 async function call(path: string, method = 'GET', token = read.token) { return fetch(base + '/proxy/customers' + path, { method, headers: { Authorization: `Bearer ${session.token}`, 'X-Toi-Project': projectId, 'X-Toi-Capability': token, 'X-Toi-Reason': 'customer support review' }, body: method === 'PATCH' ? JSON.stringify({ status: 'active' }) : undefined }); }
 const list = await call('/customers?size=20'), listBody = await list.json();

@@ -4,16 +4,20 @@ import { join } from 'node:path';
 import { createAgentServer } from '../src/server.ts';
 import { MockDriver } from '../src/mock.ts';
 import type { GenerationEvent } from '../../../contracts/src/generation.ts';
+try { process.loadEnvFile(new URL('../../../.env', import.meta.url).pathname); } catch {}
+const accessToken = process.env.TOI_ACCESS_TOKEN;
+if (!accessToken) throw new Error('Set TOI_ACCESS_TOKEN to a current Keycloak builder access token');
 mkdirSync('data', { recursive: true }); mkdirSync('evidence', { recursive: true });
 const app = createAgentServer({ dataDir: mkdtempSync(join(process.cwd(), 'data', 'smoke-')), driver: new MockDriver(20) });
-await new Promise<void>((resolve, reject) => { app.server.once('error', reject); app.server.listen(7400, '127.0.0.1', resolve); });
-const base = 'http://127.0.0.1:7400';
-const post = (path: string, body: unknown) => fetch(base + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+await new Promise<void>((resolve, reject) => { app.server.once('error', reject); app.server.listen(0, '127.0.0.1', resolve); });
+const base = `http://127.0.0.1:${(app.server.address() as {port:number}).port}`;
+const post = (path: string, body: unknown) => fetch(base + path, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization:`Bearer ${accessToken}` }, body: JSON.stringify(body) });
 let curl: ReturnType<typeof spawn> | undefined;
 try {
   const project = await (await post('/projects', { name: 'curl SSE smoke', apiIds: ['customers'] })).json();
   const { generationId } = await (await post('/generations', { projectId: project.projectId, baseRevision: project.revision, requestId: crypto.randomUUID(), prompt: '고객 목록' })).json();
-  curl = spawn('curl', ['--silent', '--show-error', '--no-buffer', '--max-time', '20', `${base}/generations/${generationId}/events`]);
+  curl = spawn('curl', ['--config', '-', '--silent', '--show-error', '--no-buffer', '--max-time', '20', `${base}/generations/${generationId}/events`]);
+  curl.stdin!.end(`header = \"Authorization: Bearer ${accessToken}\"\n`);
   let raw = ''; let buffered = ''; const events: GenerationEvent[] = []; let answer: Promise<number> | undefined;
   curl.stdout!.on('data', chunk => {
     const text = chunk.toString(); raw += text; buffered += text;

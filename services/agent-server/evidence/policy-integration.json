@@ -1,16 +1,14 @@
 {
-  "recordedAt": "2026-09-13T06:27:37.525Z",
+  "recordedAt": "2026-09-13T11:00:50.612Z",
   "passed": true,
   "transport": "Engine tools -> PolicyClient -> live :7200",
-  "serviceSessionUser": "agent-server",
-  "roles": [
-    "viewer"
-  ],
+  "serviceClient": "toi-agent-server",
+  "audience": "toi-api",
   "apiIds": [
     "customers"
   ],
   "schemaVersion": 1,
   "requireReason": true,
-  "upstreamBaseUrlExcluded": true,
+  "environmentsExcluded": true,
   "generationState": "done"
 }

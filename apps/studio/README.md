@@ -18,17 +18,33 @@ React 19 스튜디오가 채팅 생성, 파일 CAS 저장, 조합 빌드, 트랜
 
 `revision_ready` → deps-builder POST/long poll → source/manifest digest 확정 → `setDesiredRevision` → `build` 순서다. `committed`, `build_failed`, `runtime_failed`, `stale_discarded`를 사용자 문구로 표시하고 최근 커밋 시간을 보여 준다. 원시 이벤트와 세부 timings는 `window.studio.getSnapshot().events`에서 확인할 수 있다. 이 디버그 객체에는 세션·capability를 저장하지 않는다.
 
-## 세션과 쓰기
+## 로그인과 토큰 보관
 
-같은 사용자 sub에 editor+viewer 세션과 viewer 전용 세션을 별도 발급한다. editor 세션은 controller의 JS private field에만 두고 프리뷰에 보내지 않는다. 프리뷰에는 viewer 세션과 기본 read capability만 `BuildInput.hostConfig.toiFetch`로 전달한다. 프레임은 이를 동결된 `__TOI_FETCH_CONFIG__`로 주입한다.
+“Keycloak으로 로그인”을 누르고 `.env`의 `TOI_PASSWORD_ALICE` 등 사용자별 비밀번호를 입력한다. 계정은 alice·bob·carol·dana·root이며 비밀번호는 문서에 복사하지 않는다. “로그아웃”은 Keycloak SSO 세션을 종료하고 스튜디오 인증 상태를 지운다.
 
-“쓰기 테스트 허용”을 켜면 editor 세션으로 현재 프로젝트의 `apiIds`만 포함하는 120초 write capability를 발급한다. viewer 세션은 유지하고 capability만 교체해 새 프레임에 반영한다. 끄면 새 read capability로 반영한다. 화면 상태는 새 프레임에서 초기화된다. `POST /capabilities`를 viewer 세션으로 직접 호출하면 403이다.
+OIDC 클라이언트는 버전을 고정한 `oidc-client-ts@3.3.0`이며 Authorization Code + PKCE S256을 사용한다. 공개 설정은 `VITE_OIDC_ISSUER`(기본 `http://localhost:8080/realms/toi`), `VITE_OIDC_CLIENT_ID`(기본 `toi-studio`)다. 기존 esbuild 스크립트가 루트 `.env`와 프로세스 환경에서 이 두 Vite 형식 변수만 읽어 `import.meta.env`로 주입한다. client secret은 스튜디오에 필요하지 않다.
+
+access·refresh·ID 토큰은 `InMemoryWebStorage` 기반 OIDC user store와 비공개 인증 객체 메모리에만 둔다. localStorage에 토큰을 쓰지 않는다. sessionStorage에는 리다이렉트 왕복에 필요한 일회용 PKCE verifier·state·nonce와 복귀 경로만 잠깐 저장하며 callback 처리 뒤 소비한다. 새로고침·새 탭은 Keycloak의 HttpOnly SSO 쿠키와 `prompt=none` 인증 코드 흐름으로 새 메모리 토큰을 얻는다. silent callback(`/?oidc=silent`)은 인증 코드 응답만 부모에 전달하며 토큰을 교환하거나 스튜디오를 렌더링하지 않는다. 따라서 Playwright storageState의 SSO 쿠키만으로도 새 탭을 복구할 수 있다. 브라우저가 이 SSO 쿠키 사용을 막거나 세션이 끝났으면 로그인 버튼을 안내한다. 토큰을 디스크에 지속하지 않아 탈취 가능한 저장 범위를 줄이지만 같은 스튜디오 origin의 악성 스크립트에 대한 방어를 대신하지는 않는다. [oidc-client-ts 저장소 설정](https://authts.github.io/oidc-client-ts/interfaces/UserManagerSettings.html)을 따른다.
+
+모든 agent-server·policy-proxy 요청과 fetch SSE에 Bearer를 붙인다. 401이면 동시 요청이 하나의 갱신을 공유하고 원래 요청을 딱 한 번 재시도한다. 재실패나 갱신 실패에는 토큰과 프리뷰를 폐기하고 로그인 안내를 표시한다. builder에는 Keycloak 토큰을 보내지 않는다. 404에는 “프로젝트를 찾을 수 없거나 멤버가 아니에요”, 403에는 권한 부족을 안내한다.
+
+## 멤버와 live 승인
+
+“멤버 · live 쓰기 승인”에서 프로젝트 소유자는 사용자 이름으로 멤버를 추가하고 owner(소유자)·editor(편집자)·viewer(조회자) 역할을 바꾸거나 제거한다. 마지막 소유자의 제거·강등은 서버에서 거부하며 화면에 이유를 표시한다. viewer는 조회 프리뷰만 사용할 수 있고 생성·소스 저장·쓰기 테스트는 editor 이상이 필요하다.
+
+프로젝트 owner는 API와 사유로 live 쓰기 승인을 요청한다. dana 같은 해당 API의 api-owner는 프로젝트 ID로 승인 요청을 조회하고 승인·거절한다. 요청자 본인은 승인할 수 없으며 승인 상태와 유효 기한을 표시한다. 승인은 live capability 발급의 전제이며 스튜디오 프리뷰를 live로 전환하지 않는다.
+
+## 프리뷰 세션과 쓰기
+
+스튜디오는 `POST /preview-sessions`로 현재 프로젝트의 하향 세션과 capability를 함께 받는다. 프리뷰에는 그 응답의 `sessionToken`·`capabilityToken`만 `BuildInput.hostConfig.toiFetch`로 전달한다. Keycloak 토큰은 프리뷰 iframe·postMessage·URL·storage에 전달하지 않으며 debug snapshot에도 없다. 프레임은 하향 설정만 동결된 `__TOI_FETCH_CONFIG__`로 주입한다. 기존 개발용 세션 경로는 제거했다.
+
+“쓰기 테스트 허용”을 켜면 같은 endpoint에 현재 `apiIds`와 최대 120초 TTL의 `write`를 요청하고 새 하향 세션·capability로 재빌드한다. 끄면 조회 세션을 발급한다. 모든 프리뷰 capability의 환경은 preview이며 합성 upstream만 사용한다. viewer 세션은 직접 capability를 발급할 수 없다.
 
 ## 검증과 한계
 
 통합 검증은 루트 `e2e/`에서 실행한다. `npm run typecheck`, `npm run build` 통과. E2E A–F는 생성·마스킹·사유·감사, 문법 오류 보존, 오래된 실행 폐기, 권한 경계, CAS, React singleton을 확인한다.
 
-로컬 실험용이며 `/dev/session`은 개발용 인증 경로다. 실제 사용자 인증·배포용 CSP·네트워크 격리를 제공하는 제품용 보안 경계는 아니다. capability는 만료 후 쓰기를 자동 갱신하지 않으며, 다시 켜야 허용된다. 좁은 화면에서는 패널을 세로로 배치한다. 스크롤 바깥 iframe의 requestAnimationFrame 지연을 피하도록, 투명하고 inert인 candidate 프레임만 검증 중 뷰포트 안에 실제 프리뷰 크기로 배치한다. committed 이후에는 원래 프리뷰 영역으로 돌아간다. 이 스튜디오 CSS는 런타임의 `data-state="candidate"` 표시를 소비한다.
+실제 사용자 인증과 프로젝트 권한은 서버가 판정한다. 로컬 HTTP 구성에서 실행하며 배포용 TLS·CSP 구성은 별도로 적용해야 한다. capability는 만료 후 쓰기를 자동 갱신하지 않으며, 다시 켜야 허용된다. 좁은 화면에서는 패널을 세로로 배치한다. 스크롤 바깥 iframe의 requestAnimationFrame 지연을 피하도록, 투명하고 inert인 candidate 프레임만 검증 중 뷰포트 안에 실제 프리뷰 크기로 배치한다. committed 이후에는 원래 프리뷰 영역으로 돌아간다. 이 스튜디오 CSS는 런타임의 `data-state="candidate"` 표시를 소비한다.
 
 ## QA1 복구와 오류 안내
 
@@ -65,3 +81,7 @@ deps-builder HTTP 오류와 `failed` 상태의 `code`를 우선 사용한다. `r
 `runtime_failed.error`의 file/line/column도 빌드 진단과 동일한 공통 UI에서 `파일 · N행 M열`로 표시한다. 위치를 계산하는 주체는 preview-runtime이며 스튜디오는 제공된 위치를 사용한다.
 
 E2E L은 새 탭과 stale checkpoint의 전체 대화·질문 복원, 답변 완료 동기화, 중복 생성 차단과 취소를 확인한다. M은 별도 builder 프로세스의 레지스트리 프록시에서 실제 Yarn HTTP 503 실패를 일으키고 복구 후 동일 revision 재시도를 확인한다. 메모리 산출물과 임시 Yarn 캐시를 쓰며 공용 레지스트리·MinIO·서비스 포트는 변경하지 않는다.
+
+## 인증 E2E N–S
+
+`npm run typecheck`, `npm test`, `npm run build`로 인증 상태·Bearer 주입·401 갱신 공유/재시도 상한·프리뷰 토큰 격리를 검증한다. `npm --prefix e2e run test:repeat`는 A–M과 N–S(비멤버 404, 멤버 역할/제거, 4-eyes 승인/만료, preview/live 분리, 계정 비활성화, 프리뷰 토큰 미전달)를 각각 3회 실행한다. 자세한 실행 조건과 비밀값 처리 규칙은 `e2e/README.md`를 따른다.

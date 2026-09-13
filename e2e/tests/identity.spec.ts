@@ -1,0 +1,175 @@
+import { test, expect, api, admin, login, issuer, studio, agent, policy } from '../helpers/auth';
+import type { Page } from '@playwright/test';
+const snapshot = (page: Page) => page.evaluate(() => (window as any).studio?.getSnapshot());
+async function project(account: Parameters<typeof api>[0]) {
+  const response = await api(account, '/projects', { name: 'Identity boundary', apiIds: ['customers'] });
+  expect(response.status).toBe(201); return response.json();
+}
+async function preview(account: Parameters<typeof api>[0], projectId: string) {
+  const response = await api(account, '/preview-sessions', { projectId }, 'POST', policy);
+  expect(response.status).toBe(200); return response.json();
+}
+async function proxy(session: { sessionToken: string; capabilityToken: string }, projectId: string, path = '/customers', method = 'GET') {
+  return fetch(policy + '/proxy/customers' + path, { method, headers: { Origin: 'http://localhost:5174', Authorization: 'Bearer ' + session.sessionToken, 'X-Toi-Capability': session.capabilityToken, 'X-Toi-Project': projectId, 'X-Toi-Reason': 'Identity boundary verification', 'Content-Type': 'application/json' }, ...(method === 'GET' ? {} : { body: JSON.stringify({ status: 'active' }) }) });
+}
+test('N: carol nonmember receives 404 and cannot mint or use preview/capability', async ({ browser, accounts }) => {
+  const alice = await accounts('alice'); const carol = await accounts('carol'); const p = await project(alice);
+  expect((await api(carol, '/projects/' + p.projectId)).status).toBe(404);
+  expect((await api(carol, '/preview-sessions', { projectId: p.projectId }, 'POST', policy)).status).toBe(404);
+  expect((await api(carol, '/capabilities', { projectId: p.projectId, mode: 'read', env: 'preview', ttlSec: 60 }, 'POST', policy)).status).toBe(404);
+  const session = await preview(alice, p.projectId);
+  expect((await proxy({ ...session, sessionToken: await carol.token() }, p.projectId)).status).toBe(404);
+  const context = await browser.newContext({ storageState: carol.state });
+  try { const page = await context.newPage(); await page.goto(studio + '/?project=' + p.projectId); await expect(page.getByRole('status')).toContainText('프로젝트를 찾을 수 없거나 멤버가 아니에요'); await expect(page.locator('#preview iframe')).toHaveCount(0); }
+  finally { await context.close(); }
+});
+test('O: owner member UI protects last owner; viewer read only, editor generation, removal revokes proxy within 5s', async ({ page, browser, accounts }) => {
+  const alice = await accounts('alice'); const bob = await login(browser, 'bob'); const p = await project(alice);
+  await page.goto('/?project=' + p.projectId);
+  await page.getByText('멤버 · live 쓰기 승인', { exact: true }).click();
+  await expect(page.getByLabel('alice 역할')).toBeVisible();
+  await page.getByLabel('alice 역할').selectOption('viewer');
+  await expect(page.locator('.access-panel')).toContainText('마지막 소유자');
+  await page.getByLabel('추가할 사용자 이름').fill('bob'); await page.getByRole('button', { name: '멤버 추가', exact: true }).click();
+  await expect(page.getByLabel('bob 역할')).toHaveValue('viewer');
+  expect((await api(bob, '/projects/' + p.projectId + '/source', { baseRevision: p.revision, files: p.files }, 'PUT')).status).toBe(403);
+  expect((await api(bob, '/generations', { projectId: p.projectId, baseRevision: p.revision, prompt: '고객 목록', requestId: crypto.randomUUID() })).status).toBe(403);
+  const session = await preview(bob, p.projectId); expect((await proxy(session, p.projectId)).status).toBe(200);
+  const context = await browser.newContext({ storageState: bob.state });
+  try { const view = await context.newPage(); await view.goto(studio + '/?project=' + p.projectId); await expect(view.getByLabel('만들고 싶은 화면')).toBeDisabled(); await expect.poll(async () => (await snapshot(view))?.lastCommit?.token.revision).toBe(1); }
+  finally { await context.close(); }
+  await page.getByLabel('bob 역할').selectOption('editor'); await expect(page.getByLabel('bob 역할')).toHaveValue('editor');
+  const generated = await api(bob, '/generations', { projectId: p.projectId, baseRevision: p.revision, prompt: '고객 목록 화면 만들어줘', requestId: crypto.randomUUID() });
+  expect(generated.status).toBe(202); const { generationId } = await generated.json();
+  await api(bob, '/generations/' + generationId + '/cancel', {});
+  await page.getByLabel('bob 역할').locator('..').getByRole('button', { name: '제거' }).click();
+  await expect(page.getByLabel('bob 역할')).toHaveCount(0);
+  await expect.poll(async () => (await proxy(session, p.projectId)).status, { timeout: 5000, intervals: [100, 200, 500] }).toBe(404);
+});
+test('P: live write requires another API owner approval and expires', async ({ page, browser, accounts }) => {
+  test.setTimeout(380000);
+  const alice = await accounts('alice'); const dana = await accounts('dana'); const p = await project(alice);
+  const capability = () => api(alice, '/capabilities', { projectId: p.projectId, mode: 'write', env: 'live', apiIds: ['customers'], ttlSec: 120 }, 'POST', policy);
+  expect((await capability()).status).toBe(403);
+  await page.goto('/?project=' + p.projectId); await page.getByText('멤버 · live 쓰기 승인', { exact: true }).click();
+  await page.getByLabel('승인 요청 사유').fill('고객 데이터 정정 승인'); await page.getByRole('button', { name: 'live 쓰기 승인 요청', exact: true }).click();
+  await expect(page.locator('.approval-row')).toContainText('승인 대기');
+  const approvals = await (await api(alice, '/approvals?projectId=' + p.projectId, undefined, 'GET', policy)).json();
+  expect(approvals.length).toBe(1); const approval = approvals[0];
+  expect((await api(alice, '/approvals/' + approval.approvalId + '/decision', { decision: 'approved' }, 'POST', policy)).status).toBe(403);
+  const context = await browser.newContext({ storageState: dana.state });
+  try {
+    const decisionPage = await context.newPage(); await decisionPage.goto(studio); await decisionPage.getByText('멤버 · live 쓰기 승인', { exact: true }).click();
+    await decisionPage.getByLabel('승인할 프로젝트 ID').fill(p.projectId); await decisionPage.getByRole('button', { name: '승인 요청 조회', exact: true }).click();
+    await decisionPage.getByRole('button', { name: '승인', exact: true }).click(); await expect(decisionPage.locator('.approval-row')).toContainText('승인됨');
+  } finally { await context.close(); }
+  const issued = await capability(); expect(issued.status).toBe(200); const live = await issued.json();
+  const approved = await (await api(alice, '/approvals?projectId=' + p.projectId, undefined, 'GET', policy)).json();
+  const remaining = Date.parse(approved[0].expiresAt) - Date.now();
+  expect(remaining).toBeGreaterThan(0); expect(remaining).toBeLessThanOrEqual(300000);
+  await new Promise(resolve => setTimeout(resolve, remaining + 150));
+  expect((await capability()).status).toBe(403);
+  expect((await proxy({ sessionToken: await alice.token(), capabilityToken: live.token }, p.projectId, '/customers/1', 'PATCH')).status).toBe(403);
+  await page.getByRole('button', { name: '승인 상태 새로고침', exact: true }).click(); await expect(page.locator('.approval-row')).toContainText('만료됨');
+});
+test('Q: preview capability never selects live upstream', async ({ accounts }) => {
+  const alice = await accounts('alice'); const p = await project(alice); const session = await preview(alice, p.projectId);
+  for (const path of ['/customers', '/customers?env=live', '/customers?upstream=live']) {
+    const response = await proxy(session, p.projectId, path); expect(response.status).toBe(200);
+    const data = await response.json(); expect(data.dataset).toBe('preview'); expect(JSON.stringify(data).includes('live-only')).toBe(false);
+  }
+  for (const path of ['/live/customers', '/%2e%2e/live/customers']) expect((await proxy(session, p.projectId, path)).ok).toBe(false);
+});
+test.describe('R isolated serial mutation', () => {
+  test.describe.configure({ mode: 'serial' });
+  test('R: short-token renewal preserves a pending build; disabled bob cannot refresh or use expired access', async ({ browser }, testInfo) => {
+    // User API authentication binds azp to toi-studio, so a separate client cannot
+    // exercise this boundary. Serialize the shared-client fallback and restore explicitly.
+    expect(testInfo.config.workers).toBe(1);
+    const [client] = await admin('/clients?clientId=toi-studio');
+    const [bob] = await admin('/users?username=bob&exact=true');
+    const ttlKey = 'access.token.lifespan'; const originalTtl = client.attributes?.[ttlKey];
+    let context: Awaited<ReturnType<typeof browser.newContext>> | undefined;
+    try {
+      await admin('/clients/' + client.id, { ...client, attributes: { ...client.attributes, [ttlKey]: '4' } });
+      const identity = await login(browser, 'bob', 4);
+      context = await browser.newContext({ storageState: identity.state });
+      const page = await context.newPage();
+      let delayed = false; let successfulRenewals = 0; let waits = 0;
+      let latest = identity.raw;
+      // Delay the first real renewal beyond the old token's expiry, then let
+      // Keycloak issue a fresh token. This must not remount the pending workspace.
+      await page.route(issuer + '/protocol/openid-connect/token', async route => {
+        const form = new URLSearchParams(route.request().postData() ?? '');
+        if (form.get('grant_type') === 'refresh_token' && !delayed) {
+          delayed = true; await new Promise(resolve => setTimeout(resolve, 4500));
+        }
+        await route.continue();
+      });
+      page.on('response', async response => {
+        if (response.url() !== issuer + '/protocol/openid-connect/token' || !response.ok()) return;
+        const form = new URLSearchParams(response.request().postData() ?? '');
+        const value = await response.json().catch(() => undefined);
+        if (value) { latest = value; if (form.get('grant_type') === 'refresh_token') successfulRenewals++; }
+      });
+      await page.route('http://localhost:7100/package-sets', route => route.fulfill({ status: 202, json: { status: 'building', artifactKey: 'qa-refresh', startedAt: new Date().toISOString() } }));
+      await page.route('http://localhost:7100/package-sets/qa-refresh/wait?timeoutMs=30000', () => { waits++; });
+      await page.goto(studio); await page.getByRole('button', { name: '프로젝트 만들기' }).click();
+      await expect.poll(() => waits).toBe(1);
+      const controller = await page.evaluateHandle(() => (window as any).studio);
+      const before = await snapshot(page);
+      await expect.poll(() => successfulRenewals, { timeout: 20000 }).toBeGreaterThanOrEqual(2);
+      expect(await page.evaluate(saved => saved === (window as any).studio, controller)).toBe(true);
+      expect(waits).toBe(1);
+      expect((await snapshot(page)).project.projectId).toBe(before.project.projectId);
+      await expect(page.getByRole('status')).toContainText('처음 사용하는 구성 요소');
+      await controller.dispose(); await context.close(); context = undefined;
+
+      await admin('/users/' + bob.id, { enabled: false });
+      const refreshed = await fetch(issuer + '/protocol/openid-connect/token', { method: 'POST', body: new URLSearchParams({ grant_type: 'refresh_token', client_id: 'toi-studio', refresh_token: latest.refresh_token }) });
+      expect(refreshed.ok).toBe(false);
+      const claims = JSON.parse(Buffer.from(latest.access_token.split('.')[1], 'base64url').toString());
+      expect(claims.exp - claims.iat).toBeLessThanOrEqual(4);
+      await new Promise(resolve => setTimeout(resolve, Math.max(0, claims.exp * 1000 - Date.now()) + 1200));
+      const denied = await fetch(agent + '/projects/disabled-account-check', { headers: { Origin: studio, Authorization: 'Bearer ' + latest.access_token } });
+      expect(denied.status).toBe(401);
+    } finally {
+      try { await context?.close(); await admin('/users/' + bob.id, { enabled: bob.enabled }); }
+      finally {
+        // Keycloak merges attribute maps: omission does not delete a temporary key.
+        await admin('/clients/' + client.id, { ...client, attributes: { ...client.attributes, [ttlKey]: originalTtl ?? null } });
+        const restored = await admin('/clients/' + client.id);
+        expect(restored.attributes?.[ttlKey] ?? null).toBe(originalTtl ?? null);
+      }
+    }
+  });
+});
+test('S: iframe globals/storage/messages/URLs contain no Keycloak token', async ({ page }) => {
+  const identityTokens = new Set<string>();
+  page.on('response', async response => {
+    if (response.url() === issuer + '/protocol/openid-connect/token' && response.ok()) { const value = await response.json().catch(() => ({})); for (const key of ['access_token', 'refresh_token', 'id_token']) if (typeof value[key] === 'string') identityTokens.add(value[key]); }
+  });
+  await page.addInitScript(() => { const messages: unknown[] = []; Object.assign(globalThis, { __receivedMessages: messages }); addEventListener('message', event => messages.push(event.data)); });
+  await page.goto('/'); await page.getByRole('button', { name: '프로젝트 만들기' }).click();
+  await expect.poll(async () => (await snapshot(page))?.lastCommit?.token.revision).toBe(1);
+  expect(identityTokens.size > 0).toBe(true);
+  const frameMarkup = await page.locator('#preview iframe').evaluate(element => element.outerHTML);
+  expect([...identityTokens].some(token => frameMarkup.includes(token))).toBe(false);
+  const result = await page.frameLocator('#preview iframe').locator('body').evaluate(() => {
+    const visited = new WeakSet<object>(); const strings: string[] = []; let count = 0;
+    function collect(value: unknown, depth = 0) {
+      if (typeof value === 'string') { strings.push(value); return; }
+      if (!value || typeof value !== 'object' || depth > 5 || visited.has(value) || ++count > 30000) return;
+      visited.add(value);
+      try { for (const descriptor of Object.values(Object.getOwnPropertyDescriptors(value))) if ('value' in descriptor) collect(descriptor.value, depth + 1); } catch { /* Cross-origin platform objects are inaccessible. */ }
+    }
+    collect(globalThis); collect({ ...localStorage }); collect({ ...sessionStorage }); strings.push(location.href);
+    const config = (globalThis as any).__TOI_FETCH_CONFIG__;
+    return { strings, audience: JSON.parse(atob(config.sessionToken.split('.')[1])).aud, roles: JSON.parse(atob(config.sessionToken.split('.')[1])).roles };
+  });
+  // Compare in the Node worker: the test itself never sends an identity token into a frame.
+  expect(result.strings.some(value => [...identityTokens].some(token => value.includes(token)))).toBe(false);
+  expect({ audience: result.audience, roles: result.roles }).toEqual({ audience: 'toi-preview', roles: ['viewer'] });
+  const studioState = await page.evaluate(() => JSON.stringify({ ...localStorage, ...sessionStorage, snapshot: (window as any).studio.getSnapshot() }));
+  expect([...identityTokens].some(token => studioState.includes(token))).toBe(false);
+});

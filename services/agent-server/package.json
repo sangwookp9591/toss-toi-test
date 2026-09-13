@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "0.125.0",
+    "jose": "6.1.3",
     "zod": "4.6.4"
   },
   "devDependencies": {

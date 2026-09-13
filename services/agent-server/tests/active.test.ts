@@ -6,9 +6,9 @@ afterEach(async () => { for (const app of apps.splice(0)) await app.cleanup(); }
 
 it('finds the newest nonterminal generation for this project and falls back after cancel', async () => {
   const app = await start(); apps.push(app);
-  const active = () => fetch(`${app.url}/projects/${app.project.projectId}/generations/active`);
+  const active = () => app.fetch(`${app.url}/projects/${app.project.projectId}/generations/active`);
   expect((await active()).status).toBe(404);
-  expect((await fetch(`${app.url}/projects/missing/generations/active`)).status).toBe(404);
+  expect((await app.fetch(`${app.url}/projects/missing/generations/active`)).status).toBe(404);
   const first = await app.generate(); await question(app, first);
   const second = await app.generate(); await question(app, second);
   const other = app.store.createProject('Other', ['customers']);
@@ -29,7 +29,7 @@ it('finds the newest nonterminal generation for this project and falls back afte
 it.each([undefined, 'http://localhost:5173'])('active lookup permits server and studio Origin %j', async origin => {
   const app = await start(); apps.push(app);
   const id = await app.generate(); await question(app, id);
-  const response = await fetch(`${app.url}/projects/${app.project.projectId}/generations/active`, { headers: origin ? { Origin: origin } : {} });
+  const response = await app.fetch(`${app.url}/projects/${app.project.projectId}/generations/active`, { headers: origin ? { Origin: origin } : {} });
   expect(response.status).toBe(200);
   expect(response.headers.get('access-control-allow-origin')).toBe(origin ?? null);
   expect((await response.json()).generationId).toBe(id);
