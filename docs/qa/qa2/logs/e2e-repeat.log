@@ -1,0 +1,73 @@
+
+added 3 packages, and audited 4 packages in 613ms
+
+found 0 vulnerabilities
+
+> test:repeat
+> playwright test --repeat-each=3
+
+
+Running 45 tests using 1 worker
+
+(node:28064) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:28064) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/studio.spec.ts:9:1 › A: 생성, 역질문, 마스킹, 조회 사유와 감사 기록 (5.4s)
+  ✓   2 tests/studio.spec.ts:10:1 › B: 문법 오류는 마지막 정상 화면 유지 (1.3s)
+  ✓   3 tests/studio.spec.ts:11:1 › C: 이전 실행을 지연해도 최신 revision만 커밋 (3.9s)
+D preview issuance boundary: {"roles":["viewer"],"probes":[{"endpoint":"/dev/session","tokenObtained":false,"blocked":true},{"endpoint":"/capabilities","tokenObtained":false,"blocked":true}],"authenticatedCapabilityBlocked":true}
+  ✓   4 tests/studio.spec.ts:12:1 › D: viewer 자체 발급 차단, 읽기 전용 차단, 제한된 쓰기 허용 (2.3s)
+  ✓   5 tests/studio.spec.ts:25:1 › E: 두 탭 CAS 충돌과 최신 내용 다시 불러오기 (2.1s)
+  ✓   6 tests/studio.spec.ts:26:1 › F: 사내 useToast와 앱 React 인스턴스 공유 (1.3s)
+  ✓   7 tests/studio.spec.ts:37:1 › G: 역질문 새로고침 복구, Last-Event-ID 이후 답변과 revision_ready (2.2s)
+  ✓   8 tests/studio.spec.ts:54:1 › G: 복구한 질문 취소와 이미 끝난 생성·404 안내 (2.1s)
+  ✓   9 tests/studio.spec.ts:73:1 › H: 쓰기 권한 만료 시 토글 off, 안내와 read capability 재반영 (5.1s)
+  ✓  10 tests/studio.spec.ts:84:1 › I: 문법 오류 위치, 금지 패키지 이름과 runtime 원인 (1.4s)
+  ✓  11 tests/studio.spec.ts:98:1 › J: CAS 최신 불러오기 전에 파일별 내 편집 보관, 복사와 새로고침 유지 (2.8s)
+  ✓  12 tests/studio.spec.ts:118:1 › K: 존재하지 않는 패키지 버전의 실제 조합 실패와 동일 revision 재시도 (2.4s)
+  ✓  13 tests/studio.spec.ts:136:1 › K: failed 응답·연결 실패·시간 초과 구분과 새로고침 없는 재빌드 (2.1s)
+  ✓  14 tests/studio.spec.ts:170:34 › 레이아웃: 1600px 답변 버튼은 한 줄 (1.3s)
+  ✓  15 tests/studio.spec.ts:170:34 › 레이아웃: 400px 답변 버튼은 한 줄 (1.3s)
+(node:28841) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:28841) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  16 tests/studio.spec.ts:9:1 › A: 생성, 역질문, 마스킹, 조회 사유와 감사 기록 (2.1s)
+  ✓  17 tests/studio.spec.ts:10:1 › B: 문법 오류는 마지막 정상 화면 유지 (1.5s)
+  ✓  18 tests/studio.spec.ts:11:1 › C: 이전 실행을 지연해도 최신 revision만 커밋 (3.7s)
+D preview issuance boundary: {"roles":["viewer"],"probes":[{"endpoint":"/dev/session","tokenObtained":false,"blocked":true},{"endpoint":"/capabilities","tokenObtained":false,"blocked":true}],"authenticatedCapabilityBlocked":true}
+  ✓  19 tests/studio.spec.ts:12:1 › D: viewer 자체 발급 차단, 읽기 전용 차단, 제한된 쓰기 허용 (2.4s)
+  ✓  20 tests/studio.spec.ts:25:1 › E: 두 탭 CAS 충돌과 최신 내용 다시 불러오기 (2.0s)
+  ✓  21 tests/studio.spec.ts:26:1 › F: 사내 useToast와 앱 React 인스턴스 공유 (1.3s)
+  ✓  22 tests/studio.spec.ts:37:1 › G: 역질문 새로고침 복구, Last-Event-ID 이후 답변과 revision_ready (1.9s)
+  ✓  23 tests/studio.spec.ts:54:1 › G: 복구한 질문 취소와 이미 끝난 생성·404 안내 (2.0s)
+  ✓  24 tests/studio.spec.ts:73:1 › H: 쓰기 권한 만료 시 토글 off, 안내와 read capability 재반영 (5.7s)
+  ✓  25 tests/studio.spec.ts:84:1 › I: 문법 오류 위치, 금지 패키지 이름과 runtime 원인 (1.5s)
+  ✓  26 tests/studio.spec.ts:98:1 › J: CAS 최신 불러오기 전에 파일별 내 편집 보관, 복사와 새로고침 유지 (2.9s)
+  ✓  27 tests/studio.spec.ts:118:1 › K: 존재하지 않는 패키지 버전의 실제 조합 실패와 동일 revision 재시도 (2.3s)
+  ✓  28 tests/studio.spec.ts:136:1 › K: failed 응답·연결 실패·시간 초과 구분과 새로고침 없는 재빌드 (2.1s)
+  ✓  29 tests/studio.spec.ts:170:34 › 레이아웃: 1600px 답변 버튼은 한 줄 (1.4s)
+  ✓  30 tests/studio.spec.ts:170:34 › 레이아웃: 400px 답변 버튼은 한 줄 (1.5s)
+(node:29672) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:29672) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  31 tests/studio.spec.ts:9:1 › A: 생성, 역질문, 마스킹, 조회 사유와 감사 기록 (2.2s)
+  ✓  32 tests/studio.spec.ts:10:1 › B: 문법 오류는 마지막 정상 화면 유지 (1.3s)
+  ✓  33 tests/studio.spec.ts:11:1 › C: 이전 실행을 지연해도 최신 revision만 커밋 (3.7s)
+D preview issuance boundary: {"roles":["viewer"],"probes":[{"endpoint":"/dev/session","tokenObtained":false,"blocked":true},{"endpoint":"/capabilities","tokenObtained":false,"blocked":true}],"authenticatedCapabilityBlocked":true}
+  ✓  34 tests/studio.spec.ts:12:1 › D: viewer 자체 발급 차단, 읽기 전용 차단, 제한된 쓰기 허용 (2.2s)
+  ✓  35 tests/studio.spec.ts:25:1 › E: 두 탭 CAS 충돌과 최신 내용 다시 불러오기 (1.9s)
+  ✓  36 tests/studio.spec.ts:26:1 › F: 사내 useToast와 앱 React 인스턴스 공유 (1.4s)
+  ✓  37 tests/studio.spec.ts:37:1 › G: 역질문 새로고침 복구, Last-Event-ID 이후 답변과 revision_ready (2.0s)
+  ✓  38 tests/studio.spec.ts:54:1 › G: 복구한 질문 취소와 이미 끝난 생성·404 안내 (1.9s)
+  ✓  39 tests/studio.spec.ts:73:1 › H: 쓰기 권한 만료 시 토글 off, 안내와 read capability 재반영 (5.2s)
+  ✓  40 tests/studio.spec.ts:84:1 › I: 문법 오류 위치, 금지 패키지 이름과 runtime 원인 (1.3s)
+  ✓  41 tests/studio.spec.ts:98:1 › J: CAS 최신 불러오기 전에 파일별 내 편집 보관, 복사와 새로고침 유지 (2.9s)
+  ✓  42 tests/studio.spec.ts:118:1 › K: 존재하지 않는 패키지 버전의 실제 조합 실패와 동일 revision 재시도 (2.3s)
+  ✓  43 tests/studio.spec.ts:136:1 › K: failed 응답·연결 실패·시간 초과 구분과 새로고침 없는 재빌드 (2.1s)
+  ✓  44 tests/studio.spec.ts:170:34 › 레이아웃: 1600px 답변 버튼은 한 줄 (1.4s)
+  ✓  45 tests/studio.spec.ts:170:34 › 레이아웃: 400px 답변 버튼은 한 줄 (1.3s)
+
+  45 passed (1.8m)

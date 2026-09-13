@@ -1,0 +1,318 @@
+[
+  {
+    "name": "refresh-1",
+    "time": "2026-09-13T08:28:08.414Z",
+    "same": true
+  },
+  {
+    "name": "refresh-2",
+    "time": "2026-09-13T08:28:08.583Z",
+    "same": true
+  },
+  {
+    "name": "other-tab",
+    "time": "2026-09-13T08:28:09.293Z",
+    "question": 0,
+    "text": "toistudio\n고객 어드민\n로컬 실험\n● 안전한 프리뷰\n화면 만들기\n01\n✦\n\n어떤 업무를 도와드릴까요?\n고객 목록, 상세 조회처럼 필요한 화면을 이야기해 주세요.\n\n만들고 싶은 화면\n업무 데이터는 정책을 거쳐 보호돼요\n보내기 ↑\n코드 확인\n02\n⌘App.tsx\n⌘api.ts\n⌘main.tsx\n/src/App.tsx\n저장됨\n저장 버전 1\n저장하고 반영\n미리보기\n03\n버전 1 반영됨\n쓰기 테스트 허용\n조회 전용 · 개인정보 마스킹 적용\n활동 기록\n화면에 반영했어요\n350ms · 최근 화면 반영"
+  },
+  {
+    "name": "button-400",
+    "time": "2026-09-13T08:28:09.498Z",
+    "size": {
+      "width": 48,
+      "height": 34,
+      "right": 366,
+      "lineHeight": "20px",
+      "whiteSpace": "nowrap"
+    }
+  },
+  {
+    "name": "button-1600",
+    "time": "2026-09-13T08:28:09.633Z",
+    "size": {
+      "width": 48,
+      "height": 34,
+      "right": 339.078125,
+      "lineHeight": "20px",
+      "whiteSpace": "nowrap"
+    }
+  },
+  {
+    "name": "answered",
+    "time": "2026-09-13T08:28:09.813Z",
+    "revisionReady": true
+  },
+  {
+    "name": "query-initial",
+    "time": "2026-09-13T08:28:09.901Z",
+    "text": "고객 상태 변경\n조회 사유조회\n\n고객 ID고객 상태를 정지로 변경\n\n조회 사유를 입력하고 조회를 눌러 주세요"
+  },
+  {
+    "name": "write-enabled",
+    "time": "2026-09-13T08:28:11.408Z",
+    "start": 1789288090223,
+    "foot": "쓰기 허용 1:59 남음\n활동 기록"
+  },
+  {
+    "name": "security",
+    "time": "2026-09-13T08:28:33.927Z",
+    "roles": [
+      "viewer"
+    ],
+    "frozen": true,
+    "probes": [
+      {
+        "url": "http://localhost:7200/dev/session",
+        "blocked": true,
+        "error": "Failed to fetch"
+      },
+      {
+        "url": "http://localhost:7200/capabilities",
+        "blocked": true,
+        "error": "Failed to fetch"
+      },
+      {
+        "url": "http://localhost:7400/generations",
+        "blocked": true,
+        "error": "Failed to fetch"
+      }
+    ]
+  },
+  {
+    "name": "diagnostic-syntax",
+    "time": "2026-09-13T08:29:06.510Z",
+    "diagnostics": "편집 오류\nvfs:/src/App.tsx · 1행 38열\n\nExpected \"}\" but found \"<\"",
+    "preview": "QA2 정상 편집"
+  },
+  {
+    "name": "diagnostic-runtime",
+    "time": "2026-09-13T08:29:07.471Z",
+    "diagnostics": "편집 오류\n\nQA runtime failure",
+    "preview": "QA2 정상 편집"
+  },
+  {
+    "name": "diagnostic-axios",
+    "time": "2026-09-13T08:29:08.429Z",
+    "diagnostics": "편집 오류\nvfs:/src/App.tsx · 1행 18열\n\n‘axios’ 패키지는 이 프로젝트에서 쓸 수 없어요",
+    "preview": "QA2 정상 편집"
+  },
+  {
+    "name": "cas-copy",
+    "time": "2026-09-13T08:29:41.506Z",
+    "backup": "export default function App(){return <h1>QA2 보관할 내 편집</h1>}",
+    "clipboard": "export default function App(){return <h1>QA2 보관할 내 편집</h1>}"
+  },
+  {
+    "name": "cas-after-refresh",
+    "time": "2026-09-13T08:29:42.487Z",
+    "backups": 1
+  },
+  {
+    "name": "write-expired",
+    "time": "2026-09-13T08:30:25.658Z",
+    "elapsedMs": 135432,
+    "foot": "쓰기 허용 시간이 끝났어요. 다시 켜면 2분 동안 허용돼요.\n활동 기록",
+    "checked": false
+  },
+  {
+    "name": "query-loading",
+    "time": "2026-09-13T08:30:27.859Z",
+    "disabled": true
+  },
+  {
+    "name": "empty",
+    "time": "2026-09-13T08:30:29.934Z",
+    "text": "고객 상세\n조회 사유조회\n\n고객 ID\n\n조건에 맞는 고객이 없어요"
+  },
+  {
+    "name": "cancel",
+    "time": "2026-09-13T08:30:30.160Z",
+    "revision": 3,
+    "text": "생성을 중단했어요. 이전 화면은 그대로예요."
+  },
+  {
+    "name": "policy-down",
+    "time": "2026-09-13T08:30:53.704Z",
+    "text": "고객 상세\n조회 사유조회\n\n정책 서버에 연결하지 못했어요. 잠시 후 다시 시도하세요.\n\n고객 ID"
+  },
+  {
+    "name": "policy-recovered",
+    "time": "2026-09-13T08:31:21.100Z",
+    "samePage": true
+  },
+  {
+    "name": "backend-down",
+    "time": "2026-09-13T08:31:35.056Z",
+    "text": "고객 상세\n조회 사유조회\n\n고객 시스템이 응답하지 않아요. 잠시 후 다시 시도하세요.\n\n고객 ID"
+  },
+  {
+    "name": "backend-recovered",
+    "time": "2026-09-13T08:31:47.229Z",
+    "samePage": true
+  },
+  {
+    "name": "builder-killed",
+    "time": "2026-09-13T08:31:48.474Z",
+    "status": 202,
+    "pid": 9834
+  },
+  {
+    "name": "builder-first-failed",
+    "time": "2026-09-13T08:31:48.627Z",
+    "text": "화면을 처음 준비하지 못했어요: 구성 요소 준비 실패 · 구성 요소 서비스 연결 실패\n다시 시도",
+    "hasCommit": false
+  },
+  {
+    "name": "builder-retry",
+    "time": "2026-09-13T08:32:21.539Z",
+    "sameNavigation": true,
+    "revision": 2
+  },
+  {
+    "name": "minio-set",
+    "time": "2026-09-13T08:32:41.401Z",
+    "revision": 3,
+    "packageSet": {
+      "entries": [
+        "react",
+        "react-dom/client",
+        "react/jsx-runtime",
+        "@tanstack/react-query",
+        "@toi/tds",
+        "@toi/fetch",
+        "react-dom",
+        "react/jsx-dev-runtime"
+      ],
+      "dependencies": {
+        "react": "19.3.0",
+        "react-dom": "19.3.0",
+        "@tanstack/react-query": "^5.0.0",
+        "@toi/tds": "1.0.0",
+        "@toi/fetch": "1.0.0"
+      }
+    }
+  },
+  {
+    "name": "minio-failed",
+    "time": "2026-09-13T08:32:41.515Z",
+    "text": "이전 화면을 유지했어요: 구성 요소 준비 실패 · 구성 요소 서비스 응답 오류\n다시 시도",
+    "previousRevision": 2
+  },
+  {
+    "name": "minio-first-retry",
+    "time": "2026-09-13T08:33:45.028Z",
+    "result": "immediate retry after container start failed; health was not awaited"
+  },
+  {
+    "name": "minio-retry",
+    "time": "2026-09-13T08:33:46.046Z",
+    "sameNavigation": true,
+    "revision": 3
+  },
+  {
+    "name": "verdaccio-set",
+    "time": "2026-09-13T08:33:58.549Z",
+    "revision": 4,
+    "packageSet": {
+      "entries": [
+        "react",
+        "react-dom/client",
+        "react/jsx-runtime",
+        "@tanstack/react-query",
+        "@toi/tds",
+        "@toi/fetch",
+        "react-dom",
+        "react/jsx-dev-runtime"
+      ],
+      "dependencies": {
+        "react": "19.3.0",
+        "react-dom": "19.3.0",
+        "@tanstack/react-query": "^5.0.0",
+        "@toi/tds": "1.1.0",
+        "@toi/fetch": "1.0.0"
+      }
+    }
+  },
+  {
+    "name": "verdaccio-first-attempt",
+    "time": "2026-09-13T08:38:13.569Z",
+    "result": "revision 4 committed; request raced container shutdown, no fault proven"
+  },
+  {
+    "name": "verdaccio-set-verified-down",
+    "time": "2026-09-13T08:38:13.585Z",
+    "revision": 5,
+    "packageSet": {
+      "entries": [
+        "react",
+        "react-dom/client",
+        "react/jsx-runtime",
+        "@tanstack/react-query",
+        "@toi/tds",
+        "@toi/fetch",
+        "react-dom",
+        "react/jsx-dev-runtime"
+      ],
+      "dependencies": {
+        "react": "19.3.0",
+        "react-dom": "19.3.0",
+        "@tanstack/react-query": "^5.0.0",
+        "@toi/tds": "^1.1.0",
+        "@toi/fetch": "1.0.0"
+      }
+    }
+  },
+  {
+    "name": "verdaccio-failed",
+    "time": "2026-09-13T08:38:21.191Z",
+    "text": "이전 화면을 유지했어요: 구성 요소 준비 실패 · 패키지 또는 버전 확인 필요\n다시 시도",
+    "previousRevision": 4
+  },
+  {
+    "name": "verdaccio-retry",
+    "time": "2026-09-13T08:39:04.864Z",
+    "sameNavigation": true,
+    "revision": 5,
+    "packageSetUnchanged": true
+  },
+  {
+    "name": "browser",
+    "time": "2026-09-13T08:39:04.864Z",
+    "version": "153.0.8010.36",
+    "mode": "system Chrome headed"
+  },
+  {
+    "name": "control-process",
+    "time": "2026-09-13T08:40:27.091Z",
+    "pid": 11209
+  },
+  {
+    "name": "new-ui-text-scan",
+    "time": "2026-09-13T08:40:27.100Z",
+    "pages": [
+      {
+        "url": "http://localhost:5173/?project=c545f585-f0ab-4294-9716-85922f852c31",
+        "text": [
+          "조회 전용 · 개인정보 마스킹 적용활동 기록",
+          "생성을 중단했어요. 이전 화면은 그대로예요."
+        ]
+      },
+      {
+        "url": "http://localhost:5173/?project=c3708dcb-50d7-41b4-b250-68bc3ede4e72",
+        "text": [
+          "내 편집 보관본2026. 9. 13. 오후 5:29:41/src/main.tsximport { createRoot } from 'react-dom/client';\nimport App from './App';\ncreateRoot(document.getElementById('root')!).render(<App />);\n복사/src/App.tsxexport default function App(){return <h1>QA2 보관할 내 편집</h1>}복사/src/api.tsimport { configureToiFetch, toiFetch } from '@toi/fetch';\n// The trusted preview host injects runtime credentials; generated code never mints them.\ntype HostConfig = Parameters<typeof configureToiFetch>[0];\nconst hostConfig = (globalThis as typeof globalThis & { __TOI_FETCH_CONFIG__?: HostConfig }).__TOI_FETCH_CONFIG__;\nif (!hostConfig) throw new Error('Preview host configuration missing: __TOI_FETCH_CONFIG__');\nconfigureToiFetch(hostConfig);\nexport async function listRecords(reason: string) {\n  const response = await toiFetch(\"customers\", '/customers', { reason });\n  return response.json();\n}\nexport async function getRecord(id: string, reason: string) {\n  const response = await toiFetch(\"customers\", '/customers/' + encodeURIComponent(id), { reason });\n  return response.json();\n}\nexport async function updateStatus(id: string, status: 'active' | 'inactive' | 'suspended', reason: string) {\n  const response = await toiFetch(\"customers\", '/customers/' + encodeURIComponent(id), {\n    method: 'PATCH', reason, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status })\n  });\n  return response.json();\n}\n복사",
+          "조회 전용 · 개인정보 마스킹 적용활동 기록",
+          "화면에 반영했어요"
+        ]
+      },
+      {
+        "url": "http://localhost:5173/?project=fbce9d81-eec2-497c-8df4-9390dad490ba",
+        "text": [
+          "조회 전용 · 개인정보 마스킹 적용활동 기록",
+          "화면에 반영했어요"
+        ]
+      }
+    ],
+    "internalAddressMatches": []
+  }
+]

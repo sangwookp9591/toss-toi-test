@@ -1,0 +1,23 @@
+{
+  "time": "2026-09-13T08:42:53.115477+00:00",
+  "ports": {
+    "4873": "",
+    "9000": "",
+    "5173": "",
+    "5174": "",
+    "7100": "",
+    "7200": "",
+    "7300": "",
+    "7400": ""
+  },
+  "allEightPortsFree": true,
+  "managedPidsAlive": [],
+  "managedGroupProcesses": [],
+  "qa2Containers": [],
+  "volumesPreserved": [
+    "toi-qa2_minio-data",
+    "toi-qa2_verdaccio-auth",
+    "toi-qa2_verdaccio-storage"
+  ],
+  "gitStatus": "?? docs/qa/qa2/"
+}
