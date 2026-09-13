@@ -24,3 +24,160 @@ console.log('D preview issuance boundary:',JSON.stringify({roles:security.roles,
 expect(security.probes).toHaveLength(2);expect(security.probes.map((probe:any)=>probe.endpoint)).toEqual(['/dev/session','/capabilities']);for(const probe of security.probes){expect(probe.tokenObtained).toBe(false);expect(probe.blocked).toBe(true);}expect(security.blocked).toBe(true);expect(security.roles).toEqual(['viewer']);await frame(page).getByLabel('조회 사유').fill('고객 문의 확인');await frame(page).getByRole('button',{name:'고객 상태를 정지로 변경'}).click();await expect(frame(page).getByRole('alert')).toContainText('쓰기 권한');const attempt=(await snapshot(page)).lastCommit.token.attemptId;await page.getByRole('checkbox',{name:'쓰기 테스트 허용'}).check();await expect.poll(async()=> (await snapshot(page)).lastCommit.token.attemptId).not.toBe(attempt);expect(await frame(page).locator('body').evaluate(()=> (globalThis as any).__TOI_FETCH_CONFIG__.sessionToken)).toBe(security.sessionToken);await frame(page).getByLabel('조회 사유').fill('고객 상태 변경 확인');await frame(page).getByRole('button',{name:'고객 상태를 정지로 변경'}).click();await expect(frame(page).getByRole('status')).toContainText('상태를 정지로 바꿨어요');await expect.poll(async()=>{await page.evaluate(()=> (window as any).studio.loadAudit());return (await snapshot(page)).audit.some((x:any)=>x.method==='PATCH'&&x.decision==='allowed');}).toBe(true);});
 test('E: 두 탭 CAS 충돌과 최신 내용 다시 불러오기',async({page,context})=>{await create(page);const tab=await context.newPage();await tab.goto(page.url());await commit(tab,1);await Promise.all([page.getByLabel('소스 코드').fill(plain('첫 탭')),tab.getByLabel('소스 코드').fill(plain('둘째 탭'))]);await Promise.all([page.getByRole('button',{name:'저장하고 반영'}).click(),tab.getByRole('button',{name:'저장하고 반영'}).click()]);await expect.poll(async()=>Number((await snapshot(page)).conflict)+Number((await snapshot(tab)).conflict)).toBe(1);const loser=(await snapshot(page)).conflict?page:tab;await expect(loser.getByRole('alert')).toContainText('다른 탭에서 먼저 저장');await loser.getByRole('button',{name:'최신 내용 불러오기'}).click();await expect.poll(async()=> (await snapshot(loser)).project.revision).toBe(2);await tab.close();});
 test('F: 사내 useToast와 앱 React 인스턴스 공유',async({page})=>{const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));await create(page);await save(page,`import React from 'react';import {ToastProvider,useToast,reactInstance} from '@toi/tds';function Content(){const {toast}=useToast();return <><p>{React===(reactInstance.default??reactInstance)?'동일 React':'React 불일치'}</p><button onClick={()=>toast('토스트 성공')}>알림 띄우기</button></>}export default function App(){return <ToastProvider><Content/></ToastProvider>}`);await commit(page,2);await expect(frame(page).getByText('동일 React')).toBeVisible();await frame(page).getByRole('button',{name:'알림 띄우기'}).click();await expect(frame(page).getByText('토스트 성공')).toBeVisible();expect(errors).toEqual([]);expect((await snapshot(page)).events.filter((x:any)=>x.type==='runtime_failed')).toEqual([]);});
+
+async function pendingQuestion(page: Page) {
+  await page.getByLabel('만들고 싶은 화면').fill('고객 목록 화면 만들어줘');
+  await page.getByRole('button', { name: '보내기' }).click();
+  await expect(page.locator('.question')).toBeVisible();
+}
+const recovery = (page: Page) => page.evaluate(() => {
+  const id = (window as any).studio.getSnapshot().project.projectId;
+  return JSON.parse(sessionStorage.getItem(`toi-studio-generation-v1:${id}`) ?? 'null');
+});
+test('G: 역질문 새로고침 복구, Last-Event-ID 이후 답변과 revision_ready', async ({ page }) => {
+  await create(page); await pendingQuestion(page);
+  const before = await recovery(page);
+  expect(before.seq).toBeGreaterThan(0);
+  const stream = page.waitForRequest(request => request.url().includes(`/generations/${before.generationId}/events`));
+  await page.reload();
+  expect((await stream).headers()['last-event-id']).toBe(String(before.seq));
+  await expect(page.locator('.question strong')).toHaveText(before.question.question);
+  expect((await snapshot(page)).chats).toEqual(before.chats);
+  await expect(page.getByRole('status')).toContainText('한 가지만 더 알려 주세요');
+  await expect(page.getByRole('button', { name: '생성 중단' })).toBeEnabled();
+  await page.getByLabel('추가 답변').fill('아니요');
+  await page.getByRole('button', { name: '답변', exact: true }).click();
+  await commit(page, 2);
+  expect((await snapshot(page)).generationEvents.some((event: any) => event.type === 'revision_ready')).toBe(true);
+  await expect.poll(() => recovery(page)).toBeNull();
+});
+test('G: 복구한 질문 취소와 이미 끝난 생성·404 안내', async ({ page }) => {
+  await create(page); await pendingQuestion(page);
+  const saved = await recovery(page); const url = page.url();
+  await page.reload();
+  await expect(page.locator('.question')).toBeVisible();
+  await page.getByRole('button', { name: '생성 중단' }).click();
+  await expect.poll(() => recovery(page)).toBeNull();
+  await expect(page.locator('.generation-notice')).toContainText('진행 중이던 생성이 끝났어요: 중단');
+  // Recreate the persisted checkpoint from before the terminal event arrived.
+  await page.evaluate(saved => sessionStorage.setItem(`toi-studio-generation-v1:${(window as any).studio.getSnapshot().project.projectId}`, JSON.stringify(saved)), saved);
+  await page.goto(url);
+  await expect(page.locator('.generation-notice')).toContainText('진행 중이던 생성이 끝났어요: 중단');
+  await expect.poll(() => recovery(page)).toBeNull();
+  await page.evaluate(saved => sessionStorage.setItem(`toi-studio-generation-v1:${(window as any).studio.getSnapshot().project.projectId}`, JSON.stringify({ ...saved, generationId: crypto.randomUUID() })), saved);
+  await page.reload();
+  await expect(page.locator('.generation-notice')).toContainText('진행 중이던 생성이 끝났어요: 기록을 찾을 수 없어요');
+  await expect.poll(() => recovery(page)).toBeNull();
+  await expect(page.getByLabel('만들고 싶은 화면')).toBeEnabled();
+});
+test('H: 쓰기 권한 만료 시 토글 off, 안내와 read capability 재반영', async ({ page }) => {
+  await page.addInitScript(() => { (window as any).__STUDIO_TEST_CONFIG__ = { writeTtlSec: 4 }; });
+  await create(page);
+  const original = (await snapshot(page)).lastCommit.token.attemptId;
+  await page.getByRole('checkbox', { name: '쓰기 테스트 허용' }).check();
+  await expect(page.locator('.preview-foot')).toContainText(/쓰기 허용 0:0[1-4] 남음/);
+  await expect.poll(async () => (await snapshot(page)).lastCommit.token.attemptId).not.toBe(original);
+  await expect(page.getByRole('checkbox', { name: '쓰기 테스트 허용' })).not.toBeChecked();
+  await expect(page.locator('.preview-foot')).toContainText('쓰기 허용 시간이 끝났어요. 다시 켜면 2분 동안 허용돼요.');
+  await expect.poll(async () => frame(page).locator('body').evaluate(() => JSON.parse(atob((globalThis as any).__TOI_FETCH_CONFIG__.capabilityToken.split('.')[1])).mode)).toBe('read');
+});
+test('I: 문법 오류 위치, 금지 패키지 이름과 runtime 원인', async ({ page }) => {
+  await create(page);
+  await save(page, 'export default function App( {');
+  const errors = page.getByRole('alert', { name: '편집 오류' });
+  await expect(errors).toContainText('/src/App.tsx');
+  await expect(errors).toContainText(/1행.*열/);
+  await expect(page.getByRole('status')).toContainText('이전 화면을 유지했어요: 문법 오류');
+  await save(page, "import axios from 'axios'; export default function App(){return <h1>{String(axios)}</h1>}");
+  await expect(errors).toContainText('‘axios’ 패키지는 이 프로젝트에서 쓸 수 없어요');
+  await expect(page.getByRole('status')).toContainText('허용되지 않은 패키지');
+  await save(page, "throw new Error('QA runtime failure'); export default function App(){return <h1>실패</h1>}");
+  await expect(errors).toContainText('QA runtime failure');
+  expect((await snapshot(page)).lastCommit.token.revision).toBe(1);
+});
+test('J: CAS 최신 불러오기 전에 파일별 내 편집 보관, 복사와 새로고침 유지', async ({ page, context }) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  await create(page);
+  const tab = await context.newPage(); await tab.goto(page.url()); await commit(tab, 1);
+  const local = plain('보관해야 하는 내 편집');
+  await tab.getByLabel('소스 코드').fill(local);
+  await save(page, plain('다른 탭에서 저장한 최신 편집')); await commit(page, 2);
+  await tab.getByRole('button', { name: '저장하고 반영' }).click();
+  await expect(tab.getByRole('alert')).toContainText('내 편집은 보관본으로 남겨요');
+  await tab.getByRole('button', { name: '최신 내용 불러오기' }).click(); await commit(tab, 2);
+  await expect(tab.getByLabel('소스 코드')).toHaveValue(plain('다른 탭에서 저장한 최신 편집'));
+  const backup = tab.locator('.edit-backups details').filter({ has: tab.locator('summary', { hasText: '/src/App.tsx' }) });
+  await backup.locator('summary').click();
+  await expect(tab.getByLabel('보관본 /src/App.tsx')).toHaveValue(local);
+  await backup.getByRole('button', { name: '복사', exact: true }).click();
+  expect(await tab.evaluate(() => navigator.clipboard.readText())).toBe(local);
+  await tab.reload(); await commit(tab, 2);
+  expect((await snapshot(tab)).backups[0].files['/src/App.tsx']).toBe(local);
+  await tab.close();
+});
+test('K: 존재하지 않는 패키지 버전의 실제 조합 실패와 동일 revision 재시도', async ({ page, request }) => {
+  const project = await (await request.post('http://localhost:7400/projects', { data: { name: '의존성 장애 검증', apiIds: ['customers'] } })).json();
+  const changed = await request.put(`http://localhost:7400/projects/${project.projectId}/source`, { data: {
+    baseRevision: project.revision, files: project.files,
+    packageSet: { ...project.packageSet, dependencies: { ...project.packageSet.dependencies, '@toi/tds': '9999.0.0-qa-missing' } },
+  } });
+  expect(changed.ok()).toBe(true);
+  let requests = 0;
+  page.on('request', req => { if (req.url() === 'http://localhost:7100/package-sets' && req.method() === 'POST') requests++; });
+  await page.goto(`/?project=${project.projectId}`);
+  await expect(page.getByRole('status')).toContainText('화면을 처음 준비하지 못했어요: 구성 요소 준비 실패');
+  await expect(page.getByRole('status')).toContainText('패키지 또는 버전 확인 필요');
+  await expect(page.locator('.preview-pane').getByRole('button', { name: '다시 시도' })).toBeVisible();
+  await page.locator('.preview-pane').getByRole('button', { name: '다시 시도' }).click();
+  await expect.poll(() => requests).toBe(2);
+  await expect(page.getByRole('status')).toContainText('화면을 처음 준비하지 못했어요: 구성 요소 준비 실패');
+  expect((await snapshot(page)).project.revision).toBe(2);
+});
+test('K: failed 응답·연결 실패·시간 초과 구분과 새로고침 없는 재빌드', async ({ page }) => {
+  let failure: 'failed' | 'connection' | 'timeout' | undefined = 'failed';
+  let posts = 0;
+  await page.route('http://localhost:7100/package-sets', async route => {
+    posts++;
+    if (failure === 'failed') await route.fulfill({ json: { status: 'failed', artifactKey: 'qa', error: 'Dependency build failed https://internal.example/private?token=do-not-display' } });
+    else if (failure === 'connection') await route.abort('connectionrefused');
+    else if (failure === 'timeout') await route.fulfill({ status: 202, json: { status: 'building', artifactKey: 'qa-timeout', startedAt: new Date().toISOString() } });
+    else await route.continue();
+  });
+  await page.route('http://localhost:7100/package-sets/qa-timeout/wait?timeoutMs=30000', () => {});
+  await page.goto('/'); await page.getByRole('button', { name: '프로젝트 만들기' }).click();
+  await expect(page.getByRole('status')).toContainText('구성 요소 빌드 실패');
+  await expect(page.locator('body')).not.toContainText('internal.example');
+  await expect(page.locator('body')).not.toContainText('do-not-display');
+  failure = 'connection';
+  await page.getByRole('status').getByRole('button', { name: '다시 시도' }).click();
+  await expect(page.getByRole('status')).toContainText('구성 요소 서비스 연결 실패');
+  await page.clock.install(); failure = 'timeout';
+  await page.getByRole('status').getByRole('button', { name: '다시 시도' }).click();
+  await expect(page.getByRole('status')).toContainText('처음 사용하는 구성 요소');
+  await page.clock.runFor(90001);
+  await expect(page.getByRole('status')).toContainText('대기 시간 초과');
+  failure = undefined;
+  await page.getByRole('status').getByRole('button', { name: '다시 시도' }).click();
+  await commit(page, 1);
+  expect(posts).toBe(4);
+  await expect(page.getByRole('button', { name: '다시 시도' })).toHaveCount(0);
+  failure = 'connection'; await save(page, plain('장애 뒤 재시도'));
+  await expect(page.getByRole('status')).toContainText('이전 화면을 유지했어요: 구성 요소 준비 실패');
+  failure = undefined;
+  await page.locator('.preview-pane').getByRole('button', { name: '다시 시도' }).click(); await commit(page, 2);
+  await expect(frame(page).getByText('장애 뒤 재시도')).toBeVisible();
+});
+for (const width of [1600, 400]) test(`레이아웃: ${width}px 답변 버튼은 한 줄`, async ({ page }) => {
+  await page.setViewportSize({ width, height: 1000 });
+  await create(page); await pendingQuestion(page);
+  const button = page.getByRole('button', { name: '답변', exact: true });
+  await expect(button).toBeVisible();
+  const size = await button.evaluate(el => {
+    const style = getComputedStyle(el); const box = el.getBoundingClientRect();
+    return { height: box.height, line: parseFloat(style.lineHeight), padding: parseFloat(style.paddingTop) + parseFloat(style.paddingBottom), width: box.width, right: box.right };
+  });
+  expect(size.height).toBeLessThanOrEqual(size.line + size.padding + 2);
+  expect(size.width).toBeGreaterThanOrEqual(48); expect(size.right).toBeLessThanOrEqual(width);
+  await page.screenshot({ path: `artifacts/question-${width}.png`, fullPage: true });
+  await page.getByRole('button', { name: '생성 중단' }).click();
+});

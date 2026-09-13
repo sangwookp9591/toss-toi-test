@@ -87,12 +87,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 3615,
+                  "duration": 2320,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T05:53:11.742Z",
+                  "startTime": "2026-09-13T08:17:38.085Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -121,12 +121,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1279,
+                  "duration": 1308,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T05:53:15.772Z",
+                  "startTime": "2026-09-13T08:17:40.815Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -155,12 +155,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 3748,
+                  "duration": 3826,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T05:53:17.063Z",
+                  "startTime": "2026-09-13T08:17:42.132Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -189,12 +189,16 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2334,
+                  "duration": 2278,
                   "errors": [],
-                  "stdout": [],
+                  "stdout": [
+                    {
+                      "text": "D preview issuance boundary: {\"roles\":[\"viewer\"],\"probes\":[{\"endpoint\":\"/dev/session\",\"tokenObtained\":false,\"blocked\":true},{\"endpoint\":\"/capabilities\",\"tokenObtained\":false,\"blocked\":true}],\"authenticatedCapabilityBlocked\":true}\n"
+                    }
+                  ],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T05:53:20.822Z",
+                  "startTime": "2026-09-13T08:17:45.967Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -223,12 +227,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2082,
+                  "duration": 2099,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T05:53:23.165Z",
+                  "startTime": "2026-09-13T08:17:48.255Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -238,7 +242,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-34118f2408e9be774440",
           "file": "studio.spec.ts",
-          "line": 13,
+          "line": 25,
           "column": 1
         },
         {
@@ -257,12 +261,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1450,
+                  "duration": 1311,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T05:53:25.257Z",
+                  "startTime": "2026-09-13T08:17:50.366Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -272,8 +276,314 @@
           ],
           "id": "64bdea7002f9c9cea9f4-12ab9d20c94ec765290d",
           "file": "studio.spec.ts",
-          "line": 14,
+          "line": 26,
           "column": 1
+        },
+        {
+          "title": "G: 역질문 새로고침 복구, Last-Event-ID 이후 답변과 revision_ready",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2112,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T08:17:51.688Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-d5e55d82a515c594b071",
+          "file": "studio.spec.ts",
+          "line": 37,
+          "column": 1
+        },
+        {
+          "title": "G: 복구한 질문 취소와 이미 끝난 생성·404 안내",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2231,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T08:17:53.810Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-f824ed686dfa9a511533",
+          "file": "studio.spec.ts",
+          "line": 54,
+          "column": 1
+        },
+        {
+          "title": "H: 쓰기 권한 만료 시 토글 off, 안내와 read capability 재반영",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5634,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T08:17:56.054Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-6751c35e3b5db59ac0cc",
+          "file": "studio.spec.ts",
+          "line": 73,
+          "column": 1
+        },
+        {
+          "title": "I: 문법 오류 위치, 금지 패키지 이름과 runtime 원인",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1391,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T08:18:01.699Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-5cd82d245e7d7aed83f7",
+          "file": "studio.spec.ts",
+          "line": 84,
+          "column": 1
+        },
+        {
+          "title": "J: CAS 최신 불러오기 전에 파일별 내 편집 보관, 복사와 새로고침 유지",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2907,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T08:18:03.098Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-b8e39e525b14bcfc2235",
+          "file": "studio.spec.ts",
+          "line": 98,
+          "column": 1
+        },
+        {
+          "title": "K: 존재하지 않는 패키지 버전의 실제 조합 실패와 동일 revision 재시도",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2464,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T08:18:06.013Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-b12b401434ed730562ef",
+          "file": "studio.spec.ts",
+          "line": 118,
+          "column": 1
+        },
+        {
+          "title": "K: failed 응답·연결 실패·시간 초과 구분과 새로고침 없는 재빌드",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2160,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T08:18:08.493Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-0ed9cbc225e1f3b6ee7b",
+          "file": "studio.spec.ts",
+          "line": 136,
+          "column": 1
+        },
+        {
+          "title": "레이아웃: 1600px 답변 버튼은 한 줄",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1322,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T08:18:10.662Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-8c2733647c2d925d6171",
+          "file": "studio.spec.ts",
+          "line": 170,
+          "column": 34
+        },
+        {
+          "title": "레이아웃: 400px 답변 버튼은 한 줄",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1358,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T08:18:11.994Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-01fff78adf46c6b51ea9",
+          "file": "studio.spec.ts",
+          "line": 170,
+          "column": 34
         },
         {
           "title": "A: 생성, 역질문, 마스킹, 조회 사유와 감사 기록",
@@ -291,12 +601,12 @@
                   "workerIndex": 1,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2162,
+                  "duration": 2123,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T05:53:27.339Z",
+                  "startTime": "2026-09-13T08:18:13.994Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -325,12 +635,12 @@
                   "workerIndex": 1,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1333,
+                  "duration": 1500,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T05:53:29.848Z",
+                  "startTime": "2026-09-13T08:18:16.569Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -359,12 +669,12 @@
                   "workerIndex": 1,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 3716,
+                  "duration": 3745,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T05:53:31.191Z",
+                  "startTime": "2026-09-13T08:18:18.079Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -393,12 +703,16 @@
                   "workerIndex": 1,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2232,
+                  "duration": 2297,
                   "errors": [],
-                  "stdout": [],
+                  "stdout": [
+                    {
+                      "text": "D preview issuance boundary: {\"roles\":[\"viewer\"],\"probes\":[{\"endpoint\":\"/dev/session\",\"tokenObtained\":false,\"blocked\":true},{\"endpoint\":\"/capabilities\",\"tokenObtained\":false,\"blocked\":true}],\"authenticatedCapabilityBlocked\":true}\n"
+                    }
+                  ],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T05:53:34.917Z",
+                  "startTime": "2026-09-13T08:18:21.833Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -427,12 +741,12 @@
                   "workerIndex": 1,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2101,
+                  "duration": 2199,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T05:53:37.160Z",
+                  "startTime": "2026-09-13T08:18:24.140Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -442,7 +756,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-4a1978ccdf3ab823649a",
           "file": "studio.spec.ts",
-          "line": 13,
+          "line": 25,
           "column": 1
         },
         {
@@ -461,12 +775,12 @@
                   "workerIndex": 1,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1277,
+                  "duration": 1495,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T05:53:39.271Z",
+                  "startTime": "2026-09-13T08:18:26.348Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -476,8 +790,314 @@
           ],
           "id": "64bdea7002f9c9cea9f4-8dacaa6999ffdb001752",
           "file": "studio.spec.ts",
-          "line": 14,
+          "line": 26,
           "column": 1
+        },
+        {
+          "title": "G: 역질문 새로고침 복구, Last-Event-ID 이후 답변과 revision_ready",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2248,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T08:18:27.853Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-3d0a5d3cd56fea00e757",
+          "file": "studio.spec.ts",
+          "line": 37,
+          "column": 1
+        },
+        {
+          "title": "G: 복구한 질문 취소와 이미 끝난 생성·404 안내",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2143,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T08:18:30.110Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-1fecd2ab7ea7874c40ab",
+          "file": "studio.spec.ts",
+          "line": 54,
+          "column": 1
+        },
+        {
+          "title": "H: 쓰기 권한 만료 시 토글 off, 안내와 read capability 재반영",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5218,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T08:18:32.264Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-31b9fe3d02210cedeb9b",
+          "file": "studio.spec.ts",
+          "line": 73,
+          "column": 1
+        },
+        {
+          "title": "I: 문법 오류 위치, 금지 패키지 이름과 runtime 원인",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1380,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T08:18:37.492Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-292aaccaf9fce03f35e0",
+          "file": "studio.spec.ts",
+          "line": 84,
+          "column": 1
+        },
+        {
+          "title": "J: CAS 최신 불러오기 전에 파일별 내 편집 보관, 복사와 새로고침 유지",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2979,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T08:18:38.881Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-79408440567dfbf2150b",
+          "file": "studio.spec.ts",
+          "line": 98,
+          "column": 1
+        },
+        {
+          "title": "K: 존재하지 않는 패키지 버전의 실제 조합 실패와 동일 revision 재시도",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2282,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T08:18:41.871Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-347f5c84f5a14afa0b3f",
+          "file": "studio.spec.ts",
+          "line": 118,
+          "column": 1
+        },
+        {
+          "title": "K: failed 응답·연결 실패·시간 초과 구분과 새로고침 없는 재빌드",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2228,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T08:18:44.165Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-0b809ae6ce2d092eb565",
+          "file": "studio.spec.ts",
+          "line": 136,
+          "column": 1
+        },
+        {
+          "title": "레이아웃: 1600px 답변 버튼은 한 줄",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1376,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T08:18:46.402Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-a7846fb0ef6c71cae354",
+          "file": "studio.spec.ts",
+          "line": 170,
+          "column": 34
+        },
+        {
+          "title": "레이아웃: 400px 답변 버튼은 한 줄",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1301,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T08:18:47.789Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-d3df1227add94f2e3e10",
+          "file": "studio.spec.ts",
+          "line": 170,
+          "column": 34
         },
         {
           "title": "A: 생성, 역질문, 마스킹, 조회 사유와 감사 기록",
@@ -495,12 +1115,12 @@
                   "workerIndex": 2,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2292,
+                  "duration": 2261,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T05:53:41.169Z",
+                  "startTime": "2026-09-13T08:18:49.734Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -529,12 +1149,12 @@
                   "workerIndex": 2,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1382,
+                  "duration": 1267,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T05:53:43.795Z",
+                  "startTime": "2026-09-13T08:18:52.451Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -563,12 +1183,12 @@
                   "workerIndex": 2,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 3723,
+                  "duration": 3857,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T05:53:45.188Z",
+                  "startTime": "2026-09-13T08:18:53.729Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -597,12 +1217,16 @@
                   "workerIndex": 2,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2288,
+                  "duration": 2021,
                   "errors": [],
-                  "stdout": [],
+                  "stdout": [
+                    {
+                      "text": "D preview issuance boundary: {\"roles\":[\"viewer\"],\"probes\":[{\"endpoint\":\"/dev/session\",\"tokenObtained\":false,\"blocked\":true},{\"endpoint\":\"/capabilities\",\"tokenObtained\":false,\"blocked\":true}],\"authenticatedCapabilityBlocked\":true}\n"
+                    }
+                  ],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T05:53:48.920Z",
+                  "startTime": "2026-09-13T08:18:57.595Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -631,12 +1255,12 @@
                   "workerIndex": 2,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2105,
+                  "duration": 1989,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T05:53:51.218Z",
+                  "startTime": "2026-09-13T08:18:59.626Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -646,7 +1270,7 @@
           ],
           "id": "64bdea7002f9c9cea9f4-9b73ef5f98d6055f1464",
           "file": "studio.spec.ts",
-          "line": 13,
+          "line": 25,
           "column": 1
         },
         {
@@ -665,12 +1289,12 @@
                   "workerIndex": 2,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1249,
+                  "duration": 1436,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T05:53:53.332Z",
+                  "startTime": "2026-09-13T08:19:01.625Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -680,17 +1304,323 @@
           ],
           "id": "64bdea7002f9c9cea9f4-e0ee9de85982c8a6f271",
           "file": "studio.spec.ts",
-          "line": 14,
+          "line": 26,
           "column": 1
+        },
+        {
+          "title": "G: 역질문 새로고침 복구, Last-Event-ID 이후 답변과 revision_ready",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2095,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T08:19:03.070Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-86ade82b29553eef5602",
+          "file": "studio.spec.ts",
+          "line": 37,
+          "column": 1
+        },
+        {
+          "title": "G: 복구한 질문 취소와 이미 끝난 생성·404 안내",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1979,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T08:19:05.176Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-9ca4da7081cbae5d9211",
+          "file": "studio.spec.ts",
+          "line": 54,
+          "column": 1
+        },
+        {
+          "title": "H: 쓰기 권한 만료 시 토글 off, 안내와 read capability 재반영",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5143,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T08:19:07.167Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-8ceb8bd6893d46001c66",
+          "file": "studio.spec.ts",
+          "line": 73,
+          "column": 1
+        },
+        {
+          "title": "I: 문법 오류 위치, 금지 패키지 이름과 runtime 원인",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1365,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T08:19:12.321Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-925d1bb09926061253c1",
+          "file": "studio.spec.ts",
+          "line": 84,
+          "column": 1
+        },
+        {
+          "title": "J: CAS 최신 불러오기 전에 파일별 내 편집 보관, 복사와 새로고침 유지",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3015,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T08:19:13.695Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-4fa48f6484db115870ca",
+          "file": "studio.spec.ts",
+          "line": 98,
+          "column": 1
+        },
+        {
+          "title": "K: 존재하지 않는 패키지 버전의 실제 조합 실패와 동일 revision 재시도",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2473,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T08:19:16.719Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-503659794f76e680186a",
+          "file": "studio.spec.ts",
+          "line": 118,
+          "column": 1
+        },
+        {
+          "title": "K: failed 응답·연결 실패·시간 초과 구분과 새로고침 없는 재빌드",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2128,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T08:19:19.201Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-2402927ea303d8265146",
+          "file": "studio.spec.ts",
+          "line": 136,
+          "column": 1
+        },
+        {
+          "title": "레이아웃: 1600px 답변 버튼은 한 줄",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1274,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T08:19:21.339Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-2ab00802f94558104b9b",
+          "file": "studio.spec.ts",
+          "line": 170,
+          "column": 34
+        },
+        {
+          "title": "레이아웃: 400px 답변 버튼은 한 줄",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1345,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-13T08:19:22.623Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "64bdea7002f9c9cea9f4-de060d72d967d0241f00",
+          "file": "studio.spec.ts",
+          "line": 170,
+          "column": 34
         }
       ]
     }
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-09-13T05:53:11.171Z",
-    "duration": 43647.756,
-    "expected": 18,
+    "startTime": "2026-09-13T08:17:37.652Z",
+    "duration": 106583.96100000001,
+    "expected": 45,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0
