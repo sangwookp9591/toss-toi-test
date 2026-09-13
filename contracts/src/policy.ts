@@ -144,6 +144,8 @@ export interface EncryptedDownloadRecord {
  * - CORS는 스튜디오 origin과 프리뷰 origin만 허용하고, 프리뷰 origin은 /proxy/*만 허용한다.
  *   P0-2: 프리뷰 origin은 previewOriginForProject(projectId) 형식만 인정하고, 그 projectId가
  *   X-Toi-Project·프리뷰 세션 projectId·capability projectId와 모두 같아야 한다. 다르면 403 PREVIEW_ORIGIN_MISMATCH.
+ *   R3-M2 이후: frame은 policy-proxy에 직접 요청하지 않는다(브로커가 스튜디오 origin에서 요청). 프리뷰 origin 요청은
+ *   경로와 무관하게 403 PREVIEW_DIRECT_FORBIDDEN이며 CORS 헤더를 내지 않는다. 프리뷰 세션 토큰은 계속 aud toi-preview·viewer로 제한한다.
  * - P0-3 다운로드
  *   - 대상은 등록 API의 GET 경로만, 행 최대 10000. 데이터는 /proxy와 같은 마스킹·잔여 PII 검사를 거친다.
  *   - 봉투 암호화: 파일마다 새 256비트 데이터 키 AES-256-GCM, 데이터 키는 KEK(AES-256-KW 또는 GCM)로 감싼다.
@@ -157,6 +159,11 @@ export interface EncryptedDownloadRecord {
  *   - 세그먼트(기본 1000건 또는 5분)를 객체 저장소에 `audit/segments/<firstSeq>-<lastSeq>-<lastHash>.jsonl`로 복제하고 기존 키는 덮어쓰지 않는다.
  *   - 시작 시와 /audit/verify에서 체인·세그먼트 일치를 검증한다. 불일치면 /healthz 외 모든 요청 503 AUDIT_CHAIN_BROKEN(fail-closed).
  *   - 복제 실패는 재시도하고 지연을 /healthz에 보고한다(요청은 계속 처리).
+ *   - R3-M1 외부 앵커: 체인 head(seq·hash)를 `audit/anchors/<seq 20자리 0채움>-<hash>`로 객체 저장소에 기록한다
+ *     (덮어쓰기 금지, 1초 또는 50건마다, 종료 시그널 때 즉시). download-create·download-fetch·approval 레코드는
+ *     앵커 기록이 끝난 뒤 응답한다. 시작 시 가장 큰 앵커보다 로컬 체인이 짧거나 그 seq의 hash가 다르면 brokenAt(fail-closed).
+ *     앵커 기록 실패가 5초를 넘으면 /healthz degraded, 30초를 넘으면 새 요청을 503 AUDIT_ANCHOR_UNAVAILABLE로 거부한다.
+ *   - R3-L1: 세그먼트·앵커 객체는 ObjectLockMode COMPLIANCE와 RetainUntilDate(env TOI_AUDIT_RETENTION_DAYS, 개발 기본 1일)를 설정해 올린다.
  */
 export const POLICY_PROXY_PORT = 7200;
 export const MOCK_BACKEND_PORT = 7300;

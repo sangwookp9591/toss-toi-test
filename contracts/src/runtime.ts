@@ -53,24 +53,56 @@ export interface PreviewRuntimeOptions {
 /**
  * 호스트(스튜디오)가 프리뷰 실행 전에 주입하는 설정.
  * frame은 번들을 실행하기 전에 `globalThis.__TOI_FETCH_CONFIG__ = Object.freeze({...toiFetch})`를 설정한다.
- * 생성 코드(@toi/fetch configureToiFetch)는 이 전역만 읽고 토큰을 하드코딩하지 않는다.
+ * 생성 코드(@toi/fetch configureToiFetch)는 이 전역만 읽는다.
+ *
+ * R3-M2 수정: frame에는 어떤 자격 증명도 넣지 않는다. frame은 CSP로 네트워크가 막혀 있어도
+ * top-level이 아닌 자기 내비게이션(location.href)으로 쿼리스트링을 외부에 보낼 수 있기 때문이다.
+ * 프리뷰 세션·capability 토큰은 호스트(스튜디오)에만 두고, @toi/fetch는 postMessage 브로커로 요청한다.
  */
 export interface PreviewHostConfig {
   toiFetch?: {
-    /**
-     * 반드시 viewer 역할만 가진 세션. editor 세션은 호스트(스튜디오)에만 둔다.
-     * 생성 코드가 editor 세션을 받으면 POST /capabilities로 스스로 write capability를 발급할 수 있다.
-     * 쓰기 허용은 호스트가 editor 세션으로 범위·TTL을 제한한 write capability를 발급해 capabilityToken으로만 넘긴다.
-     */
-    sessionToken: string;
-    /** 기본 read capability. write는 사용자가 명시적으로 허용했을 때만 */
-    capabilityToken: string;
     projectId: string;
-    /** 예: "http://localhost:7200" */
-    proxyBaseUrl: string;
     env: "preview" | "live";
+    /** 항상 "broker". 토큰 필드(sessionToken·capabilityToken)가 있으면 frame은 부팅을 거부한다 */
+    transport: "broker";
   };
 }
+
+/**
+ * @toi/fetch 브로커 메시지(frame ↔ 호스트). 양쪽 모두 origin·source를 검증한다.
+ * 호스트 검증 규칙(스튜디오):
+ * - source가 현재 커밋된 frame 또는 검증 중인 frame의 contentWindow이고, origin이 해당 프로젝트 프리뷰 origin이며,
+ *   token(revision·attemptId)이 그 frame의 토큰과 같을 때만 처리한다. 교체·폐기된 frame의 요청은 거부한다.
+ * - apiId는 프로젝트 apiIds에 있어야 한다. path 규칙은 @toi/fetch와 같다(`/` 시작, `//`·`\`·`#` 금지, 정규화 후 접두사 유지).
+ * - method는 GET·POST·PUT·PATCH·DELETE. 쓰기 method는 사용자가 허용한 write capability가 있을 때만 전달하고, 없으면 403 WRITE_NOT_ALLOWED.
+ * - 요청 헤더는 Content-Type만 전달한다. body는 문자열 ≤ 1MiB. 응답 body ≤ 5MiB(초과 시 413 RESPONSE_TOO_LARGE).
+ * - frame당 동시 8건, 초당 50건 초과 시 429. redirect는 error.
+ * - 호스트가 Authorization·X-Toi-Project·X-Toi-Capability·X-Toi-Env·X-Toi-Reason을 붙여 policy-proxy에 보낸다.
+ * 내비게이션 규칙:
+ * - 커밋 뒤 frame에서 load 이벤트가 다시 발생하면(자기 내비게이션) 호스트는 그 frame을 즉시 제거하고
+ *   runtime_failed("preview navigated away")를 내며, 마지막 정상 revision을 새 frame으로 다시 띄운다.
+ * - 잔여 위험: 화면에 이미 렌더링된 마스킹 데이터는 내비게이션 쿼리스트링으로 단방향 유출될 수 있다. 토큰은 유출되지 않는다.
+ */
+export type FrameToHostFetch = {
+  kind: "toi_fetch";
+  token: Pick<RevisionToken, "revision" | "attemptId">;
+  requestId: string;
+  apiId: string;
+  path: string;
+  method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+  contentType?: string;
+  body?: string;
+  reason?: string;
+};
+export type HostToFrameFetch = {
+  kind: "toi_fetch_result";
+  requestId: string;
+  status: number;
+  contentType?: string;
+  body: string;
+  /** 브로커가 거부한 경우의 코드. policy-proxy 오류는 status·body 그대로 */
+  brokerError?: "NOT_ALLOWED_SOURCE" | "API_NOT_IN_PROJECT" | "INVALID_API_PATH" | "WRITE_NOT_ALLOWED" | "TOO_MANY_REQUESTS" | "BODY_TOO_LARGE" | "RESPONSE_TOO_LARGE" | "UPSTREAM_UNREACHABLE";
+};
 
 export interface BuildInput {
   token: RevisionToken;
@@ -125,11 +157,13 @@ export function projectIdFromPreviewOrigin(origin: string): string | null {
  * - Host 헤더가 `p-<uuid>.preview.localhost:5174`가 아니면 421. 이 포트는 frame 문서와 frame 스크립트만 제공한다
  *   (스튜디오 번들·벤치·esbuild.wasm·임의 파일 없음). 스튜디오(5173)는 프리뷰 자산을 제공하지 않는다.
  * - frame 문서 응답 CSP(헤더, document.open 뒤에도 유지되어야 한다). 최소 요구:
- *     default-src 'none'; connect-src <policy-proxy origin>; script-src 'self' <패키지 자산 origin> data: + 인라인 부트 허용 방식;
+ *     default-src 'none'; connect-src 'none'; script-src 'self' <패키지 자산 origin> 'nonce-<응답별>';
  *     style-src 'self' 'unsafe-inline'; img-src data: blob:; font-src data:; form-action 'none'; base-uri 'none';
  *     frame-ancestors http://localhost:5173; worker-src 'none'; object-src 'none'
- *   'unsafe-eval' 금지. connect-src에 'self'·와일드카드 금지(상대 URL 요청도 차단되어야 한다).
+ *   'unsafe-eval' 금지. connect-src는 'none'(R3-M2: 데이터 요청은 브로커만). script-src에 data:·blob: 금지(R3-L2):
+ *   번들은 nonce가 붙은 인라인 module 스크립트로 실행한다.
  *   인라인 부트 스크립트·import map 허용은 응답마다 새 nonce 또는 동등한 방식으로 하고, 'unsafe-inline' script는 금지.
+ * - frame iframe sandbox는 allow-scripts allow-same-origin만. allow-top-navigation·allow-popups·allow-forms 금지.
  * - frame의 studio-origins 목록은 스튜디오 origin 하나만 둔다.
  * - 스튜디오 응답: CSP frame-ancestors 'self', X-Frame-Options: SAMEORIGIN, frame-src는 프리뷰 origin 패턴만.
  * - PreviewRuntimeOptions.previewOrigin은 previewOriginForProject(projectId)여야 한다. 프로젝트가 바뀌면 런타임을 새로 만든다.
