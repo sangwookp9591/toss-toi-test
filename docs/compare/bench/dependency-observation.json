@@ -1,0 +1,12 @@
+{
+  "source": "Read-only filenames of active final-run Yarn cache, not credentials or third-party source",
+  "observedCacheArchives": [
+    "@tanstack-query-core-npm-5.102.8-503e3f5e26-10c0.zip",
+    "@tanstack-react-query-npm-5.102.8-54313789b8-10c0.zip",
+    "@toi-fetch-npm-1.0.0-2265af4e94-10c0.zip",
+    "@toi-tds-npm-1.0.0-543a8448b1-10c0.zip",
+    "react-dom-npm-19.3.0-b16b0f2b73-10c0.zip",
+    "react-npm-19.3.0-81507f077b-10c0.zip",
+    "scheduler-npm-0.28.0-94e213070c-10c0.zip"
+  ]
+}

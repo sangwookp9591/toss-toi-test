@@ -1,0 +1,1271 @@
+{
+  "measuredAt": "2026-09-13T10:11:26.253Z",
+  "sourceHead": "ef32d7ed19353dd6d162a0204c116a515a23ed90",
+  "environment": {
+    "node": "v22.14.0",
+    "os": "darwin",
+    "release": "25.6.0",
+    "arch": "arm64",
+    "cpu": "Apple M4",
+    "chrome": "153.0.8010.36"
+  },
+  "conditions": {
+    "modes": [
+      {
+        "name": "local",
+        "latency": 0,
+        "downloadThroughput": -1,
+        "uploadThroughput": -1
+      },
+      {
+        "name": "slow",
+        "latency": 400,
+        "downloadThroughput": 750000,
+        "uploadThroughput": 250000
+      }
+    ],
+    "repetitions": 3,
+    "chrome": "headless system chrome; one process, sequential contexts",
+    "start": "navigation performance.timeOrigin; existing saved project URL /?project=..., full studio JS and dev sessions included",
+    "end": "synchronous StudioController subscriber observing a new lastCommit, after runtime iframe replacement and rendered 2 rAF",
+    "edit": "controller.edit then controller.saveFiles in same evaluation; no human typing time; CAS save, package-set hit, capability issuance, rebuild and frame commit included",
+    "cache": "fresh context + Network.clearBrowserCache before each navigation; normal cache retained for edit; no routes or mocked responses",
+    "miss": "fresh dependency builder process state, new empty MinIO bucket and empty Yarn cache/workspace per trial; actual service implementation at original port 7100",
+    "hit": "same artifact after miss, new browser context and cleared browser cache; identical request and source",
+    "fixture": "same 20 static masked rows as bench/app.mjs, private @toi/tds Table, default studio package set including react-query and @toi/fetch; no business API query or model call",
+    "exclusions": "server startup, project fixture creation, npm install, DNS/OS/registry-upstream/WASM compilation caches uncontrolled; browser CDP throttling does not throttle server-to-server Yarn/MinIO traffic",
+    "observation": "window.studio setter attaches read-only subscriber at existing public debug hook before first project open; no app code or network response modification"
+  },
+  "packageSet": {
+    "entries": [
+      "react",
+      "react-dom/client",
+      "react/jsx-runtime",
+      "@tanstack/react-query",
+      "@toi/tds",
+      "@toi/fetch"
+    ],
+    "dependencies": {
+      "react": "19.3.0",
+      "react-dom": "19.3.0",
+      "@tanstack/react-query": "^5.0.0",
+      "@toi/tds": "1.0.0",
+      "@toi/fetch": "1.0.0"
+    }
+  },
+  "samples": [
+    {
+      "network": "local",
+      "repeat": 1,
+      "projectId": "52e3dd4c-228c-47ad-af97-22c8818d8642",
+      "missMs": 2946.7999999970198,
+      "missTimings": {
+        "bundleMs": 246,
+        "bootMs": 41,
+        "totalMs": 334.09999999403954
+      },
+      "missPostStatuses": [
+        202
+      ],
+      "missResources": [
+        {
+          "name": "/studio.css",
+          "duration": 4.600000008940697,
+          "transferSize": 10898,
+          "encodedBodySize": 10598
+        },
+        {
+          "name": "/studio.js",
+          "duration": 5.5,
+          "transferSize": 1261450,
+          "encodedBodySize": 1261150
+        },
+        {
+          "name": "/css2",
+          "duration": 279.09999999403954,
+          "transferSize": 93010,
+          "encodedBodySize": 92710
+        },
+        {
+          "name": "/dev/session",
+          "duration": 2.0999999940395355,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/dev/session",
+          "duration": 2.3999999910593033,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/favicon.ico",
+          "duration": 0.8999999910593033,
+          "transferSize": 309,
+          "encodedBodySize": 9
+        },
+        {
+          "name": "/projects/52e3dd4c-228c-47ad-af97-22c8818d8642",
+          "duration": 1,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/package-sets",
+          "duration": 2021.2999999970198,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/projects/52e3dd4c-228c-47ad-af97-22c8818d8642/generations/active",
+          "duration": 0.7999999970197678,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/capabilities",
+          "duration": 1.7000000029802322,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/package-sets/1dfd1347c037a6eaeda057633040f41eaa8f922ed7e54423d32d3db6dc6ae99b/wait",
+          "duration": 180.20000000298023,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/worker.js",
+          "duration": -2.2000000029802322,
+          "transferSize": 153954,
+          "encodedBodySize": 153654
+        },
+        {
+          "name": "/frame.html",
+          "duration": 11.399999991059303,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        }
+      ],
+      "missWorkerResources": [
+        [
+          {
+            "name": "/esbuild.wasm",
+            "duration": 13.699999988079071,
+            "transferSize": 13979150,
+            "encodedBodySize": 13978850
+          }
+        ]
+      ],
+      "hitMs": 790.3999999910593,
+      "hitTimings": {
+        "bundleMs": 287,
+        "bootMs": 40,
+        "totalMs": 399
+      },
+      "hitPostStatuses": [
+        200
+      ],
+      "hitResources": [
+        {
+          "name": "/studio.css",
+          "duration": 4.5,
+          "transferSize": 10898,
+          "encodedBodySize": 10598
+        },
+        {
+          "name": "/studio.js",
+          "duration": 5,
+          "transferSize": 1261450,
+          "encodedBodySize": 1261150
+        },
+        {
+          "name": "/css2",
+          "duration": 252.79999999701977,
+          "transferSize": 93010,
+          "encodedBodySize": 92710
+        },
+        {
+          "name": "/dev/session",
+          "duration": 2,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/dev/session",
+          "duration": 2.1000000089406967,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/projects/52e3dd4c-228c-47ad-af97-22c8818d8642",
+          "duration": 1.199999988079071,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/package-sets",
+          "duration": 7.299999997019768,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/projects/52e3dd4c-228c-47ad-af97-22c8818d8642/generations/active",
+          "duration": 0.8999999910593033,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/capabilities",
+          "duration": 1.3999999910593033,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/worker.js",
+          "duration": -7.5999999940395355,
+          "transferSize": 153954,
+          "encodedBodySize": 153654
+        },
+        {
+          "name": "/frame.html",
+          "duration": 31.69999998807907,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        }
+      ],
+      "hitWorkerResources": [
+        [
+          {
+            "name": "/esbuild.wasm",
+            "duration": 15.400000005960464,
+            "transferSize": 13979150,
+            "encodedBodySize": 13978850
+          }
+        ]
+      ],
+      "editMs": 84.09999999403954,
+      "editTimings": {
+        "bundleMs": 37.29999999701977,
+        "bootMs": 26.5,
+        "totalMs": 76.5
+      },
+      "editPostStatuses": [
+        200
+      ],
+      "builderMetrics": {
+        "installs": 1,
+        "builds": 1
+      },
+      "success": true
+    },
+    {
+      "network": "local",
+      "repeat": 2,
+      "projectId": "43b3758a-6a00-415c-a3da-6684b71beda7",
+      "missMs": 2912.2000000029802,
+      "missTimings": {
+        "bundleMs": 243.20000000298023,
+        "bootMs": 34.20000000298023,
+        "totalMs": 323.8999999910593
+      },
+      "missPostStatuses": [
+        202
+      ],
+      "missResources": [
+        {
+          "name": "/studio.css",
+          "duration": 5.100000008940697,
+          "transferSize": 10898,
+          "encodedBodySize": 10598
+        },
+        {
+          "name": "/studio.js",
+          "duration": 6.600000008940697,
+          "transferSize": 1261450,
+          "encodedBodySize": 1261150
+        },
+        {
+          "name": "/css2",
+          "duration": 280.20000000298023,
+          "transferSize": 93010,
+          "encodedBodySize": 92710
+        },
+        {
+          "name": "/dev/session",
+          "duration": 2.2000000029802322,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/dev/session",
+          "duration": 2.4000000059604645,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/projects/43b3758a-6a00-415c-a3da-6684b71beda7",
+          "duration": 1.5999999940395355,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/package-sets",
+          "duration": 2016,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/projects/43b3758a-6a00-415c-a3da-6684b71beda7/generations/active",
+          "duration": 1.2000000029802322,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/capabilities",
+          "duration": 1.3999999910593033,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/package-sets/1dfd1347c037a6eaeda057633040f41eaa8f922ed7e54423d32d3db6dc6ae99b/wait",
+          "duration": 161.20000000298023,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/worker.js",
+          "duration": -2.4000000059604645,
+          "transferSize": 153954,
+          "encodedBodySize": 153654
+        },
+        {
+          "name": "/frame.html",
+          "duration": 10.400000005960464,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        }
+      ],
+      "missWorkerResources": [
+        [
+          {
+            "name": "/esbuild.wasm",
+            "duration": 13.400000005960464,
+            "transferSize": 13979150,
+            "encodedBodySize": 13978850
+          }
+        ]
+      ],
+      "hitMs": 859.9000000059605,
+      "hitTimings": {
+        "bundleMs": 278.20000000298023,
+        "bootMs": 67.20000000298023,
+        "totalMs": 401
+      },
+      "hitPostStatuses": [
+        200
+      ],
+      "hitResources": [
+        {
+          "name": "/studio.css",
+          "duration": 4.600000008940697,
+          "transferSize": 10898,
+          "encodedBodySize": 10598
+        },
+        {
+          "name": "/studio.js",
+          "duration": 5.5,
+          "transferSize": 1261450,
+          "encodedBodySize": 1261150
+        },
+        {
+          "name": "/css2",
+          "duration": 316.1000000089407,
+          "transferSize": 93010,
+          "encodedBodySize": 92710
+        },
+        {
+          "name": "/dev/session",
+          "duration": 2,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/dev/session",
+          "duration": 2,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/projects/43b3758a-6a00-415c-a3da-6684b71beda7",
+          "duration": 1.2999999970197678,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/package-sets",
+          "duration": 4.4000000059604645,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/projects/43b3758a-6a00-415c-a3da-6684b71beda7/generations/active",
+          "duration": 1.1000000089406967,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/capabilities",
+          "duration": 1.7000000029802322,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/worker.js",
+          "duration": -2.2000000029802322,
+          "transferSize": 153954,
+          "encodedBodySize": 153654
+        },
+        {
+          "name": "/frame.html",
+          "duration": 40.5,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        }
+      ],
+      "hitWorkerResources": [
+        [
+          {
+            "name": "/esbuild.wasm",
+            "duration": 13.899999991059303,
+            "transferSize": 13979150,
+            "encodedBodySize": 13978850
+          }
+        ]
+      ],
+      "editMs": 90.5,
+      "editTimings": {
+        "bundleMs": 35.900000005960464,
+        "bootMs": 32,
+        "totalMs": 80.20000000298023
+      },
+      "editPostStatuses": [
+        200
+      ],
+      "builderMetrics": {
+        "installs": 1,
+        "builds": 1
+      },
+      "success": true
+    },
+    {
+      "network": "local",
+      "repeat": 3,
+      "projectId": "f493e490-8de3-45f5-9869-a154894eb818",
+      "missMs": 2893.5,
+      "missTimings": {
+        "bundleMs": 250.09999999403954,
+        "bootMs": 47.099999994039536,
+        "totalMs": 343.70000000298023
+      },
+      "missPostStatuses": [
+        202
+      ],
+      "missResources": [
+        {
+          "name": "/studio.css",
+          "duration": 5,
+          "transferSize": 10898,
+          "encodedBodySize": 10598
+        },
+        {
+          "name": "/studio.js",
+          "duration": 6.4000000059604645,
+          "transferSize": 1261450,
+          "encodedBodySize": 1261150
+        },
+        {
+          "name": "/css2",
+          "duration": 268.90000000596046,
+          "transferSize": 93010,
+          "encodedBodySize": 92710
+        },
+        {
+          "name": "/dev/session",
+          "duration": 2,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/dev/session",
+          "duration": 2,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/projects/f493e490-8de3-45f5-9869-a154894eb818",
+          "duration": 2.2999999970197678,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/package-sets",
+          "duration": 1974.7999999970198,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/projects/f493e490-8de3-45f5-9869-a154894eb818/generations/active",
+          "duration": 0.8999999910593033,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/capabilities",
+          "duration": 1.4000000059604645,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/package-sets/1dfd1347c037a6eaeda057633040f41eaa8f922ed7e54423d32d3db6dc6ae99b/wait",
+          "duration": 167.1000000089407,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/worker.js",
+          "duration": -2.2999999970197678,
+          "transferSize": 153954,
+          "encodedBodySize": 153654
+        },
+        {
+          "name": "/frame.html",
+          "duration": 11.599999994039536,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        }
+      ],
+      "missWorkerResources": [
+        [
+          {
+            "name": "/esbuild.wasm",
+            "duration": 14.200000002980232,
+            "transferSize": 13979150,
+            "encodedBodySize": 13978850
+          }
+        ]
+      ],
+      "hitMs": 789.3999999910593,
+      "hitTimings": {
+        "bundleMs": 266.20000000298023,
+        "bootMs": 43.5,
+        "totalMs": 365.90000000596046
+      },
+      "hitPostStatuses": [
+        200
+      ],
+      "hitResources": [
+        {
+          "name": "/studio.css",
+          "duration": 5.9000000059604645,
+          "transferSize": 10898,
+          "encodedBodySize": 10598
+        },
+        {
+          "name": "/studio.js",
+          "duration": 6.799999997019768,
+          "transferSize": 1261450,
+          "encodedBodySize": 1261150
+        },
+        {
+          "name": "/css2",
+          "duration": 282.70000000298023,
+          "transferSize": 93010,
+          "encodedBodySize": 92710
+        },
+        {
+          "name": "/dev/session",
+          "duration": 2.5999999940395355,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/dev/session",
+          "duration": 3,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/projects/f493e490-8de3-45f5-9869-a154894eb818",
+          "duration": 1.199999988079071,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/package-sets",
+          "duration": 5.299999997019768,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/projects/f493e490-8de3-45f5-9869-a154894eb818/generations/active",
+          "duration": 2,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/capabilities",
+          "duration": 1.4000000059604645,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/worker.js",
+          "duration": -8.899999991059303,
+          "transferSize": 153954,
+          "encodedBodySize": 153654
+        },
+        {
+          "name": "/frame.html",
+          "duration": 13,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        }
+      ],
+      "hitWorkerResources": [
+        [
+          {
+            "name": "/esbuild.wasm",
+            "duration": 14,
+            "transferSize": 13979150,
+            "encodedBodySize": 13978850
+          }
+        ]
+      ],
+      "editMs": 86,
+      "editTimings": {
+        "bundleMs": 35.79999999701977,
+        "bootMs": 30,
+        "totalMs": 78.5
+      },
+      "editPostStatuses": [
+        200
+      ],
+      "builderMetrics": {
+        "installs": 1,
+        "builds": 1
+      },
+      "success": true
+    },
+    {
+      "network": "slow",
+      "repeat": 1,
+      "projectId": "10ffeb46-1b59-4a4b-9331-8d892f22f83e",
+      "missMs": 28123.29999999702,
+      "missTimings": {
+        "bundleMs": 19278.79999999702,
+        "bootMs": 1355.6000000089407,
+        "totalMs": 22105.60000000894
+      },
+      "missPostStatuses": [
+        202
+      ],
+      "missResources": [
+        {
+          "name": "/studio.css",
+          "duration": 442.29999999701977,
+          "transferSize": 10898,
+          "encodedBodySize": 10598
+        },
+        {
+          "name": "/studio.js",
+          "duration": 2236.4000000059605,
+          "transferSize": 1261450,
+          "encodedBodySize": 1261150
+        },
+        {
+          "name": "/css2",
+          "duration": 767.5,
+          "transferSize": 93010,
+          "encodedBodySize": 92710
+        },
+        {
+          "name": "/dev/session",
+          "duration": 409,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/dev/session",
+          "duration": 411.5,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/projects/10ffeb46-1b59-4a4b-9331-8d892f22f83e",
+          "duration": 415.20000000298023,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/package-sets",
+          "duration": 1978.2999999970198,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/projects/10ffeb46-1b59-4a4b-9331-8d892f22f83e/generations/active",
+          "duration": 409.3999999910593,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/capabilities",
+          "duration": 408.90000000596046,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/package-sets/1dfd1347c037a6eaeda057633040f41eaa8f922ed7e54423d32d3db6dc6ae99b/wait",
+          "duration": 413.70000000298023,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/worker.js",
+          "duration": 200.40000000596046,
+          "transferSize": 153954,
+          "encodedBodySize": 153654
+        },
+        {
+          "name": "/frame.html",
+          "duration": 825.2000000029802,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        }
+      ],
+      "missWorkerResources": [
+        [
+          {
+            "name": "/esbuild.wasm",
+            "duration": 19046.79999999702,
+            "transferSize": 13979150,
+            "encodedBodySize": 13978850
+          }
+        ]
+      ],
+      "hitMs": 26175.70000000298,
+      "hitTimings": {
+        "bundleMs": 19274.60000000894,
+        "bootMs": 1363.7999999970198,
+        "totalMs": 22118.29999999702
+      },
+      "hitPostStatuses": [
+        200
+      ],
+      "hitResources": [
+        {
+          "name": "/studio.css",
+          "duration": 440.79999999701977,
+          "transferSize": 10898,
+          "encodedBodySize": 10598
+        },
+        {
+          "name": "/studio.js",
+          "duration": 2235,
+          "transferSize": 1261450,
+          "encodedBodySize": 1261150
+        },
+        {
+          "name": "/css2",
+          "duration": 753.7000000029802,
+          "transferSize": 93010,
+          "encodedBodySize": 92710
+        },
+        {
+          "name": "/dev/session",
+          "duration": 415.79999999701977,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/dev/session",
+          "duration": 417.20000000298023,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/projects/10ffeb46-1b59-4a4b-9331-8d892f22f83e",
+          "duration": 415.20000000298023,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/package-sets",
+          "duration": 418,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/projects/10ffeb46-1b59-4a4b-9331-8d892f22f83e/generations/active",
+          "duration": 409.40000000596046,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/capabilities",
+          "duration": 413.19999998807907,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/worker.js",
+          "duration": 198.8999999910593,
+          "transferSize": 153954,
+          "encodedBodySize": 153654
+        },
+        {
+          "name": "/frame.html",
+          "duration": 835.7000000029802,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        }
+      ],
+      "hitWorkerResources": [
+        [
+          {
+            "name": "/esbuild.wasm",
+            "duration": 19043.29999999702,
+            "transferSize": 13979150,
+            "encodedBodySize": 13978850
+          }
+        ]
+      ],
+      "editMs": 1744.0999999940395,
+      "editTimings": {
+        "bundleMs": 42.20000000298023,
+        "bootMs": 25.399999991059303,
+        "totalMs": 898.6000000089407
+      },
+      "editPostStatuses": [
+        200
+      ],
+      "builderMetrics": {
+        "installs": 1,
+        "builds": 1
+      },
+      "success": true
+    },
+    {
+      "network": "slow",
+      "repeat": 2,
+      "projectId": "b63c3a3f-62ab-4bea-b249-64b8a05330cd",
+      "missMs": 28133.79999999702,
+      "missTimings": {
+        "bundleMs": 19282.89999999106,
+        "bootMs": 1358.9000000059605,
+        "totalMs": 22124.20000000298
+      },
+      "missPostStatuses": [
+        202
+      ],
+      "missResources": [
+        {
+          "name": "/studio.css",
+          "duration": 442.19999998807907,
+          "transferSize": 10898,
+          "encodedBodySize": 10598
+        },
+        {
+          "name": "/studio.js",
+          "duration": 2238,
+          "transferSize": 1261450,
+          "encodedBodySize": 1261150
+        },
+        {
+          "name": "/css2",
+          "duration": 769.2999999970198,
+          "transferSize": 93010,
+          "encodedBodySize": 92710
+        },
+        {
+          "name": "/dev/session",
+          "duration": 413.5,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/dev/session",
+          "duration": 415.40000000596046,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/projects/b63c3a3f-62ab-4bea-b249-64b8a05330cd",
+          "duration": 410.59999999403954,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/package-sets",
+          "duration": 1980.7999999970198,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/projects/b63c3a3f-62ab-4bea-b249-64b8a05330cd/generations/active",
+          "duration": 412.1000000089407,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/capabilities",
+          "duration": 411.3999999910593,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/package-sets/1dfd1347c037a6eaeda057633040f41eaa8f922ed7e54423d32d3db6dc6ae99b/wait",
+          "duration": 413.09999999403954,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/worker.js",
+          "duration": 198.70000000298023,
+          "transferSize": 153954,
+          "encodedBodySize": 153654
+        },
+        {
+          "name": "/frame.html",
+          "duration": 830,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        }
+      ],
+      "missWorkerResources": [
+        [
+          {
+            "name": "/esbuild.wasm",
+            "duration": 19045.39999999106,
+            "transferSize": 13979150,
+            "encodedBodySize": 13978850
+          }
+        ]
+      ],
+      "hitMs": 26129.29999999702,
+      "hitTimings": {
+        "bundleMs": 19272.60000000894,
+        "bootMs": 1349.2000000029802,
+        "totalMs": 22101.20000000298
+      },
+      "hitPostStatuses": [
+        200
+      ],
+      "hitResources": [
+        {
+          "name": "/studio.css",
+          "duration": 441,
+          "transferSize": 10898,
+          "encodedBodySize": 10598
+        },
+        {
+          "name": "/studio.js",
+          "duration": 2234.7999999970198,
+          "transferSize": 1261450,
+          "encodedBodySize": 1261150
+        },
+        {
+          "name": "/css2",
+          "duration": 759.4000000059605,
+          "transferSize": 93010,
+          "encodedBodySize": 92710
+        },
+        {
+          "name": "/dev/session",
+          "duration": 413.5,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/dev/session",
+          "duration": 415.29999999701977,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/projects/b63c3a3f-62ab-4bea-b249-64b8a05330cd",
+          "duration": 415.1000000089407,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/package-sets",
+          "duration": 414.79999999701977,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/projects/b63c3a3f-62ab-4bea-b249-64b8a05330cd/generations/active",
+          "duration": 408.1000000089407,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/capabilities",
+          "duration": 414.20000000298023,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/worker.js",
+          "duration": 198.90000000596046,
+          "transferSize": 153954,
+          "encodedBodySize": 153654
+        },
+        {
+          "name": "/frame.html",
+          "duration": 830.1999999880791,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        }
+      ],
+      "hitWorkerResources": [
+        [
+          {
+            "name": "/esbuild.wasm",
+            "duration": 19048,
+            "transferSize": 13979150,
+            "encodedBodySize": 13978850
+          }
+        ]
+      ],
+      "editMs": 1739.7999999970198,
+      "editTimings": {
+        "bundleMs": 37,
+        "bootMs": 21.400000005960464,
+        "totalMs": 894.5999999940395
+      },
+      "editPostStatuses": [
+        200
+      ],
+      "builderMetrics": {
+        "installs": 1,
+        "builds": 1
+      },
+      "success": true
+    },
+    {
+      "network": "slow",
+      "repeat": 3,
+      "projectId": "b3e4b0db-63a5-4573-b9b0-6f4ffa8ee294",
+      "missMs": 28331.59999999404,
+      "missTimings": {
+        "bundleMs": 19276.29999999702,
+        "bootMs": 1349.7999999970198,
+        "totalMs": 22106.90000000596
+      },
+      "missPostStatuses": [
+        202
+      ],
+      "missResources": [
+        {
+          "name": "/studio.css",
+          "duration": 443.90000000596046,
+          "transferSize": 10898,
+          "encodedBodySize": 10598
+        },
+        {
+          "name": "/studio.js",
+          "duration": 2237.7999999970198,
+          "transferSize": 1261450,
+          "encodedBodySize": 1261150
+        },
+        {
+          "name": "/css2",
+          "duration": 757.4000000059605,
+          "transferSize": 93010,
+          "encodedBodySize": 92710
+        },
+        {
+          "name": "/dev/session",
+          "duration": 410.3999999910593,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/dev/session",
+          "duration": 413,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/projects/b3e4b0db-63a5-4573-b9b0-6f4ffa8ee294",
+          "duration": 410.70000000298023,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/package-sets",
+          "duration": 2203.800000011921,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/projects/b3e4b0db-63a5-4573-b9b0-6f4ffa8ee294/generations/active",
+          "duration": 407.3999999910593,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/capabilities",
+          "duration": 409.19999998807907,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/package-sets/1dfd1347c037a6eaeda057633040f41eaa8f922ed7e54423d32d3db6dc6ae99b/wait",
+          "duration": 407.5,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/worker.js",
+          "duration": 201.09999999403954,
+          "transferSize": 153954,
+          "encodedBodySize": 153654
+        },
+        {
+          "name": "/frame.html",
+          "duration": 834.5,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        }
+      ],
+      "missWorkerResources": [
+        [
+          {
+            "name": "/esbuild.wasm",
+            "duration": 19047.5,
+            "transferSize": 13979150,
+            "encodedBodySize": 13978850
+          }
+        ]
+      ],
+      "hitMs": 26149.29999999702,
+      "hitTimings": {
+        "bundleMs": 19275.79999999702,
+        "bootMs": 1353.7000000029802,
+        "totalMs": 22111.40000000596
+      },
+      "hitPostStatuses": [
+        200
+      ],
+      "hitResources": [
+        {
+          "name": "/studio.css",
+          "duration": 440.79999999701977,
+          "transferSize": 10898,
+          "encodedBodySize": 10598
+        },
+        {
+          "name": "/studio.js",
+          "duration": 2234.6000000089407,
+          "transferSize": 1261450,
+          "encodedBodySize": 1261150
+        },
+        {
+          "name": "/css2",
+          "duration": 755.3999999910593,
+          "transferSize": 93010,
+          "encodedBodySize": 92710
+        },
+        {
+          "name": "/dev/session",
+          "duration": 411.90000000596046,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/dev/session",
+          "duration": 414.70000000298023,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/projects/b3e4b0db-63a5-4573-b9b0-6f4ffa8ee294",
+          "duration": 414.70000000298023,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/package-sets",
+          "duration": 419.59999999403954,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/projects/b3e4b0db-63a5-4573-b9b0-6f4ffa8ee294/generations/active",
+          "duration": 411.40000000596046,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/capabilities",
+          "duration": 412.29999999701977,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        },
+        {
+          "name": "/worker.js",
+          "duration": 198.29999999701977,
+          "transferSize": 153954,
+          "encodedBodySize": 153654
+        },
+        {
+          "name": "/frame.html",
+          "duration": 836.7000000029802,
+          "transferSize": 0,
+          "encodedBodySize": 0
+        }
+      ],
+      "hitWorkerResources": [
+        [
+          {
+            "name": "/esbuild.wasm",
+            "duration": 19044.89999999106,
+            "transferSize": 13979150,
+            "encodedBodySize": 13978850
+          }
+        ]
+      ],
+      "editMs": 1738.5,
+      "editTimings": {
+        "bundleMs": 40.8999999910593,
+        "bootMs": 25.399999991059303,
+        "totalMs": 902
+      },
+      "editPostStatuses": [
+        200
+      ],
+      "builderMetrics": {
+        "installs": 1,
+        "builds": 1
+      },
+      "success": true
+    }
+  ],
+  "medians": {
+    "local": {
+      "missMs": 2912.2000000029802,
+      "hitMs": 790.3999999910593,
+      "editMs": 86
+    },
+    "slow": {
+      "missMs": 28133.79999999702,
+      "hitMs": 26149.29999999702,
+      "editMs": 1739.7999999970198
+    }
+  },
+  "serviceRestored": true
+}

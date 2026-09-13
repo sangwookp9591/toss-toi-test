@@ -1,0 +1,77 @@
+{
+  "measuredAt": "2026-09-13T10:02:59.914Z",
+  "sourceHead": "ef32d7ed19353dd6d162a0204c116a515a23ed90",
+  "environment": {
+    "node": "v22.14.0",
+    "os": "darwin",
+    "release": "25.6.0",
+    "arch": "arm64",
+    "cpu": "Apple M4",
+    "chrome": "153.0.8010.36"
+  },
+  "conditions": {
+    "modes": [
+      {
+        "name": "local",
+        "latency": 0,
+        "downloadThroughput": -1,
+        "uploadThroughput": -1
+      },
+      {
+        "name": "slow",
+        "latency": 400,
+        "downloadThroughput": 750000,
+        "uploadThroughput": 250000
+      }
+    ],
+    "repetitions": 3,
+    "chrome": "headless system chrome; one process, sequential contexts",
+    "start": "navigation performance.timeOrigin; existing saved project URL /?project=..., full studio JS and dev sessions included",
+    "end": "synchronous StudioController subscriber observing a new lastCommit, after runtime iframe replacement and rendered 2 rAF",
+    "edit": "controller.edit then controller.saveFiles in same evaluation; no human typing time; CAS save, package-set hit, capability issuance, rebuild and frame commit included",
+    "cache": "fresh context + Network.clearBrowserCache before each navigation; normal cache retained for edit; no routes or mocked responses",
+    "miss": "fresh dependency builder process state, new empty MinIO bucket and empty Yarn cache/workspace per trial; actual service implementation at original port 7100",
+    "hit": "same artifact after miss, new browser context and cleared browser cache; identical request and source",
+    "fixture": "same 20 static masked rows as bench/app.mjs, private @toi/tds Table, default studio package set including react-query and @toi/fetch; no business API query or model call",
+    "exclusions": "server startup, project fixture creation, npm install, DNS/OS/registry-upstream/WASM compilation caches uncontrolled; browser CDP throttling does not throttle server-to-server Yarn/MinIO traffic",
+    "observation": "window.studio setter attaches read-only subscriber at existing public debug hook before first project open; no app code or network response modification"
+  },
+  "packageSet": {
+    "entries": [
+      "react",
+      "react-dom/client",
+      "react/jsx-runtime",
+      "@tanstack/react-query",
+      "@toi/tds",
+      "@toi/fetch"
+    ],
+    "dependencies": {
+      "react": "19.3.0",
+      "react-dom": "19.3.0",
+      "@tanstack/react-query": "^5.0.0",
+      "@toi/tds": "1.0.0",
+      "@toi/fetch": "1.0.0"
+    }
+  },
+  "samples": [
+    {
+      "network": "local",
+      "repeat": 1,
+      "projectId": "ae259305-bb1e-4f9b-bab1-e4e7ca975012",
+      "error": "TimeoutError: page.waitForFunction: Timeout 180000ms exceeded."
+    }
+  ],
+  "medians": {
+    "local": {
+      "missMs": null,
+      "hitMs": null,
+      "editMs": null
+    },
+    "slow": {
+      "missMs": null,
+      "hitMs": null,
+      "editMs": null
+    }
+  },
+  "serviceRestored": true
+}

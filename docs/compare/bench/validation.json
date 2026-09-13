@@ -1,0 +1,35 @@
+{
+  "checkedAt": "2026-09-13T10:18:16.572Z",
+  "passed": true,
+  "completedScenarioMeasurements": 18,
+  "featureRows": 40,
+  "counts": {
+    "부분": 12,
+    "동등": 14,
+    "없음": 9,
+    "다름(의도적 개선)": 3,
+    "확인 불가(토스 비공개)": 2
+  },
+  "score": {
+    "numerator": 23,
+    "denominator": 38,
+    "percent": 60.5
+  },
+  "linksChecked": 99,
+  "secretsChecked": 4,
+  "secretMatches": 0,
+  "trackedDiffEmpty": true,
+  "onlyCompareFilesChanged": true,
+  "health": {
+    "4873": 200,
+    "5173": 200,
+    "5174": 200,
+    "7100": 200,
+    "7200": 200,
+    "7400": 200,
+    "9000": 200
+  },
+  "agentMode": "mock",
+  "restoredBuilderPid": 65001,
+  "restoredBuilderManagedByDevDown": false
+}
