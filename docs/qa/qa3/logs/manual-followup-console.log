@@ -1,0 +1,60 @@
+environment {"browser":"153.0.8010.36","headed":true,"head":"f7577f5befce1868ab20006ea1980c8f2d78a99a","started":"2026-09-13T09:09:09.353Z"}
+START N01
+layout-400 {"width":48,"height":34,"right":366,"lineHeight":"20px","whiteSpace":"nowrap"}
+layout-1600 {"width":48,"height":34,"right":339.078125,"lineHeight":"20px","whiteSpace":"nowrap"}
+cross-tab {"prompt":"고객 목록 상태 변경 화면 만들어줘 — QA3 원문 보존","chatsEqual":true,"question":"조회 사유 기본값을 넣을까요?","answerState":"answered","revisionReady":true,"duplicatePostCount":0,"cancelNotice":"생성을 중단했어요. 이전 화면은 그대로예요."}
+N01 {"pass":true}
+{
+  "id": "40de96fe-fb82-4af5-aa75-cac8ef04e3f5",
+  "ok": true,
+  "result": {
+    "runId": "run_1e6e743fa729",
+    "dispatchId": "ctx_d65e3faa109f",
+    "deliveryId": null,
+    "messages": [],
+    "count": 0,
+    "replayed": false,
+    "acknowledged": null,
+    "timedOut": false,
+    "cancelled": false,
+    "connectionLost": false,
+    "mutation": {
+      "requestId": "bf01a05e-d702-463e-825e-f2cbfa5878e5",
+      "replayed": false
+    }
+  },
+  "_meta": {
+    "runtimeId": "7ae12af0-64b7-430c-8299-c5c1022f2da8"
+  }
+}
+
+START regression
+masked-table {"text":"ID\t이름\t휴대폰\t상태\nC001\t홍*동\t010-****-5678\tsuspended\nC002\t김*동\t010-****-5679\tactive\nC003\t이*동\t010-****-5680\tactive\nC004\t박*동\t010-****-5681\tactive\nC005\t최*동\t010-****-5682\tactive\nC006\t홍*수\t010-****-5683\tactive\nC007\t김*수\t010-****-5684\tactive\nC008\t이*수\t010-****-5685\tactive\nC009\t박*수\t010-****-5686\tactive\nC010\t최*수\t010-****-5687\tinactive\nC011\t홍*연\t010-****-5688\tactive\nC012\t김*연\t010-****-5689\tactive\nC013\t이*연\t010-****-5690\tactive\nC014\t박*연\t010-****-5691\tactive\nC015\t최*연\t010-****-5692\tactive\nC016\t홍*우\t010-****-5693\tactive\nC017\t김*우\t010-****-5694\tactive\nC018\t이*우\t010-****-5695\tactive\nC019\t박*우\t010-****-5696\tactive\nC020\t최*우\t010-****-5697\tinactive"}
+security {"probes":[{"endpoint":"/dev/session","blocked":true,"error":"Failed to fetch"},{"endpoint":"/generations","blocked":true,"error":"Failed to fetch"},{"endpoint":"/projects/d5804402-c651-45c1-b7a8-667ae9714d6f/generations/active","blocked":true,"error":"Failed to fetch"}],"roles":["viewer"],"frozen":true}
+expiry {"ttlSec":4,"notice":"쓰기 허용 시간이 끝났어요. 다시 켜면 2분 동안 허용돼요.\n활동 기록"}
+regression {"pass":true}
+{
+  "id": "635252c1-5c86-41eb-a8b0-fe6b0ea34454",
+  "ok": true,
+  "result": {
+    "runId": "run_1e6e743fa729",
+    "dispatchId": "ctx_d65e3faa109f",
+    "deliveryId": null,
+    "messages": [],
+    "count": 0,
+    "replayed": false,
+    "acknowledged": null,
+    "timedOut": false,
+    "cancelled": false,
+    "connectionLost": false,
+    "mutation": {
+      "requestId": "c3155fe7-1e6a-422b-9aec-ae8696d5b71d",
+      "replayed": false
+    }
+  },
+  "_meta": {
+    "runtimeId": "7ae12af0-64b7-430c-8299-c5c1022f2da8"
+  }
+}
+
+finished {"failures":[]}

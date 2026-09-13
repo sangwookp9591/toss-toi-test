@@ -1,0 +1,225 @@
+[
+  {
+    "at": "2026-09-13T09:08:07.083Z",
+    "name": "environment",
+    "browser": "153.0.8010.36",
+    "headed": true,
+    "head": "f7577f5befce1868ab20006ea1980c8f2d78a99a",
+    "started": "2026-09-13T09:08:07.082Z"
+  },
+  {
+    "at": "2026-09-13T09:08:12.403Z",
+    "name": "layout-400",
+    "width": 48,
+    "height": 34,
+    "right": 366,
+    "lineHeight": "20px",
+    "whiteSpace": "nowrap"
+  },
+  {
+    "at": "2026-09-13T09:08:12.555Z",
+    "name": "layout-1600",
+    "width": 48,
+    "height": 34,
+    "right": 339.078125,
+    "lineHeight": "20px",
+    "whiteSpace": "nowrap"
+  },
+  {
+    "at": "2026-09-13T09:08:18.991Z",
+    "name": "N01",
+    "pass": false,
+    "error": "expect(locator).toContainText(expected) failed\n\nLocator: locator('.generation-notice')\nExpected substring: \"진행 중이던 생성이 끝났어요: 중단\"\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toContainText\" locator('.generation-notice') with timeout 5000ms\n  - waiting for locator('.generation-notice')\n"
+  },
+  {
+    "at": "2026-09-13T09:08:19.627Z",
+    "name": "masked-table",
+    "text": "ID\t이름\t휴대폰\t상태\nC001\t홍*동\t010-****-5678\tactive\nC002\t김*동\t010-****-5679\tactive\nC003\t이*동\t010-****-5680\tactive\nC004\t박*동\t010-****-5681\tactive\nC005\t최*동\t010-****-5682\tactive\nC006\t홍*수\t010-****-5683\tactive\nC007\t김*수\t010-****-5684\tactive\nC008\t이*수\t010-****-5685\tactive\nC009\t박*수\t010-****-5686\tactive\nC010\t최*수\t010-****-5687\tinactive\nC011\t홍*연\t010-****-5688\tactive\nC012\t김*연\t010-****-5689\tactive\nC013\t이*연\t010-****-5690\tactive\nC014\t박*연\t010-****-5691\tactive\nC015\t최*연\t010-****-5692\tactive\nC016\t홍*우\t010-****-5693\tactive\nC017\t김*우\t010-****-5694\tactive\nC018\t이*우\t010-****-5695\tactive\nC019\t박*우\t010-****-5696\tactive\nC020\t최*우\t010-****-5697\tinactive"
+  },
+  {
+    "at": "2026-09-13T09:08:20.435Z",
+    "name": "regression",
+    "pass": false,
+    "error": "locator.evaluate: Error: strict mode violation: locator('#preview iframe') resolved to 2 elements:\n    1) <iframe data-state=\"committed\" title=\"Preview revision 2\" sandbox=\"allow-scripts allow-same-origin\" src=\"http://localhost:5174/frame.html?parentOrigin=http%3A%2F%2Flocalhost%3A5173\"></iframe> aka locator('iframe[title=\"Preview revision 2\"]').first()\n    2) <iframe inert=\"\" aria-hidden=\"true\" data-state=\"candidate\" title=\"Preview revision 2\" sandbox=\"allow-scripts allow-same-origin\" src=\"http://localhost:5174/frame.html?parentOrigin=http%3A%2F%2Flocalhost%3A5173\"></iframe> aka locator('iframe[title=\"Preview revision 2\"]').nth(1)\n\nCall log:\n\u001b[2m  - waiting for locator('#preview iframe').contentFrame().locator('body')\u001b[22m\n"
+  },
+  {
+    "at": "2026-09-13T09:08:21.651Z",
+    "name": "runtime-app",
+    "code": "// QA3 original line check\n\n  throw new Error('QA runtime failure');\nexport default function App(){return <h1>실패</h1>}",
+    "diagnostic": {
+      "message": "QA runtime failure",
+      "file": "/src/App.tsx",
+      "line": 3,
+      "column": 8
+    },
+    "expected": {
+      "file": "/src/App.tsx",
+      "line": 3,
+      "column": 8
+    },
+    "previewRetained": true
+  },
+  {
+    "at": "2026-09-13T09:08:21.944Z",
+    "name": "syntax",
+    "code": "export default function App() { return < }",
+    "diagnostic": {
+      "message": "Expected identifier but found \"}\"",
+      "file": "/src/App.tsx",
+      "line": 1,
+      "column": 41
+    },
+    "expected": {
+      "file": "/src/App.tsx",
+      "line": 1,
+      "column": null
+    },
+    "previewRetained": true
+  },
+  {
+    "at": "2026-09-13T09:08:22.235Z",
+    "name": "axios",
+    "code": "import axios from 'axios'; export default function App(){return <h1>{String(axios)}</h1>}",
+    "diagnostic": {
+      "message": "package not in package set: axios",
+      "file": "/src/App.tsx",
+      "line": 1,
+      "column": 18
+    },
+    "expected": {
+      "file": "/src/App.tsx",
+      "line": 1,
+      "column": 18
+    },
+    "previewRetained": true
+  },
+  {
+    "at": "2026-09-13T09:08:22.495Z",
+    "name": "runtime-child",
+    "code": "// QA3 child source\nexport function failChild() {\n    throw new Error('QA child runtime failure');\n}\n",
+    "diagnostic": {
+      "message": "QA child runtime failure",
+      "file": "/src/Child.tsx",
+      "line": 3,
+      "column": 10
+    },
+    "expected": {
+      "file": "/src/Child.tsx",
+      "line": 3,
+      "column": 10
+    },
+    "previewRetained": true
+  },
+  {
+    "at": "2026-09-13T09:08:22.817Z",
+    "name": "runtime",
+    "pass": true
+  },
+  {
+    "at": "2026-09-13T09:08:26.307Z",
+    "name": "cas-detail",
+    "clipboardMatches": true,
+    "persistedAfterReload": true
+  },
+  {
+    "at": "2026-09-13T09:08:26.308Z",
+    "name": "CAS",
+    "pass": true
+  },
+  {
+    "at": "2026-09-13T09:08:30.757Z",
+    "name": "compose-stop-verdaccio",
+    "start": "2026-09-13T09:08:27.130Z",
+    "output": ""
+  },
+  {
+    "at": "2026-09-13T09:08:30.778Z",
+    "name": "verdaccio-confirmed-down",
+    "health": "unreachable"
+  },
+  {
+    "at": "2026-09-13T09:08:31.708Z",
+    "name": "registry-failure",
+    "revision": 2,
+    "packageSet": {
+      "entries": [
+        "react",
+        "react-dom/client",
+        "react/jsx-runtime",
+        "@tanstack/react-query",
+        "@toi/tds",
+        "@toi/fetch"
+      ],
+      "dependencies": {
+        "react": "19.3.0",
+        "react-dom": "19.3.0",
+        "@tanstack/react-query": "^5.0.0",
+        "@toi/tds": "^1.1.0",
+        "@toi/fetch": "1.0.0"
+      }
+    },
+    "status": "이전 화면을 유지했어요: 구성 요소 준비 실패 · 패키지 저장소에 연결하지 못했어요. 잠시 후 다시 시도하세요.\n다시 시도",
+    "lastCommit": 1
+  },
+  {
+    "at": "2026-09-13T09:08:35.783Z",
+    "name": "compose-start-verdaccio",
+    "start": "2026-09-13T09:08:31.709Z",
+    "output": ""
+  },
+  {
+    "at": "2026-09-13T09:08:38.100Z",
+    "name": "registry-retry",
+    "health": 200,
+    "revision": 2,
+    "sameProjectAndPackages": true,
+    "sameNavigation": true
+  },
+  {
+    "at": "2026-09-13T09:08:39.016Z",
+    "name": "missing-version-control",
+    "health": 200,
+    "status": "이전 화면을 유지했어요: 구성 요소 준비 실패 · 패키지 또는 버전 확인 필요\n다시 시도"
+  },
+  {
+    "at": "2026-09-13T09:08:42.728Z",
+    "name": "compose-stop-minio",
+    "start": "2026-09-13T09:08:39.138Z",
+    "output": ""
+  },
+  {
+    "at": "2026-09-13T09:08:42.864Z",
+    "name": "storage-failure",
+    "health": "unreachable",
+    "status": "이전 화면을 유지했어요: 구성 요소 준비 실패 · 구성 요소 저장소에 연결하지 못했어요. 잠시 후 다시 시도하세요.\n다시 시도",
+    "revision": 5,
+    "lastCommit": 4
+  },
+  {
+    "at": "2026-09-13T09:08:46.326Z",
+    "name": "compose-start-minio",
+    "start": "2026-09-13T09:08:42.864Z",
+    "output": ""
+  },
+  {
+    "at": "2026-09-13T09:08:48.656Z",
+    "name": "storage-retry",
+    "health": 200,
+    "revision": 5,
+    "sameProjectAndPackages": true,
+    "sameNavigation": true
+  },
+  {
+    "at": "2026-09-13T09:08:48.656Z",
+    "name": "N02",
+    "pass": true
+  },
+  {
+    "at": "2026-09-13T09:08:49.164Z",
+    "name": "finished",
+    "failures": [
+      "N01",
+      "regression"
+    ]
+  }
+]

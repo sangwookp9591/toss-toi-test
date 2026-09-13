@@ -1,0 +1,24 @@
+{
+  "checkedAt": "2026-09-13T09:12:45.775802+00:00",
+  "listeners": {
+    "4873": "",
+    "9000": "",
+    "5173": "",
+    "5174": "",
+    "7100": "",
+    "7200": "",
+    "7300": "",
+    "7400": ""
+  },
+  "listenerCount": 0,
+  "managedPidsAlive": [],
+  "managedProcessGroupsAlive": [],
+  "containers": [],
+  "volumesPreserved": [
+    "toi-qa3_minio-data",
+    "toi-qa3_verdaccio-auth",
+    "toi-qa3_verdaccio-storage"
+  ],
+  "gitStatus": "?? docs/qa/qa3/\n",
+  "trackedDiff": ""
+}

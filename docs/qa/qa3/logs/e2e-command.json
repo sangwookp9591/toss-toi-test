@@ -1,0 +1,33 @@
+{
+  "command": "npm --prefix e2e ci && npm --prefix e2e run test:repeat",
+  "started": "2026-09-13T09:09:35.955Z",
+  "finished": "2026-09-13T09:11:52.963Z",
+  "durationMs": 137006.805333,
+  "exitCode": 0,
+  "restoredTrackedFiles": [
+    {
+      "path": "e2e/artifacts/question-1600.png",
+      "copy": "shots/e2e-question-1600.png"
+    },
+    {
+      "path": "e2e/artifacts/question-400.png",
+      "copy": "shots/e2e-question-400.png"
+    },
+    {
+      "path": "e2e/artifacts/registry-recovered.png",
+      "copy": "shots/e2e-registry-recovered.png"
+    },
+    {
+      "path": "e2e/artifacts/results.json",
+      "copy": "logs/e2e-results.json"
+    },
+    {
+      "path": "e2e/artifacts/runtime-location.png",
+      "copy": "shots/e2e-runtime-location.png"
+    },
+    {
+      "path": "e2e/artifacts/studio.png",
+      "copy": "shots/e2e-studio.png"
+    }
+  ]
+}

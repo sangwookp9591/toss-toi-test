@@ -1,0 +1,133 @@
+[0.000s] development configuration: starting
+[0.009s] development configuration: ready (0.009s)
+[0.009s] Docker Compose: starting
+[0.106s]  Network toi-qa3_default  Creating
+[0.199s]  Network toi-qa3_default  Created
+[0.200s]  Volume "toi-qa3_minio-data"  Creating
+[0.204s]  Volume "toi-qa3_minio-data"  Created
+[0.205s]  Volume "toi-qa3_verdaccio-storage"  Creating
+[0.208s]  Volume "toi-qa3_verdaccio-storage"  Created
+[0.209s]  Volume "toi-qa3_verdaccio-auth"  Creating
+[0.210s]  Volume "toi-qa3_verdaccio-auth"  Created
+[0.212s]  Container toi-qa3-minio-1  Creating
+[0.212s]  Container toi-qa3-verdaccio-init-1  Creating
+[0.259s]  Container toi-qa3-minio-1  Created
+[0.263s]  Container toi-qa3-verdaccio-init-1  Created
+[0.263s]  Container toi-qa3-verdaccio-1  Creating
+[0.319s]  Container toi-qa3-verdaccio-1  Created
+[0.344s]  Container toi-qa3-verdaccio-init-1  Starting
+[0.344s]  Container toi-qa3-minio-1  Starting
+[0.484s]  Container toi-qa3-minio-1  Started
+[0.494s]  Container toi-qa3-verdaccio-init-1  Started
+[0.494s]  Container toi-qa3-verdaccio-init-1  Waiting
+[0.999s]  Container toi-qa3-verdaccio-init-1  Exited
+[0.999s]  Container toi-qa3-verdaccio-1  Starting
+[1.143s]  Container toi-qa3-verdaccio-1  Started
+[1.353s] Docker Compose: ready (1.344s)
+[1.353s] registry and storage health: starting
+[1.895s] registry and storage health: ready (0.542s)
+[1.896s] packages/fake-tds install: starting
+[2.600s] 
+[2.601s] added 4 packages, and audited 5 packages in 609ms
+[2.601s] 
+[2.602s] found 0 vulnerabilities
+[2.607s] packages/fake-tds install: ready (0.711s)
+[2.607s] packages/preview-runtime install: starting
+[4.137s] 
+[4.137s] added 116 packages, and audited 117 packages in 1s
+[4.138s] 
+[4.138s] 22 packages are looking for funding
+[4.138s]   run `npm fund` for details
+[4.139s] 
+[4.139s] found 0 vulnerabilities
+[4.147s] packages/preview-runtime install: ready (1.540s)
+[4.147s] services/mock-backend install: starting
+[5.623s] 
+[5.624s] added 125 packages, and audited 126 packages in 1s
+[5.624s] 
+[5.624s] 17 packages are looking for funding
+[5.625s]   run `npm fund` for details
+[5.631s] 
+[5.631s] 2 vulnerabilities (1 moderate, 1 critical)
+[5.632s] 
+[5.632s] To address all issues, run:
+[5.633s]   npm audit fix --force
+[5.633s] 
+[5.634s] Run `npm audit` for details.
+[5.640s] services/mock-backend install: ready (1.492s)
+[5.640s] services/policy-proxy install: starting
+[7.238s] 
+[7.239s] added 126 packages, and audited 127 packages in 2s
+[7.239s] 
+[7.239s] 17 packages are looking for funding
+[7.240s]   run `npm fund` for details
+[7.245s] 
+[7.245s] 2 vulnerabilities (1 moderate, 1 critical)
+[7.245s] 
+[7.246s] To address all issues, run:
+[7.246s]   npm audit fix --force
+[7.246s] 
+[7.246s] Run `npm audit` for details.
+[7.254s] services/policy-proxy install: ready (1.614s)
+[7.255s] services/deps-builder install: starting
+[8.636s] 
+[8.636s] added 100 packages, and audited 101 packages in 1s
+[8.637s] 
+[8.637s] 25 packages are looking for funding
+[8.637s]   run `npm fund` for details
+[8.639s] 
+[8.640s] 5 moderate severity vulnerabilities
+[8.640s] 
+[8.640s] To address all issues, run:
+[8.640s]   npm audit fix --force
+[8.640s] 
+[8.641s] Run `npm audit` for details.
+[8.648s] services/deps-builder install: ready (1.394s)
+[8.649s] services/agent-server install: starting
+[10.240s] 
+[10.240s] added 121 packages, and audited 122 packages in 2s
+[10.241s] 
+[10.241s] 23 packages are looking for funding
+[10.241s]   run `npm fund` for details
+[10.241s] 
+[10.242s] found 0 vulnerabilities
+[10.248s] services/agent-server install: ready (1.600s)
+[10.249s] apps/studio install: starting
+[11.453s] 
+[11.453s] added 56 packages, and audited 57 packages in 1s
+[11.453s] 
+[11.454s] found 0 vulnerabilities
+[11.460s] apps/studio install: ready (1.211s)
+[11.460s] registry setup: starting
+[11.591s] 
+[11.591s] > @toi/deps-builder@1.0.0 setup-registry
+[11.591s] > node scripts/setup-registry.mjs
+[11.592s] 
+[11.684s] Anonymous @toi/tds metadata blocked: HTTP 401
+[11.931s] Registry token stored in gitignored root .env (mode 0600)
+[11.932s] fake-tds build: starting
+[13.051s] fake-tds build: ready (1.120s)
+[13.905s] Published @toi/tds@1.0.0
+[14.593s] Published @toi/tds@1.1.0
+[14.597s] Verified both versions published; anonymous access remains HTTP 401
+[14.608s] registry setup: ready (3.148s)
+[14.609s] fetch client publish: starting
+[14.742s] 
+[14.743s] > @toi/policy-proxy@1.0.0 publish:client
+[14.743s] > node scripts/publish-client.mjs
+[14.743s] 
+[16.616s] Published @toi/fetch@1.0.0; anonymous metadata is blocked
+[16.676s] fetch client publish: ready (2.067s)
+[16.676s] mock-backend start: starting
+[17.692s] mock-backend start: ready (1.016s)
+[17.693s] policy-proxy start: starting
+[18.706s] policy-proxy start: ready (1.013s)
+[18.707s] deps-builder start: starting
+[20.222s] deps-builder start: ready (1.515s)
+[20.222s] agent-server start: starting
+[21.745s] agent-server start: ready (1.523s)
+[21.746s] studio start: starting
+[22.270s] studio start: ready (0.524s)
+[22.271s] preview origin health: starting
+[22.274s] preview origin health: ready (0.003s)
+[22.274s] TOI-lite ready: http://localhost:5173 (logs: scripts/.run)

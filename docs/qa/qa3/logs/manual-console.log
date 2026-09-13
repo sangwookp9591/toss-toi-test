@@ -1,0 +1,162 @@
+environment {"browser":"153.0.8010.36","headed":true,"head":"f7577f5befce1868ab20006ea1980c8f2d78a99a","started":"2026-09-13T09:08:07.082Z"}
+START N01
+layout-400 {"width":48,"height":34,"right":366,"lineHeight":"20px","whiteSpace":"nowrap"}
+layout-1600 {"width":48,"height":34,"right":339.078125,"lineHeight":"20px","whiteSpace":"nowrap"}
+N01 {"pass":false,"error":"expect(locator).toContainText(expected) failed\n\nLocator: locator('.generation-notice')\nExpected substring: \"진행 중이던 생성이 끝났어요: 중단\"\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toContainText\" locator('.generation-notice') with timeout 5000ms\n  - waiting for locator('.generation-notice')\n"}
+{
+  "id": "ee03d0c5-18d8-41fa-aa37-ff4f47cc038c",
+  "ok": true,
+  "result": {
+    "runId": "run_1e6e743fa729",
+    "dispatchId": "ctx_d65e3faa109f",
+    "deliveryId": null,
+    "messages": [],
+    "count": 0,
+    "replayed": false,
+    "acknowledged": null,
+    "timedOut": false,
+    "cancelled": false,
+    "connectionLost": false,
+    "mutation": {
+      "requestId": "35984590-e093-4712-a47b-7d149028e3d5",
+      "replayed": false
+    }
+  },
+  "_meta": {
+    "runtimeId": "7ae12af0-64b7-430c-8299-c5c1022f2da8"
+  }
+}
+
+START regression
+masked-table {"text":"ID\t이름\t휴대폰\t상태\nC001\t홍*동\t010-****-5678\tactive\nC002\t김*동\t010-****-5679\tactive\nC003\t이*동\t010-****-5680\tactive\nC004\t박*동\t010-****-5681\tactive\nC005\t최*동\t010-****-5682\tactive\nC006\t홍*수\t010-****-5683\tactive\nC007\t김*수\t010-****-5684\tactive\nC008\t이*수\t010-****-5685\tactive\nC009\t박*수\t010-****-5686\tactive\nC010\t최*수\t010-****-5687\tinactive\nC011\t홍*연\t010-****-5688\tactive\nC012\t김*연\t010-****-5689\tactive\nC013\t이*연\t010-****-5690\tactive\nC014\t박*연\t010-****-5691\tactive\nC015\t최*연\t010-****-5692\tactive\nC016\t홍*우\t010-****-5693\tactive\nC017\t김*우\t010-****-5694\tactive\nC018\t이*우\t010-****-5695\tactive\nC019\t박*우\t010-****-5696\tactive\nC020\t최*우\t010-****-5697\tinactive"}
+regression {"pass":false,"error":"locator.evaluate: Error: strict mode violation: locator('#preview iframe') resolved to 2 elements:\n    1) <iframe data-state=\"committed\" title=\"Preview revision 2\" sandbox=\"allow-scripts allow-same-origin\" src=\"http://localhost:5174/frame.html?parentOrigin=http%3A%2F%2Flocalhost%3A5173\"></iframe> aka locator('iframe[title=\"Preview revision 2\"]').first()\n    2) <iframe inert=\"\" aria-hidden=\"true\" data-state=\"candidate\" title=\"Preview revision 2\" sandbox=\"allow-scripts allow-same-origin\" src=\"http://localhost:5174/frame.html?parentOrigin=http%3A%2F%2Flocalhost%3A5173\"></iframe> aka locator('iframe[title=\"Preview revision 2\"]').nth(1)\n\nCall log:\n\u001b[2m  - waiting for locator('#preview iframe').contentFrame().locator('body')\u001b[22m\n"}
+{
+  "id": "c61b87f1-3009-4045-aaa6-02dd161411fc",
+  "ok": true,
+  "result": {
+    "runId": "run_1e6e743fa729",
+    "dispatchId": "ctx_d65e3faa109f",
+    "deliveryId": null,
+    "messages": [],
+    "count": 0,
+    "replayed": false,
+    "acknowledged": null,
+    "timedOut": false,
+    "cancelled": false,
+    "connectionLost": false,
+    "mutation": {
+      "requestId": "dfca4c03-cc75-4ca7-9aa8-b73288ecdf53",
+      "replayed": false
+    }
+  },
+  "_meta": {
+    "runtimeId": "7ae12af0-64b7-430c-8299-c5c1022f2da8"
+  }
+}
+
+START runtime
+runtime-app {"code":"// QA3 original line check\n\n  throw new Error('QA runtime failure');\nexport default function App(){return <h1>실패</h1>}","diagnostic":{"message":"QA runtime failure","file":"/src/App.tsx","line":3,"column":8},"expected":{"file":"/src/App.tsx","line":3,"column":8},"previewRetained":true}
+syntax {"code":"export default function App() { return < }","diagnostic":{"message":"Expected identifier but found \"}\"","file":"/src/App.tsx","line":1,"column":41},"expected":{"file":"/src/App.tsx","line":1,"column":null},"previewRetained":true}
+axios {"code":"import axios from 'axios'; export default function App(){return <h1>{String(axios)}</h1>}","diagnostic":{"message":"package not in package set: axios","file":"/src/App.tsx","line":1,"column":18},"expected":{"file":"/src/App.tsx","line":1,"column":18},"previewRetained":true}
+runtime-child {"code":"// QA3 child source\nexport function failChild() {\n    throw new Error('QA child runtime failure');\n}\n","diagnostic":{"message":"QA child runtime failure","file":"/src/Child.tsx","line":3,"column":10},"expected":{"file":"/src/Child.tsx","line":3,"column":10},"previewRetained":true}
+runtime {"pass":true}
+{
+  "id": "2cba5f16-08ff-49ec-921c-037495861421",
+  "ok": true,
+  "result": {
+    "runId": "run_1e6e743fa729",
+    "dispatchId": "ctx_d65e3faa109f",
+    "deliveryId": null,
+    "messages": [],
+    "count": 0,
+    "replayed": false,
+    "acknowledged": null,
+    "timedOut": false,
+    "cancelled": false,
+    "connectionLost": false,
+    "mutation": {
+      "requestId": "481509a7-5979-43da-a7ac-085a89cb72ad",
+      "replayed": false
+    }
+  },
+  "_meta": {
+    "runtimeId": "7ae12af0-64b7-430c-8299-c5c1022f2da8"
+  }
+}
+
+START CAS
+cas-detail {"clipboardMatches":true,"persistedAfterReload":true}
+CAS {"pass":true}
+{
+  "id": "9ee5b03f-3513-40a0-9792-4a544cd3e128",
+  "ok": true,
+  "result": {
+    "runId": "run_1e6e743fa729",
+    "dispatchId": "ctx_d65e3faa109f",
+    "deliveryId": null,
+    "messages": [],
+    "count": 0,
+    "replayed": false,
+    "acknowledged": null,
+    "timedOut": false,
+    "cancelled": false,
+    "connectionLost": false,
+    "mutation": {
+      "requestId": "961416c3-4fbb-4e81-b38d-d961ef7e104f",
+      "replayed": false
+    }
+  },
+  "_meta": {
+    "runtimeId": "7ae12af0-64b7-430c-8299-c5c1022f2da8"
+  }
+}
+
+START N02
+ Container toi-qa3-verdaccio-1  Stopping
+ Container toi-qa3-verdaccio-1  Stopped
+compose-stop-verdaccio {"start":"2026-09-13T09:08:27.130Z","output":""}
+verdaccio-confirmed-down {"health":"unreachable"}
+registry-failure {"revision":2,"packageSet":{"entries":["react","react-dom/client","react/jsx-runtime","@tanstack/react-query","@toi/tds","@toi/fetch"],"dependencies":{"react":"19.3.0","react-dom":"19.3.0","@tanstack/react-query":"^5.0.0","@toi/tds":"^1.1.0","@toi/fetch":"1.0.0"}},"status":"이전 화면을 유지했어요: 구성 요소 준비 실패 · 패키지 저장소에 연결하지 못했어요. 잠시 후 다시 시도하세요.\n다시 시도","lastCommit":1}
+ Container toi-qa3-verdaccio-init-1  Starting
+ Container toi-qa3-verdaccio-init-1  Started
+ Container toi-qa3-verdaccio-init-1  Waiting
+ Container toi-qa3-verdaccio-init-1  Exited
+ Container toi-qa3-verdaccio-1  Starting
+ Container toi-qa3-verdaccio-1  Started
+compose-start-verdaccio {"start":"2026-09-13T09:08:31.709Z","output":""}
+registry-retry {"health":200,"revision":2,"sameProjectAndPackages":true,"sameNavigation":true}
+missing-version-control {"health":200,"status":"이전 화면을 유지했어요: 구성 요소 준비 실패 · 패키지 또는 버전 확인 필요\n다시 시도"}
+ Container toi-qa3-minio-1  Stopping
+ Container toi-qa3-minio-1  Stopped
+compose-stop-minio {"start":"2026-09-13T09:08:39.138Z","output":""}
+storage-failure {"health":"unreachable","status":"이전 화면을 유지했어요: 구성 요소 준비 실패 · 구성 요소 저장소에 연결하지 못했어요. 잠시 후 다시 시도하세요.\n다시 시도","revision":5,"lastCommit":4}
+ Container toi-qa3-minio-1  Starting
+ Container toi-qa3-minio-1  Started
+compose-start-minio {"start":"2026-09-13T09:08:42.864Z","output":""}
+storage-retry {"health":200,"revision":5,"sameProjectAndPackages":true,"sameNavigation":true}
+N02 {"pass":true}
+{
+  "id": "c0eed293-3631-46a3-81b5-3481178006c0",
+  "ok": true,
+  "result": {
+    "runId": "run_1e6e743fa729",
+    "dispatchId": "ctx_d65e3faa109f",
+    "deliveryId": null,
+    "messages": [],
+    "count": 0,
+    "replayed": false,
+    "acknowledged": null,
+    "timedOut": false,
+    "cancelled": false,
+    "connectionLost": false,
+    "mutation": {
+      "requestId": "bf6d57a1-b330-447b-a466-7401605bff78",
+      "replayed": false
+    }
+  },
+  "_meta": {
+    "runtimeId": "7ae12af0-64b7-430c-8299-c5c1022f2da8"
+  }
+}
+
+finished {"failures":["N01","regression"]}
