@@ -1,0 +1,11 @@
+{
+  "id": "13-cancel",
+  "apiIds": [
+    "customers"
+  ],
+  "kind": "cancel",
+  "prompt": "고객 목록 화면을 만들어 주세요.",
+  "expectedVisible": [],
+  "piiFields": [],
+  "answer": "예. 조회 사유는 업무 검토 확인, 기본 ID는 C001 입니다."
+}

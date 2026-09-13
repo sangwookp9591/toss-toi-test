@@ -1,0 +1,24 @@
+{
+  "driver": "claude",
+  "model": "claude-opus-5",
+  "startedAt": "2026-09-13T11:14:09.266Z",
+  "limits": {
+    "maxMinutes": 60,
+    "maxCostUsd": 0,
+    "caseSeconds": 180,
+    "repeat": 1
+  },
+  "auth": "isolated RS256 test issuer; real JWKS verification and membership HTTP",
+  "selfTest": {
+    "passed": true,
+    "controls": [
+      "unapproved/static/dynamic imports rejected",
+      "approved/relative imports accepted",
+      "raw fetch blocked"
+    ]
+  },
+  "cases": [],
+  "costReservedUsd": 0,
+  "skip": "Claude requires explicit --max-cost-usd > 0; no request made",
+  "durationMs": 14
+}

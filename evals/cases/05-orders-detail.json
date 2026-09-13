@@ -1,0 +1,16 @@
+{
+  "id": "05-orders-detail",
+  "apiIds": [
+    "orders"
+  ],
+  "kind": "detail",
+  "prompt": "주문 O001 상세를 조회하는 화면을 만드세요. id, customerId, amount, status, note 및 조회 사유와 조회 버튼을 표시하세요.",
+  "expectedVisible": [
+    "O001",
+    "C001",
+    "42000"
+  ],
+  "piiFields": [],
+  "answer": "예. 조회 사유는 업무 검토 확인, 기본 ID는 O001 입니다.",
+  "expectedDetailPath": "/orders/O001"
+}

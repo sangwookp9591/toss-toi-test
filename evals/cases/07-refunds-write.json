@@ -1,0 +1,19 @@
+{
+  "id": "07-refunds-write",
+  "apiIds": [
+    "refunds"
+  ],
+  "kind": "write",
+  "prompt": "환불 R001 상태 변경 화면을 만드세요. 현재 id, amount, status를 조회하고 승인 버튼으로 status를 approved로 PATCH하세요. 사유 입력과 조회 버튼을 제공하세요.",
+  "expectedVisible": [
+    "R001",
+    "12000"
+  ],
+  "piiFields": [],
+  "answer": "예. 조회 사유는 업무 검토 확인, 기본 ID는 R001 입니다.",
+  "expectedWrite": {
+    "method": "PATCH",
+    "path": "/refunds/R001",
+    "status": "approved"
+  }
+}

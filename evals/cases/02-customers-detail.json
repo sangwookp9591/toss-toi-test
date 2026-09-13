@@ -1,0 +1,18 @@
+{
+  "id": "02-customers-detail",
+  "apiIds": [
+    "customers"
+  ],
+  "kind": "detail",
+  "prompt": "고객 C001 상세 화면: id, name, phone, status와 조회 사유 및 조회 버튼을 표시하세요.",
+  "expectedVisible": [
+    "C001",
+    "active"
+  ],
+  "piiFields": [
+    "name",
+    "phone"
+  ],
+  "answer": "예. 조회 사유는 업무 검토 확인, 기본 ID는 C001 입니다.",
+  "expectedDetailPath": "/customers/C001"
+}

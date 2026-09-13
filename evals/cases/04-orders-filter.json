@@ -1,0 +1,19 @@
+{
+  "id": "04-orders-filter",
+  "apiIds": [
+    "orders"
+  ],
+  "kind": "filter",
+  "prompt": "주문 목록에 status 필터를 제공하고 기본값 paid, amount 내림차순 정렬(sort=amount_desc)로 조회하세요. id, amount, status 및 조회 사유와 조회 버튼을 표시하세요.",
+  "expectedVisible": [
+    "O001",
+    "42000",
+    "paid"
+  ],
+  "piiFields": [],
+  "answer": "예. 조회 사유는 업무 검토 확인, 기본 ID는 O001 입니다.",
+  "expectedQuery": {
+    "status": "paid",
+    "sort": "amount_desc"
+  }
+}

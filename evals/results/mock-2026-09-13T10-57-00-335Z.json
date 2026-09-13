@@ -1,0 +1,829 @@
+{
+  "driver": "mock",
+  "model": "deterministic repository MockDriver",
+  "startedAt": "2026-09-13T10:57:00.330Z",
+  "limits": {
+    "maxMinutes": 5,
+    "maxCostUsd": 0,
+    "caseSeconds": 180,
+    "repeat": 1
+  },
+  "auth": "isolated RS256 test issuer; real JWKS verification and membership HTTP",
+  "selfTest": {
+    "passed": true,
+    "controls": [
+      "unapproved/static/dynamic imports rejected",
+      "approved/relative imports accepted",
+      "raw fetch blocked"
+    ]
+  },
+  "cases": [
+    {
+      "id": "01-customers-list",
+      "iteration": 1,
+      "kind": "list",
+      "score": 100,
+      "success": true,
+      "checks": {
+        "generation_complete": {
+          "pass": true
+        },
+        "source_policy": {
+          "pass": true
+        },
+        "approved_imports": {
+          "pass": true
+        },
+        "toi_fetch_only": {
+          "pass": true
+        },
+        "preview_commit": {
+          "pass": true
+        },
+        "visible_fields": {
+          "pass": true
+        },
+        "pii_masked": {
+          "pass": true
+        },
+        "runtime_clean": {
+          "pass": true
+        }
+      },
+      "failures": [],
+      "events": [
+        {
+          "type": "state",
+          "state": "requested",
+          "generationId": "b6a27298-b058-441f-a9a1-2f8b19ec6c25",
+          "seq": 1
+        },
+        {
+          "type": "state",
+          "state": "staging",
+          "generationId": "b6a27298-b058-441f-a9a1-2f8b19ec6c25",
+          "seq": 2
+        },
+        {
+          "type": "text",
+          "delta": "요청을 확인했습니다. ",
+          "generationId": "b6a27298-b058-441f-a9a1-2f8b19ec6c25",
+          "seq": 3
+        },
+        {
+          "type": "text",
+          "delta": "등록된 API를 사용하는 화면을 준비합니다. ",
+          "generationId": "b6a27298-b058-441f-a9a1-2f8b19ec6c25",
+          "seq": 4
+        },
+        {
+          "type": "state",
+          "state": "awaiting_answer",
+          "generationId": "b6a27298-b058-441f-a9a1-2f8b19ec6c25",
+          "seq": 5
+        },
+        {
+          "type": "question",
+          "questionId": "a3f83af0-aacd-46b7-a053-bfa10732c7d0",
+          "question": "조회 사유 기본값을 넣을까요?",
+          "options": [
+            "예",
+            "아니요"
+          ],
+          "generationId": "b6a27298-b058-441f-a9a1-2f8b19ec6c25",
+          "seq": 6
+        },
+        {
+          "type": "state",
+          "state": "staging",
+          "generationId": "b6a27298-b058-441f-a9a1-2f8b19ec6c25",
+          "seq": 7
+        },
+        {
+          "type": "file",
+          "path": "/src/App.tsx",
+          "content": "import { useRef, useState } from 'react';\nimport { Button, TextField, Table } from '@toi/tds';\nimport { ToiFetchError, ToiForbiddenError, ToiReasonRequiredError } from '@toi/fetch';\nimport { listRecords, getRecord, updateStatus } from './api';\nfunction errorMessage(error: unknown, writing = false) {\n  const status = error instanceof ToiFetchError ? error.status : undefined;\n  if (error instanceof ToiReasonRequiredError || status === 428) return '조회 사유를 5자 이상 입력하세요.';\n  if (error instanceof ToiForbiddenError || status === 403) return writing\n    ? '쓰기 권한이 없거나 허용 시간이 끝났어요. 스튜디오에서 쓰기 테스트를 다시 허용하세요.'\n    : '조회 권한이 없어요. 스튜디오에서 접근 권한을 확인하세요.';\n  if (status !== undefined && status >= 500) return '고객 시스템이 응답하지 않아요. 잠시 후 다시 시도하세요.';\n  if (error instanceof TypeError) return '정책 서버에 연결하지 못했어요. 잠시 후 다시 시도하세요.';\n  return writing ? '상태를 바꾸지 못했어요. 잠시 후 다시 시도하세요.' : '고객을 조회하지 못했어요. 잠시 후 다시 시도하세요.';\n}\nexport default function App() {\n  const [reason, setReason] = useState(\"고객 문의 확인\");\n  const [rows, setRows] = useState<Record<string, unknown>[]>([]);\n  const [customerId, setCustomerId] = useState('C001');\n  const [error, setError] = useState('');\n  const [notice, setNotice] = useState('');\n  const [queryState, setQueryState] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');\n  const [writing, setWriting] = useState(false);\n  const queryPending = useRef(false);\n  const writePending = useRef(false);\n  async function suspend() {\n    if (writePending.current || queryPending.current) return;\n    writePending.current = true; setWriting(true);\n    try { await updateStatus(customerId, 'suspended', reason); setNotice('상태를 정지로 바꿨어요.'); setError(''); await load(); }\n    catch (e) { setNotice(''); setError(errorMessage(e, true)); }\n    finally { writePending.current = false; setWriting(false); }\n  }\n  async function load() {\n    if (queryPending.current) return;\n    if (reason.trim().length < 5) { setError('조회 사유를 5자 이상 입력하세요.'); setQueryState('error'); return; }\n    queryPending.current = true; setQueryState('loading'); setError('');\n    try {\n      const data = await listRecords(reason);\n      setRows(data == null ? [] : Array.isArray(data.items) ? data.items : [data]); setQueryState('success');\n    } catch (e) {\n      if (e instanceof ToiFetchError && e.status === 404) { setRows([]); setQueryState('success'); }\n      else { setError(errorMessage(e)); setQueryState('error'); }\n    } finally { queryPending.current = false; }\n  }\n  return <main><h1>고객 목록</h1><TextField label=\"조회 사유\" value={reason} onChange={e => setReason(e.target.value)} />\n    <Button onClick={load} disabled={queryState === 'loading' || writing}>{queryState === 'loading' ? '조회 중…' : '조회'}</Button><p role=\"alert\">{error}</p>\n    \n    \n    <div role=\"status\"><p>{notice}</p>\n      {queryState === 'idle' ? <p>조회 사유를 입력하고 조회를 눌러 주세요</p> : null}\n      {queryState === 'loading' ? <p>조회 중…</p> : null}\n      {queryState === 'success' && rows.length === 0 ? <p>조건에 맞는 고객이 없어요</p> : null}\n    </div>\n    {queryState === 'success' && rows.length > 0 ?\n      <Table columns={[{key:'id',header:'ID'},{key:'name',header:'이름'},{key:'phone',header:'휴대폰'},{key:'status',header:'상태'}]} rows={rows} rowKey=\"id\" /> : null}</main>;\n}\n",
+          "generationId": "b6a27298-b058-441f-a9a1-2f8b19ec6c25",
+          "seq": 8
+        },
+        {
+          "type": "state",
+          "state": "revision_ready",
+          "generationId": "b6a27298-b058-441f-a9a1-2f8b19ec6c25",
+          "seq": 9
+        },
+        {
+          "type": "revision_ready",
+          "revision": 2,
+          "sourceDigest": "90d2d36ac810214c965c4eea04fe86ba159a52abacbeca3eb511f5b1eba52455",
+          "files": {
+            "/src/main.tsx": "import { createRoot } from 'react-dom/client';\nimport App from './App';\ncreateRoot(document.getElementById('root')!).render(<App />);\n",
+            "/src/App.tsx": "import { useRef, useState } from 'react';\nimport { Button, TextField, Table } from '@toi/tds';\nimport { ToiFetchError, ToiForbiddenError, ToiReasonRequiredError } from '@toi/fetch';\nimport { listRecords, getRecord, updateStatus } from './api';\nfunction errorMessage(error: unknown, writing = false) {\n  const status = error instanceof ToiFetchError ? error.status : undefined;\n  if (error instanceof ToiReasonRequiredError || status === 428) return '조회 사유를 5자 이상 입력하세요.';\n  if (error instanceof ToiForbiddenError || status === 403) return writing\n    ? '쓰기 권한이 없거나 허용 시간이 끝났어요. 스튜디오에서 쓰기 테스트를 다시 허용하세요.'\n    : '조회 권한이 없어요. 스튜디오에서 접근 권한을 확인하세요.';\n  if (status !== undefined && status >= 500) return '고객 시스템이 응답하지 않아요. 잠시 후 다시 시도하세요.';\n  if (error instanceof TypeError) return '정책 서버에 연결하지 못했어요. 잠시 후 다시 시도하세요.';\n  return writing ? '상태를 바꾸지 못했어요. 잠시 후 다시 시도하세요.' : '고객을 조회하지 못했어요. 잠시 후 다시 시도하세요.';\n}\nexport default function App() {\n  const [reason, setReason] = useState(\"고객 문의 확인\");\n  const [rows, setRows] = useState<Record<string, unknown>[]>([]);\n  const [customerId, setCustomerId] = useState('C001');\n  const [error, setError] = useState('');\n  const [notice, setNotice] = useState('');\n  const [queryState, setQueryState] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');\n  const [writing, setWriting] = useState(false);\n  const queryPending = useRef(false);\n  const writePending = useRef(false);\n  async function suspend() {\n    if (writePending.current || queryPending.current) return;\n    writePending.current = true; setWriting(true);\n    try { await updateStatus(customerId, 'suspended', reason); setNotice('상태를 정지로 바꿨어요.'); setError(''); await load(); }\n    catch (e) { setNotice(''); setError(errorMessage(e, true)); }\n    finally { writePending.current = false; setWriting(false); }\n  }\n  async function load() {\n    if (queryPending.current) return;\n    if (reason.trim().length < 5) { setError('조회 사유를 5자 이상 입력하세요.'); setQueryState('error'); return; }\n    queryPending.current = true; setQueryState('loading'); setError('');\n    try {\n      const data = await listRecords(reason);\n      setRows(data == null ? [] : Array.isArray(data.items) ? data.items : [data]); setQueryState('success');\n    } catch (e) {\n      if (e instanceof ToiFetchError && e.status === 404) { setRows([]); setQueryState('success'); }\n      else { setError(errorMessage(e)); setQueryState('error'); }\n    } finally { queryPending.current = false; }\n  }\n  return <main><h1>고객 목록</h1><TextField label=\"조회 사유\" value={reason} onChange={e => setReason(e.target.value)} />\n    <Button onClick={load} disabled={queryState === 'loading' || writing}>{queryState === 'loading' ? '조회 중…' : '조회'}</Button><p role=\"alert\">{error}</p>\n    \n    \n    <div role=\"status\"><p>{notice}</p>\n      {queryState === 'idle' ? <p>조회 사유를 입력하고 조회를 눌러 주세요</p> : null}\n      {queryState === 'loading' ? <p>조회 중…</p> : null}\n      {queryState === 'success' && rows.length === 0 ? <p>조건에 맞는 고객이 없어요</p> : null}\n    </div>\n    {queryState === 'success' && rows.length > 0 ?\n      <Table columns={[{key:'id',header:'ID'},{key:'name',header:'이름'},{key:'phone',header:'휴대폰'},{key:'status',header:'상태'}]} rows={rows} rowKey=\"id\" /> : null}</main>;\n}\n",
+            "/src/api.ts": "import { configureToiFetch, toiFetch } from '@toi/fetch';\n// The trusted preview host injects runtime credentials; generated code never mints them.\ntype HostConfig = Parameters<typeof configureToiFetch>[0];\nconst hostConfig = (globalThis as typeof globalThis & { __TOI_FETCH_CONFIG__?: HostConfig }).__TOI_FETCH_CONFIG__;\nif (!hostConfig) throw new Error('Preview host configuration missing: __TOI_FETCH_CONFIG__');\nconfigureToiFetch(hostConfig);\nexport async function listRecords(reason: string) {\n  const response = await toiFetch(\"customers\", '/customers', { reason });\n  return response.json();\n}\nexport async function getRecord(id: string, reason: string) {\n  const response = await toiFetch(\"customers\", '/customers/' + encodeURIComponent(id), { reason });\n  return response.json();\n}\nexport async function updateStatus(id: string, status: 'active' | 'inactive' | 'suspended', reason: string) {\n  const response = await toiFetch(\"customers\", '/customers/' + encodeURIComponent(id), {\n    method: 'PATCH', reason, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status })\n  });\n  return response.json();\n}\n"
+          },
+          "packageSet": {
+            "entries": [
+              "react",
+              "react-dom/client",
+              "react/jsx-runtime",
+              "@tanstack/react-query",
+              "@toi/tds",
+              "@toi/fetch"
+            ],
+            "dependencies": {
+              "react": "19.3.0",
+              "react-dom": "19.3.0",
+              "@tanstack/react-query": "^5.0.0",
+              "@toi/tds": "1.0.0",
+              "@toi/fetch": "1.0.0"
+            }
+          },
+          "generationId": "b6a27298-b058-441f-a9a1-2f8b19ec6c25",
+          "seq": 10
+        },
+        {
+          "type": "state",
+          "state": "done",
+          "generationId": "b6a27298-b058-441f-a9a1-2f8b19ec6c25",
+          "seq": 11
+        },
+        {
+          "type": "done",
+          "summary": "조회 사유를 입력하는 고객 어드민 화면을 생성했습니다.",
+          "generationId": "b6a27298-b058-441f-a9a1-2f8b19ec6c25",
+          "seq": 12
+        }
+      ],
+      "project": {
+        "projectId": "9bb5e8eb-c47a-456e-8aa7-47d51df79930",
+        "name": "Evaluation 01-customers-list",
+        "revision": 2,
+        "files": {
+          "/src/main.tsx": "import { createRoot } from 'react-dom/client';\nimport App from './App';\ncreateRoot(document.getElementById('root')!).render(<App />);\n",
+          "/src/App.tsx": "import { useRef, useState } from 'react';\nimport { Button, TextField, Table } from '@toi/tds';\nimport { ToiFetchError, ToiForbiddenError, ToiReasonRequiredError } from '@toi/fetch';\nimport { listRecords, getRecord, updateStatus } from './api';\nfunction errorMessage(error: unknown, writing = false) {\n  const status = error instanceof ToiFetchError ? error.status : undefined;\n  if (error instanceof ToiReasonRequiredError || status === 428) return '조회 사유를 5자 이상 입력하세요.';\n  if (error instanceof ToiForbiddenError || status === 403) return writing\n    ? '쓰기 권한이 없거나 허용 시간이 끝났어요. 스튜디오에서 쓰기 테스트를 다시 허용하세요.'\n    : '조회 권한이 없어요. 스튜디오에서 접근 권한을 확인하세요.';\n  if (status !== undefined && status >= 500) return '고객 시스템이 응답하지 않아요. 잠시 후 다시 시도하세요.';\n  if (error instanceof TypeError) return '정책 서버에 연결하지 못했어요. 잠시 후 다시 시도하세요.';\n  return writing ? '상태를 바꾸지 못했어요. 잠시 후 다시 시도하세요.' : '고객을 조회하지 못했어요. 잠시 후 다시 시도하세요.';\n}\nexport default function App() {\n  const [reason, setReason] = useState(\"고객 문의 확인\");\n  const [rows, setRows] = useState<Record<string, unknown>[]>([]);\n  const [customerId, setCustomerId] = useState('C001');\n  const [error, setError] = useState('');\n  const [notice, setNotice] = useState('');\n  const [queryState, setQueryState] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');\n  const [writing, setWriting] = useState(false);\n  const queryPending = useRef(false);\n  const writePending = useRef(false);\n  async function suspend() {\n    if (writePending.current || queryPending.current) return;\n    writePending.current = true; setWriting(true);\n    try { await updateStatus(customerId, 'suspended', reason); setNotice('상태를 정지로 바꿨어요.'); setError(''); await load(); }\n    catch (e) { setNotice(''); setError(errorMessage(e, true)); }\n    finally { writePending.current = false; setWriting(false); }\n  }\n  async function load() {\n    if (queryPending.current) return;\n    if (reason.trim().length < 5) { setError('조회 사유를 5자 이상 입력하세요.'); setQueryState('error'); return; }\n    queryPending.current = true; setQueryState('loading'); setError('');\n    try {\n      const data = await listRecords(reason);\n      setRows(data == null ? [] : Array.isArray(data.items) ? data.items : [data]); setQueryState('success');\n    } catch (e) {\n      if (e instanceof ToiFetchError && e.status === 404) { setRows([]); setQueryState('success'); }\n      else { setError(errorMessage(e)); setQueryState('error'); }\n    } finally { queryPending.current = false; }\n  }\n  return <main><h1>고객 목록</h1><TextField label=\"조회 사유\" value={reason} onChange={e => setReason(e.target.value)} />\n    <Button onClick={load} disabled={queryState === 'loading' || writing}>{queryState === 'loading' ? '조회 중…' : '조회'}</Button><p role=\"alert\">{error}</p>\n    \n    \n    <div role=\"status\"><p>{notice}</p>\n      {queryState === 'idle' ? <p>조회 사유를 입력하고 조회를 눌러 주세요</p> : null}\n      {queryState === 'loading' ? <p>조회 중…</p> : null}\n      {queryState === 'success' && rows.length === 0 ? <p>조건에 맞는 고객이 없어요</p> : null}\n    </div>\n    {queryState === 'success' && rows.length > 0 ?\n      <Table columns={[{key:'id',header:'ID'},{key:'name',header:'이름'},{key:'phone',header:'휴대폰'},{key:'status',header:'상태'}]} rows={rows} rowKey=\"id\" /> : null}</main>;\n}\n",
+          "/src/api.ts": "import { configureToiFetch, toiFetch } from '@toi/fetch';\n// The trusted preview host injects runtime credentials; generated code never mints them.\ntype HostConfig = Parameters<typeof configureToiFetch>[0];\nconst hostConfig = (globalThis as typeof globalThis & { __TOI_FETCH_CONFIG__?: HostConfig }).__TOI_FETCH_CONFIG__;\nif (!hostConfig) throw new Error('Preview host configuration missing: __TOI_FETCH_CONFIG__');\nconfigureToiFetch(hostConfig);\nexport async function listRecords(reason: string) {\n  const response = await toiFetch(\"customers\", '/customers', { reason });\n  return response.json();\n}\nexport async function getRecord(id: string, reason: string) {\n  const response = await toiFetch(\"customers\", '/customers/' + encodeURIComponent(id), { reason });\n  return response.json();\n}\nexport async function updateStatus(id: string, status: 'active' | 'inactive' | 'suspended', reason: string) {\n  const response = await toiFetch(\"customers\", '/customers/' + encodeURIComponent(id), {\n    method: 'PATCH', reason, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status })\n  });\n  return response.json();\n}\n"
+        },
+        "packageSet": {
+          "entries": [
+            "react",
+            "react-dom/client",
+            "react/jsx-runtime",
+            "@tanstack/react-query",
+            "@toi/tds",
+            "@toi/fetch"
+          ],
+          "dependencies": {
+            "react": "19.3.0",
+            "react-dom": "19.3.0",
+            "@tanstack/react-query": "^5.0.0",
+            "@toi/tds": "1.0.0",
+            "@toi/fetch": "1.0.0"
+          }
+        },
+        "apiIds": [
+          "customers"
+        ],
+        "updatedAt": "2026-09-13T10:57:01.039Z"
+      },
+      "preview": {
+        "event": {
+          "type": "committed",
+          "token": {
+            "projectId": "9bb5e8eb-c47a-456e-8aa7-47d51df79930",
+            "revision": 2,
+            "attemptId": "d0fac1a4-511c-48d2-adc1-3caaf779907e",
+            "sourceDigest": "90d2d36ac810214c965c4eea04fe86ba159a52abacbeca3eb511f5b1eba52455",
+            "manifestDigest": "474c77ecd5fbbf62d70adddb080c5cc3485a89d9b9b47ace942cf4e19e89b9bb"
+          },
+          "timings": {
+            "bundleMs": 560.2999999970198,
+            "bootMs": 113.90000000596046,
+            "totalMs": 696.1000000089407
+          }
+        },
+        "text": "고객 목록\n조회 사유조회\n\nID\t이름\t휴대폰\t상태\nC001\t김*가\t010-****-8765\tactive\nC002\t이**트\t010-****-1234\tinactive",
+        "fieldChecks": {
+          "C001": true,
+          "active": true
+        },
+        "piiChecks": {
+          "customers.name": true,
+          "customers.phone": true
+        },
+        "writeConfirmed": false,
+        "rawPiiVisible": [],
+        "forbiddenRequests": [],
+        "apiRequests": [
+          {
+            "method": "GET",
+            "path": "/proxy/customers/customers",
+            "query": "",
+            "body": null,
+            "viaToiFetch": true
+          }
+        ],
+        "runtimeErrors": [],
+        "browserErrors": []
+      },
+      "metrics": {
+        "turns": null,
+        "inputTokens": null,
+        "outputTokens": null,
+        "toolCalls": 3,
+        "toolErrors": 0,
+        "tools": [
+          "ask_user",
+          "write_file",
+          "finish"
+        ],
+        "stagedPolicyViolations": [],
+        "injectedArgumentFault": false
+      },
+      "durationMs": 1829
+    },
+    {
+      "id": "02-customers-detail",
+      "iteration": 1,
+      "kind": "detail",
+      "score": 100,
+      "success": true,
+      "checks": {
+        "generation_complete": {
+          "pass": true
+        },
+        "source_policy": {
+          "pass": true
+        },
+        "approved_imports": {
+          "pass": true
+        },
+        "toi_fetch_only": {
+          "pass": true
+        },
+        "preview_commit": {
+          "pass": true
+        },
+        "visible_fields": {
+          "pass": true
+        },
+        "pii_masked": {
+          "pass": true
+        },
+        "runtime_clean": {
+          "pass": true
+        }
+      },
+      "failures": [],
+      "events": [
+        {
+          "type": "state",
+          "state": "requested",
+          "generationId": "34ed9335-17dd-49c2-9895-38a1d2b81700",
+          "seq": 1
+        },
+        {
+          "type": "state",
+          "state": "staging",
+          "generationId": "34ed9335-17dd-49c2-9895-38a1d2b81700",
+          "seq": 2
+        },
+        {
+          "type": "text",
+          "delta": "요청을 확인했습니다. ",
+          "generationId": "34ed9335-17dd-49c2-9895-38a1d2b81700",
+          "seq": 3
+        },
+        {
+          "type": "text",
+          "delta": "등록된 API를 사용하는 화면을 준비합니다. ",
+          "generationId": "34ed9335-17dd-49c2-9895-38a1d2b81700",
+          "seq": 4
+        },
+        {
+          "type": "state",
+          "state": "awaiting_answer",
+          "generationId": "34ed9335-17dd-49c2-9895-38a1d2b81700",
+          "seq": 5
+        },
+        {
+          "type": "question",
+          "questionId": "68f3faf0-67f0-491c-8f19-5679e772b428",
+          "question": "조회 사유 기본값을 넣을까요?",
+          "options": [
+            "예",
+            "아니요"
+          ],
+          "generationId": "34ed9335-17dd-49c2-9895-38a1d2b81700",
+          "seq": 6
+        },
+        {
+          "type": "state",
+          "state": "staging",
+          "generationId": "34ed9335-17dd-49c2-9895-38a1d2b81700",
+          "seq": 7
+        },
+        {
+          "type": "file",
+          "path": "/src/App.tsx",
+          "content": "import { useRef, useState } from 'react';\nimport { Button, TextField, Table } from '@toi/tds';\nimport { ToiFetchError, ToiForbiddenError, ToiReasonRequiredError } from '@toi/fetch';\nimport { listRecords, getRecord, updateStatus } from './api';\nfunction errorMessage(error: unknown, writing = false) {\n  const status = error instanceof ToiFetchError ? error.status : undefined;\n  if (error instanceof ToiReasonRequiredError || status === 428) return '조회 사유를 5자 이상 입력하세요.';\n  if (error instanceof ToiForbiddenError || status === 403) return writing\n    ? '쓰기 권한이 없거나 허용 시간이 끝났어요. 스튜디오에서 쓰기 테스트를 다시 허용하세요.'\n    : '조회 권한이 없어요. 스튜디오에서 접근 권한을 확인하세요.';\n  if (status !== undefined && status >= 500) return '고객 시스템이 응답하지 않아요. 잠시 후 다시 시도하세요.';\n  if (error instanceof TypeError) return '정책 서버에 연결하지 못했어요. 잠시 후 다시 시도하세요.';\n  return writing ? '상태를 바꾸지 못했어요. 잠시 후 다시 시도하세요.' : '고객을 조회하지 못했어요. 잠시 후 다시 시도하세요.';\n}\nexport default function App() {\n  const [reason, setReason] = useState(\"고객 문의 확인\");\n  const [rows, setRows] = useState<Record<string, unknown>[]>([]);\n  const [customerId, setCustomerId] = useState('C001');\n  const [error, setError] = useState('');\n  const [notice, setNotice] = useState('');\n  const [queryState, setQueryState] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');\n  const [writing, setWriting] = useState(false);\n  const queryPending = useRef(false);\n  const writePending = useRef(false);\n  async function suspend() {\n    if (writePending.current || queryPending.current) return;\n    writePending.current = true; setWriting(true);\n    try { await updateStatus(customerId, 'suspended', reason); setNotice('상태를 정지로 바꿨어요.'); setError(''); await load(); }\n    catch (e) { setNotice(''); setError(errorMessage(e, true)); }\n    finally { writePending.current = false; setWriting(false); }\n  }\n  async function load() {\n    if (queryPending.current) return;\n    if (reason.trim().length < 5) { setError('조회 사유를 5자 이상 입력하세요.'); setQueryState('error'); return; }\n    queryPending.current = true; setQueryState('loading'); setError('');\n    try {\n      const data = await getRecord(customerId, reason);\n      setRows(data == null ? [] : Array.isArray(data.items) ? data.items : [data]); setQueryState('success');\n    } catch (e) {\n      if (e instanceof ToiFetchError && e.status === 404) { setRows([]); setQueryState('success'); }\n      else { setError(errorMessage(e)); setQueryState('error'); }\n    } finally { queryPending.current = false; }\n  }\n  return <main><h1>고객 상세</h1><TextField label=\"조회 사유\" value={reason} onChange={e => setReason(e.target.value)} />\n    <Button onClick={load} disabled={queryState === 'loading' || writing}>{queryState === 'loading' ? '조회 중…' : '조회'}</Button><p role=\"alert\">{error}</p>\n    <TextField label=\"고객 ID\" value={customerId} onChange={e => setCustomerId(e.target.value)} />\n    \n    <div role=\"status\"><p>{notice}</p>\n      {queryState === 'idle' ? <p>조회 사유를 입력하고 조회를 눌러 주세요</p> : null}\n      {queryState === 'loading' ? <p>조회 중…</p> : null}\n      {queryState === 'success' && rows.length === 0 ? <p>조건에 맞는 고객이 없어요</p> : null}\n    </div>\n    {queryState === 'success' && rows.length > 0 ?\n      <Table columns={[{key:'id',header:'ID'},{key:'name',header:'이름'},{key:'phone',header:'휴대폰'},{key:'status',header:'상태'}]} rows={rows} rowKey=\"id\" /> : null}</main>;\n}\n",
+          "generationId": "34ed9335-17dd-49c2-9895-38a1d2b81700",
+          "seq": 8
+        },
+        {
+          "type": "state",
+          "state": "revision_ready",
+          "generationId": "34ed9335-17dd-49c2-9895-38a1d2b81700",
+          "seq": 9
+        },
+        {
+          "type": "revision_ready",
+          "revision": 2,
+          "sourceDigest": "351a51f41fae9b55e1fac29f4690e67bc5d980ba7df87c2147b7d64f76451d75",
+          "files": {
+            "/src/main.tsx": "import { createRoot } from 'react-dom/client';\nimport App from './App';\ncreateRoot(document.getElementById('root')!).render(<App />);\n",
+            "/src/App.tsx": "import { useRef, useState } from 'react';\nimport { Button, TextField, Table } from '@toi/tds';\nimport { ToiFetchError, ToiForbiddenError, ToiReasonRequiredError } from '@toi/fetch';\nimport { listRecords, getRecord, updateStatus } from './api';\nfunction errorMessage(error: unknown, writing = false) {\n  const status = error instanceof ToiFetchError ? error.status : undefined;\n  if (error instanceof ToiReasonRequiredError || status === 428) return '조회 사유를 5자 이상 입력하세요.';\n  if (error instanceof ToiForbiddenError || status === 403) return writing\n    ? '쓰기 권한이 없거나 허용 시간이 끝났어요. 스튜디오에서 쓰기 테스트를 다시 허용하세요.'\n    : '조회 권한이 없어요. 스튜디오에서 접근 권한을 확인하세요.';\n  if (status !== undefined && status >= 500) return '고객 시스템이 응답하지 않아요. 잠시 후 다시 시도하세요.';\n  if (error instanceof TypeError) return '정책 서버에 연결하지 못했어요. 잠시 후 다시 시도하세요.';\n  return writing ? '상태를 바꾸지 못했어요. 잠시 후 다시 시도하세요.' : '고객을 조회하지 못했어요. 잠시 후 다시 시도하세요.';\n}\nexport default function App() {\n  const [reason, setReason] = useState(\"고객 문의 확인\");\n  const [rows, setRows] = useState<Record<string, unknown>[]>([]);\n  const [customerId, setCustomerId] = useState('C001');\n  const [error, setError] = useState('');\n  const [notice, setNotice] = useState('');\n  const [queryState, setQueryState] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');\n  const [writing, setWriting] = useState(false);\n  const queryPending = useRef(false);\n  const writePending = useRef(false);\n  async function suspend() {\n    if (writePending.current || queryPending.current) return;\n    writePending.current = true; setWriting(true);\n    try { await updateStatus(customerId, 'suspended', reason); setNotice('상태를 정지로 바꿨어요.'); setError(''); await load(); }\n    catch (e) { setNotice(''); setError(errorMessage(e, true)); }\n    finally { writePending.current = false; setWriting(false); }\n  }\n  async function load() {\n    if (queryPending.current) return;\n    if (reason.trim().length < 5) { setError('조회 사유를 5자 이상 입력하세요.'); setQueryState('error'); return; }\n    queryPending.current = true; setQueryState('loading'); setError('');\n    try {\n      const data = await getRecord(customerId, reason);\n      setRows(data == null ? [] : Array.isArray(data.items) ? data.items : [data]); setQueryState('success');\n    } catch (e) {\n      if (e instanceof ToiFetchError && e.status === 404) { setRows([]); setQueryState('success'); }\n      else { setError(errorMessage(e)); setQueryState('error'); }\n    } finally { queryPending.current = false; }\n  }\n  return <main><h1>고객 상세</h1><TextField label=\"조회 사유\" value={reason} onChange={e => setReason(e.target.value)} />\n    <Button onClick={load} disabled={queryState === 'loading' || writing}>{queryState === 'loading' ? '조회 중…' : '조회'}</Button><p role=\"alert\">{error}</p>\n    <TextField label=\"고객 ID\" value={customerId} onChange={e => setCustomerId(e.target.value)} />\n    \n    <div role=\"status\"><p>{notice}</p>\n      {queryState === 'idle' ? <p>조회 사유를 입력하고 조회를 눌러 주세요</p> : null}\n      {queryState === 'loading' ? <p>조회 중…</p> : null}\n      {queryState === 'success' && rows.length === 0 ? <p>조건에 맞는 고객이 없어요</p> : null}\n    </div>\n    {queryState === 'success' && rows.length > 0 ?\n      <Table columns={[{key:'id',header:'ID'},{key:'name',header:'이름'},{key:'phone',header:'휴대폰'},{key:'status',header:'상태'}]} rows={rows} rowKey=\"id\" /> : null}</main>;\n}\n",
+            "/src/api.ts": "import { configureToiFetch, toiFetch } from '@toi/fetch';\n// The trusted preview host injects runtime credentials; generated code never mints them.\ntype HostConfig = Parameters<typeof configureToiFetch>[0];\nconst hostConfig = (globalThis as typeof globalThis & { __TOI_FETCH_CONFIG__?: HostConfig }).__TOI_FETCH_CONFIG__;\nif (!hostConfig) throw new Error('Preview host configuration missing: __TOI_FETCH_CONFIG__');\nconfigureToiFetch(hostConfig);\nexport async function listRecords(reason: string) {\n  const response = await toiFetch(\"customers\", '/customers', { reason });\n  return response.json();\n}\nexport async function getRecord(id: string, reason: string) {\n  const response = await toiFetch(\"customers\", '/customers/' + encodeURIComponent(id), { reason });\n  return response.json();\n}\nexport async function updateStatus(id: string, status: 'active' | 'inactive' | 'suspended', reason: string) {\n  const response = await toiFetch(\"customers\", '/customers/' + encodeURIComponent(id), {\n    method: 'PATCH', reason, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status })\n  });\n  return response.json();\n}\n"
+          },
+          "packageSet": {
+            "entries": [
+              "react",
+              "react-dom/client",
+              "react/jsx-runtime",
+              "@tanstack/react-query",
+              "@toi/tds",
+              "@toi/fetch"
+            ],
+            "dependencies": {
+              "react": "19.3.0",
+              "react-dom": "19.3.0",
+              "@tanstack/react-query": "^5.0.0",
+              "@toi/tds": "1.0.0",
+              "@toi/fetch": "1.0.0"
+            }
+          },
+          "generationId": "34ed9335-17dd-49c2-9895-38a1d2b81700",
+          "seq": 10
+        },
+        {
+          "type": "state",
+          "state": "done",
+          "generationId": "34ed9335-17dd-49c2-9895-38a1d2b81700",
+          "seq": 11
+        },
+        {
+          "type": "done",
+          "summary": "조회 사유를 입력하는 고객 어드민 화면을 생성했습니다.",
+          "generationId": "34ed9335-17dd-49c2-9895-38a1d2b81700",
+          "seq": 12
+        }
+      ],
+      "project": {
+        "projectId": "c157d073-de86-42c4-8b05-612a904d4f2a",
+        "name": "Evaluation 02-customers-detail",
+        "revision": 2,
+        "files": {
+          "/src/main.tsx": "import { createRoot } from 'react-dom/client';\nimport App from './App';\ncreateRoot(document.getElementById('root')!).render(<App />);\n",
+          "/src/App.tsx": "import { useRef, useState } from 'react';\nimport { Button, TextField, Table } from '@toi/tds';\nimport { ToiFetchError, ToiForbiddenError, ToiReasonRequiredError } from '@toi/fetch';\nimport { listRecords, getRecord, updateStatus } from './api';\nfunction errorMessage(error: unknown, writing = false) {\n  const status = error instanceof ToiFetchError ? error.status : undefined;\n  if (error instanceof ToiReasonRequiredError || status === 428) return '조회 사유를 5자 이상 입력하세요.';\n  if (error instanceof ToiForbiddenError || status === 403) return writing\n    ? '쓰기 권한이 없거나 허용 시간이 끝났어요. 스튜디오에서 쓰기 테스트를 다시 허용하세요.'\n    : '조회 권한이 없어요. 스튜디오에서 접근 권한을 확인하세요.';\n  if (status !== undefined && status >= 500) return '고객 시스템이 응답하지 않아요. 잠시 후 다시 시도하세요.';\n  if (error instanceof TypeError) return '정책 서버에 연결하지 못했어요. 잠시 후 다시 시도하세요.';\n  return writing ? '상태를 바꾸지 못했어요. 잠시 후 다시 시도하세요.' : '고객을 조회하지 못했어요. 잠시 후 다시 시도하세요.';\n}\nexport default function App() {\n  const [reason, setReason] = useState(\"고객 문의 확인\");\n  const [rows, setRows] = useState<Record<string, unknown>[]>([]);\n  const [customerId, setCustomerId] = useState('C001');\n  const [error, setError] = useState('');\n  const [notice, setNotice] = useState('');\n  const [queryState, setQueryState] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');\n  const [writing, setWriting] = useState(false);\n  const queryPending = useRef(false);\n  const writePending = useRef(false);\n  async function suspend() {\n    if (writePending.current || queryPending.current) return;\n    writePending.current = true; setWriting(true);\n    try { await updateStatus(customerId, 'suspended', reason); setNotice('상태를 정지로 바꿨어요.'); setError(''); await load(); }\n    catch (e) { setNotice(''); setError(errorMessage(e, true)); }\n    finally { writePending.current = false; setWriting(false); }\n  }\n  async function load() {\n    if (queryPending.current) return;\n    if (reason.trim().length < 5) { setError('조회 사유를 5자 이상 입력하세요.'); setQueryState('error'); return; }\n    queryPending.current = true; setQueryState('loading'); setError('');\n    try {\n      const data = await getRecord(customerId, reason);\n      setRows(data == null ? [] : Array.isArray(data.items) ? data.items : [data]); setQueryState('success');\n    } catch (e) {\n      if (e instanceof ToiFetchError && e.status === 404) { setRows([]); setQueryState('success'); }\n      else { setError(errorMessage(e)); setQueryState('error'); }\n    } finally { queryPending.current = false; }\n  }\n  return <main><h1>고객 상세</h1><TextField label=\"조회 사유\" value={reason} onChange={e => setReason(e.target.value)} />\n    <Button onClick={load} disabled={queryState === 'loading' || writing}>{queryState === 'loading' ? '조회 중…' : '조회'}</Button><p role=\"alert\">{error}</p>\n    <TextField label=\"고객 ID\" value={customerId} onChange={e => setCustomerId(e.target.value)} />\n    \n    <div role=\"status\"><p>{notice}</p>\n      {queryState === 'idle' ? <p>조회 사유를 입력하고 조회를 눌러 주세요</p> : null}\n      {queryState === 'loading' ? <p>조회 중…</p> : null}\n      {queryState === 'success' && rows.length === 0 ? <p>조건에 맞는 고객이 없어요</p> : null}\n    </div>\n    {queryState === 'success' && rows.length > 0 ?\n      <Table columns={[{key:'id',header:'ID'},{key:'name',header:'이름'},{key:'phone',header:'휴대폰'},{key:'status',header:'상태'}]} rows={rows} rowKey=\"id\" /> : null}</main>;\n}\n",
+          "/src/api.ts": "import { configureToiFetch, toiFetch } from '@toi/fetch';\n// The trusted preview host injects runtime credentials; generated code never mints them.\ntype HostConfig = Parameters<typeof configureToiFetch>[0];\nconst hostConfig = (globalThis as typeof globalThis & { __TOI_FETCH_CONFIG__?: HostConfig }).__TOI_FETCH_CONFIG__;\nif (!hostConfig) throw new Error('Preview host configuration missing: __TOI_FETCH_CONFIG__');\nconfigureToiFetch(hostConfig);\nexport async function listRecords(reason: string) {\n  const response = await toiFetch(\"customers\", '/customers', { reason });\n  return response.json();\n}\nexport async function getRecord(id: string, reason: string) {\n  const response = await toiFetch(\"customers\", '/customers/' + encodeURIComponent(id), { reason });\n  return response.json();\n}\nexport async function updateStatus(id: string, status: 'active' | 'inactive' | 'suspended', reason: string) {\n  const response = await toiFetch(\"customers\", '/customers/' + encodeURIComponent(id), {\n    method: 'PATCH', reason, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status })\n  });\n  return response.json();\n}\n"
+        },
+        "packageSet": {
+          "entries": [
+            "react",
+            "react-dom/client",
+            "react/jsx-runtime",
+            "@tanstack/react-query",
+            "@toi/tds",
+            "@toi/fetch"
+          ],
+          "dependencies": {
+            "react": "19.3.0",
+            "react-dom": "19.3.0",
+            "@tanstack/react-query": "^5.0.0",
+            "@toi/tds": "1.0.0",
+            "@toi/fetch": "1.0.0"
+          }
+        },
+        "apiIds": [
+          "customers"
+        ],
+        "updatedAt": "2026-09-13T10:57:02.864Z"
+      },
+      "preview": {
+        "event": {
+          "type": "committed",
+          "token": {
+            "projectId": "c157d073-de86-42c4-8b05-612a904d4f2a",
+            "revision": 2,
+            "attemptId": "6fdb55df-c498-47bb-a68e-9877451d809b",
+            "sourceDigest": "351a51f41fae9b55e1fac29f4690e67bc5d980ba7df87c2147b7d64f76451d75",
+            "manifestDigest": "474c77ecd5fbbf62d70adddb080c5cc3485a89d9b9b47ace942cf4e19e89b9bb"
+          },
+          "timings": {
+            "bundleMs": 568.4000000059605,
+            "bootMs": 105.29999999701977,
+            "totalMs": 696.8999999910593
+          }
+        },
+        "text": "고객 상세\n조회 사유조회\n\n고객 ID\n\nID\t이름\t휴대폰\t상태\nC001\t김*가\t010-****-8765\tactive",
+        "fieldChecks": {
+          "C001": true,
+          "active": true
+        },
+        "piiChecks": {
+          "customers.name": true,
+          "customers.phone": true
+        },
+        "writeConfirmed": false,
+        "rawPiiVisible": [],
+        "forbiddenRequests": [],
+        "apiRequests": [
+          {
+            "method": "GET",
+            "path": "/proxy/customers/customers/C001",
+            "query": "",
+            "body": null,
+            "viaToiFetch": true
+          }
+        ],
+        "runtimeErrors": [],
+        "browserErrors": []
+      },
+      "metrics": {
+        "turns": null,
+        "inputTokens": null,
+        "outputTokens": null,
+        "toolCalls": 3,
+        "toolErrors": 0,
+        "tools": [
+          "ask_user",
+          "write_file",
+          "finish"
+        ],
+        "stagedPolicyViolations": [],
+        "injectedArgumentFault": false
+      },
+      "durationMs": 1777
+    },
+    {
+      "id": "03-orders-list",
+      "iteration": 1,
+      "kind": "list",
+      "score": 86,
+      "success": false,
+      "checks": {
+        "generation_complete": {
+          "pass": true
+        },
+        "source_policy": {
+          "pass": true
+        },
+        "approved_imports": {
+          "pass": true
+        },
+        "toi_fetch_only": {
+          "pass": true
+        },
+        "preview_commit": {
+          "pass": true
+        },
+        "visible_fields": {
+          "pass": false,
+          "reason": "Missing visible fields: 42000, O001, paid"
+        },
+        "runtime_clean": {
+          "pass": true
+        }
+      },
+      "failures": [
+        {
+          "type": "visible_fields",
+          "reason": "Missing visible fields: 42000, O001, paid"
+        }
+      ],
+      "events": [
+        {
+          "type": "state",
+          "state": "requested",
+          "generationId": "a7d23a67-5d50-4f85-b5a6-733298b12ef4",
+          "seq": 1
+        },
+        {
+          "type": "state",
+          "state": "staging",
+          "generationId": "a7d23a67-5d50-4f85-b5a6-733298b12ef4",
+          "seq": 2
+        },
+        {
+          "type": "text",
+          "delta": "요청을 확인했습니다. ",
+          "generationId": "a7d23a67-5d50-4f85-b5a6-733298b12ef4",
+          "seq": 3
+        },
+        {
+          "type": "text",
+          "delta": "등록된 API를 사용하는 화면을 준비합니다. ",
+          "generationId": "a7d23a67-5d50-4f85-b5a6-733298b12ef4",
+          "seq": 4
+        },
+        {
+          "type": "state",
+          "state": "awaiting_answer",
+          "generationId": "a7d23a67-5d50-4f85-b5a6-733298b12ef4",
+          "seq": 5
+        },
+        {
+          "type": "question",
+          "questionId": "41b4c015-0d58-4aa2-8f4c-346f584f0bc5",
+          "question": "조회 사유 기본값을 넣을까요?",
+          "options": [
+            "예",
+            "아니요"
+          ],
+          "generationId": "a7d23a67-5d50-4f85-b5a6-733298b12ef4",
+          "seq": 6
+        },
+        {
+          "type": "state",
+          "state": "staging",
+          "generationId": "a7d23a67-5d50-4f85-b5a6-733298b12ef4",
+          "seq": 7
+        },
+        {
+          "type": "file",
+          "path": "/src/App.tsx",
+          "content": "import { useRef, useState } from 'react';\nimport { Button, TextField, Table } from '@toi/tds';\nimport { ToiFetchError, ToiForbiddenError, ToiReasonRequiredError } from '@toi/fetch';\nimport { listRecords, getRecord, updateStatus } from './api';\nfunction errorMessage(error: unknown, writing = false) {\n  const status = error instanceof ToiFetchError ? error.status : undefined;\n  if (error instanceof ToiReasonRequiredError || status === 428) return '조회 사유를 5자 이상 입력하세요.';\n  if (error instanceof ToiForbiddenError || status === 403) return writing\n    ? '쓰기 권한이 없거나 허용 시간이 끝났어요. 스튜디오에서 쓰기 테스트를 다시 허용하세요.'\n    : '조회 권한이 없어요. 스튜디오에서 접근 권한을 확인하세요.';\n  if (status !== undefined && status >= 500) return '고객 시스템이 응답하지 않아요. 잠시 후 다시 시도하세요.';\n  if (error instanceof TypeError) return '정책 서버에 연결하지 못했어요. 잠시 후 다시 시도하세요.';\n  return writing ? '상태를 바꾸지 못했어요. 잠시 후 다시 시도하세요.' : '고객을 조회하지 못했어요. 잠시 후 다시 시도하세요.';\n}\nexport default function App() {\n  const [reason, setReason] = useState(\"고객 문의 확인\");\n  const [rows, setRows] = useState<Record<string, unknown>[]>([]);\n  const [customerId, setCustomerId] = useState('C001');\n  const [error, setError] = useState('');\n  const [notice, setNotice] = useState('');\n  const [queryState, setQueryState] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');\n  const [writing, setWriting] = useState(false);\n  const queryPending = useRef(false);\n  const writePending = useRef(false);\n  async function suspend() {\n    if (writePending.current || queryPending.current) return;\n    writePending.current = true; setWriting(true);\n    try { await updateStatus(customerId, 'suspended', reason); setNotice('상태를 정지로 바꿨어요.'); setError(''); await load(); }\n    catch (e) { setNotice(''); setError(errorMessage(e, true)); }\n    finally { writePending.current = false; setWriting(false); }\n  }\n  async function load() {\n    if (queryPending.current) return;\n    if (reason.trim().length < 5) { setError('조회 사유를 5자 이상 입력하세요.'); setQueryState('error'); return; }\n    queryPending.current = true; setQueryState('loading'); setError('');\n    try {\n      const data = await listRecords(reason);\n      setRows(data == null ? [] : Array.isArray(data.items) ? data.items : [data]); setQueryState('success');\n    } catch (e) {\n      if (e instanceof ToiFetchError && e.status === 404) { setRows([]); setQueryState('success'); }\n      else { setError(errorMessage(e)); setQueryState('error'); }\n    } finally { queryPending.current = false; }\n  }\n  return <main><h1>고객 목록</h1><TextField label=\"조회 사유\" value={reason} onChange={e => setReason(e.target.value)} />\n    <Button onClick={load} disabled={queryState === 'loading' || writing}>{queryState === 'loading' ? '조회 중…' : '조회'}</Button><p role=\"alert\">{error}</p>\n    \n    \n    <div role=\"status\"><p>{notice}</p>\n      {queryState === 'idle' ? <p>조회 사유를 입력하고 조회를 눌러 주세요</p> : null}\n      {queryState === 'loading' ? <p>조회 중…</p> : null}\n      {queryState === 'success' && rows.length === 0 ? <p>조건에 맞는 고객이 없어요</p> : null}\n    </div>\n    {queryState === 'success' && rows.length > 0 ?\n      <Table columns={[{key:'id',header:'ID'},{key:'name',header:'이름'},{key:'phone',header:'휴대폰'},{key:'status',header:'상태'}]} rows={rows} rowKey=\"id\" /> : null}</main>;\n}\n",
+          "generationId": "a7d23a67-5d50-4f85-b5a6-733298b12ef4",
+          "seq": 8
+        },
+        {
+          "type": "state",
+          "state": "revision_ready",
+          "generationId": "a7d23a67-5d50-4f85-b5a6-733298b12ef4",
+          "seq": 9
+        },
+        {
+          "type": "revision_ready",
+          "revision": 2,
+          "sourceDigest": "3910fce8bc62c6c584de403ba3a938907ccf0c4f183353c80379e1a554ff17b6",
+          "files": {
+            "/src/main.tsx": "import { createRoot } from 'react-dom/client';\nimport App from './App';\ncreateRoot(document.getElementById('root')!).render(<App />);\n",
+            "/src/App.tsx": "import { useRef, useState } from 'react';\nimport { Button, TextField, Table } from '@toi/tds';\nimport { ToiFetchError, ToiForbiddenError, ToiReasonRequiredError } from '@toi/fetch';\nimport { listRecords, getRecord, updateStatus } from './api';\nfunction errorMessage(error: unknown, writing = false) {\n  const status = error instanceof ToiFetchError ? error.status : undefined;\n  if (error instanceof ToiReasonRequiredError || status === 428) return '조회 사유를 5자 이상 입력하세요.';\n  if (error instanceof ToiForbiddenError || status === 403) return writing\n    ? '쓰기 권한이 없거나 허용 시간이 끝났어요. 스튜디오에서 쓰기 테스트를 다시 허용하세요.'\n    : '조회 권한이 없어요. 스튜디오에서 접근 권한을 확인하세요.';\n  if (status !== undefined && status >= 500) return '고객 시스템이 응답하지 않아요. 잠시 후 다시 시도하세요.';\n  if (error instanceof TypeError) return '정책 서버에 연결하지 못했어요. 잠시 후 다시 시도하세요.';\n  return writing ? '상태를 바꾸지 못했어요. 잠시 후 다시 시도하세요.' : '고객을 조회하지 못했어요. 잠시 후 다시 시도하세요.';\n}\nexport default function App() {\n  const [reason, setReason] = useState(\"고객 문의 확인\");\n  const [rows, setRows] = useState<Record<string, unknown>[]>([]);\n  const [customerId, setCustomerId] = useState('C001');\n  const [error, setError] = useState('');\n  const [notice, setNotice] = useState('');\n  const [queryState, setQueryState] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');\n  const [writing, setWriting] = useState(false);\n  const queryPending = useRef(false);\n  const writePending = useRef(false);\n  async function suspend() {\n    if (writePending.current || queryPending.current) return;\n    writePending.current = true; setWriting(true);\n    try { await updateStatus(customerId, 'suspended', reason); setNotice('상태를 정지로 바꿨어요.'); setError(''); await load(); }\n    catch (e) { setNotice(''); setError(errorMessage(e, true)); }\n    finally { writePending.current = false; setWriting(false); }\n  }\n  async function load() {\n    if (queryPending.current) return;\n    if (reason.trim().length < 5) { setError('조회 사유를 5자 이상 입력하세요.'); setQueryState('error'); return; }\n    queryPending.current = true; setQueryState('loading'); setError('');\n    try {\n      const data = await listRecords(reason);\n      setRows(data == null ? [] : Array.isArray(data.items) ? data.items : [data]); setQueryState('success');\n    } catch (e) {\n      if (e instanceof ToiFetchError && e.status === 404) { setRows([]); setQueryState('success'); }\n      else { setError(errorMessage(e)); setQueryState('error'); }\n    } finally { queryPending.current = false; }\n  }\n  return <main><h1>고객 목록</h1><TextField label=\"조회 사유\" value={reason} onChange={e => setReason(e.target.value)} />\n    <Button onClick={load} disabled={queryState === 'loading' || writing}>{queryState === 'loading' ? '조회 중…' : '조회'}</Button><p role=\"alert\">{error}</p>\n    \n    \n    <div role=\"status\"><p>{notice}</p>\n      {queryState === 'idle' ? <p>조회 사유를 입력하고 조회를 눌러 주세요</p> : null}\n      {queryState === 'loading' ? <p>조회 중…</p> : null}\n      {queryState === 'success' && rows.length === 0 ? <p>조건에 맞는 고객이 없어요</p> : null}\n    </div>\n    {queryState === 'success' && rows.length > 0 ?\n      <Table columns={[{key:'id',header:'ID'},{key:'name',header:'이름'},{key:'phone',header:'휴대폰'},{key:'status',header:'상태'}]} rows={rows} rowKey=\"id\" /> : null}</main>;\n}\n",
+            "/src/api.ts": "import { configureToiFetch, toiFetch } from '@toi/fetch';\n// The trusted preview host injects runtime credentials; generated code never mints them.\ntype HostConfig = Parameters<typeof configureToiFetch>[0];\nconst hostConfig = (globalThis as typeof globalThis & { __TOI_FETCH_CONFIG__?: HostConfig }).__TOI_FETCH_CONFIG__;\nif (!hostConfig) throw new Error('Preview host configuration missing: __TOI_FETCH_CONFIG__');\nconfigureToiFetch(hostConfig);\nexport async function listRecords(reason: string) {\n  const response = await toiFetch(\"orders\", '/customers', { reason });\n  return response.json();\n}\nexport async function getRecord(id: string, reason: string) {\n  const response = await toiFetch(\"orders\", '/customers/' + encodeURIComponent(id), { reason });\n  return response.json();\n}\nexport async function updateStatus(id: string, status: 'active' | 'inactive' | 'suspended', reason: string) {\n  const response = await toiFetch(\"orders\", '/customers/' + encodeURIComponent(id), {\n    method: 'PATCH', reason, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status })\n  });\n  return response.json();\n}\n"
+          },
+          "packageSet": {
+            "entries": [
+              "react",
+              "react-dom/client",
+              "react/jsx-runtime",
+              "@tanstack/react-query",
+              "@toi/tds",
+              "@toi/fetch"
+            ],
+            "dependencies": {
+              "react": "19.3.0",
+              "react-dom": "19.3.0",
+              "@tanstack/react-query": "^5.0.0",
+              "@toi/tds": "1.0.0",
+              "@toi/fetch": "1.0.0"
+            }
+          },
+          "generationId": "a7d23a67-5d50-4f85-b5a6-733298b12ef4",
+          "seq": 10
+        },
+        {
+          "type": "state",
+          "state": "done",
+          "generationId": "a7d23a67-5d50-4f85-b5a6-733298b12ef4",
+          "seq": 11
+        },
+        {
+          "type": "done",
+          "summary": "조회 사유를 입력하는 고객 어드민 화면을 생성했습니다.",
+          "generationId": "a7d23a67-5d50-4f85-b5a6-733298b12ef4",
+          "seq": 12
+        }
+      ],
+      "project": {
+        "projectId": "9a55d91e-d86d-4d0c-af24-4fbdecfee732",
+        "name": "Evaluation 03-orders-list",
+        "revision": 2,
+        "files": {
+          "/src/main.tsx": "import { createRoot } from 'react-dom/client';\nimport App from './App';\ncreateRoot(document.getElementById('root')!).render(<App />);\n",
+          "/src/App.tsx": "import { useRef, useState } from 'react';\nimport { Button, TextField, Table } from '@toi/tds';\nimport { ToiFetchError, ToiForbiddenError, ToiReasonRequiredError } from '@toi/fetch';\nimport { listRecords, getRecord, updateStatus } from './api';\nfunction errorMessage(error: unknown, writing = false) {\n  const status = error instanceof ToiFetchError ? error.status : undefined;\n  if (error instanceof ToiReasonRequiredError || status === 428) return '조회 사유를 5자 이상 입력하세요.';\n  if (error instanceof ToiForbiddenError || status === 403) return writing\n    ? '쓰기 권한이 없거나 허용 시간이 끝났어요. 스튜디오에서 쓰기 테스트를 다시 허용하세요.'\n    : '조회 권한이 없어요. 스튜디오에서 접근 권한을 확인하세요.';\n  if (status !== undefined && status >= 500) return '고객 시스템이 응답하지 않아요. 잠시 후 다시 시도하세요.';\n  if (error instanceof TypeError) return '정책 서버에 연결하지 못했어요. 잠시 후 다시 시도하세요.';\n  return writing ? '상태를 바꾸지 못했어요. 잠시 후 다시 시도하세요.' : '고객을 조회하지 못했어요. 잠시 후 다시 시도하세요.';\n}\nexport default function App() {\n  const [reason, setReason] = useState(\"고객 문의 확인\");\n  const [rows, setRows] = useState<Record<string, unknown>[]>([]);\n  const [customerId, setCustomerId] = useState('C001');\n  const [error, setError] = useState('');\n  const [notice, setNotice] = useState('');\n  const [queryState, setQueryState] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');\n  const [writing, setWriting] = useState(false);\n  const queryPending = useRef(false);\n  const writePending = useRef(false);\n  async function suspend() {\n    if (writePending.current || queryPending.current) return;\n    writePending.current = true; setWriting(true);\n    try { await updateStatus(customerId, 'suspended', reason); setNotice('상태를 정지로 바꿨어요.'); setError(''); await load(); }\n    catch (e) { setNotice(''); setError(errorMessage(e, true)); }\n    finally { writePending.current = false; setWriting(false); }\n  }\n  async function load() {\n    if (queryPending.current) return;\n    if (reason.trim().length < 5) { setError('조회 사유를 5자 이상 입력하세요.'); setQueryState('error'); return; }\n    queryPending.current = true; setQueryState('loading'); setError('');\n    try {\n      const data = await listRecords(reason);\n      setRows(data == null ? [] : Array.isArray(data.items) ? data.items : [data]); setQueryState('success');\n    } catch (e) {\n      if (e instanceof ToiFetchError && e.status === 404) { setRows([]); setQueryState('success'); }\n      else { setError(errorMessage(e)); setQueryState('error'); }\n    } finally { queryPending.current = false; }\n  }\n  return <main><h1>고객 목록</h1><TextField label=\"조회 사유\" value={reason} onChange={e => setReason(e.target.value)} />\n    <Button onClick={load} disabled={queryState === 'loading' || writing}>{queryState === 'loading' ? '조회 중…' : '조회'}</Button><p role=\"alert\">{error}</p>\n    \n    \n    <div role=\"status\"><p>{notice}</p>\n      {queryState === 'idle' ? <p>조회 사유를 입력하고 조회를 눌러 주세요</p> : null}\n      {queryState === 'loading' ? <p>조회 중…</p> : null}\n      {queryState === 'success' && rows.length === 0 ? <p>조건에 맞는 고객이 없어요</p> : null}\n    </div>\n    {queryState === 'success' && rows.length > 0 ?\n      <Table columns={[{key:'id',header:'ID'},{key:'name',header:'이름'},{key:'phone',header:'휴대폰'},{key:'status',header:'상태'}]} rows={rows} rowKey=\"id\" /> : null}</main>;\n}\n",
+          "/src/api.ts": "import { configureToiFetch, toiFetch } from '@toi/fetch';\n// The trusted preview host injects runtime credentials; generated code never mints them.\ntype HostConfig = Parameters<typeof configureToiFetch>[0];\nconst hostConfig = (globalThis as typeof globalThis & { __TOI_FETCH_CONFIG__?: HostConfig }).__TOI_FETCH_CONFIG__;\nif (!hostConfig) throw new Error('Preview host configuration missing: __TOI_FETCH_CONFIG__');\nconfigureToiFetch(hostConfig);\nexport async function listRecords(reason: string) {\n  const response = await toiFetch(\"orders\", '/customers', { reason });\n  return response.json();\n}\nexport async function getRecord(id: string, reason: string) {\n  const response = await toiFetch(\"orders\", '/customers/' + encodeURIComponent(id), { reason });\n  return response.json();\n}\nexport async function updateStatus(id: string, status: 'active' | 'inactive' | 'suspended', reason: string) {\n  const response = await toiFetch(\"orders\", '/customers/' + encodeURIComponent(id), {\n    method: 'PATCH', reason, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status })\n  });\n  return response.json();\n}\n"
+        },
+        "packageSet": {
+          "entries": [
+            "react",
+            "react-dom/client",
+            "react/jsx-runtime",
+            "@tanstack/react-query",
+            "@toi/tds",
+            "@toi/fetch"
+          ],
+          "dependencies": {
+            "react": "19.3.0",
+            "react-dom": "19.3.0",
+            "@tanstack/react-query": "^5.0.0",
+            "@toi/tds": "1.0.0",
+            "@toi/fetch": "1.0.0"
+          }
+        },
+        "apiIds": [
+          "orders"
+        ],
+        "updatedAt": "2026-09-13T10:57:04.641Z"
+      },
+      "preview": {
+        "event": {
+          "type": "committed",
+          "token": {
+            "projectId": "9a55d91e-d86d-4d0c-af24-4fbdecfee732",
+            "revision": 2,
+            "attemptId": "8aa56371-deea-41d9-ab9f-4c8ceac96fee",
+            "sourceDigest": "3910fce8bc62c6c584de403ba3a938907ccf0c4f183353c80379e1a554ff17b6",
+            "manifestDigest": "474c77ecd5fbbf62d70adddb080c5cc3485a89d9b9b47ace942cf4e19e89b9bb"
+          },
+          "timings": {
+            "bundleMs": 579,
+            "bootMs": 43.29999999701977,
+            "totalMs": 695.0999999940395
+          }
+        },
+        "text": "고객 목록\n조회 사유조회\n\n조건에 맞는 고객이 없어요",
+        "fieldChecks": {
+          "42000": false,
+          "O001": false,
+          "paid": false
+        },
+        "piiChecks": {},
+        "writeConfirmed": false,
+        "rawPiiVisible": [],
+        "forbiddenRequests": [],
+        "apiRequests": [
+          {
+            "method": "GET",
+            "path": "/proxy/orders/customers",
+            "query": "",
+            "body": null,
+            "viaToiFetch": true
+          }
+        ],
+        "runtimeErrors": [],
+        "browserErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ]
+      },
+      "metrics": {
+        "turns": null,
+        "inputTokens": null,
+        "outputTokens": null,
+        "toolCalls": 3,
+        "toolErrors": 0,
+        "tools": [
+          "ask_user",
+          "write_file",
+          "finish"
+        ],
+        "stagedPolicyViolations": [],
+        "injectedArgumentFault": false
+      },
+      "durationMs": 1758
+    },
+    {
+      "id": "13-cancel",
+      "iteration": 1,
+      "kind": "cancel",
+      "score": 100,
+      "success": true,
+      "checks": {
+        "cancel_terminal": {
+          "pass": true
+        },
+        "cancel_no_commit": {
+          "pass": true
+        },
+        "cancel_no_late_mutation": {
+          "pass": true
+        }
+      },
+      "failures": [],
+      "events": [
+        {
+          "type": "state",
+          "state": "requested",
+          "generationId": "229657b2-dddc-4b94-ac7e-46661197842a",
+          "seq": 1
+        },
+        {
+          "type": "state",
+          "state": "staging",
+          "generationId": "229657b2-dddc-4b94-ac7e-46661197842a",
+          "seq": 2
+        },
+        {
+          "type": "text",
+          "delta": "요청을 확인했습니다. ",
+          "generationId": "229657b2-dddc-4b94-ac7e-46661197842a",
+          "seq": 3
+        },
+        {
+          "type": "text",
+          "delta": "등록된 API를 사용하는 화면을 준비합니다. ",
+          "generationId": "229657b2-dddc-4b94-ac7e-46661197842a",
+          "seq": 4
+        },
+        {
+          "type": "state",
+          "state": "awaiting_answer",
+          "generationId": "229657b2-dddc-4b94-ac7e-46661197842a",
+          "seq": 5
+        },
+        {
+          "type": "question",
+          "questionId": "4a9003ad-c0ab-4945-83f7-fb7fea535e0c",
+          "question": "조회 사유 기본값을 넣을까요?",
+          "options": [
+            "예",
+            "아니요"
+          ],
+          "generationId": "229657b2-dddc-4b94-ac7e-46661197842a",
+          "seq": 6
+        },
+        {
+          "type": "state",
+          "state": "canceled",
+          "generationId": "229657b2-dddc-4b94-ac7e-46661197842a",
+          "seq": 7
+        },
+        {
+          "type": "canceled",
+          "generationId": "229657b2-dddc-4b94-ac7e-46661197842a",
+          "seq": 8
+        }
+      ],
+      "project": {
+        "projectId": "58fa50e4-7a46-45c2-84b1-18e3510c67ac",
+        "name": "Evaluation 13-cancel",
+        "revision": 1,
+        "files": {
+          "/src/main.tsx": "import { createRoot } from 'react-dom/client';\nimport App from './App';\ncreateRoot(document.getElementById('root')!).render(<App />);\n",
+          "/src/App.tsx": "export default function App() { return <main><h1>새 어드민</h1><p>채팅으로 화면을 만들어 보세요.</p></main>; }\n",
+          "/src/api.ts": "import { configureToiFetch, toiFetch } from '@toi/fetch';\n// The trusted preview host injects runtime credentials; generated code never mints them.\ntype HostConfig = Parameters<typeof configureToiFetch>[0];\nconst hostConfig = (globalThis as typeof globalThis & { __TOI_FETCH_CONFIG__?: HostConfig }).__TOI_FETCH_CONFIG__;\nif (!hostConfig) throw new Error('Preview host configuration missing: __TOI_FETCH_CONFIG__');\nconfigureToiFetch(hostConfig);\nexport async function listRecords(reason: string) {\n  const response = await toiFetch(\"customers\", '/customers', { reason });\n  return response.json();\n}\nexport async function getRecord(id: string, reason: string) {\n  const response = await toiFetch(\"customers\", '/customers/' + encodeURIComponent(id), { reason });\n  return response.json();\n}\nexport async function updateStatus(id: string, status: 'active' | 'inactive' | 'suspended', reason: string) {\n  const response = await toiFetch(\"customers\", '/customers/' + encodeURIComponent(id), {\n    method: 'PATCH', reason, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status })\n  });\n  return response.json();\n}\n"
+        },
+        "packageSet": {
+          "entries": [
+            "react",
+            "react-dom/client",
+            "react/jsx-runtime",
+            "@tanstack/react-query",
+            "@toi/tds",
+            "@toi/fetch"
+          ],
+          "dependencies": {
+            "react": "19.3.0",
+            "react-dom": "19.3.0",
+            "@tanstack/react-query": "^5.0.0",
+            "@toi/tds": "1.0.0",
+            "@toi/fetch": "1.0.0"
+          }
+        },
+        "apiIds": [
+          "customers"
+        ],
+        "updatedAt": "2026-09-13T10:57:06.360Z"
+      },
+      "metrics": {
+        "turns": null,
+        "inputTokens": null,
+        "outputTokens": null,
+        "toolCalls": 1,
+        "toolErrors": 1,
+        "tools": [
+          "ask_user"
+        ],
+        "stagedPolicyViolations": [],
+        "injectedArgumentFault": false
+      },
+      "durationMs": 60
+    }
+  ],
+  "costReservedUsd": 0,
+  "security": {
+    "rawFetchSourceRejected": true,
+    "rawFetchStatus": 400,
+    "computedAliasSourceAccepted": true,
+    "noCapabilityDenied": true,
+    "noCapabilityStatus": 403,
+    "unregisteredDenied": true,
+    "unregisteredStatus": 404,
+    "readCapabilityWriteDenied": true,
+    "missingReasonDenied": true,
+    "finding": "Source guard accepts computed global fetch alias and relative URL. This is a textual-guard bypass; policy proxy still protects requests sent through it, but cannot govern direct browser egress. No external request was executed by this probe; browser harness blocks and records attempted egress, so it does not prove production CSP containment."
+  },
+  "durationMs": 6080,
+  "mockValidation": {
+    "passed": true,
+    "explanation": "Repository mock should pass customer list/detail and cancellation, and fail orders semantics; mock is not generalized for these APIs."
+  }
+}
