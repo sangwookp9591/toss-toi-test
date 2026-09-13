@@ -2,15 +2,20 @@ import { createServer, type ServerResponse } from 'node:http';
 import { pipeline } from 'node:stream/promises';
 import { PackageBuilder } from './builder.js';
 import { failureCode, FAILURE_RESPONSES, InputError } from './security.js';
-const allowedOrigins = new Set(['http://localhost:5173', 'http://localhost:5174']);
+import { projectIdFromPreviewOrigin } from '../../../contracts/src/runtime.js';
 function json(res: ServerResponse, status: number, body: unknown) { res.writeHead(status, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }); res.end(JSON.stringify(body)); }
 export function createApp(builder: PackageBuilder) {
   return createServer(async (req, res) => {
     const origin = req.headers.origin;
-    if (origin && allowedOrigins.has(origin)) { res.setHeader('Access-Control-Allow-Origin', origin); res.setHeader('Vary', 'Origin'); res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS'); res.setHeader('Access-Control-Allow-Headers', 'Content-Type'); }
-    if (req.method === 'OPTIONS') { res.writeHead(origin && !allowedOrigins.has(origin) ? 403 : 204); res.end(); return; }
+    const url = new URL(req.url ?? '/', 'http://localhost');
+    const method = req.method === 'OPTIONS' ? req.headers['access-control-request-method'] : req.method;
+    const previewAsset = !!origin && !!projectIdFromPreviewOrigin(origin) && /^\/assets\/[a-f0-9]{64}\//.test(url.pathname) && (method === 'GET' || method === 'HEAD');
+    const allowed = origin === 'http://localhost:5173' || previewAsset;
+    res.setHeader('Vary', 'Origin');
+    if (origin && !allowed) return json(res, 403, {error:'Origin is not allowed'});
+    if (origin && allowed) { res.setHeader('Access-Control-Allow-Origin', origin); res.setHeader('Access-Control-Allow-Methods', previewAsset ? 'GET, HEAD, OPTIONS' : 'GET, HEAD, POST, OPTIONS'); res.setHeader('Access-Control-Allow-Headers', 'Content-Type'); }
+    if (req.method === 'OPTIONS') { res.writeHead(204); res.end(); return; }
     try {
-      const url = new URL(req.url ?? '/', 'http://localhost');
       if (req.method === 'GET' && url.pathname === '/healthz') return json(res, 200, { status: 'ok' });
       if (req.method === 'POST' && url.pathname === '/package-sets') {
         let raw = ''; for await (const chunk of req) { raw += chunk; if (Buffer.byteLength(raw) > 32768) throw new InputError('Request is too large'); }
@@ -24,13 +29,14 @@ export function createApp(builder: PackageBuilder) {
         return json(res, status ? 200 : 404, status ?? { error: 'Unknown artifactKey' });
       }
       const assetMatch = url.pathname.match(/^\/assets\/([a-f0-9]{64})\/(.+)$/);
-      if (req.method === 'GET' && assetMatch) {
+      if ((req.method === 'GET' || req.method === 'HEAD') && assetMatch) {
         const [, key, filename] = assetMatch;
         const status = await builder.status(key);
         // Files remain inaccessible until a verified manifest is published.
         if (!status || status.status !== 'ready' || (filename !== 'manifest.json' && !status.manifest.files.some(file => file.path === filename))) return json(res, 404, { error: 'Asset is not published' });
-        const stream = await builder.store.stream(`${key}/${filename}`);
         res.writeHead(200, { 'Content-Type': filename.endsWith('.json') ? 'application/json' : filename.endsWith('.css') ? 'text/css' : 'text/javascript', 'Cache-Control': 'public, max-age=31536000, immutable', 'X-Content-Type-Options': 'nosniff' });
+        if (req.method === 'HEAD') {res.end(); return;}
+        const stream = await builder.store.stream(`${key}/${filename}`);
         await pipeline(stream, res); return;
       }
       json(res, 404, { error: 'Not found' });

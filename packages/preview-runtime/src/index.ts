@@ -1,3 +1,4 @@
+import { projectIdFromPreviewOrigin } from '../../../contracts/src/runtime.ts';
 import type { BuildInput, Diagnostic, ParentToFrame, PreviewEvent, PreviewRuntime, PreviewRuntimeOptions, RevisionToken } from '../../../contracts/src/runtime.ts';
 import type { BundleRequest, BundleResponse } from './worker-protocol.ts';
 import { digestJson, mergeVfs, sourceDigest } from './vfs.ts';
@@ -19,16 +20,19 @@ export class BrowserPreviewRuntime implements PreviewRuntime {
   private pending = new Map<number, { resolve: (result: BundleResponse) => void; reject: (error: Error) => void }>();
   private sequence = 0;
   private active?: HTMLIFrameElement;
+  private activeCleanup?: () => void;
   private candidates = new Map<HTMLIFrameElement, () => void>();
   private disposed = false;
   private options: PreviewRuntimeOptions;
 
   constructor(options: PreviewRuntimeOptions) {
     this.options = { ...options };
-    if (new URL(options.previewOrigin).origin !== options.previewOrigin || options.previewOrigin === location.origin) throw new Error('previewOrigin must be a distinct origin');
+    if (!projectIdFromPreviewOrigin(options.previewOrigin) || options.previewOrigin === location.origin) throw new Error('previewOrigin must be a project preview origin');
     if (new URL(options.frameUrl).origin !== options.previewOrigin) throw new Error('frameUrl must belong to previewOrigin');
   }
-  setDesiredRevision(token: RevisionToken) { this.desired = { ...token }; }
+  setDesiredRevision(token: RevisionToken) {
+    if (token.projectId !== projectIdFromPreviewOrigin(this.options.previewOrigin)) throw new Error('preview project origin mismatch');
+    this.desired = { ...token }; }
   cancel(token: RevisionToken) { this.canceled.add(tokenKey(token)); }
   on(listener: (event: PreviewEvent) => void) { this.listeners.add(listener); return () => { this.listeners.delete(listener); }; }
   private emit(event: PreviewEvent): PreviewEvent {
@@ -65,6 +69,7 @@ export class BrowserPreviewRuntime implements PreviewRuntime {
     const failed = (diagnostics: Diagnostic[]) => this.emit({ type: 'build_failed', token, diagnostics });
     if (this.disposed) return this.emit({ type: 'stale_discarded', token, reason: 'canceled' });
     try {
+      if (token.projectId !== projectIdFromPreviewOrigin(this.options.previewOrigin) || (snapshot.hostConfig?.toiFetch && snapshot.hostConfig.toiFetch.projectId !== token.projectId)) return failed([{ message: 'preview project origin mismatch' }]);
       const files = mergeVfs(snapshot.layers);
       const [actualSource, actualManifest] = await Promise.all([sourceDigest(files), digestJson(manifest)]);
       if (actualManifest !== token.manifestDigest) return this.emit({ type: 'stale_discarded', token, reason: 'manifest_mismatch' });
@@ -97,7 +102,7 @@ export class BrowserPreviewRuntime implements PreviewRuntime {
         if (settled) return;
         settled = true;
         clearTimeout(timer);
-        window.removeEventListener('message', onMessage);
+        // Keep the authenticated listener for errors after a successful commit.
         this.candidates.delete(frame);
         const decision = commitDecision(payload.token, this.desired, this.disposed || this.canceled.has(tokenKey(payload.token)), rendered);
         let event: PreviewEvent;
@@ -106,10 +111,13 @@ export class BrowserPreviewRuntime implements PreviewRuntime {
           frame.removeAttribute('aria-hidden');
           frame.inert = false;
           frame.dataset.state = 'committed';
+          this.activeCleanup?.();
+          this.activeCleanup = () => window.removeEventListener('message', onMessage);
           this.active?.remove();
           this.active = frame;
           event = { type: 'committed', token: payload.token, timings: { bundleMs, bootMs, totalMs: performance.now() - start } };
         } else {
+          window.removeEventListener('message', onMessage);
           frame.remove();
           event = decision === 'runtime_failed' ? { type: 'runtime_failed', token: payload.token, error } : { type: 'stale_discarded', token: payload.token, reason: decision };
         }
@@ -123,7 +131,9 @@ export class BrowserPreviewRuntime implements PreviewRuntime {
         } else if (loaded && event.data.kind === 'rendered' && sameToken(event.data.token, payload.token)) {
           finish(true, event.data.bootMs);
         } else if (loaded && event.data.kind === 'error' && sameToken(event.data.token, payload.token)) {
-          finish(false, 0, runtimeDiagnostic(event.data.error.message, event.data.stack, bundle));
+          const error = runtimeDiagnostic(event.data.error.message, event.data.stack, bundle);
+          if (settled && this.active === frame) this.emit({ type: 'runtime_failed', token: payload.token, error });
+          else finish(false, 0, error);
         }
       };
       const timer = window.setTimeout(() => finish(false), this.options.bootTimeoutMs ?? 5000);
@@ -143,6 +153,8 @@ export class BrowserPreviewRuntime implements PreviewRuntime {
     this.worker = undefined;
     for (const pending of this.pending.values()) pending.reject(new Error('Preview disposed'));
     this.pending.clear();
+    this.activeCleanup?.();
+    this.activeCleanup = undefined;
     this.active?.remove();
     this.active = undefined;
     this.listeners.clear();

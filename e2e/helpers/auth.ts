@@ -59,7 +59,7 @@ export const test = base.extend<{}, { accounts: (username: Username) => Promise<
   storageState: async ({ accounts }, use) => { await use((await accounts('alice')).state); },
   request: async ({ playwright, accounts }, use) => {
     const account = await accounts('alice');
-    const request: APIRequestContext = await playwright.request.newContext({ extraHTTPHeaders: { Origin: studio, Authorization: 'Bearer ' + await account.token(), 'Content-Type': 'application/json' } });
+    const request: APIRequestContext = await playwright.request.newContext({ baseURL: studio, extraHTTPHeaders: { Origin: studio, Authorization: 'Bearer ' + await account.token(), 'Content-Type': 'application/json' } });
     await use(request); await request.dispose();
   },
 });

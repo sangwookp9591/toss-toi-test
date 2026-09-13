@@ -11,7 +11,7 @@ cd packages/preview-runtime
 npm ci
 npm run dev
 # studio: http://localhost:5173
-# preview document: http://localhost:5174/frame.html
+# preview document: http://p-00000000-0000-4000-8000-000000000000.preview.localhost:5174/frame.html
 ```
 
 `npm test`와 `npm run bench`는 패키지 전용 **5273·5274** 서버를 사용하며 통합 서비스 포트를 점유하지 않습니다. `STUDIO_PORT=5273 PREVIEW_PORT=5274 npm run dev`로 직접 실행할 수도 있습니다.
@@ -44,8 +44,8 @@ import type { BuildInput } from '@toi/preview-runtime';
 
 const runtime = createPreviewRuntime({
   container: document.querySelector<HTMLElement>('#preview')!,
-  previewOrigin: 'http://localhost:5174',
-  frameUrl: 'http://localhost:5174/frame.html',
+  previewOrigin: 'http://p-00000000-0000-4000-8000-000000000000.preview.localhost:5174',
+  frameUrl: 'http://p-00000000-0000-4000-8000-000000000000.preview.localhost:5174/frame.html',
   esbuildWasmUrl: 'http://localhost:5173/esbuild.wasm',
   entry: '/src/main.tsx',
   bootTimeoutMs: 5000,
@@ -157,3 +157,14 @@ QA-04는 기존 단위 23개·브라우저 15개를 모두 유지하고 단위 1
 - import map의 manifest digest는 확인하지만 각 외부 모듈의 sha256을 브라우저에서 별도로 검사하지 않습니다. 실제 산출물의 immutable URL/무결성/peer singleton은 deps-builder의 책임입니다. 공개 fixture의 `files:[]`는 이 검증을 대신하지 않습니다.
 - frame 배포 CSP는 bootstrap과 `data:` 모듈 및 승인 의존성 origin을 허용하도록 별도 설계해야 합니다. 기본 데모 서버는 CSP를 설정하지 않습니다. HTTPS 배포에서는 studio, preview, WASM 및 의존성 URL을 모두 적절히 HTTPS로 바꿉니다.
 - 취소된 토큰은 해당 런타임의 수명 동안 기억합니다. 프로젝트를 닫을 때 `dispose()`해야 합니다. 백그라운드 탭/숨겨진 상위 컨테이너의 rAF 억제로 boot timeout이 발생할 수 있습니다. 무제한 동시 후보 수를 제어하는 UI admission 정책은 소비 앱에서 추가해야 합니다.
+
+
+P0-2: runtime accepts only `previewOriginForProject(projectId)` and rejects build
+or host-config project mismatches. The trusted parent is localhost:5173. Frame
+responses carry nonce CSP through document replacement; CSP violations use the
+existing runtime_failed diagnostic with a CSP_BLOCKED prefix, including after commit.
+The AST source policy is defense in depth; CSP enforces the browser network boundary.
+Browser tests keep contract origins while forwarding HTTP to isolated fixture ports
+5273/5274, preserving real response CSP. Their React fixture is bundled from the
+pinned local studio packages; it does not use a public CDN. End-to-end isolation
+coverage against the actual running servers is in e2e/tests/isolation.spec.ts.

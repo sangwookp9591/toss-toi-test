@@ -1,0 +1,357 @@
+
+> test:repeat
+> playwright test --repeat-each=3
+
+
+Running 99 tests using 1 worker
+
+(node:48323) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:48323) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/downloads.spec.ts:34:1 › T: Alice CSV/XLSX are AES-256 AE-2; signature, sub, single-use and 60-second expiry enforced (1.0m)
+  ✓   2 tests/downloads.spec.ts:51:1 › U: viewer, nonmember and preview origin cannot create downloads (1.1s)
+  ✓   3 tests/downloads.spec.ts:57:1 › V: MinIO bytes hide row values and password; successful delivery deletes ciphertext and wrapped key (131ms)
+  ✓   4 tests/downloads.spec.ts:68:1 › W: audit verification is valid, seq remains continuous and audit contains no password, keys or signature (1.3s)
+  ✓   5 tests/downloads.spec.ts:79:1 › download UI shows password once, saves using Bearer and clears it on close (1.1s)
+  ✓   6 tests/identity.spec.ts:15:1 › N: carol nonmember receives 404 and cannot mint or use preview/capability (713ms)
+  ✘   7 tests/identity.spec.ts:26:1 › O: owner member UI protects last owner; viewer read only, editor generation, removal revokes proxy within 5s (2.1s)
+(node:50304) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50304) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   8 tests/identity.spec.ts:49:1 › P: live write requires another API owner approval and expires (11.4s)
+  ✓   9 tests/identity.spec.ts:75:1 › Q: preview capability never selects live upstream (85ms)
+  ✓  10 tests/identity.spec.ts:85:3 › R isolated serial mutation › R: short-token renewal preserves a pending build; disabled bob cannot refresh or use expired access (13.1s)
+  ✓  11 tests/identity.spec.ts:147:1 › S: iframe globals/storage/messages/URLs contain no Keycloak token (1.3s)
+  ✓  12 tests/isolation.spec.ts:13:1 › X: project origins isolate storage and cross-project frame access (3.6s)
+  ✓  13 tests/isolation.spec.ts:33:1 › Y: response CSP survives document.open and blocks egress before the server receives it (2.2s)
+  ✓  14 tests/isolation.spec.ts:70:1 › Z: project A preview session from project B origin returns PREVIEW_ORIGIN_MISMATCH (27ms)
+  ✓  15 tests/isolation.spec.ts:79:1 › AA: preview Host/path allowlist and studio embedding headers (26ms)
+  ✓  16 tests/isolation.spec.ts:99:1 › AB: AST bypass sources are rejected without incrementing the source revision (32ms)
+  ✘  17 tests/studio.spec.ts:10:1 › A: 생성, 역질문, 마스킹, 조회 사유와 감사 기록 (519ms)
+(node:51162) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:51162) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  18 tests/studio.spec.ts:11:1 › B: 문법 오류는 마지막 정상 화면 유지 (1.7s)
+(node:51218) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:51218) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  19 tests/studio.spec.ts:12:1 › C: 이전 실행을 지연해도 최신 revision만 커밋 (1.6s)
+(node:51271) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:51271) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  20 tests/studio.spec.ts:13:1 › D: viewer 자체 발급 차단, 읽기 전용 차단, 제한된 쓰기 허용 (1.8s)
+(node:51338) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:51338) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  21 tests/studio.spec.ts:26:1 › E: 두 탭 CAS 충돌과 최신 내용 다시 불러오기 (1.7s)
+(node:51420) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:51420) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  22 tests/studio.spec.ts:27:1 › F: 사내 useToast와 앱 React 인스턴스 공유 (2.6s)
+  ✘  23 tests/studio.spec.ts:43:1 › G: 역질문 새로고침 복구, Last-Event-ID 이후 답변과 revision_ready (525ms)
+(node:51504) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:51504) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  24 tests/studio.spec.ts:60:1 › G: 복구한 질문 취소와 이미 끝난 생성·404 안내 (1.7s)
+(node:51587) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:51587) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  25 tests/studio.spec.ts:79:1 › H: 쓰기 권한 만료 시 토글 off, 안내와 read capability 재반영 (1.7s)
+(node:51660) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:51660) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  26 tests/studio.spec.ts:90:1 › I: 문법 오류 위치, 금지 패키지 이름과 runtime 원인 (3.0s)
+  ✘  27 tests/studio.spec.ts:107:1 › J: CAS 최신 불러오기 전에 파일별 내 편집 보관, 복사와 새로고침 유지 (493ms)
+(node:51793) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:51793) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  28 tests/studio.spec.ts:127:1 › K: 존재하지 않는 패키지 버전의 실제 조합 실패와 동일 revision 재시도 (3.6s)
+  ✓  29 tests/studio.spec.ts:145:1 › K: failed 응답·연결 실패·시간 초과 구분과 새로고침 없는 재빌드 (2.9s)
+  ✘  30 tests/studio.spec.ts:195:34 › 레이아웃: 1600px 답변 버튼은 한 줄 (474ms)
+(node:51974) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:51974) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  31 tests/studio.spec.ts:195:34 › 레이아웃: 400px 답변 버튼은 한 줄 (1.7s)
+(node:52061) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:52061) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  32 tests/studio.spec.ts:210:1 › L: 새 탭 활성 생성 전체 replay, 답변 동기화와 양쪽 취소 종결 (1.8s)
+(node:52114) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:52114) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  33 tests/studio.spec.ts:248:1 › M: 실제 Yarn 레지스트리 503 안내 후 저장소 복구와 동일 revision 재시도 성공 (5.9s)
+(node:52255) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:52255) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  34 tests/downloads.spec.ts:34:1 › T: Alice CSV/XLSX are AES-256 AE-2; signature, sub, single-use and 60-second expiry enforced (1.5s)
+
+
+  1) tests/identity.spec.ts:26:1 › O: owner member UI protects last owner; viewer read only, editor generation, removal revokes proxy within 5s 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('.access-panel')
+    Expected substring: "마지막 소유자"
+    Error: strict mode violation: locator('.access-panel') resolved to 2 elements:
+        1) <details open="" class="access-panel">…</details> aka getByText('멤버 · live 쓰기 승인프로젝트 멤버멤버 새로고침')
+        2) <details class="access-panel">…</details> aka getByText('암호화 다운로드다운로드 APIcustomers')
+
+    Call log:
+      - Expect "toContainText" locator('.access-panel') with timeout 30000ms
+      - waiting for locator('.access-panel')
+
+
+      30 |   await expect(page.getByLabel('alice 역할')).toBeVisible();
+      31 |   await page.getByLabel('alice 역할').selectOption('viewer');
+    > 32 |   await expect(page.locator('.access-panel')).toContainText('마지막 소유자');
+         |                                               ^
+      33 |   await page.getByLabel('추가할 사용자 이름').fill('bob'); await page.getByRole('button', { name: '멤버 추가', exact: true }).click();
+      34 |   await expect(page.getByLabel('bob 역할')).toHaveValue('viewer');
+      35 |   expect((await api(bob, '/projects/' + p.projectId + '/source', { baseRevision: p.revision, files: p.files }, 'PUT')).status).toBe(403);
+        at /Users/psw/Projects/toss-toi-test/e2e/tests/identity.spec.ts:32:47
+
+    Error Context: test-results/identity-O-owner-member-UI-bf983-val-revokes-proxy-within-5s/error-context.md
+
+  2) tests/studio.spec.ts:10:1 › A: 생성, 역질문, 마스킹, 조회 사유와 감사 기록 ─────────────────────────────────────
+
+    Error: page.evaluate: Execution context was destroyed, most likely because of a navigation
+
+      3 | const snapshot=(page:Page)=>page.evaluate(()=> (window as any).studio?.getSnapshot() ?? {});
+      4 | async function commit(page:Page,revision:number){await expect.poll(async()=> (await snapshot(page)).lastCommit?.token.revision).toBe(revision);}
+    > 5 | async function create(page:Page){await page.goto('/');expect(await page.evaluate(()=>crossOriginIsolated)).toBe(false);await page.getByRole('button',{name:'프로젝트 만들기'}).click();await commit(page,1);}
+        |                                                                         ^
+      6 | const frame=(page:Page)=>page.frameLocator('#preview iframe');
+      7 | async function generate(page:Page,prompt='고객 목록 화면 만들어줘'){await pendingQuestion(page,prompt);await page.getByRole('button',{name:'아니요',exact:true}).click();await commit(page,2);}
+      8 | async function save(page:Page,app:string){return page.evaluate(async app=>{const c=(window as any).studio;return c.saveFiles({...c.getSnapshot().project.files,'/src/App.tsx':app});},app);}
+        at create (/Users/psw/Projects/toss-toi-test/e2e/tests/studio.spec.ts:5:73)
+        at /Users/psw/Projects/toss-toi-test/e2e/tests/studio.spec.ts:10:54
+
+    Error Context: test-results/studio-A-생성-역질문-마스킹-조회-사유와-감사-기록/error-context.md
+
+  3) tests/studio.spec.ts:11:1 › B: 문법 오류는 마지막 정상 화면 유지 ────────────────────────────────────────────
+
+    Error: page.evaluate: Execution context was destroyed, most likely because of a navigation
+
+      3 | const snapshot=(page:Page)=>page.evaluate(()=> (window as any).studio?.getSnapshot() ?? {});
+      4 | async function commit(page:Page,revision:number){await expect.poll(async()=> (await snapshot(page)).lastCommit?.token.revision).toBe(revision);}
+    > 5 | async function create(page:Page){await page.goto('/');expect(await page.evaluate(()=>crossOriginIsolated)).toBe(false);await page.getByRole('button',{name:'프로젝트 만들기'}).click();await commit(page,1);}
+        |                                                                         ^
+      6 | const frame=(page:Page)=>page.frameLocator('#preview iframe');
+      7 | async function generate(page:Page,prompt='고객 목록 화면 만들어줘'){await pendingQuestion(page,prompt);await page.getByRole('button',{name:'아니요',exact:true}).click();await commit(page,2);}
+      8 | async function save(page:Page,app:string){return page.evaluate(async app=>{const c=(window as any).studio;return c.saveFiles({...c.getSnapshot().project.files,'/src/App.tsx':app});},app);}
+        at create (/Users/psw/Projects/toss-toi-test/e2e/tests/studio.spec.ts:5:73)
+        at /Users/psw/Projects/toss-toi-test/e2e/tests/studio.spec.ts:11:47
+
+    Error Context: test-results/studio-B-문법-오류는-마지막-정상-화면-유지/error-context.md
+
+  4) tests/studio.spec.ts:12:1 › C: 이전 실행을 지연해도 최신 revision만 커밋 ────────────────────────────────────
+
+    Error: page.evaluate: Execution context was destroyed, most likely because of a navigation
+
+      3 | const snapshot=(page:Page)=>page.evaluate(()=> (window as any).studio?.getSnapshot() ?? {});
+      4 | async function commit(page:Page,revision:number){await expect.poll(async()=> (await snapshot(page)).lastCommit?.token.revision).toBe(revision);}
+    > 5 | async function create(page:Page){await page.goto('/');expect(await page.evaluate(()=>crossOriginIsolated)).toBe(false);await page.getByRole('button',{name:'프로젝트 만들기'}).click();await commit(page,1);}
+        |                                                                         ^
+      6 | const frame=(page:Page)=>page.frameLocator('#preview iframe');
+      7 | async function generate(page:Page,prompt='고객 목록 화면 만들어줘'){await pendingQuestion(page,prompt);await page.getByRole('button',{name:'아니요',exact:true}).click();await commit(page,2);}
+      8 | async function save(page:Page,app:string){return page.evaluate(async app=>{const c=(window as any).studio;return c.saveFiles({...c.getSnapshot().project.files,'/src/App.tsx':app});},app);}
+        at create (/Users/psw/Projects/toss-toi-test/e2e/tests/studio.spec.ts:5:73)
+        at /Users/psw/Projects/toss-toi-test/e2e/tests/studio.spec.ts:12:55
+
+    Error Context: test-results/studio-C-이전-실행을-지연해도-최신-revision만-커밋/error-context.md
+
+  5) tests/studio.spec.ts:13:1 › D: viewer 자체 발급 차단, 읽기 전용 차단, 제한된 쓰기 허용 ───────────────────────────
+
+    Error: page.evaluate: Execution context was destroyed, most likely because of a navigation
+
+      3 | const snapshot=(page:Page)=>page.evaluate(()=> (window as any).studio?.getSnapshot() ?? {});
+      4 | async function commit(page:Page,revision:number){await expect.poll(async()=> (await snapshot(page)).lastCommit?.token.revision).toBe(revision);}
+    > 5 | async function create(page:Page){await page.goto('/');expect(await page.evaluate(()=>crossOriginIsolated)).toBe(false);await page.getByRole('button',{name:'프로젝트 만들기'}).click();await commit(page,1);}
+        |                                                                         ^
+      6 | const frame=(page:Page)=>page.frameLocator('#preview iframe');
+      7 | async function generate(page:Page,prompt='고객 목록 화면 만들어줘'){await pendingQuestion(page,prompt);await page.getByRole('button',{name:'아니요',exact:true}).click();await commit(page,2);}
+      8 | async function save(page:Page,app:string){return page.evaluate(async app=>{const c=(window as any).studio;return c.saveFiles({...c.getSnapshot().project.files,'/src/App.tsx':app});},app);}
+        at create (/Users/psw/Projects/toss-toi-test/e2e/tests/studio.spec.ts:5:73)
+        at /Users/psw/Projects/toss-toi-test/e2e/tests/studio.spec.ts:13:64
+
+    Error Context: test-results/studio-D-viewer-자체-발급-차단-읽기-전용-차단-제한된-쓰기-허용/error-context.md
+
+  6) tests/studio.spec.ts:26:1 › E: 두 탭 CAS 충돌과 최신 내용 다시 불러오기 ──────────────────────────────────────
+
+    Error: page.evaluate: Execution context was destroyed, most likely because of a navigation
+
+      3 | const snapshot=(page:Page)=>page.evaluate(()=> (window as any).studio?.getSnapshot() ?? {});
+      4 | async function commit(page:Page,revision:number){await expect.poll(async()=> (await snapshot(page)).lastCommit?.token.revision).toBe(revision);}
+    > 5 | async function create(page:Page){await page.goto('/');expect(await page.evaluate(()=>crossOriginIsolated)).toBe(false);await page.getByRole('button',{name:'프로젝트 만들기'}).click();await commit(page,1);}
+        |                                                                         ^
+      6 | const frame=(page:Page)=>page.frameLocator('#preview iframe');
+      7 | async function generate(page:Page,prompt='고객 목록 화면 만들어줘'){await pendingQuestion(page,prompt);await page.getByRole('button',{name:'아니요',exact:true}).click();await commit(page,2);}
+      8 | async function save(page:Page,app:string){return page.evaluate(async app=>{const c=(window as any).studio;return c.saveFiles({...c.getSnapshot().project.files,'/src/App.tsx':app});},app);}
+        at create (/Users/psw/Projects/toss-toi-test/e2e/tests/studio.spec.ts:5:73)
+        at /Users/psw/Projects/toss-toi-test/e2e/tests/studio.spec.ts:26:61
+
+    Error Context: test-results/studio-E-두-탭-CAS-충돌과-최신-내용-다시-불러오기/error-context.md
+
+  7) tests/studio.spec.ts:43:1 › G: 역질문 새로고침 복구, Last-Event-ID 이후 답변과 revision_ready ───────────────
+
+    Error: page.evaluate: Execution context was destroyed, most likely because of a navigation
+
+      3 | const snapshot=(page:Page)=>page.evaluate(()=> (window as any).studio?.getSnapshot() ?? {});
+      4 | async function commit(page:Page,revision:number){await expect.poll(async()=> (await snapshot(page)).lastCommit?.token.revision).toBe(revision);}
+    > 5 | async function create(page:Page){await page.goto('/');expect(await page.evaluate(()=>crossOriginIsolated)).toBe(false);await page.getByRole('button',{name:'프로젝트 만들기'}).click();await commit(page,1);}
+        |                                                                         ^
+      6 | const frame=(page:Page)=>page.frameLocator('#preview iframe');
+      7 | async function generate(page:Page,prompt='고객 목록 화면 만들어줘'){await pendingQuestion(page,prompt);await page.getByRole('button',{name:'아니요',exact:true}).click();await commit(page,2);}
+      8 | async function save(page:Page,app:string){return page.evaluate(async app=>{const c=(window as any).studio;return c.saveFiles({...c.getSnapshot().project.files,'/src/App.tsx':app});},app);}
+        at create (/Users/psw/Projects/toss-toi-test/e2e/tests/studio.spec.ts:5:73)
+        at /Users/psw/Projects/toss-toi-test/e2e/tests/studio.spec.ts:44:3
+
+    Error Context: test-results/studio-G-역질문-새로고침-복구-Last-Event-ID-이후-답변과-revision-ready/error-context.md
+
+  8) tests/studio.spec.ts:60:1 › G: 복구한 질문 취소와 이미 끝난 생성·404 안내 ─────────────────────────────────────
+
+    Error: page.evaluate: Execution context was destroyed, most likely because of a navigation
+
+      3 | const snapshot=(page:Page)=>page.evaluate(()=> (window as any).studio?.getSnapshot() ?? {});
+      4 | async function commit(page:Page,revision:number){await expect.poll(async()=> (await snapshot(page)).lastCommit?.token.revision).toBe(revision);}
+    > 5 | async function create(page:Page){await page.goto('/');expect(await page.evaluate(()=>crossOriginIsolated)).toBe(false);await page.getByRole('button',{name:'프로젝트 만들기'}).click();await commit(page,1);}
+        |                                                                         ^
+      6 | const frame=(page:Page)=>page.frameLocator('#preview iframe');
+      7 | async function generate(page:Page,prompt='고객 목록 화면 만들어줘'){await pendingQuestion(page,prompt);await page.getByRole('button',{name:'아니요',exact:true}).click();await commit(page,2);}
+      8 | async function save(page:Page,app:string){return page.evaluate(async app=>{const c=(window as any).studio;return c.saveFiles({...c.getSnapshot().project.files,'/src/App.tsx':app});},app);}
+        at create (/Users/psw/Projects/toss-toi-test/e2e/tests/studio.spec.ts:5:73)
+        at /Users/psw/Projects/toss-toi-test/e2e/tests/studio.spec.ts:61:3
+
+    Error Context: test-results/studio-G-복구한-질문-취소와-이미-끝난-생성·404-안내/error-context.md
+
+  9) tests/studio.spec.ts:79:1 › H: 쓰기 권한 만료 시 토글 off, 안내와 read capability 재반영 ─────────────────────
+
+    Error: page.evaluate: Execution context was destroyed, most likely because of a navigation
+
+      3 | const snapshot=(page:Page)=>page.evaluate(()=> (window as any).studio?.getSnapshot() ?? {});
+      4 | async function commit(page:Page,revision:number){await expect.poll(async()=> (await snapshot(page)).lastCommit?.token.revision).toBe(revision);}
+    > 5 | async function create(page:Page){await page.goto('/');expect(await page.evaluate(()=>crossOriginIsolated)).toBe(false);await page.getByRole('button',{name:'프로젝트 만들기'}).click();await commit(page,1);}
+        |                                                                         ^
+      6 | const frame=(page:Page)=>page.frameLocator('#preview iframe');
+      7 | async function generate(page:Page,prompt='고객 목록 화면 만들어줘'){await pendingQuestion(page,prompt);await page.getByRole('button',{name:'아니요',exact:true}).click();await commit(page,2);}
+      8 | async function save(page:Page,app:string){return page.evaluate(async app=>{const c=(window as any).studio;return c.saveFiles({...c.getSnapshot().project.files,'/src/App.tsx':app});},app);}
+        at create (/Users/psw/Projects/toss-toi-test/e2e/tests/studio.spec.ts:5:73)
+        at /Users/psw/Projects/toss-toi-test/e2e/tests/studio.spec.ts:81:3
+
+    Error Context: test-results/studio-H-쓰기-권한-만료-시-토글-off-안내와-read-capability-재반영/error-context.md
+
+  10) tests/studio.spec.ts:107:1 › J: CAS 최신 불러오기 전에 파일별 내 편집 보관, 복사와 새로고침 유지 ──────────────────────
+
+    Error: page.evaluate: Execution context was destroyed, most likely because of a navigation
+
+      3 | const snapshot=(page:Page)=>page.evaluate(()=> (window as any).studio?.getSnapshot() ?? {});
+      4 | async function commit(page:Page,revision:number){await expect.poll(async()=> (await snapshot(page)).lastCommit?.token.revision).toBe(revision);}
+    > 5 | async function create(page:Page){await page.goto('/');expect(await page.evaluate(()=>crossOriginIsolated)).toBe(false);await page.getByRole('button',{name:'프로젝트 만들기'}).click();await commit(page,1);}
+        |                                                                         ^
+      6 | const frame=(page:Page)=>page.frameLocator('#preview iframe');
+      7 | async function generate(page:Page,prompt='고객 목록 화면 만들어줘'){await pendingQuestion(page,prompt);await page.getByRole('button',{name:'아니요',exact:true}).click();await commit(page,2);}
+      8 | async function save(page:Page,app:string){return page.evaluate(async app=>{const c=(window as any).studio;return c.saveFiles({...c.getSnapshot().project.files,'/src/App.tsx':app});},app);}
+        at create (/Users/psw/Projects/toss-toi-test/e2e/tests/studio.spec.ts:5:73)
+        at /Users/psw/Projects/toss-toi-test/e2e/tests/studio.spec.ts:109:3
+
+    Error Context: test-results/studio-J-CAS-최신-불러오기-전에-파일별-내-편집-보관-복사와-새로고침-유지/error-context.md
+
+  11) tests/studio.spec.ts:195:34 › 레이아웃: 1600px 답변 버튼은 한 줄 ────────────────────────────────────────
+
+    Error: page.evaluate: Execution context was destroyed, most likely because of a navigation
+
+      3 | const snapshot=(page:Page)=>page.evaluate(()=> (window as any).studio?.getSnapshot() ?? {});
+      4 | async function commit(page:Page,revision:number){await expect.poll(async()=> (await snapshot(page)).lastCommit?.token.revision).toBe(revision);}
+    > 5 | async function create(page:Page){await page.goto('/');expect(await page.evaluate(()=>crossOriginIsolated)).toBe(false);await page.getByRole('button',{name:'프로젝트 만들기'}).click();await commit(page,1);}
+        |                                                                         ^
+      6 | const frame=(page:Page)=>page.frameLocator('#preview iframe');
+      7 | async function generate(page:Page,prompt='고객 목록 화면 만들어줘'){await pendingQuestion(page,prompt);await page.getByRole('button',{name:'아니요',exact:true}).click();await commit(page,2);}
+      8 | async function save(page:Page,app:string){return page.evaluate(async app=>{const c=(window as any).studio;return c.saveFiles({...c.getSnapshot().project.files,'/src/App.tsx':app});},app);}
+        at create (/Users/psw/Projects/toss-toi-test/e2e/tests/studio.spec.ts:5:73)
+        at /Users/psw/Projects/toss-toi-test/e2e/tests/studio.spec.ts:197:3
+
+    Error Context: test-results/studio-레이아웃-1600px-답변-버튼은-한-줄/error-context.md
+
+  12) tests/studio.spec.ts:195:34 › 레이아웃: 400px 답변 버튼은 한 줄 ─────────────────────────────────────────
+
+    Error: page.evaluate: Execution context was destroyed, most likely because of a navigation
+
+      3 | const snapshot=(page:Page)=>page.evaluate(()=> (window as any).studio?.getSnapshot() ?? {}).catch(error=>{if (/Execution context was destroyed|Cannot find context/.test(error.message)) return {}; throw error;});
+      4 | async function commit(page:Page,revision:number){await expect.poll(async()=> (await snapshot(page)).lastCommit?.token.revision).toBe(revision);}
+    > 5 | async function create(page:Page){await page.goto('/');await page.getByRole('button',{name:'프로젝트 만들기'}).waitFor();expect(await page.evaluate(()=>crossOriginIsolated)).toBe(false);await page.getByRole('button',{name:'프로젝트 만들기'}).click();await commit(page,1);}
+        |                                                                         ^
+      6 | const frame=(page:Page)=>page.frameLocator('#preview iframe');
+      7 | async function generate(page:Page,prompt='고객 목록 화면 만들어줘'){await pendingQuestion(page,prompt);await page.getByRole('button',{name:'아니요',exact:true}).click();await commit(page,2);}
+      8 | async function save(page:Page,app:string){return page.evaluate(async app=>{const c=(window as any).studio;return c.saveFiles({...c.getSnapshot().project.files,'/src/App.tsx':app});},app);}
+        at create (/Users/psw/Projects/toss-toi-test/e2e/tests/studio.spec.ts:5:73)
+        at /Users/psw/Projects/toss-toi-test/e2e/tests/studio.spec.ts:197:3
+
+    Error Context: test-results/studio-레이아웃-400px-답변-버튼은-한-줄/error-context.md
+
+  13) tests/studio.spec.ts:210:1 › L: 새 탭 활성 생성 전체 replay, 답변 동기화와 양쪽 취소 종결 ────────────────────────
+
+    Error: page.evaluate: Execution context was destroyed, most likely because of a navigation
+
+      3 | const snapshot=(page:Page)=>page.evaluate(()=> (window as any).studio?.getSnapshot() ?? {}).catch(error=>{if (/Execution context was destroyed|Cannot find context/.test(error.message)) return {}; throw error;});
+      4 | async function commit(page:Page,revision:number){await expect.poll(async()=> (await snapshot(page)).lastCommit?.token.revision).toBe(revision);}
+    > 5 | async function create(page:Page){await page.goto('/');await page.getByRole('button',{name:'프로젝트 만들기'}).waitFor();expect(await page.evaluate(()=>crossOriginIsolated)).toBe(false);await page.getByRole('button',{name:'프로젝트 만들기'}).click();await commit(page,1);}
+        |                                                                         ^
+      6 | const frame=(page:Page)=>page.frameLocator('#preview iframe');
+      7 | async function generate(page:Page,prompt='고객 목록 화면 만들어줘'){await pendingQuestion(page,prompt);await page.getByRole('button',{name:'아니요',exact:true}).click();await commit(page,2);}
+      8 | async function save(page:Page,app:string){return page.evaluate(async app=>{const c=(window as any).studio;return c.saveFiles({...c.getSnapshot().project.files,'/src/App.tsx':app});},app);}
+        at create (/Users/psw/Projects/toss-toi-test/e2e/tests/studio.spec.ts:5:73)
+        at /Users/psw/Projects/toss-toi-test/e2e/tests/studio.spec.ts:211:3
+
+    Error Context: test-results/studio-L-새-탭-활성-생성-전체-replay-답변-동기화와-양쪽-취소-종결/error-context.md
+
+  14) tests/downloads.spec.ts:34:1 › T: Alice CSV/XLSX are AES-256 AE-2; signature, sub, single-use and 60-second expiry enforced 
+
+    Test was interrupted.
+
+    Error: Keycloak UI login failed for bob; verify service readiness and .env credentials
+
+       at ../helpers/auth.ts:39
+
+      37 |       return tokens.access_token;
+      38 |     } };
+    > 39 |   } catch { throw new Error('Keycloak UI login failed for ' + username + '; verify service readiness and .env credentials'); }
+         |                   ^
+      40 |   finally { await context.close(); }
+      41 | }
+      42 | export async function api(account: Account, path: string, body?: unknown, method = body === undefined ? 'GET' : 'POST', baseUrl = agent) {
+        at login (/Users/psw/Projects/toss-toi-test/e2e/helpers/auth.ts:39:19)
+        at /Users/psw/Projects/toss-toi-test/e2e/tests/downloads.spec.ts:36:48
+
+  13 failed
+    tests/identity.spec.ts:26:1 › O: owner member UI protects last owner; viewer read only, editor generation, removal revokes proxy within 5s 
+    tests/studio.spec.ts:10:1 › A: 생성, 역질문, 마스킹, 조회 사유와 감사 기록 ──────────────────────────────────────
+    tests/studio.spec.ts:11:1 › B: 문법 오류는 마지막 정상 화면 유지 ─────────────────────────────────────────────
+    tests/studio.spec.ts:12:1 › C: 이전 실행을 지연해도 최신 revision만 커밋 ─────────────────────────────────────
+    tests/studio.spec.ts:13:1 › D: viewer 자체 발급 차단, 읽기 전용 차단, 제한된 쓰기 허용 ────────────────────────────
+    tests/studio.spec.ts:26:1 › E: 두 탭 CAS 충돌과 최신 내용 다시 불러오기 ───────────────────────────────────────
+    tests/studio.spec.ts:43:1 › G: 역질문 새로고침 복구, Last-Event-ID 이후 답변과 revision_ready ────────────────
+    tests/studio.spec.ts:60:1 › G: 복구한 질문 취소와 이미 끝난 생성·404 안내 ──────────────────────────────────────
+    tests/studio.spec.ts:79:1 › H: 쓰기 권한 만료 시 토글 off, 안내와 read capability 재반영 ──────────────────────
+    tests/studio.spec.ts:107:1 › J: CAS 최신 불러오기 전에 파일별 내 편집 보관, 복사와 새로고침 유지 ────────────────────────
+    tests/studio.spec.ts:195:34 › 레이아웃: 1600px 답변 버튼은 한 줄 ──────────────────────────────────────────
+    tests/studio.spec.ts:195:34 › 레이아웃: 400px 답변 버튼은 한 줄 ───────────────────────────────────────────
+    tests/studio.spec.ts:210:1 › L: 새 탭 활성 생성 전체 replay, 답변 동기화와 양쪽 취소 종결 ──────────────────────────
+  1 interrupted
+    tests/downloads.spec.ts:34:1 › T: Alice CSV/XLSX are AES-256 AE-2; signature, sub, single-use and 60-second expiry enforced 
+  65 did not run
+  20 passed (2.5m)

@@ -10,7 +10,7 @@ async function preview(account: Parameters<typeof api>[0], projectId: string) {
   expect(response.status).toBe(200); return response.json();
 }
 async function proxy(session: { sessionToken: string; capabilityToken: string }, projectId: string, path = '/customers', method = 'GET') {
-  return fetch(policy + '/proxy/customers' + path, { method, headers: { Origin: 'http://localhost:5174', Authorization: 'Bearer ' + session.sessionToken, 'X-Toi-Capability': session.capabilityToken, 'X-Toi-Project': projectId, 'X-Toi-Reason': 'Identity boundary verification', 'Content-Type': 'application/json' }, ...(method === 'GET' ? {} : { body: JSON.stringify({ status: 'active' }) }) });
+  return fetch(policy + '/proxy/customers' + path, { method, headers: { Origin: `http://p-${projectId}.preview.localhost:5174`, Authorization: 'Bearer ' + session.sessionToken, 'X-Toi-Capability': session.capabilityToken, 'X-Toi-Project': projectId, 'X-Toi-Reason': 'Identity boundary verification', 'Content-Type': 'application/json' }, ...(method === 'GET' ? {} : { body: JSON.stringify({ status: 'active' }) }) });
 }
 test('N: carol nonmember receives 404 and cannot mint or use preview/capability', async ({ browser, accounts }) => {
   const alice = await accounts('alice'); const carol = await accounts('carol'); const p = await project(alice);
@@ -29,7 +29,7 @@ test('O: owner member UI protects last owner; viewer read only, editor generatio
   await page.getByText('멤버 · live 쓰기 승인', { exact: true }).click();
   await expect(page.getByLabel('alice 역할')).toBeVisible();
   await page.getByLabel('alice 역할').selectOption('viewer');
-  await expect(page.locator('.access-panel')).toContainText('마지막 소유자');
+  await expect(page.locator('.access-panel').filter({has: page.getByRole('heading', {name:'프로젝트 멤버', exact:true})})).toContainText('마지막 소유자');
   await page.getByLabel('추가할 사용자 이름').fill('bob'); await page.getByRole('button', { name: '멤버 추가', exact: true }).click();
   await expect(page.getByLabel('bob 역할')).toHaveValue('viewer');
   expect((await api(bob, '/projects/' + p.projectId + '/source', { baseRevision: p.revision, files: p.files }, 'PUT')).status).toBe(403);
@@ -134,7 +134,7 @@ test.describe('R isolated serial mutation', () => {
       const denied = await fetch(agent + '/projects/disabled-account-check', { headers: { Origin: studio, Authorization: 'Bearer ' + latest.access_token } });
       expect(denied.status).toBe(401);
     } finally {
-      try { await context?.close(); await admin('/users/' + bob.id, { enabled: bob.enabled }); }
+      try { await context?.close(); await admin('/users/' + bob.id, { enabled: bob.enabled }); const restoredBob = await admin('/users/' + bob.id); expect(restoredBob.enabled).toBe(bob.enabled); }
       finally {
         // Keycloak merges attribute maps: omission does not delete a temporary key.
         await admin('/clients/' + client.id, { ...client, attributes: { ...client.attributes, [ttlKey]: originalTtl ?? null } });

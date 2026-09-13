@@ -3,12 +3,12 @@ export const fixture: PackageSetManifest = {
   schemaVersion: 1, tossPackageSetHash: '0'.repeat(16), artifactKey: '0'.repeat(64), lockfileSha256: '0'.repeat(64),
   entries: ['react', 'react-dom/client', 'react/jsx-runtime'],
   importMap: { imports: {
-    react: 'https://esm.sh/react@19.3.0',
-    'react-dom/client': 'https://esm.sh/react-dom@19.3.0/client?external=react',
-    'react/jsx-runtime': 'https://esm.sh/react@19.3.0/jsx-runtime?external=react'
+    react: 'http://localhost:7100/__runtime_fixture__/react.js',
+    'react-dom/client': 'http://localhost:7100/__runtime_fixture__/react-dom-client.js',
+    'react/jsx-runtime': 'http://localhost:7100/__runtime_fixture__/react-jsx-runtime.js'
   } },
-  files: [], buildProfile: { builder: 'esbuild', builderVersion: '0.28.2', packageManager: 'yarn-berry', packageManagerVersion: 'fixture', target: 'es2022', nodeEnv: 'production', conditions: ['browser', 'import'], configDigest: '0'.repeat(64), registryNamespace: 'PUBLIC-DEMO-FIXTURE-NOT-A-BUILDER-ARTIFACT' },
-  assetBaseUrl: 'https://esm.sh/', createdAt: '2026-09-13T00:00:00.000Z'
+  files: [], buildProfile: { builder: 'esbuild', builderVersion: '0.28.2', packageManager: 'yarn-berry', packageManagerVersion: 'fixture', target: 'es2022', nodeEnv: 'production', conditions: ['browser', 'import'], configDigest: '0'.repeat(64), registryNamespace: 'LOCAL-DEMO-FIXTURE-NOT-A-BUILDER-ARTIFACT' },
+  assetBaseUrl: 'http://localhost:7100/__runtime_fixture__/', createdAt: '2026-09-13T00:00:00.000Z'
 };
 export const initialSource = `import { createRoot } from 'react-dom/client';
 

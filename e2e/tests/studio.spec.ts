@@ -1,8 +1,8 @@
 import type { Page } from '@playwright/test';
 import { test, expect } from '../helpers/auth';
-const snapshot=(page:Page)=>page.evaluate(()=> (window as any).studio?.getSnapshot() ?? {});
+const snapshot=(page:Page)=>page.evaluate(()=> (window as any).studio?.getSnapshot() ?? {}).catch(error=>{if (/Execution context was destroyed|Cannot find context/.test(error.message)) return {}; throw error;});
 async function commit(page:Page,revision:number){await expect.poll(async()=> (await snapshot(page)).lastCommit?.token.revision).toBe(revision);}
-async function create(page:Page){await page.goto('/');expect(await page.evaluate(()=>crossOriginIsolated)).toBe(false);await page.getByRole('button',{name:'프로젝트 만들기'}).click();await commit(page,1);}
+async function create(page:Page){await page.goto('/');await page.getByRole('button',{name:'프로젝트 만들기'}).waitFor();expect(await page.evaluate(()=>crossOriginIsolated)).toBe(false);await page.getByRole('button',{name:'프로젝트 만들기'}).click();await commit(page,1);}
 const frame=(page:Page)=>page.frameLocator('#preview iframe');
 async function generate(page:Page,prompt='고객 목록 화면 만들어줘'){await pendingQuestion(page,prompt);await page.getByRole('button',{name:'아니요',exact:true}).click();await commit(page,2);}
 async function save(page:Page,app:string){return page.evaluate(async app=>{const c=(window as any).studio;return c.saveFiles({...c.getSnapshot().project.files,'/src/App.tsx':app});},app);}

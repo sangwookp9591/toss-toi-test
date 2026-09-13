@@ -7,7 +7,7 @@ import type { CapabilityClaims } from '../../../contracts/src/policy.ts';
 import { Identity, isUser } from './identity.js';
 import type { PolicyConfig } from './config.js';
 import { HttpError, identifier, verifyToken, type SessionClaims } from './tokens.js';
-import type { PolicyStorage } from './storage.js';
+import { sanitize, type PolicyStorage } from './storage.js';
 export type Actor = SessionClaims & { identity?: AccessClaims; preview?: PreviewSessionClaims };
 export class Access {
   readonly identity: Identity;
@@ -44,13 +44,19 @@ export class Access {
     } catch (e) { if (e instanceof HttpError) throw e; throw new HttpError(503, 'MEMBERSHIP_UNAVAILABLE'); }
   }
   async member(actor: Actor, projectId: string, minimum: ProjectRole = 'viewer') {
+    try {
     if (actor.preview ? actor.preview.projectId !== projectId : !actor.identity || !isUser(actor.identity)) throw new HttpError(404, 'PROJECT_NOT_FOUND');
     const membership = await this.membership(projectId);
     const member = membership.members.find(m => m.sub === actor.sub);
     if (!member) throw new HttpError(404, 'PROJECT_NOT_FOUND');
     if (!(PROJECT_ROLE_RANK[member.role] >= PROJECT_ROLE_RANK[minimum])) throw new HttpError(403, 'PROJECT_ROLE_FORBIDDEN');
     return { ...actor, roles: Object.keys(PROJECT_ROLE_RANK).filter(role => PROJECT_ROLE_RANK[role as ProjectRole] <= PROJECT_ROLE_RANK[member.role]) };
+    } catch (error) {
+      if (error instanceof HttpError && [403, 404].includes(error.status)) await this.storage.append(sanitize({ action: 'membership-denied', ts: new Date().toISOString(), user: actor.sub, projectId: identifier(projectId) ? projectId : 'unknown', apiId: 'unknown', method: 'CHECK', path: '/membership', status: error.status, maskedFields: [], decision: 'denied', denyReason: error.code } as const, [this.config.downloads?.kek ?? '', this.config.downloads?.urlSecret ?? '', this.config.minio?.secretKey ?? '', this.config.upstreamToken, this.config.liveToken, this.config.sessionSecret, this.config.capabilitySecret, this.config.policyClientSecret ?? '']));
+      throw error;
+    }
   }
+
   save(approval: Approval) {
     const next = new Map(this.approvals); next.set(approval.approvalId, approval);
     const file = path.join(this.storage.directory, 'approvals.json'), temp = file + '.' + randomUUID() + '.tmp';

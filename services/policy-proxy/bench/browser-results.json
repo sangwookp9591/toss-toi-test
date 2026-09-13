@@ -1,6 +1,6 @@
 {
   "browser": "153.0.8010.36",
-  "direct": 401,
+  "directBlocked": true,
   "proxy": 200,
   "phone": "010-****-5678",
   "masked": "900101-*******",

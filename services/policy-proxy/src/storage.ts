@@ -2,8 +2,9 @@ import { mkdir, readFile, writeFile, rename, appendFile } from 'node:fs/promises
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import type { RegisteredApi, PublicApi, AuditRecord, MaskKind } from '../../../contracts/src/policy.js';
-import type { PolicyWarning } from './mask.js';
-export interface PolicyAuditRecord extends Omit<AuditRecord, 'seq' | 'prevHash' | 'hash'> { policyWarnings?: PolicyWarning[] }
+import { AuditChain, type AuditInput } from './audit.js';
+import type { ObjectStore } from './objects.js';
+export type PolicyAuditRecord = AuditInput;
 import { HttpError, identifier } from './tokens.js';
 export function sanitize<T>(value: T, secrets: string[]): T {
   const clean = (item: unknown): unknown => {
@@ -46,10 +47,11 @@ export function validateApi(input: unknown, allowedUpstreams: string[]): Registe
 export class PolicyStorage {
   readonly apis = new Map<string, RegisteredApi>();
   private registryQueue = Promise.resolve();
-  private auditQueue = Promise.resolve();
-  constructor(readonly directory: string) {}
+  readonly chain: AuditChain;
+  constructor(readonly directory: string, objects?: ObjectStore) { this.chain = new AuditChain(directory, objects); }
   async init() {
     await mkdir(this.directory, { recursive: true, mode: 0o700 });
+    await this.chain.init();
     try { const values = JSON.parse(await readFile(path.join(this.directory, 'apis.json'), 'utf8')) as RegisteredApi[]; for (const api of values) if (api.environments) this.apis.set(api.apiId, api); }
     catch (error) { if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error; }
   }
@@ -62,13 +64,6 @@ export class PolicyStorage {
     });
     this.registryQueue = operation.catch(() => {}); return operation;
   }
-  append(record: PolicyAuditRecord): Promise<void> {
-    const operation = this.auditQueue.then(() => appendFile(path.join(this.directory, 'audit.jsonl'), JSON.stringify(record) + '\n', { mode: 0o600 }));
-    this.auditQueue = operation.catch(() => {}); return operation;
-  }
-  async audit(projectId: string | undefined, limit: number, subject?: string): Promise<PolicyAuditRecord[]> {
-    await this.auditQueue;
-    try { const lines = (await readFile(path.join(this.directory, 'audit.jsonl'), 'utf8')).trim(); return (lines ? lines.split('\n').map(line => JSON.parse(line) as PolicyAuditRecord) : []).filter(record => (!projectId || record.projectId === projectId) && (!subject || record.user === subject)).slice(-limit); }
-    catch (error) { if ((error as NodeJS.ErrnoException).code === 'ENOENT') return []; throw error; }
-  }
+  append(record: PolicyAuditRecord): Promise<void> { return this.chain.append(record); }
+  audit(projectId: string | undefined, limit: number, subject?: string) { return this.chain.read(projectId, limit, subject); }
 }

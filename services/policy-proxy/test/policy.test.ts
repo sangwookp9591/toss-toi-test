@@ -18,14 +18,14 @@ const close = (server: Server) => new Promise<void>(resolve => { server.closeAll
 let mock: Server, proxy: Server, base: string, upstream: string, store: PolicyStorage, cfg: PolicyConfig, dataDir: string;
 let viewer: string, editor: string, admin: string, outsider: string, other: string, read: string, write: string, readClaims: CapabilityClaims;
 const send = (url: string, token?: string, value?: unknown) => fetch(base + url, { method: value === undefined ? 'GET' : 'POST', headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}), 'Content-Type': 'application/json' }, body: value === undefined ? undefined : JSON.stringify(value) });
-const session = async (user: string, roles: string[]) => { if (roles.length) member('test-project', user, roles.includes('editor') ? 'editor' : 'viewer'); return token(user, roles.includes('platform-admin') ? ['platform-admin'] : ['builder']); };
-const cap = async (token: string, value: Record<string, unknown> = {}) => (await (await send('/capabilities', token, { projectId: 'test-project', env: 'preview', ttlSec: 300, ...value })).json());
+const session = async (user: string, roles: string[]) => { if (roles.length) member('11111111-1111-1111-1111-111111111111', user, roles.includes('editor') ? 'editor' : 'viewer'); return token(user, roles.includes('platform-admin') ? ['platform-admin'] : ['builder']); };
+const cap = async (token: string, value: Record<string, unknown> = {}) => (await (await send('/capabilities', token, { projectId: '11111111-1111-1111-1111-111111111111', env: 'preview', ttlSec: 300, ...value })).json());
 function call(options: { session?: string | null; cap?: string; project?: string; api?: string; path?: string; method?: string; reason?: string | null; extra?: Record<string, string> } = {}) {
-  return fetch(`${base}/proxy/${options.api ?? 'customers'}${options.path ?? '/customers?size=20'}`, { method: options.method ?? 'GET', headers: { ...(options.session === null ? {} : { Authorization: `Bearer ${options.session ?? viewer}` }), 'X-Toi-Capability': options.cap ?? read, 'X-Toi-Project': options.project ?? 'test-project', ...(options.reason === null ? {} : { 'X-Toi-Reason': encodeURIComponent(options.reason ?? '고객 문의 응대') }), ...options.extra }, body: options.method === 'PATCH' ? JSON.stringify({ status: 'suspended' }) : undefined });
+  return fetch(`${base}/proxy/${options.api ?? 'customers'}${options.path ?? '/customers?size=20'}`, { method: options.method ?? 'GET', headers: { ...(options.session === null ? {} : { Authorization: `Bearer ${options.session ?? viewer}` }), 'X-Toi-Capability': options.cap ?? read, 'X-Toi-Project': options.project ?? '11111111-1111-1111-1111-111111111111', ...(options.reason === null ? {} : { 'X-Toi-Reason': encodeURIComponent(options.reason ?? '고객 문의 응대') }), ...options.extra }, body: options.method === 'PATCH' ? JSON.stringify({ status: 'suspended' }) : undefined });
 }
 beforeAll(async () => {
   await mkdir(path.join(serviceRoot, '.cache'), { recursive: true }); dataDir = await mkdtemp(path.join(serviceRoot, '.cache/policy-test-'));
-  mock = createMockBackend('test-upstream-secret-very-private'); upstream = await listen(mock);
+  mock = createMockBackend('test-upstream-secret-very-private', 'test-live-secret-very-private'); upstream = await listen(mock);
   cfg = { ...configuration({ NODE_ENV: 'test' }), ...identityConfig, dataDir, upstreamUrl: upstream, upstreamAllowlist: [upstream + '/preview', upstream + '/live'], upstreamToken: 'test-upstream-secret-very-private', sessionSecret: 'test-session-signing-secret', capabilitySecret: 'test-capability-signing-secret', devAuth: true, devAdminToken: 'test-admin-bootstrap-token' };
   store = new PolicyStorage(dataDir); await store.init(); await seedRegistry(store, cfg);
   proxy = createPolicyProxy(cfg, store); base = await listen(proxy);
@@ -56,7 +56,7 @@ test('decision order and every denial are audited', async () => {
   ];
   const before = (await store.audit(undefined, 1000)).length;
   for (const [options, status, code] of cases) { const response = await call(options); expect(response.status).toBe(status); expect((await response.json()).error).toBe(code); }
-  const audit = (await store.audit(undefined, 1000)).slice(before); expect(audit).toHaveLength(cases.length);
+  const audit = (await store.audit(undefined, 1000)).slice(before).filter(r => r.action === 'proxy'); expect(audit).toHaveLength(cases.length);
   expect(audit.every(record => record.decision === 'denied')).toBe(true);
   expect(audit.map(record => record.status)).toEqual(cases.map(([, status]) => status));
   expect(audit[0].capability!.jti).toBe('unverified');
@@ -76,7 +76,7 @@ test('masking snapshot includes concrete wildcard pointers and leaves source dat
       "status": "active",
     }
   `);
-  const audit = (await store.audit('test-project', 1))[0]; expect(audit.decision).toBe('allowed'); expect(audit.maskedFields).toHaveLength(100); expect(audit.maskedFields).toContain('/items/0/phone'); expect(audit.reason).toBe('고객 문의 응대');
+  const audit = (await store.audit('11111111-1111-1111-1111-111111111111', 1))[0]; expect(audit.decision).toBe('allowed'); expect(audit.maskedFields).toHaveLength(100); expect(audit.maskedFields).toContain('/items/0/phone'); expect(audit.reason).toBe('고객 문의 응대');
   const original = await (await fetch(upstream + '/preview/customers/C001', { headers: { 'X-Service-Token': cfg.upstreamToken } })).json(); expect(original.phone).toBe('010-1000-5678');
   const detail = await (await call({ path: '/customers/C001' })).json(); expect(detail.email).toBe('ho***@example.com');
   const escaped = maskJson({ 'a/b': { '~name': '홍길동' }, items: [{ phone: null }, { phone: '01012345678' }] }, { '/a~1b/~0name': 'name', '/items/*/phone': 'phone' });
@@ -89,7 +89,7 @@ test('N2 seed GET /customers/{id}/orders preserves the actual backend response a
   const response = await call({ path: '/customers/C002/orders' });
   expect(response.status).toBe(200); expect(await response.json()).toEqual(expected);
   expect(expected.items.map((item: { createdAt: string }) => item.createdAt)).toEqual(['2026-08-01T00:00:00.000Z', '2026-08-02T00:00:00.000Z', '2026-08-03T00:00:00.000Z']);
-  const audit = (await store.audit('test-project', 1))[0];
+  const audit = (await store.audit('11111111-1111-1111-1111-111111111111', 1))[0];
   expect(audit.maskedFields).toEqual([]); expect(audit.policyWarnings).toEqual(['mask_rules_unmatched']);
 });
 
@@ -97,7 +97,7 @@ test('write authorization is re-evaluated for every request and allowWrite is en
   const allowed = await call({ method: 'PATCH', path: '/customers/C001', session: editor, cap: write }); expect(allowed.status).toBe(200); expect((await allowed.json()).status).toBe('suspended');
   const api = store.apis.get('customers')!; await store.save({ ...api, policy: { ...api.policy, allowWrite: false } });
   try { expect((await call({ method: 'PATCH', path: '/customers/C001', session: editor, cap: write })).status).toBe(403); } finally { await store.save(api); }
-  expect((await send('/capabilities', viewer, { projectId: 'test-project', mode: 'write', env: 'preview', ttlSec: 300, apiIds: ['customers'] })).status).toBe(403);
+  expect((await send('/capabilities', viewer, { projectId: '11111111-1111-1111-1111-111111111111', mode: 'write', env: 'preview', ttlSec: 300, apiIds: ['customers'] })).status).toBe(403);
 });
 
 test('registry hides upstream data and enforces platform-admin plus destination allowlist', async () => {
@@ -125,12 +125,12 @@ test('service credentials, addresses and identifying headers never escape respon
 });
 
 test('CORS only permits studio and preview, including X-Toi headers', async () => {
-  const allowed = await fetch(base + '/proxy/customers/customers', { method: 'OPTIONS', headers: { Origin: 'http://localhost:5174', 'Access-Control-Request-Headers': 'authorization,x-toi-capability,x-toi-project,x-toi-reason,x-toi-extra' } }); expect(allowed.status).toBe(204); expect(allowed.headers.get('access-control-allow-headers')).toContain('x-toi-extra');
+  const allowed = await fetch(base + '/proxy/customers/customers', { method: 'OPTIONS', headers: { Origin: 'http://p-11111111-1111-1111-1111-111111111111.preview.localhost:5174', 'Access-Control-Request-Headers': 'authorization,x-toi-capability,x-toi-project,x-toi-reason,x-toi-extra' } }); expect(allowed.status).toBe(204); expect(allowed.headers.get('access-control-allow-headers')).toContain('x-toi-extra');
   const blocked = await fetch(base + '/apis', { method: 'OPTIONS', headers: { Origin: 'http://evil.invalid' } }); expect(blocked.status).toBe(403); expect(blocked.headers.get('access-control-allow-origin')).toBeNull();
 });
 
 test('dependency-free client attaches host credentials and maps 403 and 428 to typed errors', async () => {
-  configureToiFetch({ sessionToken: viewer, capabilityToken: read, projectId: 'test-project', proxyBaseUrl: base });
+  configureToiFetch({ sessionToken: viewer, capabilityToken: read, projectId: '11111111-1111-1111-1111-111111111111', proxyBaseUrl: base });
   await expect(toiFetch('customers', '/customers')).rejects.toBeInstanceOf(ToiReasonRequiredError);
   const response = await toiFetch('customers', '/customers', { reason: '문의 대응 확인' }); expect(response.status).toBe(200);
   await expect(toiFetch('customers', '/customers/C001', { method: 'PATCH', body: JSON.stringify({ status: 'active' }), reason: '정책 거부 확인' })).rejects.toBeInstanceOf(ToiForbiddenError);
@@ -141,13 +141,14 @@ test('real Chrome direct upstream GET is 401 and proxy GET is masked 200', async
   const browser = await chromium.launch({ executablePath: process.env.CHROME_PATH ?? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', headless: true });
   try {
     const context = await browser.newContext(), cdp = await browser.newBrowserCDPSession(); const { browserContextIds } = await cdp.send('Target.getBrowserContexts');
-    await cdp.send('Browser.setPermission', { permission: { name: 'loopback-network' }, setting: 'granted', origin: 'http://localhost:5174', browserContextId: browserContextIds[0] });
-    const page = await context.newPage(); await page.route('http://localhost:5174/__policy-test', route => route.fulfill({ contentType: 'text/html', body: '<!doctype html><p>Policy test</p>' })); await page.goto('http://localhost:5174/__policy-test');
+    await cdp.send('Browser.setPermission', { permission: { name: 'loopback-network' }, setting: 'granted', origin: 'http://p-11111111-1111-1111-1111-111111111111.preview.localhost:5174', browserContextId: browserContextIds[0] });
+    const page = await context.newPage(); await page.route('http://p-11111111-1111-1111-1111-111111111111.preview.localhost:5174/__policy-test', route => route.fulfill({ contentType: 'text/html', body: '<!doctype html><p>Policy test</p>' })); await page.goto('http://p-11111111-1111-1111-1111-111111111111.preview.localhost:5174/__policy-test');
     const result = await page.evaluate(async ({ upstream, base, viewer, read }) => {
-      const direct = await fetch(upstream + '/preview/customers?size=20'); const proxied = await fetch(base + '/proxy/customers/customers?size=20', { headers: { Authorization: `Bearer ${viewer}`, 'X-Toi-Capability': read, 'X-Toi-Project': 'test-project', 'X-Toi-Reason': 'customer support' } });
-      const data = await proxied.json(); return { direct: direct.status, proxy: proxied.status, phone: data.items[0].phone, masked: data.items[0].rrn };
+      let directBlocked = false; try { await fetch(upstream + '/preview/customers?size=20'); } catch { directBlocked = true; } const proxied = await fetch(base + '/proxy/customers/customers?size=20', { headers: { Authorization: `Bearer ${viewer}`, 'X-Toi-Capability': read, 'X-Toi-Project': '11111111-1111-1111-1111-111111111111', 'X-Toi-Reason': 'customer support' } });
+      const data = await proxied.json(); return { directBlocked, proxy: proxied.status, phone: data.items[0].phone, masked: data.items[0].rrn };
     }, { upstream, base, viewer, read });
-    expect(result).toEqual({ direct: 401, proxy: 200, phone: '010-****-5678', masked: '900101-*******' });
+    expect((await fetch(upstream + '/preview/customers?size=20')).status).toBe(401);
+    expect(result).toEqual({ directBlocked: true, proxy: 200, phone: '010-****-5678', masked: '900101-*******' });
     await mkdir(path.join(serviceRoot, 'bench'), { recursive: true }); await writeFile(path.join(serviceRoot, 'bench/browser-results.json'), JSON.stringify({ browser: browser.version(), ...result, permission: 'loopback-network granted only to the temporary test context' }, null, 2) + '\n');
   } finally { await browser.close(); }
 }, 30000);

@@ -1,0 +1,34 @@
+{
+  "policyTests": 156,
+  "policyTypecheck": "passed",
+  "studioTypecheck": "passed",
+  "studioBuild": "passed",
+  "combinedCommand": "npm --prefix e2e run test:repeat",
+  "stats": {
+    "startTime": "2026-09-13T12:12:48.546Z",
+    "duration": 454481.83999999997,
+    "expected": 99,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "sha256": {
+    "services/policy-proxy/src/identity.ts": "26469b7f4e51ff94f2d2bd391b4eacb692ecf3e31ab992f2ba0dc8cc7ed410bc",
+    "services/policy-proxy/src/main.ts": "d7cbd4a0bbece81198bd2df88ced22d30b2222c89189652ea286c4c8760a8a06",
+    "services/policy-proxy/src/objects.ts": "bf63cf5c06fb78857f53a7647ee5c868bb03ffd2ebde3b6055327aee59ad4fe5",
+    "services/policy-proxy/src/storage.ts": "d7e54c163f04ea9a5d5cdfc0372de5547b7e30bb897abbc395cc2dc7a69fcc9f",
+    "services/policy-proxy/src/seed.ts": "0a19e59fbac8d6e42703d152fd1169ac02d8639bca33d73ac500b56d2c148db2",
+    "services/policy-proxy/src/downloads.ts": "6e79111166d3542a7c1cf0d2787f8eb888a10cabc973819affd0a6023fd8458a",
+    "services/policy-proxy/src/tokens.ts": "6bce4737173af0afbb763a0cba67ab647b2677c690466fea1cc3ade5f853d01e",
+    "services/policy-proxy/src/access.ts": "c5cf909f4018eefa58665b7ecea58474e6b77e10d15029eb604dd3f22b49d180",
+    "services/policy-proxy/src/config.ts": "845a77a6444e1d848381bffec916ddb84716b8ce6ac56d39976c2d26d6638d0b",
+    "services/policy-proxy/src/audit.ts": "7454acf95a822fec7ab9634ab9652bc48e1a6fc3792374805a11b98b9201273c",
+    "services/policy-proxy/src/server.ts": "c35a8d555e1c4ebcb1477ed3ee5381263605346d97e2f0a899ba03e6e210b80a",
+    "services/policy-proxy/src/mask.ts": "9e6f399802ee53428fa90a02ee8239f8b07175a04a61318843c33e0f0973c1f9",
+    "services/policy-proxy/package-lock.json": "4159e00e52dfca9c27f314281d3e0d30b2ec12822c2e5dcdc3e7984cd228ddbd",
+    "services/policy-proxy/scripts/publish-client.mjs": "f16c143953c42a83c2f0df1e8800bdc6fab36ffe2c609daf5a744649f83b9994",
+    "apps/studio/src/main.tsx": "1020f8eeb96bbfb368879639ac999e8e29dd0926fcf724fe9ce84fe5da188b43",
+    "apps/studio/src/download-panel.tsx": "f5e01711092b28ca467b8192afdeb122b24a25c193a9bfe3d2f91245687c1df6",
+    "e2e/tests/downloads.spec.ts": "f33f40b758a851dcf84cf6a50a5eb64a0df85bf1cd08834d620069132e04862e"
+  }
+}

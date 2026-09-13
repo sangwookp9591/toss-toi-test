@@ -2,13 +2,11 @@ import { createServer, type ServerResponse } from 'node:http';
 import { timingSafeEqual } from 'node:crypto';
 import { seedCustomers, customerOrders } from './data.js';
 import { openapi } from './openapi.js';
-const origins = new Set(['http://localhost:5173', 'http://localhost:5174']);
 const json = (res: ServerResponse, status: number, value: unknown) => { res.writeHead(status, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }); res.end(JSON.stringify(value)); };
-export function createMockBackend(serviceToken: string, liveToken: string = serviceToken + '-live') {
+export function createMockBackend(serviceToken: string, liveToken: string) {
   if (!serviceToken || !liveToken || serviceToken === liveToken) throw new Error('Distinct environment service tokens required');
   const datasets = { preview: seedCustomers(), live: seedCustomers().map(c => ({ ...c, grade: 'live-only' })) };
   return createServer(async (req, res) => {
-    if (req.headers.origin && origins.has(req.headers.origin)) { res.setHeader('Access-Control-Allow-Origin', req.headers.origin); res.setHeader('Vary', 'Origin'); }
     const url = new URL(req.url ?? '/', 'http://mock.invalid');
     const environment = url.pathname.startsWith('/live/') ? 'live' : 'preview';
     const customers = datasets[environment];

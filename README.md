@@ -85,3 +85,48 @@ node scripts/dev-down.mjs
 ```
 
 E2E는 시스템 Chrome의 실제 Keycloak 로그인으로 A–S를 세 번 반복한다. `dev-up --e2e`는 승인 만료 테스트를 위해 TTL을 8초로 줄이고 관리 중인 policy-proxy를 필요하면 재시작한다. 일반 `dev-up`은 기본 300초를 다시 적용한다(명시적 `TOI_APPROVAL_TTL_SEC` 설정은 유지). 옵션 없이도 E2E는 실제 만료 시각까지 기다리지만 반복마다 최대 5분이 추가된다. 결과와 화면은 [e2e/README.md](e2e/README.md), 비교 조건과 3회 원시 측정값은 [bench/README.md](bench/README.md), 구현 구조는 [스튜디오 README](apps/studio/README.md)에 있다. `dev-down`은 dev-up이 직접 시작한 프로세스와 Docker Compose를 종료하며, 외부에서 시작해 재사용한 서비스는 종료하지 않는다. Docker 볼륨은 보존한다.
+
+### 프리뷰 네트워크·환경변수 격리 (P0-2)
+
+프로젝트 UUID마다 `http://p-<projectId>.preview.localhost:5174` origin을 만든다. 프로젝트를 바꾸면 런타임·iframe을 새로 만들고, 해당 프로젝트의 viewer 프리뷰 세션과 capability만 주입한다. 스튜디오 부모는 `http://localhost:5173` 하나다. 로그인 복원은 iframe 대신 최상위 `prompt=none` PKCE 리다이렉트를 사용하고, 이후 토큰 갱신은 메모리의 refresh token grant만 사용한다. 5174는 정확한 프로젝트 Host에서 `/frame.html`과 `/frame.js`만 제공하며 잘못된 Host는 421, 다른 경로는 404다. 스튜디오에서는 frame 자산을 제공하지 않으며, 벤치는 `TOI_ENABLE_BENCH=true`로 시작했을 때만 열린다.
+
+| 프리뷰 CSP 지시문 | 허용 범위 |
+|---|---|
+| `default-src` | `'none'` |
+| `connect-src` | `http://localhost:7200` — 상대 URL·다른 origin 통신 차단 |
+| `script-src` | `'self' http://localhost:7100 data:` 및 응답마다 새 nonce |
+| `style-src` | `'self' 'unsafe-inline'` |
+| `img-src` / `font-src` | `data: blob:` / `data:` |
+| `frame-ancestors` | `http://localhost:5173` |
+| `worker-src`, `object-src`, `form-action`, `base-uri` | `'none'` |
+
+CSP는 HTTP 응답 헤더다. nonce를 import map·호스트 설정·부트에 전달하며 `document.open/write` 뒤에도 적용되는지 실제 Chromium의 isolation E2E가 검사한다. script `unsafe-inline`, `unsafe-eval`, connect `self`는 허용하지 않는다. 차단은 `securitypolicyviolation`에서 기존 `runtime_failed` 진단으로 전달되고 스튜디오에 “차단된 요청”이 표시된다. 스튜디오에는 `frame-ancestors 'self'`, `frame-src http://*.preview.localhost:5174`, `X-Frame-Options: SAMEORIGIN`을 붙인다.
+
+소스 저장 정책은 기존 문자열 규칙에 고정 버전 `typescript-ast`(TypeScript 5.9.3) AST 검사를 더한다. 계산된 전역 멤버, 전역 구조 분해·리플렉션, eval/Function, 동적 import와 Worker를 거부한다. 이 검사는 보조 수단이며 임의 JavaScript의 안전성을 증명하지 않는다. **브라우저 요청의 근본 차단은 프리뷰 CSP이고, 허용된 policy-proxy 요청의 권한·프로젝트 일치는 서버가 검사한다.**
+
+`dev-up`의 각 자식 프로세스는 `scripts/service-env.mjs`의 allowlist만 받는다. 공통 실행 키는 PATH, HOME/USERPROFILE, TMPDIR/TMP/TEMP, Windows 실행 경로 키, LANG/LC_ALL, NODE_ENV다. NODE_OPTIONS와 임의 상속 키는 전달하지 않는다. `TOI_MANAGED_ENV=1`일 때 서비스는 루트 `.env`를 다시 읽지 않는다.
+
+| 서비스 | 추가 설정·비밀 범위 |
+|---|---|
+| mock-backend | preview/live 서비스 토큰 둘; 누락·동일 토큰은 시작 거부 |
+| policy-proxy | 세션·capability·upstream 토큰, policy IdP client, 정책 경로·issuer·owner·TTL, 다운로드 KEK/서명 키, 두 버킷 전용 MinIO 자격증명 |
+| deps-builder | registry 주소·토큰, builder public URL, dependencies 버킷과 MinIO 설정 |
+| agent-server | 드라이버 종류, 해당 모델 설정·Anthropic 키, agent IdP client, 데이터·서비스 URL |
+| studio | 공개 OIDC issuer/client ID, 명시적 벤치·E2E 플래그; 비밀 없음 |
+
+`TOI_DOWNLOAD_KEK`, `TOI_DOWNLOAD_URL_SECRET`, `TOI_POLICY_MINIO_PASSWORD`는 dev-up이 32바이트 무작위 값으로 `.env`(0600)에 저장한다. `toi-downloads` 버킷은 삭제를 허용하고, `toi-audit` 버킷은 object lock을 켜서 생성한다. 별도 `toi-policy` MinIO 사용자는 두 버킷만 접근하며 감사 객체 삭제 권한은 없다. 실제 감사 세그먼트 보존 기간은 policy-proxy 업로드의 retention 설정을 따른다. 버킷에 object lock을 켜는 것만으로 모든 새 객체에 보존 기간이 자동 부여되지는 않는다.
+
+```sh
+# 환경 분리·CSP 변경을 기존 관리 프로세스에도 적용
+node scripts/dev-up.mjs --e2e --restart
+node --test scripts/dev-up.test.mjs
+npm --prefix e2e run test:repeat
+```
+
+E2E 모드에서만 `/__test/csp-requests`가 CSP probe 경로의 수신 횟수를 반환한다(토큰·본문·일반 URL은 수집하지 않음). 테스트는 이를 외부 loopback 수신 서버와 함께 확인하여 브라우저 차단 이벤트만으로 성공을 판정하지 않는다.
+
+`*.localhost`를 loopback으로 해석하지 않는 브라우저·DNS·프록시 환경에서는 프로젝트 프리뷰를 열 수 없다. `/etc/hosts`를 자동 변경하거나 공용 프리뷰 origin으로 fallback하지 않는다. 운영에서는 프로젝트별 DNS와 HTTPS, 배포 origin에 맞춘 CSP·CORS를 구성해야 한다.
+
+기존 비교 벤치는 P0-2 후속 과제다. `npm --prefix packages/preview-runtime run bench`는 브라우저 origin을 5273/5274로 가정하고, 루트 `bench/toi.js`는 공유 localhost:5174와 `projectId='bench'`를 사용하므로 엄격한 런타임 검증에서 실패한다. `TOI_ENABLE_BENCH=true`는 경로만 열며 이 가정을 우회하지 않는다. 두 벤치는 UUID 프로젝트 origin 헬퍼와 격리 fixture 서버로의 HTTP 라우팅으로 옮겨야 하며, 그 전에는 새 성능 비교 결과를 만들지 않는다. 이 이행은 코디네이터 결정으로 이번 구현 범위에서 제외했다.
+
+루트 벤치 재현 명령은 `npm --prefix bench run run`이다(벤치 경로 플래그가 필요함). 해당 벤치의 임시 builder 포트와 외부 Sandpack frame도 고정 CSP 허용 범위 밖이므로, origin 이행과 함께 허용된 fixture 자산·부모 구조로 재설계해야 한다.

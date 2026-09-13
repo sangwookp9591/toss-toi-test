@@ -60,7 +60,7 @@ test('OIDC uses PKCE code flow, memory user store and only session-scoped transi
   assert.equal(await settings.userStore!.get('user'), 'secret');
 });
 test('preview host configuration includes only downgraded tokens, never Keycloak tokens or extra response fields', () => {
-  const input = { sessionToken: 'preview-session', capabilityToken: 'preview-capability', access_token: 'identity-secret', refresh_token: 'refresh-secret', capability: {}, sessionClaims: {} };
+  const input = { sessionToken: 'preview-session', capabilityToken: 'preview-capability', access_token: 'identity-secret', refresh_token: 'refresh-secret', capability: {projectId: 'project', env: 'preview'}, sessionClaims: {projectId: 'project', aud: 'toi-preview', roles: ['viewer']} };
   const output = previewHostConfig(input as any, 'project', API.policy);
   assert.deepEqual(output, { toiFetch: { sessionToken: 'preview-session', capabilityToken: 'preview-capability', projectId: 'project', proxyBaseUrl: API.policy, env: 'preview' } });
   assert.ok(!JSON.stringify(output).includes('secret'));
@@ -103,4 +103,14 @@ test('signout cannot be undone by an in-flight renewal response', async () => {
   f.driver.signinSilent = () => new Promise<User>(done => { resolve = done; });
   const renewing = f.session.refresh(); await f.session.invalidate(); resolve(user('late'));
   await assert.rejects(renewing, LoginRequired); assert.equal(f.session.getSnapshot().status, 'anonymous');
+});
+
+test('preview config rejects another project session, capability, or privileged session', () => {
+  const valid = {sessionToken:'viewer',capabilityToken:'read',sessionClaims:{projectId:'p',aud:'toi-preview',roles:['viewer']},capability:{projectId:'p',env:'preview'}};
+  for (const input of [
+    {...valid,sessionClaims:{...valid.sessionClaims,projectId:'other'}},
+    {...valid,capability:{...valid.capability,projectId:'other'}},
+    {...valid,sessionClaims:{...valid.sessionClaims,roles:['editor']}},
+    {...valid,capability:{...valid.capability,env:'live'}},
+  ]) assert.throws(() => previewHostConfig(input as any, 'p', API.policy), /do not belong/);
 });

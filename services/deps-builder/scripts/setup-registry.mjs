@@ -8,7 +8,7 @@ import { config } from 'dotenv';
 import { summarizeFailure } from '../../../scripts/dev-diagnostics.mjs';
 const run = promisify(execFile), root = fileURLToPath(new URL('../../../', import.meta.url));
 const envPath = path.join(root, '.env');
-config({ path: envPath, quiet: true });
+if (process.env.TOI_MANAGED_ENV !== '1') config({ path: envPath, quiet: true });
 const registry = process.env.TOI_REGISTRY_URL ?? 'http://localhost:4873';
 let token = process.env.TOI_REGISTRY_TOKEN;
 let stage = 'registry configuration';

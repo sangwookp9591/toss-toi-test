@@ -6,7 +6,7 @@ import type { BuildProfile } from '../../../contracts/src/package-set.js';
 import { canonicalJson, sha256 } from './hash.js';
 export const serviceRoot = fileURLToPath(new URL('../', import.meta.url));
 export const repoRoot = path.resolve(serviceRoot, '../..');
-config({ path: path.join(repoRoot, '.env'), quiet: true });
+if (process.env.TOI_MANAGED_ENV !== '1') config({ path: path.join(repoRoot, '.env'), quiet: true });
 export const buildConfig = { revision: 1, splitting: true, format: 'esm', platform: 'browser', minify: false, sourcemap: false, facade: 'static-cjs-exports-v1', mainFields: ['browser', 'module', 'main'], lifecycleScripts: false, npmMinimalAgeGate: 1440, npmPreapprovedPackages: ['@toi/*'] };
 export function defaultProfile(): BuildProfile {
   return { builder: 'esbuild', builderVersion: version, packageManager: 'yarn-berry', packageManagerVersion: '4.18.0', target: 'es2022', nodeEnv: 'production', conditions: ['browser', 'import', 'module', 'default'], configDigest: sha256(canonicalJson(buildConfig)), registryNamespace: 'verdaccio-local-v1' };

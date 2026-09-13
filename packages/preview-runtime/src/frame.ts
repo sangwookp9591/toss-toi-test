@@ -9,6 +9,9 @@ function boot(payload: ParentToFrame, parentOrigin: string) {
     failed = true;
     parent.postMessage({ kind: 'error', token: payload.token, error: { message: error instanceof Error ? error.message : String(error) }, stack: error instanceof Error ? error.stack : undefined }, parentOrigin);
   };
+  document.addEventListener('securitypolicyviolation', event => {
+    parent.postMessage({ kind: 'error', token: payload.token, error: { message: 'CSP_BLOCKED: 차단된 요청 (' + event.effectiveDirective + ')' } }, parentOrigin);
+  });
   window.addEventListener('error', event => report(event.error ?? event.message));
   window.addEventListener('unhandledrejection', event => report(event.reason));
   const mount = document.createElement('div');
@@ -24,16 +27,18 @@ function boot(payload: ParentToFrame, parentOrigin: string) {
   }).catch(report);
 }
 const parentOrigin = new URL(location.href).searchParams.get('parentOrigin');
+const nonce = document.querySelector<HTMLMetaElement>('meta[name="boot-nonce"]')!.content;
 const allowedOrigins = document.querySelector<HTMLMetaElement>('meta[name="studio-origins"]')!.content.split(',');
 if (parent !== window && parentOrigin && allowedOrigins.includes(parentOrigin)) {
   const onLoad = (event: MessageEvent<ParentToFrame>) => {
     if (event.origin !== parentOrigin || event.source !== parent || event.data?.kind !== 'load') return;
+    if (event.data.token.projectId !== location.hostname.slice(2, -'.preview.localhost'.length) || (event.data.hostConfig?.toiFetch && event.data.hostConfig.toiFetch.projectId !== event.data.token.projectId)) return;
     window.removeEventListener('message', onLoad);
     const json = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029');
     // Initialize host credentials before the import map and any application module.
     const hostConfig = event.data.hostConfig?.toiFetch;
-    const configure = hostConfig ? '<script>globalThis.__TOI_FETCH_CONFIG__ = Object.freeze({...' + json(hostConfig) + '});</script>' : '';
-    const markup = '<!doctype html><html><head><meta charset="utf-8">' + configure + '<script type="importmap">' + json(event.data.importMap) + '</script></head><body><script>(' + boot.toString() + ')(' + json(event.data) + ',' + json(parentOrigin) + ')</script></body></html>';
+    const configure = hostConfig ? '<script nonce="' + nonce + '">globalThis.__TOI_FETCH_CONFIG__ = Object.freeze({...' + json(hostConfig) + '});</script>' : '';
+    const markup = '<!doctype html><html><head><meta charset="utf-8">' + configure + '<script nonce="' + nonce + '" type="importmap">' + json(event.data.importMap) + '</script></head><body><script nonce="' + nonce + '">(' + boot.toString() + ')(' + json(event.data) + ',' + json(parentOrigin) + ')</script></body></html>';
     document.open();
     document.write(markup);
     document.close();

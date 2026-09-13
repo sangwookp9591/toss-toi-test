@@ -68,7 +68,19 @@ let manager: UserManager | undefined;
 export function auth() {
   if (!current) {
     manager = new UserManager(oidcSettings(location.origin));
-    current = new AuthSession(manager);
+    const oidc = manager;
+    current = new AuthSession({
+      getUser: () => oidc.getUser(),
+      // Renewal uses the in-memory refresh token. A hidden IdP iframe is
+      // intentionally outside the studio's preview-only frame-src policy.
+      signinSilent: async args => {
+        if (!(await oidc.getUser())?.refresh_token) throw new LoginRequired();
+        return oidc.signinSilent(args);
+      },
+      signinRedirect: args => oidc.signinRedirect(args),
+      signoutRedirect: args => oidc.signoutRedirect(args),
+      removeUser: () => oidc.removeUser(),
+    });
     manager.events.addAccessTokenExpiring(() => { void current!.refresh().catch(() => {}); });
     manager.events.addAccessTokenExpired(() => { void current!.expired(); });
     manager.events.addUserSignedOut(() => { void current!.invalidate(); });
@@ -85,8 +97,17 @@ export async function initializeAuth(): Promise<boolean> {
       const user = await manager!.signinRedirectCallback();
       const returnTo = (user.state as { returnTo?: string })?.returnTo;
       history.replaceState(null, '', returnTo?.startsWith('/') && !returnTo.startsWith('//') ? returnTo : '/');
+      sessionStorage.removeItem('toi-sso-attempted');
       session.accept(user);
     } catch { history.replaceState(null, '', '/'); await session.invalidate(); }
-  } else await session.initialize();
+  } else if (await manager!.getUser()) await session.initialize();
+  else {
+    // Restore SSO through top-level PKCE prompt=none. Tokens remain in memory,
+    // and an anonymous session returns login_required to the callback above.
+    if (sessionStorage.getItem('toi-sso-attempted')) { await session.invalidate(); return true; }
+    sessionStorage.setItem('toi-sso-attempted', '1');
+    await manager!.signinRedirect({ prompt: 'none', state: { returnTo: location.pathname + location.search } });
+    return false;
+  }
   return true;
 }

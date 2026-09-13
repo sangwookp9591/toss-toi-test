@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { StudioController, diagnosticMessage } from './controller.ts';
 import './style.css';
 import { auth, initializeAuth } from './auth.ts';
+import { DownloadPanel } from './download-panel.tsx';
 import { AccessPanel } from './access-panel.tsx';
 function EditBackups({ backups }: { backups: ReturnType<StudioController['getSnapshot']>['backups'] }) {
   const [copied, setCopied] = useState('');
@@ -28,6 +29,7 @@ function App() {
     <header><div className="brand">toi<span>studio</span></div><span className="divider"/><strong>{state.project?.name ?? '새로운 어드민'}</strong><span className="environment">로컬 실험</span><div className="header-spacer"/><span className="session">{identity.username} · 안전한 프리뷰</span><button className="quiet" onClick={() => void auth().logout()}>로그아웃</button></header>
     {!state.project ? <div className="start-banner"><div><strong>업무에 필요한 화면을 만들어 보세요</strong><p>채팅으로 만들고, 코드를 확인하고, 안전하게 미리 봅니다.</p></div><label>프로젝트 이름<input aria-label="프로젝트 이름" value={name} onChange={e => setName(e.target.value)} /></label><button onClick={() => void controller.open(undefined, name)}>프로젝트 만들기</button></div> : null}
     <AccessPanel controller={controller} state={state} identity={identity}/>
+    {state.project ? <DownloadPanel key={state.project.projectId} projectId={state.project.projectId} apiIds={state.project.apiIds} disabled={viewer}/> : null}
     {state.accessNotice ? <p className="access-notice" role="alert">{state.accessNotice}</p> : null}
     {viewer ? <p className="access-notice">조회 권한이에요. 생성·저장·쓰기 테스트는 편집자 이상이 할 수 있어요.</p> : null}
     <main className="workspace">

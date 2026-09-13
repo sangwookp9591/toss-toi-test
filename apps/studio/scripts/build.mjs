@@ -5,7 +5,7 @@ process.chdir(fileURLToPath(new URL('..', import.meta.url)));
 export async function build(watch=false) {
   // Vite-compatible public env names; this app keeps its existing esbuild pipeline.
   const { parseEnv } = await import('node:util');
-  let fileEnv = {}; try { fileEnv = parseEnv(await readFile('../../.env', 'utf8')); } catch {}
+  let fileEnv = {}; try { if (process.env.TOI_MANAGED_ENV !== '1') fileEnv = parseEnv(await readFile('../../.env', 'utf8')); } catch {}
   const publicEnv = Object.fromEntries(['VITE_OIDC_ISSUER', 'VITE_OIDC_CLIENT_ID'].flatMap(key => {
     const value = process.env[key] ?? fileEnv[key]; return value ? [[key, value]] : [];
   }));

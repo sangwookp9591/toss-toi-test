@@ -4,6 +4,17 @@ import { templateFiles, mockFiles } from '../src/templates.ts';
 import { start, waitFor } from './helpers.ts';
 
 const forbidden = [
+  ...['globalThis', 'window', 'self', 'top', 'parent', 'frames'].flatMap(global => [
+    ['computed ' + global, `const network = ${global}['fet' + 'ch']; network('/unregistered')`],
+    ['destructure ' + global, `const { fetch: network } = ${global}; network('/unregistered')`],
+  ] as const),
+  ['reflect global', `Reflect.get(globalThis, 'fet' + 'ch')('/unregistered')`],
+  ['descriptor global', `Object.getOwnPropertyDescriptor(window, 'fetch').value('/unregistered')`],
+  ['eval alias', `const execute = (0, eval); execute('danger')`],
+  ['Function constructor', `new Function('return 1')`],
+  ['dynamic import', `import('/' + 'unsafe.js')`],
+  ['worker', `new Worker('/unsafe.js')`],
+  ['destructuring assignment', `let network; ({ fetch: network } = window)`],
   ['raw fetch', "fetch('/proxy/customers')"],
   ['raw fetch with whitespace', "globalThis.fetch /* comment */ ('/proxy/customers')"],
   ['XMLHttpRequest', 'new XMLHttpRequest()'],

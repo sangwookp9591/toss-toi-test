@@ -1,0 +1,14 @@
+
+Running 5 tests using 1 worker
+
+(node:41368) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:41368) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/downloads.spec.ts:34:1 › T: Alice CSV/XLSX are AES-256 AE-2; signature, sub, single-use and 60-second expiry enforced (1.0m)
+  ✓  2 tests/downloads.spec.ts:51:1 › U: viewer, nonmember and preview origin cannot create downloads (1.0s)
+  ✓  3 tests/downloads.spec.ts:57:1 › V: MinIO bytes hide row values and password; successful delivery deletes ciphertext and wrapped key (243ms)
+  ✓  4 tests/downloads.spec.ts:68:1 › W: audit verification is valid, seq remains continuous and audit contains no password, keys or signature (1.2s)
+  ✓  5 tests/downloads.spec.ts:79:1 › download UI shows password once, saves using Bearer and clears it on close (1.3s)
+
+  5 passed (1.1m)

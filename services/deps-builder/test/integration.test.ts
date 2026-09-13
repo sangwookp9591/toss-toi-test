@@ -5,6 +5,7 @@ import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { chromium } from 'playwright-core';
 import type { PackageSetStatus } from '../../../contracts/src/package-set.js';
+import { previewOriginForProject } from '../../../contracts/src/runtime.js';
 import { PackageBuilder } from '../src/builder.js';
 import { createApp } from '../src/server.js';
 import { MinioStore } from '../src/store.js';
@@ -14,6 +15,7 @@ import { install } from '../src/installer.js';
 import { listen, close } from './helpers.js';
 
 const request = { entries: ['react', 'react/jsx-runtime', 'react-dom/client', '@toi/tds'], dependencies: { react: '19.3.0', 'react-dom': '19.3.0', '@toi/tds': '1.0.0' } };
+const previewOrigin = previewOriginForProject('00000000-0000-4000-8000-000000000000');
 
 test('real Verdaccio auth, MinIO atomic publication, cache, retries, integrity and Chrome singleton', { timeout: 240000 }, async t => {
   assert.ok(settings().token, 'Run npm run setup-registry first');
@@ -63,13 +65,16 @@ test('real Verdaccio auth, MinIO atomic publication, cache, retries, integrity a
       const hit = await post(); assert.equal(hit.status, 200); assert.equal(builder.metrics.builds, 1);
       assert.equal(ready.manifestDigest, sha256(canonicalJson(ready.manifest)));
       for (const file of ready.manifest.files) {
-        const response = await fetch(ready.manifest.assetBaseUrl + file.path, { headers: { Origin: 'http://localhost:5174' } });
-        assert.equal(response.headers.get('access-control-allow-origin'), 'http://localhost:5174');
+        const response = await fetch(ready.manifest.assetBaseUrl + file.path, { headers: { Origin: previewOrigin } });
+        assert.equal(response.status, 200);
+        assert.equal(response.headers.get('access-control-allow-origin'), previewOrigin);
         assert.equal(response.headers.get('cache-control'), 'public, max-age=31536000, immutable');
         const body = Buffer.from(await response.arrayBuffer()); assert.equal(body.length, file.bytes); assert.equal(sha256(body), file.sha256);
         assert.ok(!body.toString().includes(settings().token));
       }
       assert.ok(!JSON.stringify(ready).includes(settings().token));
+      const legacy = await fetch(ready.manifestUrl, { headers: { Origin: 'http://localhost:5174' } });
+      assert.equal(legacy.status, 403); assert.equal(legacy.headers.get('access-control-allow-origin'), null);
       const denied = await fetch(ready.manifestUrl, { headers: { Origin: 'http://evil.example' } }); assert.equal(denied.headers.get('access-control-allow-origin'), null);
       const allowed = await fetch(ready.manifestUrl, { headers: { Origin: 'http://localhost:5173' } }); assert.equal(allowed.headers.get('access-control-allow-origin'), 'http://localhost:5173');
     });
@@ -106,12 +111,15 @@ test('real Verdaccio auth, MinIO atomic publication, cache, retries, integrity a
         const context = await browser.newContext();
         const cdp = await browser.newBrowserCDPSession();
         const { browserContextIds } = await cdp.send('Target.getBrowserContexts');
-        await cdp.send('Browser.setPermission', { permission: { name: 'loopback-network' }, setting: 'granted', origin: 'http://localhost:5174', browserContextId: browserContextIds[0] });
+        await cdp.send('Browser.setPermission', { permission: { name: 'loopback-network' }, setting: 'granted', origin: previewOrigin, browserContextId: browserContextIds[0] });
         const page = await context.newPage(), errors: string[] = [];
         page.setDefaultTimeout(10000); page.setDefaultNavigationTimeout(10000);
         page.on('pageerror', error => errors.push(error.message)); page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
-        await page.route('http://localhost:5174/__deps-singleton', route => route.fulfill({ contentType: 'text/html', body: html }));
-        await page.goto('http://localhost:5174/__deps-singleton');
+        // Supply only the harness document; dependency requests still reach the
+        // real builder and exercise its CORS from the project's browser origin.
+        await page.route(previewOrigin + '/__deps-singleton', route => route.fulfill({ contentType: 'text/html', body: html }));
+        await page.goto(previewOrigin + '/__deps-singleton');
+        assert.equal(await page.evaluate(() => location.origin), previewOrigin);
         try { await page.locator('#send').click(); } catch (error) { throw new Error(`Singleton page failed: ${errors.join(' | ')}; ${String(error)}`); }
         await page.waitForFunction(() => document.querySelector('#reader')?.textContent === 'shared-1');
         assert.equal(await page.locator('#send').innerText(), 'count-1');

@@ -1,0 +1,55 @@
+TAP version 13
+# Subtest: all app, service and runtime package manifests have lockfile install targets
+ok 1 - all app, service and runtime package manifests have lockfile install targets
+  ---
+  duration_ms: 9.878584
+  ...
+# Subtest: a newly added runtime package fails the install inventory check
+ok 2 - a newly added runtime package fails the install inventory check
+  ---
+  duration_ms: 3.500375
+  ...
+# Subtest: known failures retain stage/cause while arbitrary subprocess text stays out of summaries
+ok 3 - known failures retain stage/cause while arbitrary subprocess text stays out of summaries
+  ---
+  duration_ms: 0.86425
+  ...
+# Subtest: command logs redact configured secrets, authorization and URL credentials
+ok 4 - command logs redact configured secrets, authorization and URL credentials
+  ---
+  duration_ms: 0.318917
+  ...
+# Subtest: Keycloak import fixes PKCE, audiences, roles and TTL without plaintext credentials
+ok 5 - Keycloak import fixes PKCE, audiences, roles and TTL without plaintext credentials
+  ---
+  duration_ms: 1.252292
+  ...
+# Subtest: each runtime receives exactly its own allowlist and no inherited credentials
+ok 6 - each runtime receives exactly its own allowlist and no inherited credentials
+  ---
+  duration_ms: 0.799583
+  ...
+# Subtest: download keys are random, persistent, and 32 bytes; environment file is private
+ok 7 - download keys are random, persistent, and 32 bytes; environment file is private
+  ---
+  duration_ms: 3.727458
+  ...
+# Subtest: managed deps-builder never reloads root dotenv secrets
+ok 8 - managed deps-builder never reloads root dotenv secrets
+  ---
+  duration_ms: 156.790292
+  ...
+# Subtest: managed mock-backend refuses startup with absent tokens despite root dotenv file
+ok 9 - managed mock-backend refuses startup with absent tokens despite root dotenv file
+  ---
+  duration_ms: 153.68625
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 404.55225

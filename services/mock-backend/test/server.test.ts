@@ -1,7 +1,7 @@
 import { beforeAll, afterAll, test, expect } from 'vitest';
 import { createMockBackend } from '../src/server.js';
 import { seedCustomers } from '../src/data.js';
-const server = createMockBackend('test-upstream-token'); let base: string;
+const server = createMockBackend('test-upstream-token', 'test-upstream-token-live'); let base: string;
 beforeAll(async () => { await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve)); base = `http://127.0.0.1:${(server.address() as { port: number }).port}`; });
 afterAll(async () => { server.closeAllConnections(); await new Promise<void>(resolve => server.close(() => resolve())); });
 const get = (path: string, init: RequestInit = {}) => fetch(base + path, { ...init, headers: { 'X-Service-Token': 'test-upstream-token', ...init.headers } });
@@ -16,4 +16,8 @@ test('environment token and datasets cannot cross', async () => {
   expect(live.status).toBe(200); const data = await live.json(); expect(data.dataset).toBe('live'); expect(data.items[0].grade).toBe('live-only');
   const preview = await (await get('/preview/customers')).json(); expect(preview.dataset).toBe('preview'); expect(preview.items[0].grade).not.toBe('live-only');
   expect((await get('/preview/customers', {headers:{'X-Service-Token':'test-upstream-token-live'}})).status).toBe(401);
+});
+
+test('missing and equal environment tokens are rejected', () => {
+  for (const pair of [['', 'live'], ['preview', ''], ['same', 'same']]) expect(() => createMockBackend(pair[0], pair[1])).toThrow('Distinct');
 });

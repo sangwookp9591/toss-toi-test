@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect, type Page } from './browser-fixture.ts';
 import type { Demo } from '../demo/main.ts';
 declare global { interface Window { demo: Demo; testJobs: Record<string, Promise<unknown>> } }
 const source = (text: string) => `import { createRoot } from 'react-dom/client'; createRoot(document.getElementById('root')!).render(<h1>${text}</h1>);`;
@@ -141,7 +141,7 @@ test('forged messages from wrong origin or source cannot commit a candidate', as
     const data = { kind: 'rendered', token: (window as any).spoofToken, bootMs: 1 };
     const frame = document.querySelector<HTMLIFrameElement>('iframe[data-state="candidate"]')!;
     window.dispatchEvent(new MessageEvent('message', { origin: location.origin, source: frame.contentWindow, data }));
-    window.dispatchEvent(new MessageEvent('message', { origin: 'http://localhost:5274', source: window, data }));
+    window.dispatchEvent(new MessageEvent('message', { origin: 'http://p-00000000-0000-4000-8000-000000000000.preview.localhost:5174', source: window, data }));
   });
   await expect(committed(page).locator('#root')).toHaveText('Trusted');
   await expect(page.locator('iframe[data-state="candidate"]')).toHaveCount(1);
@@ -191,12 +191,12 @@ test('host config exists before app execution, is frozen and safely preserves to
       try { config.projectId = 'tampered'; } catch {}
       document.getElementById('root')!.textContent = config.projectId;
     `);
-    input.hostConfig = { toiFetch: { sessionToken, capabilityToken: sessionToken, projectId: 'host-project', proxyBaseUrl: 'http://localhost:7200', env: 'preview' } };
+    input.hostConfig = { toiFetch: { sessionToken, capabilityToken: sessionToken, projectId: input.token.projectId, proxyBaseUrl: 'http://localhost:7200', env: 'preview' } };
     window.demo.runtime.setDesiredRevision(input.token);
     return window.demo.runtime.build(input);
   }, dangerousToken);
   expect(result.type).toBe('committed');
-  await expect(committed(page).locator('#root')).toHaveText('host-project');
+  await expect(committed(page).locator('#root')).toHaveText('00000000-0000-4000-8000-000000000000');
   expect(await committed(page).locator('#root').evaluate(() => {
     const config = (globalThis as any).__TOI_FETCH_CONFIG__;
     return { frozen: Object.isFrozen(config), session: config.sessionToken, capability: config.capabilityToken, injected: (globalThis as any).injected };
@@ -216,7 +216,7 @@ test('no host config creates no fetch global, including after a configured build
     const input = await window.demo.prepare(code);
     window.demo.runtime.setDesiredRevision(input.token);
     const first = await window.demo.runtime.build(input);
-    input.hostConfig = { toiFetch: { sessionToken: 'viewer', capabilityToken: 'read', projectId: 'p', proxyBaseUrl: 'http://localhost:7200', env: 'preview' } };
+    input.hostConfig = { toiFetch: { sessionToken: 'viewer', capabilityToken: 'read', projectId: input.token.projectId, proxyBaseUrl: 'http://localhost:7200', env: 'preview' } };
     const configured = await window.demo.runtime.build(input);
     delete input.hostConfig;
     const absent = await window.demo.runtime.build(input);
@@ -230,12 +230,12 @@ test('no host config creates no fetch global, including after a configured build
 test('replacing only hostConfig with the same revision token commits the new config', async ({ page }) => {
   await open(page);
   const result = await page.evaluate(async () => {
-    const input = await window.demo.prepare("document.getElementById('root')!.textContent = (globalThis as any).__TOI_FETCH_CONFIG__.projectId;");
-    input.hostConfig = { toiFetch: { sessionToken: 'viewer', capabilityToken: 'read-old', projectId: 'before', proxyBaseUrl: 'http://localhost:7200', env: 'preview' } };
+    const input = await window.demo.prepare("document.getElementById('root')!.textContent = (globalThis as any).__TOI_FETCH_CONFIG__.capabilityToken;");
+    input.hostConfig = { toiFetch: { sessionToken: 'viewer', capabilityToken: 'read-old', projectId: input.token.projectId, proxyBaseUrl: 'http://localhost:7200', env: 'preview' } };
     const token = { ...input.token };
     window.demo.runtime.setDesiredRevision(token);
     const first = await window.demo.runtime.build(input);
-    input.hostConfig.toiFetch = { ...input.hostConfig.toiFetch!, capabilityToken: 'read-new', projectId: 'after' };
+    input.hostConfig.toiFetch = { ...input.hostConfig.toiFetch!, capabilityToken: 'read-new' };
     const second = await window.demo.runtime.build(input);
     return { first, second, token, finalToken: input.token };
   });
@@ -243,7 +243,7 @@ test('replacing only hostConfig with the same revision token commits the new con
   expect(result.second.type).toBe('committed');
   expect(result.finalToken).toEqual(result.token);
   expect(result.first.token).toEqual(result.second.token);
-  await expect(committed(page).locator('#root')).toHaveText('after');
+  await expect(committed(page).locator('#root')).toHaveText('read-new');
   expect(await page.locator('iframe').count()).toBe(1);
 });
 
@@ -253,7 +253,7 @@ test('boot timeout retains previous iframe and dispose settles a build during in
     const modulePath = '/runtime.js';
     const { createPreviewRuntime } = await import(modulePath);
     window.demo.runtime.dispose();
-    const runtime = createPreviewRuntime({ container: document.querySelector('#preview'), previewOrigin: 'http://localhost:5274', frameUrl: 'http://localhost:5274/frame.html', esbuildWasmUrl: new URL('/esbuild.wasm', location.origin).href, entry: '/src/main.tsx', bootTimeoutMs: 1000 });
+    const runtime = createPreviewRuntime({ container: document.querySelector('#preview'), previewOrigin: 'http://p-00000000-0000-4000-8000-000000000000.preview.localhost:5174', frameUrl: 'http://p-00000000-0000-4000-8000-000000000000.preview.localhost:5174/frame.html', esbuildWasmUrl: new URL('/esbuild.wasm', location.origin).href, entry: '/src/main.tsx', bootTimeoutMs: 1000 });
     const initial = await window.demo.prepare("document.getElementById('root')!.textContent = 'Before timeout';");
     runtime.setDesiredRevision(initial.token);
     const first = await runtime.build(initial);
@@ -268,7 +268,7 @@ test('boot timeout retains previous iframe and dispose settles a build during in
   const disposed = await page.evaluate(async () => {
     const modulePath = '/runtime.js';
     const { createPreviewRuntime } = await import(modulePath);
-    const runtime = createPreviewRuntime({ container: document.createElement('div'), previewOrigin: 'http://localhost:5274', frameUrl: 'http://localhost:5274/frame.html', esbuildWasmUrl: new URL('/esbuild.wasm', location.origin).href, entry: '/src/main.tsx' });
+    const runtime = createPreviewRuntime({ container: document.createElement('div'), previewOrigin: 'http://p-00000000-0000-4000-8000-000000000000.preview.localhost:5174', frameUrl: 'http://p-00000000-0000-4000-8000-000000000000.preview.localhost:5174/frame.html', esbuildWasmUrl: new URL('/esbuild.wasm', location.origin).href, entry: '/src/main.tsx' });
     const input = await window.demo.prepare('');
     runtime.setDesiredRevision(input.token);
     const pending = runtime.build(input);

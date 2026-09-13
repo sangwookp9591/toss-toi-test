@@ -1,4 +1,5 @@
 import { createPreviewRuntime, digestJson, mergeVfs, sourceDigest } from '../src/index.ts';
+import { previewOriginForProject } from '../../../contracts/src/runtime.ts';
 import type { BuildInput, PreviewEvent } from '../../../contracts/src/runtime.ts';
 import type { PackageSetManifest } from '../../../contracts/src/package-set.ts';
 import { fixture, initialSource } from './fixture.ts';
@@ -20,7 +21,7 @@ async function init() {
     const data = await response.json();
     manifest = data.manifest ?? data;
   } else manifest = fixture;
-  const previewOrigin = document.querySelector<HTMLMetaElement>('meta[name="preview-origin"]')?.content ?? 'http://localhost:5174';
+  const previewOrigin = previewOriginForProject('00000000-0000-4000-8000-000000000000');
   runtime = createPreviewRuntime({ container: document.querySelector('#preview')!, previewOrigin, frameUrl: previewOrigin + '/frame.html', esbuildWasmUrl: new URL('/esbuild.wasm', location.origin).href, entry: '/src/main.tsx', bootTimeoutMs: 15000 });
   runtime.on(event => {
     events.push(event);
@@ -30,7 +31,7 @@ async function init() {
 }
 async function prepare(source: string, requestedRevision = ++revision): Promise<BuildInput> {
   const layers = { user: { '/src/main.tsx': source } };
-  return { layers, manifest, token: { projectId: 'demo', revision: requestedRevision, attemptId: crypto.randomUUID(), sourceDigest: await sourceDigest(mergeVfs(layers)), manifestDigest: await digestJson(manifest) } };
+  return { layers, manifest, token: { projectId: '00000000-0000-4000-8000-000000000000', revision: requestedRevision, attemptId: crypto.randomUUID(), sourceDigest: await sourceDigest(mergeVfs(layers)), manifestDigest: await digestJson(manifest) } };
 }
 async function run(source = editor.value) {
   lastInput = await prepare(source);

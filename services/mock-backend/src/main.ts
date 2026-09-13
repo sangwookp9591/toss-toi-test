@@ -1,6 +1,6 @@
 import { config } from 'dotenv';
 import { createMockBackend } from './server.js';
-config({ path: new URL('../../../.env', import.meta.url).pathname, quiet: true });
+if (process.env.TOI_MANAGED_ENV !== '1') config({ path: new URL('../../../.env', import.meta.url).pathname, quiet: true });
 const preview = process.env.TOI_PREVIEW_SERVICE_TOKEN, live = process.env.TOI_LIVE_SERVICE_TOKEN;
 if (!preview || !live || preview === live) throw new Error('Distinct preview/live service tokens required');
 const server = createMockBackend(preview, live);
