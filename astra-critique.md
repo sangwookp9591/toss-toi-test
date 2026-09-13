@@ -118,14 +118,14 @@ WASM fetch+compile을 별도로 분리한 중앙값은 28.1ms이고 그 뒤 init
 명령: `cd poc/critique && node provenance.mjs`; 보조 확인 `file ../node_modules/pnpm/pnpm`, `../node_modules/pnpm/pnpm --version`.
 원시 증거: [pnpm-provenance.json](poc/critique/evidence/pnpm-provenance.json), [기존 bench-install.mjs](poc/bench-install.mjs), [기존 install-results.json](poc/evidence/install-results.json).
 
-**확인:** registry `time['12.3.4']`는 **`2026-09-04T14:20:10.390Z`**다. [npm registry 원문](https://registry.npmjs.org/pnpm)의 version metadata와 [공식 GitHub v12.3.4 release](https://github.com/pnpm/pnpm/releases/tag/v12.3.4)(9월 4일 14:23 게시)도 일치하는 날짜다. 실행 파일은 `$W/poc/node_modules/pnpm/pnpm`, 형식 `Mach-O 64-bit executable arm64`, 직접 `--version` 출력 `12.3.4`다. 실행 파일 SHA256는 `99ccfa6b57e73c693ec2ec9760a978f063b001df8f462e89fce3a30be3d641f3`다.
+**확인:** registry `time['12.3.4']`는 **`2026-09-04T14:20:10.390Z`**다. [npm registry 원문](https://registry.npmjs.org/pnpm)의 version metadata와 [공식 GitHub v12.3.4 release](https://github.com/pnpm/pnpm/releases/tag/v12.3.4)(9월 4일 14:23 게시)도 일치하는 날짜다. 실행 파일은 `poc/node_modules/pnpm/pnpm`, 형식 `Mach-O 64-bit executable arm64`, 직접 `--version` 출력 `12.3.4`다. 실행 파일 SHA256는 `99ccfa6b57e73c693ec2ec9760a978f063b001df8f462e89fce3a30be3d641f3`다.
 
 부모 PoC의 고정 의존성 설치로 가져온 패키지이며 설치 단계에서 `npm install`을 사용했다. **벤치 실행은 npx/Corepack/PATH의 pnpm을 사용하지 않고 절대경로 바이너리를 spawn했다.** 따라서 Opus가 이전에 관찰한 시스템 pnpm 10.x와 충돌하지 않는다. `--config.manage-package-manager-versions=false`도 argv에 넣어 버전 자동 변경을 막았다. 언어 구현 자체는 `file` 출력만으로 판별하지 않는다.
 
 기존 locked install 명령은 다음과 같다. `${TRIAL}`은 각 1~3회 디렉터리이고, 모든 정확한 argv는 install-results.json에 저장돼 있다.
 
 ```sh
-"$W/poc/node_modules/pnpm/pnpm" install --ignore-scripts   --store-dir "${TRIAL}/.cache"   --config.manage-package-manager-versions=false --frozen-lockfile
+"poc/node_modules/pnpm/pnpm" install --ignore-scripts   --store-dir "${TRIAL}/.cache"   --config.manage-package-manager-versions=false --frozen-lockfile
 ```
 
 아래는 **기존 3회 원시값을 재검토한 표**이며 이번 라운드에서 설치 벤치를 추가 수행한 것으로 표시하지 않는다. 동일 React 19.3.0, React DOM 19.3.0, React Query 5.102.8, clsx 2.1.1의 작은 공개 registry fixture다. cold는 node_modules와 지정 store를 삭제한 locked install, warm은 node_modules만 지우고 store를 유지한 locked install이다.

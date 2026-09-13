@@ -3,7 +3,7 @@
 기존 `../fixtures.mjs`, `../node_modules`, `../public/oxc`, `../public/singleton`을 읽기 전용으로 사용한다. 새 출력은 모두 이 디렉터리와 `../../astra-critique.md`에 둔다. 전역 설치는 없다.
 
 ```sh
-cd /private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/critique
+cd poc/critique   # 저장소 루트에서
 mkdir -p .tmp evidence
 npm ci --cache "$PWD/.cache/npm" --no-audit --no-fund
 node prepare.mjs

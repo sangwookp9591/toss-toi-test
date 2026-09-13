@@ -86,8 +86,8 @@
     }
   },
   "binary": {
-    "path": "/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/node_modules/pnpm/pnpm",
-    "file": "/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/node_modules/pnpm/pnpm: Mach-O 64-bit executable arm64",
+    "path": "poc/node_modules/pnpm/pnpm",
+    "file": "poc/node_modules/pnpm/pnpm: Mach-O 64-bit executable arm64",
     "version": "12.3.4",
     "sha256": "99ccfa6b57e73c693ec2ec9760a978f063b001df8f462e89fce3a30be3d641f3"
   }

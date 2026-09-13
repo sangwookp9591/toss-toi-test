@@ -18,14 +18,14 @@
             "status": 0,
             "command": [
               "/usr/local/bin/node",
-              "/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/node_modules/yarn/bin/yarn.js",
+              "poc/node_modules/yarn/bin/yarn.js",
               "install",
               "--ignore-scripts",
               "--non-interactive",
               "--registry",
               "https://registry.npmjs.org",
               "--cache-folder",
-              "/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/install-bench/yarn-classic-1/.cache",
+              "poc/install-bench/yarn-classic-1/.cache",
               "--frozen-lockfile"
             ]
           },
@@ -34,14 +34,14 @@
             "status": 0,
             "command": [
               "/usr/local/bin/node",
-              "/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/node_modules/yarn/bin/yarn.js",
+              "poc/node_modules/yarn/bin/yarn.js",
               "install",
               "--ignore-scripts",
               "--non-interactive",
               "--registry",
               "https://registry.npmjs.org",
               "--cache-folder",
-              "/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/install-bench/yarn-classic-1/.cache",
+              "poc/install-bench/yarn-classic-1/.cache",
               "--frozen-lockfile"
             ]
           },
@@ -55,14 +55,14 @@
             "status": 0,
             "command": [
               "/usr/local/bin/node",
-              "/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/node_modules/yarn/bin/yarn.js",
+              "poc/node_modules/yarn/bin/yarn.js",
               "install",
               "--ignore-scripts",
               "--non-interactive",
               "--registry",
               "https://registry.npmjs.org",
               "--cache-folder",
-              "/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/install-bench/yarn-classic-2/.cache",
+              "poc/install-bench/yarn-classic-2/.cache",
               "--frozen-lockfile"
             ]
           },
@@ -71,14 +71,14 @@
             "status": 0,
             "command": [
               "/usr/local/bin/node",
-              "/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/node_modules/yarn/bin/yarn.js",
+              "poc/node_modules/yarn/bin/yarn.js",
               "install",
               "--ignore-scripts",
               "--non-interactive",
               "--registry",
               "https://registry.npmjs.org",
               "--cache-folder",
-              "/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/install-bench/yarn-classic-2/.cache",
+              "poc/install-bench/yarn-classic-2/.cache",
               "--frozen-lockfile"
             ]
           },
@@ -92,14 +92,14 @@
             "status": 0,
             "command": [
               "/usr/local/bin/node",
-              "/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/node_modules/yarn/bin/yarn.js",
+              "poc/node_modules/yarn/bin/yarn.js",
               "install",
               "--ignore-scripts",
               "--non-interactive",
               "--registry",
               "https://registry.npmjs.org",
               "--cache-folder",
-              "/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/install-bench/yarn-classic-3/.cache",
+              "poc/install-bench/yarn-classic-3/.cache",
               "--frozen-lockfile"
             ]
           },
@@ -108,14 +108,14 @@
             "status": 0,
             "command": [
               "/usr/local/bin/node",
-              "/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/node_modules/yarn/bin/yarn.js",
+              "poc/node_modules/yarn/bin/yarn.js",
               "install",
               "--ignore-scripts",
               "--non-interactive",
               "--registry",
               "https://registry.npmjs.org",
               "--cache-folder",
-              "/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/install-bench/yarn-classic-3/.cache",
+              "poc/install-bench/yarn-classic-3/.cache",
               "--frozen-lockfile"
             ]
           },
@@ -135,7 +135,7 @@
             "status": 0,
             "command": [
               "/usr/local/bin/node",
-              "/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/node_modules/@yarnpkg/cli-dist/bin/yarn.js",
+              "poc/node_modules/@yarnpkg/cli-dist/bin/yarn.js",
               "install",
               "--immutable"
             ]
@@ -145,7 +145,7 @@
             "status": 0,
             "command": [
               "/usr/local/bin/node",
-              "/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/node_modules/@yarnpkg/cli-dist/bin/yarn.js",
+              "poc/node_modules/@yarnpkg/cli-dist/bin/yarn.js",
               "install",
               "--immutable"
             ]
@@ -160,7 +160,7 @@
             "status": 0,
             "command": [
               "/usr/local/bin/node",
-              "/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/node_modules/@yarnpkg/cli-dist/bin/yarn.js",
+              "poc/node_modules/@yarnpkg/cli-dist/bin/yarn.js",
               "install",
               "--immutable"
             ]
@@ -170,7 +170,7 @@
             "status": 0,
             "command": [
               "/usr/local/bin/node",
-              "/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/node_modules/@yarnpkg/cli-dist/bin/yarn.js",
+              "poc/node_modules/@yarnpkg/cli-dist/bin/yarn.js",
               "install",
               "--immutable"
             ]
@@ -185,7 +185,7 @@
             "status": 0,
             "command": [
               "/usr/local/bin/node",
-              "/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/node_modules/@yarnpkg/cli-dist/bin/yarn.js",
+              "poc/node_modules/@yarnpkg/cli-dist/bin/yarn.js",
               "install",
               "--immutable"
             ]
@@ -195,7 +195,7 @@
             "status": 0,
             "command": [
               "/usr/local/bin/node",
-              "/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/node_modules/@yarnpkg/cli-dist/bin/yarn.js",
+              "poc/node_modules/@yarnpkg/cli-dist/bin/yarn.js",
               "install",
               "--immutable"
             ]
@@ -215,11 +215,11 @@
             "ms": 440.1078750000015,
             "status": 0,
             "command": [
-              "/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/node_modules/pnpm/pnpm",
+              "poc/node_modules/pnpm/pnpm",
               "install",
               "--ignore-scripts",
               "--store-dir",
-              "/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/install-bench/pnpm-1/.cache",
+              "poc/install-bench/pnpm-1/.cache",
               "--config.manage-package-manager-versions=false",
               "--frozen-lockfile"
             ]
@@ -228,11 +228,11 @@
             "ms": 60.20929099999921,
             "status": 0,
             "command": [
-              "/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/node_modules/pnpm/pnpm",
+              "poc/node_modules/pnpm/pnpm",
               "install",
               "--ignore-scripts",
               "--store-dir",
-              "/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/install-bench/pnpm-1/.cache",
+              "poc/install-bench/pnpm-1/.cache",
               "--config.manage-package-manager-versions=false",
               "--frozen-lockfile"
             ]
@@ -246,11 +246,11 @@
             "ms": 432.4653750000034,
             "status": 0,
             "command": [
-              "/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/node_modules/pnpm/pnpm",
+              "poc/node_modules/pnpm/pnpm",
               "install",
               "--ignore-scripts",
               "--store-dir",
-              "/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/install-bench/pnpm-2/.cache",
+              "poc/install-bench/pnpm-2/.cache",
               "--config.manage-package-manager-versions=false",
               "--frozen-lockfile"
             ]
@@ -259,11 +259,11 @@
             "ms": 63.18445799999972,
             "status": 0,
             "command": [
-              "/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/node_modules/pnpm/pnpm",
+              "poc/node_modules/pnpm/pnpm",
               "install",
               "--ignore-scripts",
               "--store-dir",
-              "/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/install-bench/pnpm-2/.cache",
+              "poc/install-bench/pnpm-2/.cache",
               "--config.manage-package-manager-versions=false",
               "--frozen-lockfile"
             ]
@@ -277,11 +277,11 @@
             "ms": 451.63191700000243,
             "status": 0,
             "command": [
-              "/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/node_modules/pnpm/pnpm",
+              "poc/node_modules/pnpm/pnpm",
               "install",
               "--ignore-scripts",
               "--store-dir",
-              "/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/install-bench/pnpm-3/.cache",
+              "poc/install-bench/pnpm-3/.cache",
               "--config.manage-package-manager-versions=false",
               "--frozen-lockfile"
             ]
@@ -290,11 +290,11 @@
             "ms": 58.59508300000016,
             "status": 0,
             "command": [
-              "/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/node_modules/pnpm/pnpm",
+              "poc/node_modules/pnpm/pnpm",
               "install",
               "--ignore-scripts",
               "--store-dir",
-              "/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/install-bench/pnpm-3/.cache",
+              "poc/install-bench/pnpm-3/.cache",
               "--config.manage-package-manager-versions=false",
               "--frozen-lockfile"
             ]
@@ -320,7 +320,7 @@
               "--no-audit",
               "--no-fund",
               "--cache",
-              "/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/install-bench/npm-1/.cache"
+              "poc/install-bench/npm-1/.cache"
             ]
           },
           "warm": {
@@ -333,7 +333,7 @@
               "--no-audit",
               "--no-fund",
               "--cache",
-              "/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/install-bench/npm-1/.cache"
+              "poc/install-bench/npm-1/.cache"
             ]
           },
           "lockUnchanged": true
@@ -351,7 +351,7 @@
               "--no-audit",
               "--no-fund",
               "--cache",
-              "/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/install-bench/npm-2/.cache"
+              "poc/install-bench/npm-2/.cache"
             ]
           },
           "warm": {
@@ -364,7 +364,7 @@
               "--no-audit",
               "--no-fund",
               "--cache",
-              "/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/install-bench/npm-2/.cache"
+              "poc/install-bench/npm-2/.cache"
             ]
           },
           "lockUnchanged": true
@@ -382,7 +382,7 @@
               "--no-audit",
               "--no-fund",
               "--cache",
-              "/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/install-bench/npm-3/.cache"
+              "poc/install-bench/npm-3/.cache"
             ]
           },
           "warm": {
@@ -395,7 +395,7 @@
               "--no-audit",
               "--no-fund",
               "--cache",
-              "/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/install-bench/npm-3/.cache"
+              "poc/install-bench/npm-3/.cache"
             ]
           },
           "lockUnchanged": true
@@ -413,7 +413,7 @@
             "ms": 4158.416000000005,
             "status": 0,
             "command": [
-              "/Users/psw/.bun/bin/bun",
+              "bun",
               "install",
               "--ignore-scripts",
               "--frozen-lockfile"
@@ -423,7 +423,7 @@
             "ms": 21.96233399999619,
             "status": 0,
             "command": [
-              "/Users/psw/.bun/bin/bun",
+              "bun",
               "install",
               "--ignore-scripts",
               "--frozen-lockfile"
@@ -438,7 +438,7 @@
             "ms": 3163.000500000002,
             "status": 0,
             "command": [
-              "/Users/psw/.bun/bin/bun",
+              "bun",
               "install",
               "--ignore-scripts",
               "--frozen-lockfile"
@@ -448,7 +448,7 @@
             "ms": 21.776999999994587,
             "status": 0,
             "command": [
-              "/Users/psw/.bun/bin/bun",
+              "bun",
               "install",
               "--ignore-scripts",
               "--frozen-lockfile"
@@ -463,7 +463,7 @@
             "ms": 4185.656333999999,
             "status": 0,
             "command": [
-              "/Users/psw/.bun/bin/bun",
+              "bun",
               "install",
               "--ignore-scripts",
               "--frozen-lockfile"
@@ -473,7 +473,7 @@
             "ms": 20.172041000005265,
             "status": 0,
             "command": [
-              "/Users/psw/.bun/bin/bun",
+              "bun",
               "install",
               "--ignore-scripts",
               "--frozen-lockfile"

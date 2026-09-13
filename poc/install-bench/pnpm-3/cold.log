@@ -1,7 +1,7 @@
 ✓ Lockfile passes supply-chain policies (verified 263ms ago)
 Lockfile is up to date, resolution step is skipped
 Packages are cloned from the content-addressable store to the virtual store.
-  Content-addressable store is at: /private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc/install-bench/pnpm-3/.cache/v11
+  Content-addressable store is at: poc/install-bench/pnpm-3/.cache/v11
   Virtual store is at:             node_modules/.pnpm
 Packages: +6
 ++++++

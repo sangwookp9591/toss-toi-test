@@ -1,10 +1,10 @@
 # Task: 토스 "AI 시대 어드민(TOI)" — 1차 자료 조사 + 실측 + 2026-09-11 대안 조사
 
 ## Target
-- 작업 폴더(이 폴더 안에서만 파일 생성): `/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/` (이하 `$W`). PoC는 `$W/poc/`.
+- 작업 폴더(이 폴더 안에서만 파일 생성): 저장소 루트 (이하 `$W`, 원래는 분석 세션의 임시 작업 폴더). PoC는 `$W/poc/`.
 - 편집본 자막: `$W/transcript-tcGKZANuUVE.txt` (YouTube tcGKZANuUVE, Toss Challengers, 2026-09-10, 12분)
 - 전체 웨비나: https://youtube.com/live/xDVbTlFfu30 (2026-08-25 'AI 시대, 토스 FE는 어떻게 일할까')
-- yt-dlp: `/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/venv/bin/yt-dlp`, 실행 시 `SSL_CERT_FILE=$(<같은 venv>/bin/python -m certifi)` 필요.
+- yt-dlp: `.venv/bin/yt-dlp` (로컬 venv에 `pip install yt-dlp certifi`), 실행 시 `SSL_CERT_FILE=$(.venv/bin/python -m certifi)` 필요.
 
 ## 발표 요지 (코디네이터 요약)
 어드민 생성 플랫폼. 데이터·컴플라이언스는 서버 프록시(API 등록 → 마스킹·암호화·감사로그 자동), UI는 AI가 API 스키마 + 사내 패턴(테이블/필터/상세)으로 React 코드 생성. 프리뷰 런타임: ① 서버 Next.js dev 서버 공유 → 격리 실패 ② Sandpack → 첫 화면 47초, 사내 패키지 주입 어려움 ③ 직접 구축: 메모리 VFS + esbuild-wasm 번들링 + 의존성은 "Package Set Hash"(package.json 엔트리 + yarn.lock 해시) 단위로 yarn install → Vite 번들 → import map → S3. 성공 시에만 반영("트랜잭션 커밋"). 47s → 1.3s. 6개월 프로젝트 ~440, 페이지 ~2400, 라이브 ~120.

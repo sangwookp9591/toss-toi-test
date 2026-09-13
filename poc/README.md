@@ -3,7 +3,7 @@
 Captured on 2026-09-11. Files are self-contained under this directory; no global installation or Git mutation is needed. Dependencies are pinned in package.json and package-lock.json. Benchmarks use the installed Google Chrome application (headless); set CHROME_PATH for a different executable and BUN_PATH for an existing Bun executable.
 
 ```sh
-cd /private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/toss-admin/poc
+cd poc   # 저장소 루트에서
 mkdir -p .tmp evidence
 export TMPDIR="$PWD/.tmp"
 npm ci --cache .cache/npm --no-audit --no-fund
@@ -31,10 +31,10 @@ Run these sequentially to avoid competing benchmarks. Each script creates three 
 
 This is a focused microbenchmark, not a replica of TOI's production app. It does not measure model generation, policy-proxy latency, CDN/WAN network, package-set build latency, browser paint, Vite CSS/plugin compatibility, or production deployment. Transformer timing does not include graph resolution/linking. Neither local installs nor singleton proofs establish all-registry or all-package compatibility.
 
-Primary webinar capture command (the supplied virtualenv is read-only; all outputs below stay here):
+Primary webinar capture command (run from the repository root; `.venv` is a local virtualenv with `pip install yt-dlp certifi`):
 
 ```sh
-SSL_CERT_FILE=$(/private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/venv/bin/python -m certifi) /private/tmp/claude-501/-Users-psw-orca-workspaces-admin-ui-sargassum/4f10a63d-b5f0-49da-96ed-bc9d41509e2a/scratchpad/venv/bin/yt-dlp --skip-download --write-info-json --write-description --write-auto-subs --sub-langs ko --sub-format json3 --no-cache-dir -o 'evidence/webinar.%(ext)s' 'https://youtube.com/live/xDVbTlFfu30'
+SSL_CERT_FILE=$(.venv/bin/python -m certifi) .venv/bin/yt-dlp --skip-download --write-info-json --write-description --write-auto-subs --sub-langs ko --sub-format json3 --no-cache-dir -o 'evidence/webinar.%(ext)s' 'https://youtube.com/live/xDVbTlFfu30'
 ```
 
 The JSON metadata distinguishes release_date 20260825 from upload_date 20260826. The automatic Korean transcript has recognition errors; uncertainty is documented in ../astra-report.md. No `opus-analysis.md` was read.
