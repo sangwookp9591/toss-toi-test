@@ -1,0 +1,18 @@
+{
+  "tool": "curl",
+  "projectId": "curl-7a0c7a72-5f5e-42a6-9ed1-41d704b476cb",
+  "statuses": [
+    200,
+    200,
+    403,
+    200
+  ],
+  "phone": "010-****-5678",
+  "auditCount": 4,
+  "decisions": [
+    "allowed",
+    "allowed",
+    "denied",
+    "allowed"
+  ]
+}

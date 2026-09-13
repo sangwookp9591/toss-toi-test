@@ -1,0 +1,27 @@
+{
+  "measuredAt": "2026-09-13T05:24:01.905Z",
+  "projectId": "smoke-404d0721-4f9f-45b8-a34f-258485eaf9f0",
+  "statuses": [
+    200,
+    200,
+    403,
+    200
+  ],
+  "maskedCustomer": {
+    "id": "C001",
+    "name": "홍*동",
+    "phone": "010-****-5678",
+    "email": "ho***@example.com",
+    "rrn": "900101-*******",
+    "account": "****-****-1234",
+    "grade": "standard",
+    "status": "active"
+  },
+  "auditCount": 4,
+  "auditDecisions": [
+    "allowed",
+    "allowed",
+    "denied",
+    "allowed"
+  ]
+}

@@ -1,0 +1,18 @@
+import { randomUUID } from 'node:crypto';
+import { mkdir, writeFile } from 'node:fs/promises';
+import path from 'node:path';
+import { serviceRoot } from '../src/config.js';
+const base = 'http://localhost:7200', projectId = `smoke-${randomUUID()}`;
+const post = (path: string, body: unknown, token?: string) => fetch(base + path, { method: 'POST', headers: token ? { Authorization: `Bearer ${token}` } : {}, body: JSON.stringify(body) });
+const session = await (await post('/dev/session', { user: 'smoke-user', roles: ['viewer', 'editor'] })).json();
+const read = await (await post('/capabilities', { projectId, mode: 'read', env: 'preview', ttlSec: 300 }, session.token)).json();
+async function call(path: string, method = 'GET', token = read.token) { return fetch(base + '/proxy/customers' + path, { method, headers: { Authorization: `Bearer ${session.token}`, 'X-Toi-Project': projectId, 'X-Toi-Capability': token, 'X-Toi-Reason': 'customer support review' }, body: method === 'PATCH' ? JSON.stringify({ status: 'active' }) : undefined }); }
+const list = await call('/customers?size=20'), listBody = await list.json();
+const detail = await call('/customers/C001'); await detail.arrayBuffer();
+const denied = await call('/customers/C001', 'PATCH'); await denied.arrayBuffer();
+const write = await (await post('/capabilities', { projectId, mode: 'write', env: 'preview', ttlSec: 300, apiIds: ['customers'] }, session.token)).json();
+const updated = await call('/customers/C001', 'PATCH', write.token); await updated.arrayBuffer();
+const audit = await (await fetch(`${base}/audit?projectId=${projectId}`, { headers: { Authorization: `Bearer ${session.token}` } })).json();
+if (list.status !== 200 || detail.status !== 200 || denied.status !== 403 || updated.status !== 200 || audit.length !== 4) throw new Error('Smoke acceptance failed');
+const result = { measuredAt: new Date().toISOString(), projectId, statuses: [list.status, detail.status, denied.status, updated.status], maskedCustomer: listBody.items[0], auditCount: audit.length, auditDecisions: audit.map((row: { decision: string }) => row.decision) };
+await mkdir(path.join(serviceRoot, 'bench'), { recursive: true }); await writeFile(path.join(serviceRoot, 'bench/smoke-results.json'), JSON.stringify(result, null, 2) + '\n'); console.log(result);

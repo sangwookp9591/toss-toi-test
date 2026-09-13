@@ -1,0 +1,8 @@
+{
+  "browser": "153.0.8010.36",
+  "direct": 401,
+  "proxy": 200,
+  "phone": "010-****-5678",
+  "masked": "900101-*******",
+  "permission": "loopback-network granted only to the temporary test context"
+}

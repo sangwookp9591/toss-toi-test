@@ -1,0 +1,38 @@
+{
+  "measuredAt": "2026-09-13T05:24:02.357Z",
+  "environment": {
+    "node": "v22.14.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M4"
+  },
+  "methodology": "Three paired local HTTP trials after one warm-up of each path; 20-customer response fully consumed and parsed; alternating direct/proxy order; session and capability issuance excluded; proxy includes HMAC, policy evaluation, JSON masking and awaited JSONL append; persistent connections, no fsync and no network isolation",
+  "samples": [
+    {
+      "repeat": 1,
+      "order": "direct,proxy",
+      "directMs": 1.8996249999999861,
+      "proxyMs": 6.826958999999988,
+      "overheadMs": 4.927334000000002
+    },
+    {
+      "repeat": 2,
+      "order": "proxy,direct",
+      "directMs": 1.1502079999999921,
+      "proxyMs": 6.886500000000012,
+      "overheadMs": 5.73629200000002
+    },
+    {
+      "repeat": 3,
+      "order": "direct,proxy",
+      "directMs": 3.1742499999999723,
+      "proxyMs": 6.663542000000007,
+      "overheadMs": 3.4892920000000345
+    }
+  ],
+  "medians": {
+    "directMs": 1.8996249999999861,
+    "proxyMs": 6.826958999999988,
+    "overheadMs": 4.927334000000002
+  }
+}
