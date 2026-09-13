@@ -20,6 +20,8 @@ export async function ensureDevelopmentSecrets(envFile, env = process.env) {
 async function main() {
 const root=fileURLToPath(new URL('..',import.meta.url)),run=path.join(root,'scripts/.run');
 process.chdir(root);try{process.loadEnvFile(path.join(root,'.env'));}catch(e){if(e.code!=='ENOENT')throw e;}
+process.env.NODE_ENV = 'development';
+process.env.TOI_DEV_AUTH_ENABLED = 'true';
 await ensureDevelopmentSecrets(path.join(root,'.env'));
 await mkdir(run,{recursive:true});
 const command=(cmd,args,cwd=root)=>new Promise((resolve,reject)=>{const child=spawn(cmd,args,{cwd,stdio:'inherit',env:process.env});child.on('exit',code=>code===0?resolve():reject(new Error(`${cmd} exited ${code}`)));child.on('error',reject);});

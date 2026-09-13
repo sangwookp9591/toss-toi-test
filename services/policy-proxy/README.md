@@ -9,14 +9,14 @@
 node scripts/dev-up.mjs
 
 # 이미 공유 키를 구성한 경우 서비스만 실행
-npm --prefix services/policy-proxy start
+NODE_ENV=development TOI_DEV_AUTH_ENABLED=true npm --prefix services/policy-proxy start
 ```
 
 시작 시 `customers`가 없으면 mock-backend의 `/openapi.json`을 서비스 토큰으로 읽어 자동 등록한다. `npm run seed`는 해당 API를 현재 schema/policy로 다시 seed한다. 등록 정보는 `data/apis.json`, 감사는 `data/audit.jsonl`에 저장되며 [`.gitignore`](.gitignore)에서 `data/`를 제외한다. registry는 임시 파일+rename으로 교체하고 감사는 직렬 append한다. 다른 서비스를 종료하지 않고 각 서버를 별도 터미널에서 실행할 수 있다.
 
-설정은 루트 `.env`에서 읽는다. `NODE_ENV` 미설정은 development로 취급한다. `scripts/dev-up.mjs`는 누락·빈 값·저장소의 과거 기본값인 세 키를 각각 32바이트 난수로 생성해 gitignore된 `.env`에 권한 0600으로 저장한다. 같은 `TOI_UPSTREAM_SERVICE_TOKEN`을 mock-backend와 proxy에 전달하며 다음 실행에는 저장된 값을 재사용한다. 키를 바꾸면 두 서비스를 함께 재시작해야 한다. proxy를 직접 실행할 때 누락되거나 알려진 기본값인 키는 프로세스 시작 시 무작위 값으로 대체하므로, 별도 실행 시 upstream 토큰을 양쪽에 명시적으로 맞춰야 한다. 세션·capability 키를 재생성하면 기존 토큰은 무효화된다. 서버는 loopback에 bind한다.
+설정은 루트 `.env`에서 읽는다. `NODE_ENV`는 정확히 `development` 또는 `test`일 때만 개발 환경으로 인정한다. 개발 발급도 `TOI_DEV_AUTH_ENABLED=true`를 명시해야 켜진다. `scripts/dev-up.mjs`는 개발 전용 진입점으로 두 값을 각각 `development`, `true`로 명시 전달한다. `scripts/dev-up.mjs`는 누락·빈 값·저장소의 과거 기본값인 세 키를 각각 32바이트 난수로 생성해 gitignore된 `.env`에 권한 0600으로 저장한다. 같은 `TOI_UPSTREAM_SERVICE_TOKEN`을 mock-backend와 proxy에 전달하며 다음 실행에는 저장된 값을 재사용한다. 키를 바꾸면 두 서비스를 함께 재시작해야 한다. 명시적인 개발 환경에서 proxy를 직접 실행할 때 누락되거나 알려진 기본값인 키는 프로세스 시작 시 무작위 값으로 대체하므로, 별도 실행 시 upstream 토큰을 양쪽에 명시적으로 맞춰야 한다. 세션·capability 키를 재생성하면 기존 토큰은 무효화된다. 서버는 loopback에 bind한다.
 
-**운영 경고:** `.env.example`을 그대로 운영에 복사하면 기동이 거부된다. `NODE_ENV=production`에서는 `TOI_SESSION_SECRET`, `TOI_CAPABILITY_SECRET`, `TOI_UPSTREAM_SERVICE_TOKEN`이 모두 명시적으로 설정되어야 하고 각각 UTF-8 기준 32바이트 이상이며 과거 저장소 기본값이 아니어야 한다. `TOI_DEV_AUTH_ENABLED=false`를 반드시 명시하고 `TOI_DEV_ADMIN_TOKEN`은 빈 문자열도 남기지 말고 제거한다. 조건을 하나라도 위반하면 listen/seed 전에 종료 코드 1로 실패한다. 세 키는 독립적인 안전한 난수로 관리한다.
+**운영 경고:** `.env.example`을 그대로 운영에 복사하면 기동이 거부된다. `NODE_ENV`가 `development`/`test` 이외이면 미설정·빈 값·`Production`·`prod`·`staging`·`production `을 포함해 운영 가드를 적용한다. 환경 이름 오타나 누락으로 개발 발급이 열리는 것을 막기 위한 fail-closed 규칙이다. 이 경우 `TOI_SESSION_SECRET`, `TOI_CAPABILITY_SECRET`, `TOI_UPSTREAM_SERVICE_TOKEN`이 모두 명시적으로 설정되어야 하고 각각 UTF-8 기준 32바이트 이상이며 과거 저장소 기본값이 아니며 세 값이 모두 서로 달라야 한다. `TOI_DEV_AUTH_ENABLED=false`를 반드시 명시하고 `TOI_DEV_ADMIN_TOKEN`은 빈 문자열도 남기지 말고 제거한다. 조건을 하나라도 위반하면 listen/seed 전에 종료 코드 1로 실패한다. 세 키는 독립적인 안전한 난수로 관리한다.
 
 ## API와 판정 순서
 
@@ -48,7 +48,7 @@ npm --prefix services/policy-proxy start
 4. capability 서명·만료·project·세션 sub 일치 확인 → **403**. env는 서명된 preview/live 값이며 `X-Toi-Env`가 주어지면 일치해야 한다.
 5. 쓰기 메서드는 **mode=write + apiIds 포함 + allowWrite** 모두 필요 → **403**.
 6. requireReason이면 공백 제거 후 최소 5자 필요 → **428**. 사유는 최대 500자이며 읽기와 쓰기 모두 적용한다.
-7. 경로를 최대 3회 고정점까지 디코딩한다. 어느 단계든 인코딩된 `/`, 잔여 `%`, 백슬래시, `.`/`..` 세그먼트, 제어문자를 발견하면 **400**. 템플릿 변수의 점으로만 된 값은 매칭하지 않는다. 등록 OpenAPI path/method와 매칭한 정규화 경로로 `new URL(path, upstreamBaseUrl)`을 만들고 pathname이 정확히 같을 때만 upstream을 호출한다. 미등록 경로는 **404**다.
+7. 경로를 최대 3회 고정점까지 디코딩한다. 어느 단계든 인코딩된 `/`, 잔여 `%`, 백슬래시, 세미콜론을 포함하거나 점으로 끝나는 세그먼트(점만인 값 포함), 제어문자를 발견하면 **400**. 템플릿 변수는 영숫자·`_`·`-`·비ASCII 문자만 허용하고 위반하면 **400**이다. 호환 문자로 우회하지 못하도록 NFKC 형태도 검사한다. 등록 OpenAPI path/method와 매칭한 경로를 세그먼트별로 인코딩한 뒤 `base.pathname`의 끝 `/`를 제거한 접두사에 연결한다. URL의 최종 pathname이 그 인코딩된 기대값과 정확히 같을 때만 upstream을 호출하므로 경로 접두사와 한글 ID를 보존한다. 미등록 경로는 **404**다.
 8. JSON 등록 규칙 마스킹 → 전체 문자열 잔여 PII 스캔 → 허용·거부 모두 감사 append → 응답. 비 JSON 응답은 **502**로 차단하며 PII 탐지가 있으면 감사 경고도 남긴다. upstream 오류는 일반 오류 코드로 바꾼다.
 
 기존 12개 거부 판정은 그대로 검증한다(각 요청 감사 포함).
@@ -74,9 +74,11 @@ npm --prefix services/policy-proxy start
 
 JSON Pointer의 `~0`, `~1` 이스케이프를 처리하고 `*`는 배열 인덱스에만 매칭한다. 필드명은 대소문자를 무시하고, 마지막 키가 객체·배열이면 하위 문자열·숫자에 같은 MaskKind를 재귀 적용한다. seed 정책은 상세 `/<field>`와 목록 `/items/*/<field>`에 모두 적용한다. `none`은 등록 규칙 단계에서 값을 변경하지 않지만 잔여 PII 스캔을 면제하지 않는다.
 
-마스킹 후 응답 전체의 문자열 값(루트 문자열·배열 포함)에서 한국 휴대폰, 주민번호, 계좌번호, 이메일 패턴을 탐지해 일치 부분을 해당 종류로 마스킹한다. 규칙은 전화번호 01x/국제 +82 10, 주민번호 13자리, 계좌번호 10–16자리 또는 하이픈으로 구분한 숫자, 이메일 형식을 보수적으로 탐지한다. 정규식은 PII의 의미를 완전히 판별하지 못하므로 오탐 가능성이 있으며 등록 정책과 스키마 검토도 필요하다.
+마스킹 후 응답 전체의 문자열 값(루트 문자열·배열 포함)에서 한국 휴대폰, 주민번호, 계좌번호, 이메일 패턴을 보조 탐지한다. 계좌 패턴은 3-2~6-4~6자리 하이픈 형식 또는 10–16자리 연속 숫자로 제한한다. 잔여 스캔은 ISO 날짜·시간, UUID, 13자리 epoch/식별자, 소수 금액 토큰을 제외한다. 구분자 없는 13자리 값은 주민번호와 epoch를 패턴만으로 구분할 수 없으므로 필요한 PII는 등록 pointer로 마스킹한다. 등록 규칙은 이 보조 탐지 제외 규칙보다 우선한다.
 
-계약 파일을 변경하지 않고 서비스 내부 `PolicyAuditRecord extends AuditRecord`에 선택 필드 `policyWarnings?: ('unregistered_pii_field' | 'mask_rules_unmatched')[]`를 추가했다. 보조 탐지가 발생하면 `maskedFields`에 `/items/0/contact/phone (detected)`처럼 실제 경로를 기록하고 `unregistered_pii_field`를 남긴다. 등록 규칙이 존재하지만 하나도 매칭되지 않으면 `mask_rules_unmatched`를 남긴다. 경고가 없으면 필드를 생략한다. 비 JSON PII는 원문을 반환·기록하지 않고 502 `UPSTREAM_PII_RESPONSE`, 루트 `/ (detected)`, 탐지 경고를 감사한다.
+값 치환에는 해당 키 또는 부모 키에 `phone`/`tel`/`mobile`/`rrn`/`ssn`/`resident`/`account`/`acct`/`email` 힌트가 있어야 한다(대소문자 무시, 키 NFKC 정규화). 패턴만 맞고 키 힌트가 없으면 원문을 보존하고 `possible_unregistered_pii`만 감사에 추가한다. 이 경우 `maskedFields`에 치환하지 않은 필드를 넣지 않는다. 정규식과 키 휴리스틱은 PII 의미를 완전히 판별하지 못하므로 등록 정책과 스키마 검토가 1차 방어다.
+
+계약 파일을 변경하지 않고 서비스 내부 `PolicyAuditRecord extends AuditRecord`에 선택 필드 `policyWarnings?: ('unregistered_pii_field' | 'possible_unregistered_pii' | 'mask_rules_unmatched')[]`를 사용한다. 보조 탐지로 실제 치환하면 `maskedFields`에 `/items/0/contact/phone (detected)`처럼 경로를 기록하고 `unregistered_pii_field`를 남긴다. 등록 규칙이 하나도 매칭되지 않은 경우의 `mask_rules_unmatched`는 별도로 유지한다. 경고가 없으면 필드를 생략한다. 비 JSON PII는 원문을 반환·기록하지 않고 502 `UPSTREAM_PII_RESPONSE`와 `possible_unregistered_pii`를 감사한다(치환 필드는 없음).
 
 | 종류 | 결과 예 |
 |---|---|
@@ -161,7 +163,8 @@ curl -s 'http://localhost:7200/audit?projectId=demo-project' -H "Authorization: 
 
 2026-09-13 기준:
 
-- `npm test`: **67/67 통과**. 판정 순서·12개 거부 조합, 마스킹 스냅샷과 concrete maskedFields, 허용·거부 감사, write 재판정, registry 권한, upstream 정보 제거, CORS, typed client errors, 실제 Chrome 경로와 C1/H1/H2/M1 공격 차단을 검사했다. 강화 후 재현 출력은 [`docs/review/repro/after`](../../docs/review/repro/after/)에 있다.
+- F3a 후속: `npm run typecheck`와 `npm test` **121/121**, E2E A~F **6/6 통과**. 날짜·UUID·epoch·금액·식별자 보존, 키 힌트 기반 잔여 스캔, 경로 접두사·한글 ID, 경로 문자 제한과 fail-closed 환경 설정을 검증했다. [F3a 결과 및 재현](../../docs/review/repro/r2/after/F3a-results.md).
+- R1 강화 당시 `npm test`: **67/67 통과**. 판정 순서·12개 거부 조합, 마스킹 스냅샷과 concrete maskedFields, 허용·거부 감사, write 재판정, registry 권한, upstream 정보 제거, CORS, typed client errors, 실제 Chrome 경로와 C1/H1/H2/M1 공격 차단을 검사했다. 강화 후 재현 출력은 [`docs/review/repro/after`](../../docs/review/repro/after/)에 있다.
 - 강화된 E2E D를 포함한 `npm --prefix e2e run test:repeat`: **18/18 통과**(실제 Chrome, A~F 각 3회).
 - `npm run typecheck`, `npm run build:client`: 통과. mock-backend의 test **4/4**와 typecheck도 통과.
 - Chrome **153.0.8010.36**: 직접 upstream **401**, 프록시 **200**, 휴대폰·주민번호 마스킹 확인. [`bench/browser-results.json`](bench/browser-results.json).

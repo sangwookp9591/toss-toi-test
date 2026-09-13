@@ -8,27 +8,46 @@ export function maskValue(value: string, kind: MaskKind): string {
   return `****-****-${value.replace(/\D/g, '').slice(-4)}`;
 }
 const escape = (key: string) => key.replace(/~/g, '~0').replace(/\//g, '~1');
-export type PolicyWarning = 'unregistered_pii_field' | 'mask_rules_unmatched';
+export type PolicyWarning = 'unregistered_pii_field' | 'possible_unregistered_pii' | 'mask_rules_unmatched';
 // Conservative Korean PII patterns. Boundaries exclude already-masked fragments.
 const detectors: [MaskKind, RegExp][] = [
   ['email', /(?<![\w.*+-])[a-z0-9][a-z0-9._%+-]*@[a-z0-9.-]+\.[a-z]{2,}(?![\w*])/gi],
   ['rrn', /(?<![\d*])\d{6}-?[1-8]\d{6}(?![\d*])/g],
   ['phone', /(?<![\d*])(?:\+82[- .]?10|01[016789])[- .]?\d{3,4}[- .]?\d{4}(?![\d*])/g],
-  ['account', /(?<![\d*])(?:\d{2,6}-\d{2,6}-\d{2,6}(?:-\d{1,6})?|\d{10,16})(?![\d*])/g],
+  ['account', /(?<![\w.*-])(?:\d{3}-\d{2,6}-\d{4,6}|\d{10,16})(?![\w.*-])/g],
 ];
-export function scanPii(input: unknown): { value: unknown; maskedFields: string[] } {
+// Preserve common non-PII tokens before scanning so a detector cannot match a fragment.
+// Undelimited 13-digit identifiers are ambiguous with epoch milliseconds; require a
+// registered pointer to mask those. These exclusions apply only to residual scanning.
+const nonPiiTokens = /(?<![\w@.+-])(?:\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:\d{2})?)?|[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}|\d{13}|[+-]?\d[\d,]*\.\d+)(?![\w@.+-])/gi;
+const piiKey = /phone|tel|mobile|rrn|ssn|resident|account|acct|email/i;
+export function scanPii(input: unknown): { value: unknown; maskedFields: string[]; policyWarnings: PolicyWarning[] } {
   const fields = new Set<string>();
-  const walk = (node: unknown, pointer: string): unknown => {
+  let possible = false;
+  const walk = (node: unknown, pointer: string, hinted = false): unknown => {
     if (typeof node === 'string') {
-      let value = node;
-      for (const [kind, pattern] of detectors) value = value.replace(pattern, match => { fields.add(`${pointer || '/'} (detected)`); return maskValue(match, kind); });
-      return value;
+      const scan = (text: string) => {
+        for (const [kind, pattern] of detectors) text = text.replace(pattern, match => {
+          if (!hinted) { possible = true; return match; }
+          fields.add(`${pointer || '/'} (detected)`); return maskValue(match, kind);
+        });
+        return text;
+      };
+      let offset = 0, value = '';
+      for (const match of node.matchAll(nonPiiTokens)) {
+        value += scan(node.slice(offset, match.index)) + match[0];
+        offset = match.index + match[0].length;
+      }
+      return value + scan(node.slice(offset));
     }
-    if (Array.isArray(node)) return node.map((child, index) => walk(child, `${pointer}/${index}`));
-    if (node && typeof node === 'object') return Object.fromEntries(Object.entries(node).map(([key, child]) => [key, walk(child, `${pointer}/${escape(key)}`)]));
+    if (Array.isArray(node)) return node.map((child, index) => walk(child, `${pointer}/${index}`, hinted));
+    if (node && typeof node === 'object') return Object.fromEntries(Object.entries(node).map(([key, child]) => [key, walk(child, `${pointer}/${escape(key)}`, hinted || piiKey.test(key.normalize('NFKC')))]));
     return node;
   };
-  return { value: walk(input, ''), maskedFields: [...fields].sort() };
+  const value = walk(input, ''), policyWarnings: PolicyWarning[] = [];
+  if (fields.size) policyWarnings.push('unregistered_pii_field');
+  if (possible) policyWarnings.push('possible_unregistered_pii');
+  return { value, maskedFields: [...fields].sort(), policyWarnings };
 }
 export function maskJson(input: unknown, rules: Record<string, MaskKind>): { value: unknown; maskedFields: string[]; policyWarnings: PolicyWarning[] } {
   const value = structuredClone(input), fields = new Set<string>();
@@ -54,8 +73,7 @@ export function maskJson(input: unknown, rules: Record<string, MaskKind>): { val
     };
     walk(value, 0, '');
   }
-  const detected = scanPii(value), policyWarnings: PolicyWarning[] = [];
-  if (detected.maskedFields.length) policyWarnings.push('unregistered_pii_field');
+  const detected = scanPii(value), policyWarnings = detected.policyWarnings;
   if (Object.keys(rules).length && !matched) policyWarnings.push('mask_rules_unmatched');
   return { value: detected.value, maskedFields: [...new Set([...fields, ...detected.maskedFields])].sort(), policyWarnings };
 }

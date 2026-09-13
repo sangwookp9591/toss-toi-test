@@ -1,0 +1,187 @@
+
+> test
+> playwright test --reporter=line --output=/Users/psw/Projects/toss-toi-test/docs/review/repro/r2/after/e2e-test-results
+
+
+Running 6 tests using 1 worker
+
+(node:97176) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+(node:97176) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/6] tests/studio.spec.ts:9:1 › A: 생성, 역질문, 마스킹, 조회 사유와 감사 기록
+  1) tests/studio.spec.ts:9:1 › A: 생성, 역질문, 마스킹, 조회 사유와 감사 기록 ──────────────────────────────────────
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 1
+    Received: undefined
+
+    Call Log:
+    - Timeout 30000ms exceeded while waiting on the predicate
+
+      1 | import { test, expect, type Page } from '@playwright/test';
+      2 | const snapshot=(page:Page)=>page.evaluate(()=> (window as any).studio.getSnapshot());
+    > 3 | async function commit(page:Page,revision:number){await expect.poll(async()=> (await snapshot(page)).lastCommit?.token.revision).toBe(revision);}
+        |                                                                                                                                 ^
+      4 | async function create(page:Page){await page.goto('/');expect(await page.evaluate(()=>crossOriginIsolated)).toBe(false);await page.getByRole('button',{name:'프로젝트 만들기'}).click();await commit(page,1);}
+      5 | const frame=(page:Page)=>page.frameLocator('#preview iframe');
+      6 | async function generate(page:Page,prompt='고객 목록 화면 만들어줘'){await page.getByLabel('만들고 싶은 화면').fill(prompt);await page.getByRole('button',{name:'보내기'}).click();await page.getByRole('button',{name:'아니요',exact:true}).click();await commit(page,2);}
+        at commit (/Users/psw/Projects/toss-toi-test/e2e/tests/studio.spec.ts:3:129)
+        at create (/Users/psw/Projects/toss-toi-test/e2e/tests/studio.spec.ts:4:183)
+        at /Users/psw/Projects/toss-toi-test/e2e/tests/studio.spec.ts:9:54
+
+    Error Context: ../docs/review/repro/r2/after/e2e-test-results/studio-A-생성-역질문-마스킹-조회-사유와-감사-기록/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../docs/review/repro/r2/after/e2e-test-results/studio-A-생성-역질문-마스킹-조회-사유와-감사-기록/trace.zip
+    Usage:
+
+        npx playwright show-trace ../docs/review/repro/r2/after/e2e-test-results/studio-A-생성-역질문-마스킹-조회-사유와-감사-기록/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:98426) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+(node:98426) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[2/6] tests/studio.spec.ts:10:1 › B: 문법 오류는 마지막 정상 화면 유지
+  2) tests/studio.spec.ts:10:1 › B: 문법 오류는 마지막 정상 화면 유지 ────────────────────────────────────────────
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 1
+    Received: undefined
+
+    Call Log:
+    - Timeout 30000ms exceeded while waiting on the predicate
+
+      1 | import { test, expect, type Page } from '@playwright/test';
+      2 | const snapshot=(page:Page)=>page.evaluate(()=> (window as any).studio.getSnapshot());
+    > 3 | async function commit(page:Page,revision:number){await expect.poll(async()=> (await snapshot(page)).lastCommit?.token.revision).toBe(revision);}
+        |                                                                                                                                 ^
+      4 | async function create(page:Page){await page.goto('/');expect(await page.evaluate(()=>crossOriginIsolated)).toBe(false);await page.getByRole('button',{name:'프로젝트 만들기'}).click();await commit(page,1);}
+      5 | const frame=(page:Page)=>page.frameLocator('#preview iframe');
+      6 | async function generate(page:Page,prompt='고객 목록 화면 만들어줘'){await page.getByLabel('만들고 싶은 화면').fill(prompt);await page.getByRole('button',{name:'보내기'}).click();await page.getByRole('button',{name:'아니요',exact:true}).click();await commit(page,2);}
+        at commit (/Users/psw/Projects/toss-toi-test/e2e/tests/studio.spec.ts:3:129)
+        at create (/Users/psw/Projects/toss-toi-test/e2e/tests/studio.spec.ts:4:183)
+        at /Users/psw/Projects/toss-toi-test/e2e/tests/studio.spec.ts:10:47
+
+    Error Context: ../docs/review/repro/r2/after/e2e-test-results/studio-B-문법-오류는-마지막-정상-화면-유지/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../docs/review/repro/r2/after/e2e-test-results/studio-B-문법-오류는-마지막-정상-화면-유지/trace.zip
+    Usage:
+
+        npx playwright show-trace ../docs/review/repro/r2/after/e2e-test-results/studio-B-문법-오류는-마지막-정상-화면-유지/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:99022) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+(node:99022) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[3/6] tests/studio.spec.ts:11:1 › C: 이전 실행을 지연해도 최신 revision만 커밋
+  3) tests/studio.spec.ts:11:1 › C: 이전 실행을 지연해도 최신 revision만 커밋 ────────────────────────────────────
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 1
+    Received: undefined
+
+    Call Log:
+    - Timeout 30000ms exceeded while waiting on the predicate
+
+      1 | import { test, expect, type Page } from '@playwright/test';
+      2 | const snapshot=(page:Page)=>page.evaluate(()=> (window as any).studio.getSnapshot());
+    > 3 | async function commit(page:Page,revision:number){await expect.poll(async()=> (await snapshot(page)).lastCommit?.token.revision).toBe(revision);}
+        |                                                                                                                                 ^
+      4 | async function create(page:Page){await page.goto('/');expect(await page.evaluate(()=>crossOriginIsolated)).toBe(false);await page.getByRole('button',{name:'프로젝트 만들기'}).click();await commit(page,1);}
+      5 | const frame=(page:Page)=>page.frameLocator('#preview iframe');
+      6 | async function generate(page:Page,prompt='고객 목록 화면 만들어줘'){await page.getByLabel('만들고 싶은 화면').fill(prompt);await page.getByRole('button',{name:'보내기'}).click();await page.getByRole('button',{name:'아니요',exact:true}).click();await commit(page,2);}
+        at commit (/Users/psw/Projects/toss-toi-test/e2e/tests/studio.spec.ts:3:129)
+        at create (/Users/psw/Projects/toss-toi-test/e2e/tests/studio.spec.ts:4:183)
+        at /Users/psw/Projects/toss-toi-test/e2e/tests/studio.spec.ts:11:55
+
+    Error Context: ../docs/review/repro/r2/after/e2e-test-results/studio-C-이전-실행을-지연해도-최신-revision만-커밋/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../docs/review/repro/r2/after/e2e-test-results/studio-C-이전-실행을-지연해도-최신-revision만-커밋/trace.zip
+    Usage:
+
+        npx playwright show-trace ../docs/review/repro/r2/after/e2e-test-results/studio-C-이전-실행을-지연해도-최신-revision만-커밋/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:99819) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+(node:99819) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[4/6] tests/studio.spec.ts:12:1 › D: viewer 자체 발급 차단, 읽기 전용 차단, 제한된 쓰기 허용
+  4) tests/studio.spec.ts:12:1 › D: viewer 자체 발급 차단, 읽기 전용 차단, 제한된 쓰기 허용 ───────────────────────────
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 1
+    Received: undefined
+
+    Call Log:
+    - Timeout 30000ms exceeded while waiting on the predicate
+
+      1 | import { test, expect, type Page } from '@playwright/test';
+      2 | const snapshot=(page:Page)=>page.evaluate(()=> (window as any).studio.getSnapshot());
+    > 3 | async function commit(page:Page,revision:number){await expect.poll(async()=> (await snapshot(page)).lastCommit?.token.revision).toBe(revision);}
+        |                                                                                                                                 ^
+      4 | async function create(page:Page){await page.goto('/');expect(await page.evaluate(()=>crossOriginIsolated)).toBe(false);await page.getByRole('button',{name:'프로젝트 만들기'}).click();await commit(page,1);}
+      5 | const frame=(page:Page)=>page.frameLocator('#preview iframe');
+      6 | async function generate(page:Page,prompt='고객 목록 화면 만들어줘'){await page.getByLabel('만들고 싶은 화면').fill(prompt);await page.getByRole('button',{name:'보내기'}).click();await page.getByRole('button',{name:'아니요',exact:true}).click();await commit(page,2);}
+        at commit (/Users/psw/Projects/toss-toi-test/e2e/tests/studio.spec.ts:3:129)
+        at create (/Users/psw/Projects/toss-toi-test/e2e/tests/studio.spec.ts:4:183)
+        at /Users/psw/Projects/toss-toi-test/e2e/tests/studio.spec.ts:12:64
+
+    Error Context: ../docs/review/repro/r2/after/e2e-test-results/studio-D-viewer-자체-발급-차단-읽기-전용-차단-제한된-쓰기-허용/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../docs/review/repro/r2/after/e2e-test-results/studio-D-viewer-자체-발급-차단-읽기-전용-차단-제한된-쓰기-허용/trace.zip
+    Usage:
+
+        npx playwright show-trace ../docs/review/repro/r2/after/e2e-test-results/studio-D-viewer-자체-발급-차단-읽기-전용-차단-제한된-쓰기-허용/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:1695) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+(node:1695) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[5/6] tests/studio.spec.ts:25:1 › E: 두 탭 CAS 충돌과 최신 내용 다시 불러오기
+[6/6] tests/studio.spec.ts:26:1 › F: 사내 useToast와 앱 React 인스턴스 공유
+  4 failed
+    tests/studio.spec.ts:9:1 › A: 생성, 역질문, 마스킹, 조회 사유와 감사 기록 ───────────────────────────────────────
+    tests/studio.spec.ts:10:1 › B: 문법 오류는 마지막 정상 화면 유지 ─────────────────────────────────────────────
+    tests/studio.spec.ts:11:1 › C: 이전 실행을 지연해도 최신 revision만 커밋 ─────────────────────────────────────
+    tests/studio.spec.ts:12:1 › D: viewer 자체 발급 차단, 읽기 전용 차단, 제한된 쓰기 허용 ────────────────────────────
+  2 passed (2.2m)

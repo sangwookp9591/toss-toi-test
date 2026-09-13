@@ -82,6 +82,16 @@ test('masking snapshot includes concrete wildcard pointers and leaves source dat
   expect(escaped.maskedFields).toEqual(['/a~1b/~0name', '/items/1/phone']);
 });
 
+test('N2 seed GET /customers/{id}/orders preserves the actual backend response and ISO dates', async () => {
+  const original = await fetch(upstream + '/customers/C002/orders', { headers: { 'X-Service-Token': cfg.upstreamToken } });
+  const expected = await original.json();
+  const response = await call({ path: '/customers/C002/orders' });
+  expect(response.status).toBe(200); expect(await response.json()).toEqual(expected);
+  expect(expected.items.map((item: { createdAt: string }) => item.createdAt)).toEqual(['2026-08-01T00:00:00.000Z', '2026-08-02T00:00:00.000Z', '2026-08-03T00:00:00.000Z']);
+  const audit = (await store.audit('test-project', 1))[0];
+  expect(audit.maskedFields).toEqual([]); expect(audit.policyWarnings).toEqual(['mask_rules_unmatched']);
+});
+
 test('write authorization is re-evaluated for every request and allowWrite is enforced', async () => {
   const allowed = await call({ method: 'PATCH', path: '/customers/C001', session: editor, cap: write }); expect(allowed.status).toBe(200); expect((await allowed.json()).status).toBe('suspended');
   const api = store.apis.get('customers')!; await store.save({ ...api, policy: { ...api.policy, allowWrite: false } });

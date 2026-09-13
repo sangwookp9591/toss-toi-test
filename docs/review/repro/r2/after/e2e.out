@@ -1,0 +1,25 @@
+
+> test
+> playwright test --reporter=line --output=/Users/psw/Projects/toss-toi-test/docs/review/repro/r2/after/e2e-test-results
+
+
+Running 6 tests using 1 worker
+
+(node:2894) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+(node:2894) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/6] tests/studio.spec.ts:9:1 › A: 생성, 역질문, 마스킹, 조회 사유와 감사 기록
+[2/6] tests/studio.spec.ts:10:1 › B: 문법 오류는 마지막 정상 화면 유지
+[3/6] tests/studio.spec.ts:11:1 › C: 이전 실행을 지연해도 최신 revision만 커밋
+[4/6] tests/studio.spec.ts:12:1 › D: viewer 자체 발급 차단, 읽기 전용 차단, 제한된 쓰기 허용
+tests/studio.spec.ts:12:1 › D: viewer 자체 발급 차단, 읽기 전용 차단, 제한된 쓰기 허용
+D preview issuance boundary: {"roles":["viewer"],"probes":[{"endpoint":"/dev/session","tokenObtained":false,"blocked":true},{"endpoint":"/capabilities","tokenObtained":false,"blocked":true}],"authenticatedCapabilityBlocked":true}
+
+[5/6] tests/studio.spec.ts:25:1 › E: 두 탭 CAS 충돌과 최신 내용 다시 불러오기
+[6/6] tests/studio.spec.ts:26:1 › F: 사내 useToast와 앱 React 인스턴스 공유
+  6 passed (14.0s)

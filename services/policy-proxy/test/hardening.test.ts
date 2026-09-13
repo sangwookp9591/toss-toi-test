@@ -21,7 +21,7 @@ beforeAll(async () => {
  dir = await mkdtemp(path.join(os.tmpdir(), 'policy-hardening-'));
  upstream = createServer((req,res) => { seen.push(req.url!); res.setHeader('Content-Type',contentType); res.end(contentType === 'application/json' ? JSON.stringify(response) : String(response)); });
  const up = await listen(upstream);
- cfg = {...configuration({}), dataDir:dir, upstreamUrl:up, upstreamAllowlist:[up], devAuth:true, devAdminToken:'private-bootstrap-token'};
+ cfg = {...configuration({NODE_ENV:'test'}), dataDir:dir, upstreamUrl:up, upstreamAllowlist:[up], devAuth:true, devAdminToken:'private-bootstrap-token'};
  store = new PolicyStorage(dir); await store.init();
  await store.save({apiId:'reports',name:'reports',description:'test',upstreamBaseUrl:up,schemaVersion:1,openapi:{openapi:'3.1.0',paths:{'/reports/{year}/{month}':{get:{}},'/customers':{get:{}}}},policy:{mask:{'/items/*/phone':'phone'},requireReason:false,allowedRoles:['viewer'],allowWrite:false}});
  proxy = createPolicyProxy(cfg,store); base = await listen(proxy);
@@ -71,12 +71,12 @@ for(const key of ['TOI_SESSION_SECRET','TOI_CAPABILITY_SECRET','TOI_UPSTREAM_SER
 for(const value of [undefined,'true','FALSE']) badProduction.push([`dev auth ${value}`,{...production,TOI_DEV_AUTH_ENABLED:value}]);
 for(const value of ['','present']) badProduction.push([`admin token ${value}`,{...production,TOI_DEV_ADMIN_TOKEN:value}]);
 test.each(badProduction)('H1 production rejects %s',(_name,env)=>{expect(()=>configuration(env)).toThrow();});
-test('H1 valid production disables dev auth; absent NODE_ENV generates unpredictable process secrets',()=>{
+test('H1 valid production disables dev auth; explicit development generates unpredictable process secrets',()=>{
  expect(configuration(production).devAuth).toBe(false);
- const c=configuration({});expect(c.devAuth).toBe(true);
+ const c=configuration({NODE_ENV:'development'});expect(c.devAuth).toBe(false);
  for(const secret of [c.sessionSecret,c.capabilitySecret,c.upstreamToken]) {expect(Buffer.byteLength(secret)).toBeGreaterThanOrEqual(32);expect(knownDevelopmentSecrets.has(secret)).toBe(false);}
- expect(configuration({}).sessionSecret).toBe(c.sessionSecret);
- expect(configuration({TOI_SESSION_SECRET:'dev-session-secret-change-me'}).sessionSecret).toBe(c.sessionSecret);
+ expect(configuration({NODE_ENV:'development'}).sessionSecret).toBe(c.sessionSecret);
+ expect(configuration({NODE_ENV:'development',TOI_SESSION_SECRET:'dev-session-secret-change-me'}).sessionSecret).toBe(c.sessionSecret);
 });
 test('H1 actual main process exits before listen with unsafe production configuration',()=>{
  for(const env of [ {...production,TOI_SESSION_SECRET:'toi-dev-session-secret-change-before-production'}, {...production,TOI_DEV_AUTH_ENABLED:'true'}, {...production,TOI_DEV_ADMIN_TOKEN:'bad'}]) {
@@ -95,27 +95,97 @@ test.each(invalidPaths)('H2 raw HTTP path %s is 400 without contacting upstream'
  expect(status).toBe(400);expect(seen).toHaveLength(before);
 });
 test('H2 template variables cannot contain only dots; safe path matches exact upstream pathname',async()=>{
- expect((await fetch(base+'/proxy/reports/reports/.../admin',{headers:headers()})).status).toBe(404);
+ expect((await fetch(base+'/proxy/reports/reports/.../admin',{headers:headers()})).status).toBe(400);
  response={ok:true};expect((await fetch(base+'/proxy/reports/reports/%2532%2530%2532%2536/09?size=1',{headers:headers()})).status).toBe(200);expect(seen.at(-1)).toBe('/reports/2026/09?size=1');
 });
 test('M1 case-insensitive keys and terminal objects/arrays are recursively masked, drift detected and audited',async()=>{
  response={ITEMS:[{Phone:'010-1234-5678',phone:{number:'010-1234-5678',nested:['010-1234-5678']},contact:{phone:'010-1234-5678'},phones:['010-1234-5678']}],extra:'email test@example.com rrn 900101-1234567 account 110-123-456789'};
  const r=await fetch(base+'/proxy/reports/customers',{headers:headers()});expect(r.status).toBe(200);const text=await r.text();
- for(const pii of ['010-1234-5678','test@example.com','900101-1234567','110-123-456789']) expect(text).not.toContain(pii);
+ expect(text).not.toContain('010-1234-5678');
+ expect(JSON.parse(text).extra).toBe((response as any).extra);
  expect(JSON.parse(text).ITEMS[0].phone.nested).toEqual(['010-****-5678']);
- const audit=(await store.audit('p',1))[0];expect(audit.policyWarnings).toEqual(['unregistered_pii_field']);
- expect(audit.maskedFields).toEqual(['/ITEMS/0/Phone','/ITEMS/0/contact/phone (detected)','/ITEMS/0/phone/nested/0','/ITEMS/0/phone/number','/ITEMS/0/phones/0 (detected)','/extra (detected)']);
+ const audit=(await store.audit('p',1))[0];expect(audit.policyWarnings).toEqual(['unregistered_pii_field','possible_unregistered_pii']);
+ expect(audit.maskedFields).toEqual(['/ITEMS/0/Phone','/ITEMS/0/contact/phone (detected)','/ITEMS/0/phone/nested/0','/ITEMS/0/phone/number','/ITEMS/0/phones/0 (detected)']);
 });
 test('M1 unmatched rules warn; whole response and none rules still scan residual PII',async()=>{
  response={message:'01012345678'};await fetch(base+'/proxy/reports/customers',{headers:headers()});
- expect((await store.audit('p',1))[0].policyWarnings).toEqual(['unregistered_pii_field','mask_rules_unmatched']);
+ expect((await store.audit('p',1))[0].policyWarnings).toEqual(['possible_unregistered_pii','mask_rules_unmatched']);
  expect(maskJson({plain:true},{'/phone':'phone'}).policyWarnings).toEqual(['mask_rules_unmatched']);
- expect(maskJson(['test@example.com','9001011234567','110123456789'],{}).maskedFields).toHaveLength(3);
+ expect(maskJson(['test@example.com','9001011234567','110123456789'],{})).toEqual({value:['test@example.com','9001011234567','110123456789'],maskedFields:[],policyWarnings:['possible_unregistered_pii']});
  expect(maskJson({phone:['01012345678']},{'/phone':'phone'}).maskedFields).toEqual(['/phone/0']);
  expect(maskJson({phone:'01012345678'},{'/phone':'none'}).policyWarnings).toEqual(['unregistered_pii_field']);
 });
 test('M1 non-JSON PII is blocked with audited detection and no raw response',async()=>{
  contentType='text/plain';response='contact 010-1234-5678 test@example.com';
- try {const r=await fetch(base+'/proxy/reports/customers',{headers:headers()});expect(r.status).toBe(502);expect(await r.text()).toBe('{"error":"UPSTREAM_PII_RESPONSE"}');const audit=(await store.audit('p',1))[0];expect(audit.policyWarnings).toEqual(['unregistered_pii_field']);expect(audit.maskedFields).toEqual(['/ (detected)']);expect(audit.decision).toBe('denied');}
+ try {const r=await fetch(base+'/proxy/reports/customers',{headers:headers()});expect(r.status).toBe(502);expect(await r.text()).toBe('{"error":"UPSTREAM_PII_RESPONSE"}');const audit=(await store.audit('p',1))[0];expect(audit.policyWarnings).toEqual(['possible_unregistered_pii']);expect(audit.maskedFields).toEqual([]);expect(audit.decision).toBe('denied');}
  finally {contentType='application/json';}
+});
+
+const guardedEnvironments = ['Production', 'prod', 'staging', 'production ', '', undefined];
+test.each(guardedEnvironments)('N5 NODE_ENV=%s applies production guards', NODE_ENV => {
+ expect(() => configuration({NODE_ENV})).toThrow();
+ expect(() => configuration({...production,NODE_ENV,TOI_DEV_AUTH_ENABLED:'true'})).toThrow();
+ expect(() => configuration({...production,NODE_ENV,TOI_DEV_ADMIN_TOKEN:'leftover'})).toThrow();
+ expect(configuration({...production,NODE_ENV}).devAuth).toBe(false);
+});
+test.each(['development','test'])('N5 %s development auth requires exact opt-in', NODE_ENV => {
+ for(const TOI_DEV_AUTH_ENABLED of [undefined,'false','TRUE','true ','']) expect(configuration({NODE_ENV,TOI_DEV_AUTH_ENABLED}).devAuth).toBe(false);
+ expect(configuration({NODE_ENV,TOI_DEV_AUTH_ENABLED:'true'}).devAuth).toBe(true);
+});
+test.each([
+ {TOI_CAPABILITY_SECRET:production.TOI_SESSION_SECRET},
+ {TOI_UPSTREAM_SERVICE_TOKEN:production.TOI_SESSION_SECRET},
+ {TOI_UPSTREAM_SERVICE_TOKEN:production.TOI_CAPABILITY_SECRET},
+ {TOI_CAPABILITY_SECRET:production.TOI_SESSION_SECRET,TOI_UPSTREAM_SERVICE_TOKEN:production.TOI_SESSION_SECRET},
+])('N5 production requires independent secrets: %j', overrides => {
+ expect(() => configuration({...production,...overrides})).toThrow('three distinct secrets');
+});
+const negativePii = [
+ ['date','2026-08-01'], ['minute','2026-08-01T00:00'], ['createdAt','2026-08-01T00:00:00.000Z'],
+ ['offset','2026-08-01T00:00:00.000+09:00'], ['uuid','01012345-6789-1234-8123-110123456789'],
+ ['epoch','1785542400000'], ['amount','110123456789.25'], ['amount','1,101,234,567.89'],
+ ['orderId','110123456789'], ['invoiceId','01012345678'], ['trackingNo','110-123-456789'],
+] as const;
+test.each(negativePii)('N2 preserves non-PII %s=%s', (key,value) => {
+ const input = {[key]:value};
+ const masked=maskJson(input,{});
+ expect(masked.value).toEqual(input);expect(masked.maskedFields).toEqual([]);
+ if (['orderId','invoiceId','trackingNo'].includes(key)) expect(masked.policyWarnings).toEqual(['possible_unregistered_pii']);
+ else expect(masked.policyWarnings).toEqual([]);
+});
+test.each(negativePii.slice(0,8))('N2 token exclusions also protect hinted fields: %s', (_key,value) => {
+ expect(maskJson({acct:value},{})).toEqual({value:{acct:value},maskedFields:[],policyWarnings:[]});
+});
+test.each(['Phone','TEL','mobile_number','rrn','SSN','residentId','ACCOUNT','acct','emailAddress'])('N2 residual replacement requires key hint %s', key => {
+ const value='010-1234-5678';
+ expect(maskJson({[key]:value},{})).toEqual({value:{[key]:'010-****-5678'},maskedFields:[`/${key} (detected)`],policyWarnings:['unregistered_pii_field']});
+});
+test('N2 unhinted pattern-only response is preserved and only a possible warning is audited',async()=>{
+ response={memo:'email test@example.com rrn 900101-1234567 account 110-123-456789'};
+ const api=store.apis.get('reports')!;const originalMask=api.policy.mask;api.policy.mask={};
+ try {
+  const r=await fetch(base+'/proxy/reports/customers',{headers:headers()});expect(r.status).toBe(200);expect(await r.json()).toEqual(response);
+  const audit=(await store.audit('p',1))[0];expect(audit.maskedFields).toEqual([]);expect(audit.policyWarnings).toEqual(['possible_unregistered_pii']);
+ }finally{api.policy.mask=originalMask;}
+});
+test.each(['..;/admin','..%3b/admin','2024./admin.','.../admin','2024/a.b','2024/a:b','2024/a@b','2024/a+b','%EF%BC%8E%EF%BC%8E/admin'])('N4 path characters %s are 400 without upstream access',async suffix=>{
+ const before=seen.length;
+ const status=await new Promise<number>((resolve,reject)=>{const req=request(base,{path:'/proxy/reports/reports/'+suffix,headers:headers()},r=>{r.resume();r.on('end',()=>resolve(r.statusCode!));});req.on('error',reject);req.end();});
+ expect(status).toBe(400);expect(seen).toHaveLength(before);
+});
+test.each(['','/'])('N3 and L3 registered base prefix survives with trailing slash %j and Unicode id',async trailing=>{
+ const prefixed=cfg.upstreamUrl+'/tenant-a/api'+trailing;cfg.upstreamAllowlist.push(prefixed);
+ const registration={...store.apis.get('reports')!,apiId:'tenant',upstreamBaseUrl:prefixed,openapi:{openapi:'3.1.0',paths:{'/items/{id}':{get:{}}}}};
+ expect((await post('/apis',registration,{Authorization:`Bearer ${admin}`})).status).toBe(201);
+ response={ok:true};
+ for (const id of ['42','홍길동','abc_123-xyz']) {
+  const r=await fetch(base+'/proxy/tenant/items/'+encodeURIComponent(id)+'?page=1',{headers:headers()});
+  expect(r.status).toBe(200);expect(seen.at(-1)).toBe('/tenant-a/api/items/'+encodeURIComponent(id)+'?page=1');
+ }
+});
+test('N2 exclusions preserve tokens beside PII but do not override registered rules or email addresses',()=>{
+ const value='2026-08-01T00:00:00.000Z 1785542400000 123.45 010-1234-5678';
+ expect(maskJson({phone:value},{}).value).toEqual({phone:'2026-08-01T00:00:00.000Z 1785542400000 123.45 010-****-5678'});
+ expect(maskJson({ssn:'9001011234567'},{'/ssn':'rrn'}).value).toEqual({ssn:'900101-*******'});
+ for (const email of ['123.45@example.com','123.45.67@example.com','123.45+tag@example.com']) expect(maskJson({email},{}).value).toEqual({email:'12***@example.com'});
 });

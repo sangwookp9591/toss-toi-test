@@ -1,0 +1,12 @@
+production + 유효 설정(기준)                       ACCEPTED {"devAuth":false,"devAdminToken":false,"sessionFromEnv":true,"ephemeralStableInProcess":true}
+production + 과거 저장소 기본 시크릿                   REJECTED Production requires non-default secrets of at least 32 bytes
+production + TOI_DEV_AUTH_ENABLED 미설정        REJECTED Production requires TOI_DEV_AUTH_ENABLED=false
+production + TOI_DEV_ADMIN_TOKEN=""          REJECTED Production forbids TOI_DEV_ADMIN_TOKEN
+production + 세 시크릿 동일 값                      REJECTED Production requires three distinct secrets
+production + 저엔트로피 32바이트 "a"x32              ACCEPTED {"devAuth":false,"devAdminToken":false,"sessionFromEnv":true,"ephemeralStableInProcess":true}
+production + TOI_DEV_AUTH_ENABLED=FALSE(대문자) REJECTED Production requires TOI_DEV_AUTH_ENABLED=false
+NODE_ENV=Production (대문자 P)                  REJECTED Production requires TOI_DEV_AUTH_ENABLED=false
+NODE_ENV=prod                                REJECTED Production requires TOI_DEV_AUTH_ENABLED=false
+NODE_ENV="production " (공백)                  REJECTED Production requires non-default secrets of at least 32 bytes
+NODE_ENV=staging, 시크릿 없음                     REJECTED Production requires non-default secrets of at least 32 bytes
+NODE_ENV 미설정, 시크릿 없음 (단독 기동)                 REJECTED Production requires non-default secrets of at least 32 bytes

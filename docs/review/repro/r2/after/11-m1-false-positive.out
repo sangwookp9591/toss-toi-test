@@ -1,0 +1,5 @@
+== mock-backend 원본 형식: createdAt = 2026-08-0NT00:00:00.000Z (services/mock-backend/src/data.ts:17)
+== GET /proxy/customers/customers/C002/orders (등록된 연산)
+{"items":[{"id":"C002-O1","customerId":"C002","total":10200,"status":"completed","createdAt":"2026-08-01T00:00:00.000Z"},{"id":"C002-O2","customerId":"C002","total":15200,"status":"completed","createdAt":"2026-08-02T00:00:00.000Z"},{"id":"C002-O3","customerId":"C002","total":20200,"status":"pending","createdAt":"2026-08-03T00:00:00.000Z"}]}
+== 감사 기록
+{"path":"/customers/C002/orders","maskedFields":[],"policyWarnings":["mask_rules_unmatched"]}

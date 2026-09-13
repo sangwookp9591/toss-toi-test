@@ -19,7 +19,7 @@ function normalizePath(rawPath: string): string {
     if (decoded === pathname) break;
     pathname = decoded;
   }
-  if (!pathname.startsWith('/') || pathname.startsWith('//') || pathname.includes('\\') || pathname.includes('%') || pathname.split('/').some(part => ['.', '..'].includes(part)) || /[?#\u0000-\u0020\u007f]/.test(pathname)) throw new HttpError(400, 'INVALID_PATH');
+  if (!pathname.startsWith('/') || pathname.startsWith('//') || pathname.includes('\\') || pathname.includes('%') || pathname.split('/').some(part => /;|\.$/.test(part.normalize('NFKC'))) || /[?#\u0000-\u0020\u007f]/.test(pathname)) throw new HttpError(400, 'INVALID_PATH');
   return pathname;
 }
 const writes = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
@@ -31,7 +31,11 @@ async function body(req: IncomingMessage): Promise<unknown> {
 function allowedPath(api: RegisteredApi, pathname: string, method: string): boolean {
   return Object.entries(api.openapi.paths as Record<string, Record<string, unknown>>).some(([pattern, operations]) => {
     const expected = pattern.split('/'), actual = pathname.split('/');
-    return expected.length === actual.length && expected.every((part, index) => /^\{[^{}]+\}$/.test(part) ? Boolean(actual[index]) && !/^\.+$/.test(actual[index]) : part === actual[index]) && Boolean(operations[method.toLowerCase()]);
+    if (expected.length !== actual.length || !expected.every((part, index) => /^\{[^{}]+\}$/.test(part) ? Boolean(actual[index]) : part === actual[index]) || !operations[method.toLowerCase()]) return false;
+    for (const [index, part] of expected.entries()) {
+      if (/^\{[^{}]+\}$/.test(part) && !/^[A-Za-z0-9_\-\u0080-\u{10ffff}]+$/u.test(actual[index].normalize('NFKC'))) throw new HttpError(400, 'INVALID_PATH');
+    }
+    return true;
   });
 }
 export function createPolicyProxy(config: PolicyConfig, storage: PolicyStorage) {
@@ -56,8 +60,10 @@ export function createPolicyProxy(config: PolicyConfig, storage: PolicyStorage) 
       if (api.policy.requireReason && (!reason || reason.length < 5)) throw new HttpError(428, 'REASON_REQUIRED');
       pathname = normalizePath(rawPath);
       if (!allowedPath(api, pathname, method)) throw new HttpError(404, 'OPERATION_NOT_REGISTERED');
-      const upstreamUrl = new URL(pathname, api.upstreamBaseUrl);
-      if (upstreamUrl.pathname !== pathname) throw new HttpError(400, 'INVALID_PATH');
+      const upstreamUrl = new URL(api.upstreamBaseUrl);
+      const expectedPath = upstreamUrl.pathname.replace(/\/+$/, '') + pathname.split('/').map(encodeURIComponent).join('/');
+      upstreamUrl.pathname = expectedPath;
+      if (upstreamUrl.pathname !== expectedPath) throw new HttpError(400, 'INVALID_PATH');
       upstreamUrl.search = query;
       const payload = writes.has(method) && method !== 'DELETE' ? await body(req) : undefined;
       const upstream = await fetch(upstreamUrl, { method, headers: { 'X-Service-Token': config.upstreamToken, Accept: 'application/json', ...(payload !== undefined ? { 'Content-Type': 'application/json' } : {}) }, body: payload === undefined ? undefined : JSON.stringify(payload), signal: AbortSignal.timeout(5000), redirect: 'error' });
@@ -65,8 +71,8 @@ export function createPolicyProxy(config: PolicyConfig, storage: PolicyStorage) 
       if (!upstream.headers.get('content-type')?.includes('application/json')) {
         const detected = scanPii(await upstream.text());
         maskedFields = detected.maskedFields;
-        if (maskedFields.length) policyWarnings.push('unregistered_pii_field');
-        throw new HttpError(502, maskedFields.length ? 'UPSTREAM_PII_RESPONSE' : 'UPSTREAM_RESPONSE_INVALID');
+        policyWarnings = detected.policyWarnings;
+        throw new HttpError(502, policyWarnings.length ? 'UPSTREAM_PII_RESPONSE' : 'UPSTREAM_RESPONSE_INVALID');
       }
       const masked = maskJson(await upstream.json(), api.policy.mask); maskedFields = masked.maskedFields; policyWarnings = masked.policyWarnings; value = masked.value; status = upstream.status;
     } catch (error) {
