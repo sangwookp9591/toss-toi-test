@@ -1,9 +1,15 @@
 import { readFile, writeFile, chmod } from 'node:fs/promises';
+import { volumeCredentialError } from './compose.mjs';
 // Bootstrap runs only in dev-up. Credentials and admin responses are never logged.
 export async function provisionIdentity(envFile, env = process.env) {
   const base = 'http://localhost:8080';
   const auth = await fetch(base + '/realms/master/protocol/openid-connect/token', { method: 'POST', body: new URLSearchParams({ grant_type: 'password', client_id: 'admin-cli', username: 'toi-bootstrap', password: env.TOI_KEYCLOAK_ADMIN_PASSWORD }), signal: AbortSignal.timeout(5000) });
-  if (!auth.ok) throw new Error('Keycloak bootstrap authentication failed');
+  if (!auth.ok) {
+    const body = await auth.json().catch(() => ({}));
+    if (auth.status === 401 || (auth.status === 400 && body.error === 'invalid_grant')) throw volumeCredentialError('Keycloak', env);
+    const summary = `Keycloak bootstrap authentication request failed (HTTP ${auth.status})`;
+    throw Object.assign(new Error(summary), { safeSummary: summary });
+  }
   const { access_token } = await auth.json();
   async function admin(path, method = 'GET', body) {
     const response = await fetch(base + '/admin/realms/toi' + path, { method, headers: { Authorization: `Bearer ${access_token}`, 'Content-Type': 'application/json' }, ...(body === undefined ? {} : { body: JSON.stringify(body) }), signal: AbortSignal.timeout(5000) });

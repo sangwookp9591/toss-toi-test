@@ -1,0 +1,95 @@
+TAP version 13
+# Subtest: docker retains project selection while application and install children do not
+ok 1 - docker retains project selection while application and install children do not
+  ---
+  duration_ms: 0.799
+  ...
+# Subtest: up, down, destructive down and storage exec select the same explicit project
+ok 2 - up, down, destructive down and storage exec select the same explicit project
+  ---
+  duration_ms: 0.845375
+  ...
+# Subtest: Keycloak invalid credentials identify retained volume and safe recovery
+ok 3 - Keycloak invalid credentials identify retained volume and safe recovery
+  ---
+  duration_ms: 2.403833
+  ...
+# Subtest: Keycloak invalid_grant on HTTP 400 also identifies mismatched credentials
+ok 4 - Keycloak invalid_grant on HTTP 400 also identifies mismatched credentials
+  ---
+  duration_ms: 0.425708
+  ...
+# Subtest: Keycloak server failure is not mislabeled as a volume mismatch
+ok 5 - Keycloak server failure is not mislabeled as a volume mismatch
+  ---
+  duration_ms: 0.44975
+  ...
+# Subtest: MinIO rejects bad root credentials before any provisioning and hides raw server errors
+ok 6 - MinIO rejects bad root credentials before any provisioning and hides raw server errors
+  ---
+  duration_ms: 0.517667
+  ...
+# Subtest: default diagnostic uses the default project volume
+ok 7 - default diagnostic uses the default project volume
+  ---
+  duration_ms: 0.079458
+  ...
+# Subtest: mc authentication errors identify the compose volume; other failures remain distinct
+ok 8 - mc authentication errors identify the compose volume; other failures remain distinct
+  ---
+  duration_ms: 0.105917
+  ...
+# Subtest: all app, service and runtime package manifests have lockfile install targets
+ok 9 - all app, service and runtime package manifests have lockfile install targets
+  ---
+  duration_ms: 10.237167
+  ...
+# Subtest: a newly added runtime package fails the install inventory check
+ok 10 - a newly added runtime package fails the install inventory check
+  ---
+  duration_ms: 3.952583
+  ...
+# Subtest: known failures retain stage/cause while arbitrary subprocess text stays out of summaries
+ok 11 - known failures retain stage/cause while arbitrary subprocess text stays out of summaries
+  ---
+  duration_ms: 0.936625
+  ...
+# Subtest: command logs redact configured secrets, authorization and URL credentials
+ok 12 - command logs redact configured secrets, authorization and URL credentials
+  ---
+  duration_ms: 0.3515
+  ...
+# Subtest: Keycloak import fixes PKCE, audiences, roles and TTL without plaintext credentials
+ok 13 - Keycloak import fixes PKCE, audiences, roles and TTL without plaintext credentials
+  ---
+  duration_ms: 1.384917
+  ...
+# Subtest: each runtime receives exactly its own allowlist and no inherited credentials
+ok 14 - each runtime receives exactly its own allowlist and no inherited credentials
+  ---
+  duration_ms: 0.856292
+  ...
+# Subtest: download keys are random, persistent, and 32 bytes; environment file is private
+ok 15 - download keys are random, persistent, and 32 bytes; environment file is private
+  ---
+  duration_ms: 3.859875
+  ...
+# Subtest: managed deps-builder never reloads root dotenv secrets
+ok 16 - managed deps-builder never reloads root dotenv secrets
+  ---
+  duration_ms: 155.776417
+  ...
+# Subtest: managed mock-backend refuses startup with absent tokens despite root dotenv file
+ok 17 - managed mock-backend refuses startup with absent tokens despite root dotenv file
+  ---
+  duration_ms: 159.348084
+  ...
+1..17
+# tests 17
+# suites 0
+# pass 17
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 409.968792

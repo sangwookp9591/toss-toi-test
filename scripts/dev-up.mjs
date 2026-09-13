@@ -1,4 +1,5 @@
 import { serviceEnvironment, commandEnvironment } from './service-env.mjs';
+import { composeArguments, composeProject, defaultComposeProject } from './compose.mjs';
 import { provisionStorage } from './storage.mjs';
 import { request as httpRequest } from 'node:http';
 import { provisionIdentity } from './keycloak.mjs';
@@ -54,6 +55,9 @@ export async function checkInstallDirectories(root) {
   if (manifest.name !== lock.name) throw new Error(`Lockfile package mismatch: ${dir}`);
  }
  return installDirectories;
+}
+export function devUpArguments(env = process.env) {
+ return composeArguments(['up', '-d'], env);
 }
 async function main() {
  const root=fileURLToPath(new URL('..',import.meta.url)), run=path.join(root,'scripts/.run');
@@ -111,7 +115,9 @@ async function main() {
   await ensureDevelopmentSecrets(path.join(root,'.env'));
   await checkInstallDirectories(root);
  });
- await stage('Docker Compose',()=>command('docker',['compose','-f','infra/docker-compose.yml','up','-d'],root,'docker'));
+ const project = composeProject();
+ if (project !== defaultComposeProject) log(`Docker Compose project: ${project}`);
+ await stage('Docker Compose',()=>command('docker',devUpArguments(),root,'docker'));
  await stage('Keycloak identity provisioning', async()=>{ await wait('http://localhost:8080/realms/toi/.well-known/openid-configuration'); await provisionIdentity(path.join(root,'.env')); });
  await stage('registry and storage health',()=>Promise.all([wait('http://localhost:4873/-/ping'),wait('http://localhost:9000/minio/health/live')]));
  // Each directory has its own lockfile, so installs are independent; run a few at a time.

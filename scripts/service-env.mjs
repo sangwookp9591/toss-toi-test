@@ -22,6 +22,6 @@ export function serviceEnvironment(name, env = process.env) {
   return Object.fromEntries(Object.entries(selected).filter(([, value]) => value !== undefined));
 }
 export function commandEnvironment(kind, env = process.env) {
-  const keys = kind === 'docker' ? ['DOCKER_HOST', 'DOCKER_CONTEXT', 'DOCKER_CONFIG', 'TOI_KEYCLOAK_ADMIN_PASSWORD', ...storageKeys] : kind === 'registry' ? ['TOI_REGISTRY_URL', 'TOI_REGISTRY_TOKEN'] : kind === 'publish' ? ['TOI_REGISTRY_URL', 'TOI_REGISTRY_TOKEN'] : [];
+  const keys = kind === 'docker' ? ['DOCKER_HOST', 'DOCKER_CONTEXT', 'DOCKER_CONFIG', 'COMPOSE_PROJECT_NAME', 'TOI_KEYCLOAK_ADMIN_PASSWORD', ...storageKeys] : kind === 'registry' ? ['TOI_REGISTRY_URL', 'TOI_REGISTRY_TOKEN'] : kind === 'publish' ? ['TOI_REGISTRY_URL', 'TOI_REGISTRY_TOKEN'] : [];
   return { ...selectEnv(keys, env), TOI_MANAGED_ENV: '1' };
 }

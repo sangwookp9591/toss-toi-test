@@ -67,6 +67,19 @@ node scripts/dev-up.mjs
 
 기동 출력에는 단계별 소요 시간이 표시된다. 실패하면 `registry setup failed: fake-tds build failed: tsc not found`처럼 실패 단계와 원인 요약, 로그 경로를 표시한다. 전체 기동 로그는 `scripts/.run/dev-up.log`, 서비스별 로그는 `scripts/.run/<서비스 이름>.log`, 직접 시작한 프로세스 목록은 `scripts/.run/processes.json`에 보관한다. 기동 로그는 비밀값을 가리고 레지스트리 설정 오류는 안전한 원인 요약만 출력한다. 원인을 해결한 뒤 같은 dev-up 명령을 다시 실행한다.
 
+여러 클론의 Docker 데이터는 `COMPOSE_PROJECT_NAME`으로 분리한다. 기본값은 `toi-lite`이며, 다른 이름은 기동 로그에 표시된다. 시작과 종료에 같은 이름을 사용한다(또는 루트 `.env`에 저장한다). dev-up·dev-down·MinIO `mc` 실행은 모두 명시적인 `docker compose -p <이름>`을 사용한다. 고정된 `infra/docker-compose.yml`을 실행하고 profiles를 정의하지 않으므로 `COMPOSE_FILE`·`COMPOSE_PROFILES`는 지원하지 않는다. 프로젝트명은 포트를 바꾸지 않으므로 전체 스택은 한 번에 하나만 실행한다.
+
+```sh
+COMPOSE_PROJECT_NAME=toi-my-clone node scripts/dev-up.mjs
+COMPOSE_PROJECT_NAME=toi-my-clone node scripts/dev-down.mjs
+# 이 프로젝트의 데이터까지 폐기할 때만 사용
+COMPOSE_PROJECT_NAME=toi-my-clone node scripts/dev-down.mjs --volumes
+```
+
+Keycloak admin 또는 MinIO root 인증이 실패하면 대상 `<프로젝트>_keycloak-data` / `<프로젝트>_minio-data` 볼륨과 복구 명령을 표시한다. Keycloak의 기존 볼륨은 최초 bootstrap admin 비밀번호를 유지하므로 `.env` 변경만으로 비밀번호가 바뀌지 않는다. MinIO는 실행 중인 서버의 root 자격 증명과 `MINIO_ENDPOINT`도 확인한다. 기존 자격 증명을 복원하거나, 데이터를 폐기해도 된다면 같은 프로젝트의 `dev-down --volumes` 후 다시 시작하거나, 다른 `COMPOSE_PROJECT_NAME`으로 새 볼륨을 사용한다. 비밀번호는 로그에 출력하지 않고 볼륨도 자동 삭제하지 않는다.
+
+감사 버킷의 COMPLIANCE 객체는 보존 기한 전 S3/`mc` 삭제가 거부된다. 보존 만료를 기다리면 객체를 삭제할 수 있다. 개발 데이터를 전부 폐기하는 `dev-down --volumes`는 컨테이너를 내린 뒤 Docker 볼륨 자체를 제거하므로 S3 object lock의 보호 대상이 아니다. 볼륨 사용 중 오류가 나면 해당 프로젝트의 남은 컨테이너를 확인하고 종료한 뒤 같은 명령을 재시도하며, 다른 프로젝트 볼륨은 제거하지 않는다.
+
 [스튜디오](http://localhost:5173)에서 Keycloak 사용자 alice로 로그인한다. 비밀번호는 dev-up이 무작위 생성한 `.env`의 `TOI_PASSWORD_ALICE`를 확인한다(bob/carol/dana/root도 `TOI_PASSWORD_*`). 로그인 후 프로젝트를 만들고 “고객 목록 화면 만들어줘”를 입력한다. 조회 사유 질문에 답하면 생성된 코드와 미리보기를 볼 수 있다. 조회 사유를 입력한 뒤 조회하면 마스킹된 고객 데이터가 표시된다. 코드 편집 후 “저장하고 반영”으로 저장하며 오류가 있으면 마지막 정상 화면을 유지한다. 쓰기 작업은 기본 차단되고 “쓰기 테스트 허용”을 켰을 때 현재 프로젝트의 API에 2분간 허용된다. 프리뷰에는 `/preview-sessions`로 발급한 프로젝트 한정 viewer 세션과 capability만 전달하며 Keycloak 토큰은 전달하지 않는다. `/dev/session`은 제거했다.
 
 프로젝트 viewer는 열기·preview read, editor는 생성·저장·preview write, owner는 멤버 관리·live 승인 요청을 할 수 있다. 비멤버는 404이며 멤버 제거는 다음 proxy 요청부터 적용된다. live 쓰기는 owner 요청 후 해당 API api-owner(dana)의 4-eyes 승인이 필요하고 본인 승인은 금지한다. 승인은 기본 5분 후 만료된다. preview/live는 서로 다른 upstream 경로·데이터셋·서비스 토큰을 사용한다. 자세한 API와 역할표는 [policy-proxy README](services/policy-proxy/README.md)에 있다.

@@ -3,12 +3,33 @@ import { spawn } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import { setTimeout as delay } from 'node:timers/promises';
 import { commandEnvironment } from './service-env.mjs';
+import { composeArguments, repositoryRoot, volumeCredentialError } from './compose.mjs';
 const quote = value => "'" + String(value).replaceAll("'", "'\\''") + "'";
+export function storageProvisioningError(code, env = process.env) {
+  if (code === 42) return volumeCredentialError('MinIO', env);
+  const summary = code === 43 ? 'MinIO container alias setup failed; check server health and root configuration' : 'Storage bucket/user provisioning failed';
+  return Object.assign(new Error(summary), { safeSummary: summary });
+}
+export async function verifyStorageCredentials(env = process.env, client) {
+  if (!client) {
+    const require = createRequire(new URL('../services/deps-builder/package.json', import.meta.url));
+    const { Client } = require('minio');
+    const endpoint = new URL(env.MINIO_ENDPOINT ?? 'http://localhost:9000');
+    client = new Client({ endPoint: endpoint.hostname, port: Number(endpoint.port || (endpoint.protocol === 'https:' ? 443 : 80)), useSSL: endpoint.protocol === 'https:', accessKey: env.MINIO_ROOT_USER ?? 'toi', secretKey: env.MINIO_ROOT_PASSWORD ?? 'toi-local-secret' });
+  }
+  try { await client.listBuckets(); }
+  catch (error) {
+    if (['SignatureDoesNotMatch', 'InvalidAccessKeyId', 'AccessDenied', 'InvalidToken'].includes(error.code)) throw volumeCredentialError('MinIO', env);
+    const summary = 'MinIO admin connectivity check failed; check MINIO_ENDPOINT and server health';
+    throw Object.assign(new Error(summary), { safeSummary: summary });
+  }
+}
 // Credentials travel on stdin, never command arguments or diagnostic output.
 export async function provisionStorage(env = process.env) {
   const downloads = env.TOI_DOWNLOAD_BUCKET, audit = env.TOI_AUDIT_BUCKET;
   if (![downloads, audit].every(name => /^[a-z0-9][a-z0-9-]{2,62}$/.test(name ?? '')) || downloads === audit) throw new Error('Invalid storage bucket configuration');
   if (!env.TOI_POLICY_MINIO_USER || !env.TOI_POLICY_MINIO_PASSWORD) throw new Error('Policy storage credentials required');
+  await verifyStorageCredentials(env);
   const policy = { Version: '2012-10-17', Statement: [
     { Effect: 'Allow', Action: ['s3:ListBucket', 's3:GetBucketLocation', 's3:GetBucketObjectLockConfiguration'], Resource: [`arn:aws:s3:::${downloads}`, `arn:aws:s3:::${audit}`] },
     { Effect: 'Allow', Action: ['s3:GetObject', 's3:PutObject', 's3:DeleteObject'], Resource: [`arn:aws:s3:::${downloads}/*`] },
@@ -18,7 +39,10 @@ export async function provisionStorage(env = process.env) {
 config_dir=$(mktemp -d)
 trap 'rm -rf "$config_dir"' EXIT
 export MC_CONFIG_DIR="$config_dir"
-mc alias set local http://127.0.0.1:9000 ${quote(env.MINIO_ROOT_USER ?? 'toi')} ${quote(env.MINIO_ROOT_PASSWORD ?? 'toi-local-secret')} >/dev/null
+if ! mc --json alias set local http://127.0.0.1:9000 ${quote(env.MINIO_ROOT_USER ?? 'toi')} ${quote(env.MINIO_ROOT_PASSWORD ?? 'toi-local-secret')} >"$config_dir/auth.json" 2>&1; then
+  if grep -Eq 'SignatureDoesNotMatch|InvalidAccessKeyId|AccessDenied|InvalidToken' "$config_dir/auth.json"; then exit 42; fi
+  exit 43
+fi
 mc mb --ignore-existing ${quote('local/' + downloads)} >/dev/null
 mc mb --ignore-existing --with-lock ${quote('local/' + audit)} >/dev/null
 mc admin user add local ${quote(env.TOI_POLICY_MINIO_USER)} ${quote(env.TOI_POLICY_MINIO_PASSWORD)} >/dev/null
@@ -27,9 +51,9 @@ mc admin policy create local toi-policy-storage "$config_dir/policy.json" >/dev/
 mc admin policy attach local toi-policy-storage --user ${quote(env.TOI_POLICY_MINIO_USER)} >/dev/null
 `;
   await new Promise((resolve, reject) => {
-    const child = spawn('docker', ['compose', '-f', 'infra/docker-compose.yml', 'exec', '-T', 'minio', 'sh'], { env: commandEnvironment('docker', env), stdio: ['pipe', 'ignore', 'ignore'] });
+    const child = spawn('docker', composeArguments(['exec', '-T', 'minio', 'sh'], env), { cwd: repositoryRoot, env: commandEnvironment('docker', env), stdio: ['pipe', 'ignore', 'ignore'] });
     child.on('error', () => reject(new Error('Storage provisioning process failed')));
-    child.on('close', code => code === 0 ? resolve() : reject(new Error('Storage bucket/user provisioning failed')));
+    child.on('close', code => code === 0 ? resolve() : reject(storageProvisioningError(code, env)));
     child.stdin.on('error', () => {}); child.stdin.end(script);
   });
   // Do not silently accept an older bucket that was created without object lock.

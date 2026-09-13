@@ -1,0 +1,10 @@
+f9b3acf3436b6bc582944edfdc6655d5db5b0479c23685cc48082870ae5855fe	ildong-postgres-1	running	Up 3 days
+0e90ecfb9dc33b8ec5b1659bb0dbc1d57816254f0a67ead6251d336fd364548b	ildong-neo4j-1	running	Up 3 days
+9b6a38116d7f76c48769c1600581715c04153017b8eee3d743e42cfadea0c903	psw-task-a-postgres	running	Up 3 days (healthy)
+8133f60ebbd9df8b9c6a0ebb52e06d9cf0bdcce1dd0bde81a805b13f6755727a	psw-task-e-postgres	running	Up 3 days (healthy)
+13f30e3074fbe0905cff401ec41d0e404e8ab5fabd2a3040bdd2de84dc43d414	psw-task-e-sap-mock	running	Up 3 days (healthy)
+bc0ede2a8d4aaf558b9fcde569eb467bd79d13280658239820e7a4fa0526c420	psw-task-b-sap-mock	running	Up 3 days (healthy)
+7346e545fc3b9116dc57708d22457bec4d3a366a6cad1a5363f91de4fdfc6871	psw-task-b-postgres	running	Up 3 days (healthy)
+d379c1e0a4e269543bcea4c8d77662b85b223a14ab130a733bb2dfc87a326b7e	psw-task-b-neo4j	running	Up 3 days (healthy)
+8b0df73b8a4776b4439abe313ba854b778506c3875bbe1f90c62363f4bea6b92	zivo-postgres	exited	Exited (0) 3 weeks ago
+dd3aef38aeade33d852bddd3fa41c7c2f15dce3255dfb91ad22f3bad623f24ed	zivo-redis	exited	Exited (255) 3 weeks ago

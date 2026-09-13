@@ -1,0 +1,8 @@
+Container inventory and state (ID/name/status/startedAt/finishedAt): unchanged
+Other containers: 10
+Volume list: byte-identical (29 volumes)
+New running-phase containers: toi-f4-verdaccio-1, toi-f4-verdaccio-init-1, toi-f4-minio-1, toi-f4-keycloak-1
+New running-phase volumes: toi-f4_keycloak-data, toi-f4_minio-data, toi-f4_verdaccio-auth, toi-f4_verdaccio-storage
+Final toi-f4 containers/volumes: 0/0
+Final development-port listeners: 0
+Configured secret values found in evidence: 0 (16 values checked)

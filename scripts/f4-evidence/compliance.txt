@@ -1,0 +1,7 @@
+Project: toi-f4
+Volume: toi-f4_minio-data
+Bucket: toi-audit
+Object: f4-volume-cleanup-probe
+COMPLIANCE retain-until: 2026-09-13T14:24:21.536Z
+S3 root version deletion: denied
+Docker volume removal follows in dev-down.txt.
