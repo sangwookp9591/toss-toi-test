@@ -17,3 +17,6 @@ transcript-*.txt
 *.local
 dist/
 .run/
+
+# Playwright failure output
+/test-results/
