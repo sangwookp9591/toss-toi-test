@@ -1,0 +1,12 @@
+== 1. 프리뷰 origin에서 POST /dev/session roles=[viewer,editor,platform-admin] (CORS 응답 헤더 확인)
+Access-Control-Allow-Origin: http://localhost:5174
+status: token issued=true, roles=["viewer","editor","platform-admin"]
+== 2. 같은 origin에서 POST /capabilities mode=write (임의 projectId)
+write capability issued=true, mode=write, ttlSec=3600
+== 3. 현재 C200 status 조회 후 같은 값으로 PATCH (쓰기 판정 통과 여부만 확인)
+current status=inactive
+PATCH /customers/C200 -> HTTP 200
+== 4. platform-admin 세션으로 GET /audit (projectId 필터 없음) → 다른 사용자 기록 열람
+records=56, distinct users=25, users other than review-probe=24, records with reason text=43
+== 5. 비교: 생성 코드가 받는 viewer 세션 + read capability 로는 다른 projectId capability도 발급됨(프로젝트 소속 검증 없음)
+read capability for arbitrary project issued=true, env=live

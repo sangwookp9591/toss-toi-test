@@ -1,0 +1,8 @@
+== A. NODE_ENV 미설정(dev-up.mjs 기본): dev 세션 발급 API 켜짐 + 저장소에 적힌 기본 서명 시크릿 사용
+{"NODE_ENV":null,"startupGuardWouldReject":false,"devAuth":true,"sessionSecretIsRepoDefault":true,"sessionSecretIsRootEnvExample":false,"capabilitySecretIsKnownValue":true}
+== B. NODE_ENV=production + services/policy-proxy/.env.example 그대로 복사 (TOI_DEV_AUTH_ENABLED=true 포함)
+{"NODE_ENV":"production","startupGuardWouldReject":false,"devAuth":true,"sessionSecretIsRepoDefault":true,"sessionSecretIsRootEnvExample":false,"capabilitySecretIsKnownValue":true}
+== C. NODE_ENV=production + 루트 .env.example의 시크릿 + 서비스 토큰만 채움 (TOI_DEV_AUTH_ENABLED 미설정)
+{"NODE_ENV":"production","startupGuardWouldReject":false,"devAuth":false,"sessionSecretIsRepoDefault":false,"sessionSecretIsRootEnvExample":true,"capabilitySecretIsKnownValue":true}
+== D. 저장소에 적힌 기본 시크릿으로 서명한 세션을 실행 중인 7200이 받아들이는가 (/audit 200이면 기본 시크릿으로 기동 중)
+forged platform-admin session with repo default secret -> GET /audit HTTP 200
