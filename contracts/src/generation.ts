@@ -50,7 +50,7 @@ export type GenerationEvent = { seq: number; generationId: string } & (
  * PUT  /projects/:projectId/source        body: { baseRevision, files, packageSet? }
  *   → 200 Project | 409 { error: "conflict", currentRevision }   (CAS)
  * POST /generations                       body: CreateGenerationRequest → 202 { generationId }  (requestId 멱등)
- * GET  /projects/:projectId/generations/active → 200 { generationId, state, lastSeq } | 404 (진행 중 생성 없음)
+ * GET  /projects/:projectId/generations/active → 200 ActiveGeneration { generationId, state, lastSeq, prompt, createdAt } | 404 (진행 중 생성 없음)
  *                                         다른 탭·새 창에서 같은 프로젝트의 진행 중 생성을 발견하는 용도
  * GET  /generations/:id/events            SSE. Last-Event-ID 헤더로 끊긴 지점 이후 replay. 종결 이벤트(done/failed/canceled) 후 종료
  * POST /generations/:id/answers           body: { questionId, answer } → 204
@@ -74,4 +74,8 @@ export interface ActiveGeneration {
   generationId: string;
   state: GenerationState;
   lastSeq: number;
+  /** 생성을 시작한 사용자 요청 원문. 다른 탭에서 대화 첫 메시지를 복원하는 용도 */
+  prompt: string;
+  /** 생성 시작 시각(ISO) */
+  createdAt: string;
 }
