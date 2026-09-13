@@ -142,6 +142,21 @@ export interface EncryptedDownloadRecord {
  * - 감사 로그는 해시 체인 append-only, 레코드마다 fsync. 세그먼트는 객체 저장소에 불변 키로 복제한다.
  *   체인 검증 실패 시 서비스는 새 요청을 거부(fail-closed)하고 /healthz에 degraded를 보고한다.
  * - CORS는 스튜디오 origin과 프리뷰 origin만 허용하고, 프리뷰 origin은 /proxy/*만 허용한다.
+ *   P0-2: 프리뷰 origin은 previewOriginForProject(projectId) 형식만 인정하고, 그 projectId가
+ *   X-Toi-Project·프리뷰 세션 projectId·capability projectId와 모두 같아야 한다. 다르면 403 PREVIEW_ORIGIN_MISMATCH.
+ * - P0-3 다운로드
+ *   - 대상은 등록 API의 GET 경로만, 행 최대 10000. 데이터는 /proxy와 같은 마스킹·잔여 PII 검사를 거친다.
+ *   - 봉투 암호화: 파일마다 새 256비트 데이터 키 AES-256-GCM, 데이터 키는 KEK(AES-256-KW 또는 GCM)로 감싼다.
+ *     KEK는 env(dev-up이 무작위 생성)에서만 읽고 kekId로 회전을 구분한다. 암호문은 객체 저장소(MinIO)에 둔다.
+ *   - GET /downloads/:id는 서명(exp·downloadId·requestedBy에 대한 HMAC) + 만료 60초 + 1회 + Keycloak 토큰 sub === requestedBy를 모두 요구한다.
+ *     실패는 만료·사용됨 410, 서명 불일치 403, 다른 사용자 404.
+ *   - 첫 성공 전달 또는 retainUntil(기본 24시간) 중 먼저 오는 시점에 암호문과 wrappedDataKey를 삭제하고 메타데이터만 남긴다.
+ *   - ZIP은 AES-256(WinZip AE-2) 암호화. ZIP 비밀번호는 24자 이상 무작위, 응답에 한 번만 담고 scrypt 해시만 보관한다.
+ * - P0-3 감사
+ *   - 레코드마다 hash = sha256(canonicalJson(hash 제외 레코드)), prevHash 연결, append 후 fsync(fdatasync).
+ *   - 세그먼트(기본 1000건 또는 5분)를 객체 저장소에 `audit/segments/<firstSeq>-<lastSeq>-<lastHash>.jsonl`로 복제하고 기존 키는 덮어쓰지 않는다.
+ *   - 시작 시와 /audit/verify에서 체인·세그먼트 일치를 검증한다. 불일치면 /healthz 외 모든 요청 503 AUDIT_CHAIN_BROKEN(fail-closed).
+ *   - 복제 실패는 재시도하고 지연을 /healthz에 보고한다(요청은 계속 처리).
  */
 export const POLICY_PROXY_PORT = 7200;
 export const MOCK_BACKEND_PORT = 7300;

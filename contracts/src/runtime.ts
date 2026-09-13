@@ -99,6 +99,42 @@ export interface PreviewRuntime {
  * - 격리 헤더(COOP/COEP) 없이 동작해야 한다.
  */
 
+/**
+ * P0-2 프로젝트별 프리뷰 origin과 CSP
+ *
+ * 프리뷰 origin은 프로젝트마다 다르다. 같은 origin을 공유하면 한 프로젝트의 생성 코드가
+ * 다른 프로젝트 프리뷰의 storage·BroadcastChannel·열린 창에 닿을 수 있다.
+ * `*.localhost`는 브라우저가 loopback으로 해석하고 secure context로 취급한다.
+ */
+export const PREVIEW_PORT = 5174;
+export const PREVIEW_HOST_SUFFIX = ".preview.localhost";
+/** projectId는 UUID(소문자). 그 밖의 값은 거부한다. DNS label: "p-" + 36자 = 38자(≤63) */
+export const PROJECT_ID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+export function previewOriginForProject(projectId: string): string {
+  if (!PROJECT_ID_PATTERN.test(projectId)) throw new Error("invalid projectId for preview origin");
+  return `http://p-${projectId}${PREVIEW_HOST_SUFFIX}:${PREVIEW_PORT}`;
+}
+/** previewOriginForProject의 역함수. 형식이 아니면 null */
+export function projectIdFromPreviewOrigin(origin: string): string | null {
+  const match = /^http:\/\/p-([0-9a-f-]{36})\.preview\.localhost:5174$/.exec(origin);
+  return match && PROJECT_ID_PATTERN.test(match[1]) ? match[1] : null;
+}
+
+/**
+ * 프리뷰 서버(5174) 규칙
+ * - Host 헤더가 `p-<uuid>.preview.localhost:5174`가 아니면 421. 이 포트는 frame 문서와 frame 스크립트만 제공한다
+ *   (스튜디오 번들·벤치·esbuild.wasm·임의 파일 없음). 스튜디오(5173)는 프리뷰 자산을 제공하지 않는다.
+ * - frame 문서 응답 CSP(헤더, document.open 뒤에도 유지되어야 한다). 최소 요구:
+ *     default-src 'none'; connect-src <policy-proxy origin>; script-src 'self' <패키지 자산 origin> data: + 인라인 부트 허용 방식;
+ *     style-src 'self' 'unsafe-inline'; img-src data: blob:; font-src data:; form-action 'none'; base-uri 'none';
+ *     frame-ancestors http://localhost:5173; worker-src 'none'; object-src 'none'
+ *   'unsafe-eval' 금지. connect-src에 'self'·와일드카드 금지(상대 URL 요청도 차단되어야 한다).
+ *   인라인 부트 스크립트·import map 허용은 응답마다 새 nonce 또는 동등한 방식으로 하고, 'unsafe-inline' script는 금지.
+ * - frame의 studio-origins 목록은 스튜디오 origin 하나만 둔다.
+ * - 스튜디오 응답: CSP frame-ancestors 'self', X-Frame-Options: SAMEORIGIN, frame-src는 프리뷰 origin 패턴만.
+ * - PreviewRuntimeOptions.previewOrigin은 previewOriginForProject(projectId)여야 한다. 프로젝트가 바뀌면 런타임을 새로 만든다.
+ */
+
 /** iframe 메시지 프로토콜. 양쪽 모두 event.origin과 event.source를 검증한다. */
 export type ParentToFrame = {
   kind: "load";
