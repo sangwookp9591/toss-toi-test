@@ -18,16 +18,22 @@ export interface RegisteredApi {
   apiId: string;
   name: string;
   description: string;
-  /** 프록시 대상 upstream. 브라우저에 노출하지 않는다. 예: "http://localhost:7300" */
-  upstreamBaseUrl: string;
+  /**
+   * 환경별 upstream. 브라우저에 노출하지 않는다.
+   * preview capability는 preview upstream(합성·샌드박스 데이터)만, live capability는 live upstream만 호출한다.
+   * 예: { preview: { upstreamBaseUrl: "http://localhost:7300/preview" }, live: { upstreamBaseUrl: "http://localhost:7300/live" } }
+   */
+  environments: Record<"preview" | "live", { upstreamBaseUrl: string }>;
+  /** 이 API의 소유 조직 사용자(Keycloak sub). live 쓰기 승인 권한자 */
+  owners: string[];
   /** OpenAPI 3.1 문서 */
   openapi: Record<string, unknown>;
   policy: ApiPolicy;
   schemaVersion: number;
 }
 
-/** 에이전트·스튜디오에 보여 주는 형태. upstreamBaseUrl은 빠진다. */
-export type PublicApi = Omit<RegisteredApi, "upstreamBaseUrl">;
+/** 에이전트·스튜디오에 보여 주는 형태. environments(upstream 주소)는 빠진다. */
+export type PublicApi = Omit<RegisteredApi, "environments">;
 
 export interface CapabilityRequest {
   projectId: string;
@@ -45,7 +51,15 @@ export interface CapabilityClaims extends CapabilityRequest {
 }
 
 export interface AuditRecord {
+  /** 감사 로그 내 순번(1부터, 빈틈 없음) */
+  seq: number;
+  /** 직전 레코드의 hash. 첫 레코드는 64자리 0 */
+  prevHash: string;
+  /** sha256(canonicalJson(이 레코드에서 hash 필드를 뺀 값)) */
+  hash: string;
   ts: string;
+  /** 요청 종류 */
+  action: "proxy" | "capability" | "preview-session" | "approval" | "download-create" | "download-fetch" | "membership-denied";
   user: string;
   projectId: string;
   apiId: string;
@@ -53,31 +67,81 @@ export interface AuditRecord {
   path: string;
   status: number;
   reason?: string;
-  capability: { mode: "read" | "write"; env: "preview" | "live"; jti: string };
+  capability?: { mode: "read" | "write"; env: "preview" | "live"; jti: string };
   maskedFields: string[];
   decision: "allowed" | "denied";
   denyReason?: string;
 }
 
+/** P0-3 다운로드. 서버 보관은 봉투 암호화, 전달은 AES-256 ZIP + 1회 표시 비밀번호 */
+export type DownloadFormat = "csv" | "xlsx";
+export interface DownloadRequest {
+  projectId: string;
+  apiId: string;
+  /** 등록 API의 GET 경로. 예: "/customers?size=200" */
+  path: string;
+  format: DownloadFormat;
+  /** 5자 이상. requireReason과 무관하게 다운로드는 항상 필요 */
+  reason: string;
+}
+export interface DownloadTicket {
+  downloadId: string;
+  /** ZIP 비밀번호. 이 응답에서 한 번만 제공하고 서버는 해시만 보관한다 */
+  zipPassword: string;
+  /** 단기 서명 URL(최대 60초, 1회 사용). 경로와 만료·서명만 담고 비밀은 담지 않는다 */
+  url: string;
+  expiresAt: string;
+  rowCount: number;
+  /** 서버 보관 만료(ISO). 지나면 암호문과 데이터 키를 삭제한다 */
+  retainUntil: string;
+}
+/** 서버 보관 형식(객체 저장소). 데이터는 파일마다 새 256비트 데이터 키로 AES-256-GCM, 데이터 키는 KEK로 감싼다 */
+export interface EncryptedDownloadRecord {
+  downloadId: string;
+  projectId: string;
+  apiId: string;
+  requestedBy: string;
+  format: DownloadFormat;
+  createdAt: string;
+  retainUntil: string;
+  kekId: string;
+  wrappedDataKey: string;
+  iv: string;
+  authTag: string;
+  ciphertextSha256: string;
+  /** scrypt 해시. 평문 비밀번호는 보관하지 않는다 */
+  zipPasswordHash: string;
+  maskedFields: string[];
+  fetchCount: number;
+}
+
 /**
  * HTTP API (services/policy-proxy, 포트 7200)
  *
- * 인증: Authorization: Bearer <dev session JWT> (sub, roles). 로컬 개발용 발급: POST /dev/session {user, roles}
+ * 인증(P0-1, contracts/src/auth.ts): 사용자 요청은 Keycloak 액세스 토큰, 프리뷰는 policy-proxy가 발급한 프리뷰 세션.
+ *   dev session 발급은 제거한다.
  *
- * POST /apis                         body: RegisteredApi  → 201   (roles에 "platform-admin" 필요)
+ * POST /apis                         body: RegisteredApi  → 201   (realm role platform-admin)
  * GET  /apis                         → PublicApi[]
  * GET  /apis/:apiId                  → PublicApi
- * POST /capabilities                 body: CapabilityRequest → { token, claims }  (write는 roles에 "editor" 필요)
+ * POST /preview-sessions             contracts/src/auth.ts
+ * POST /approvals, /approvals/:id/decision, GET /approvals   contracts/src/auth.ts
+ * POST /capabilities                 body: CapabilityRequest → { token, claims }  (프로젝트 역할표, live는 승인 필요)
  * ANY  /proxy/:apiId/*               헤더: Authorization, X-Toi-Project, X-Toi-Capability, [X-Toi-Reason]
- *   판정 순서: 세션 → API 존재 → 역할 → capability(서명·만료·project 일치) → 메서드(쓰기는 mode=write·apiIds 포함·allowWrite)
- *              → requireReason → upstream 호출 → JSON 응답 마스킹 → 감사 기록(허용·거부 모두)
- * GET  /audit?projectId=&limit=      → AuditRecord[]
+ *   판정 순서: 인증 → 멤버십 → API 존재 → capability(서명·만료·sub·project 일치) → 환경(capability.env의 upstream만)
+ *              → 메서드(쓰기는 mode=write·apiIds 포함·allowWrite) → requireReason → upstream → 마스킹 → 감사
+ * POST /downloads                    body: DownloadRequest → DownloadTicket  (editor 이상, read capability 필요, 프리뷰 origin 거부)
+ * GET  /downloads/:id?exp=&sig=      → application/zip (AES-256, 비밀번호는 ticket의 zipPassword). 1회 사용, 만료·서명 검증
+ * GET  /audit?projectId=&limit=      → AuditRecord[]  (자기 기록 또는 project owner·platform-admin)
+ * GET  /audit/verify                 → { ok, lastSeq, lastHash, brokenAt? }  (platform-admin)
  * GET  /healthz
  *
  * 규칙
  * - 쓰기 권한은 요청마다 서버가 판정한다. 클라이언트 플래그를 믿지 않는다.
- * - upstream 자격증명·주소는 응답에 넣지 않는다.
- * - CORS는 프리뷰 origin(5174)과 스튜디오 origin(5173)만 허용한다.
+ * - upstream 자격증명·주소, 데이터 키·KEK·ZIP 비밀번호는 로그·감사·오류 응답에 넣지 않는다.
+ * - 감사 로그는 해시 체인 append-only, 레코드마다 fsync. 세그먼트는 객체 저장소에 불변 키로 복제한다.
+ *   체인 검증 실패 시 서비스는 새 요청을 거부(fail-closed)하고 /healthz에 degraded를 보고한다.
+ * - CORS는 스튜디오 origin과 프리뷰 origin만 허용하고, 프리뷰 origin은 /proxy/*만 허용한다.
  */
 export const POLICY_PROXY_PORT = 7200;
 export const MOCK_BACKEND_PORT = 7300;
