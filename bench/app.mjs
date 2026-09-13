@@ -1,0 +1,5 @@
+export const marker='벤치 고객 목록';
+export const rows=Array.from({length:20},(_,i)=>({id:String(i+1),name:`고객 ${i+1}`,phone:'010-****-5678'}));
+export const main="import {createRoot} from 'react-dom/client';import App from './App';createRoot(document.getElementById('root')).render(<App/>);";
+export function app(privatePackage=false,title=marker){return `${privatePackage?"import {Table} from '@toi/tds';":''}const rows=${JSON.stringify(rows)};export default function App(){return <main><h1>${title}</h1>${privatePackage?`<Table columns={[{key:'id',header:'ID'},{key:'name',header:'이름'},{key:'phone',header:'휴대폰'}]} rows={rows} rowKey="id"/>`:`<table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr><th>ID</th><th>이름</th><th>휴대폰</th></tr></thead><tbody>{rows.map(r=><tr key={r.id}><td>{r.id}</td><td>{r.name}</td><td>{r.phone}</td></tr>)}</tbody></table>`}</main>}`;}
+export const request={entries:['react','react/jsx-runtime','react-dom/client','@toi/tds'],dependencies:{react:'19.3.0','react-dom':'19.3.0','@toi/tds':'1.0.0'}};

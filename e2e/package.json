@@ -1,0 +1,1 @@
+{"name":"@toi/e2e","private":true,"type":"module","scripts":{"test":"playwright test","test:repeat":"playwright test --repeat-each=3"},"devDependencies":{"@playwright/test":"1.63.0"}}

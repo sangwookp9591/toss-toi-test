@@ -1,0 +1,19 @@
+{
+  "name": "@toi/comparison-bench",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "run": "tsx run.ts",
+    "build": "node build.mjs"
+  },
+  "dependencies": {
+    "@codesandbox/sandpack-react": "2.20.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0",
+    "esbuild": "0.28.2",
+    "tsx": "4.23.13"
+  }
+}

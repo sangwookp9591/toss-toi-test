@@ -1,0 +1,68 @@
+{
+  "measuredAt": "2026-09-13T05:50:54.476Z",
+  "environment": {
+    "node": "v22.14.0",
+    "chrome": "153.0.8010.36",
+    "os": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M4"
+  },
+  "request": {
+    "entries": [
+      "react",
+      "react/jsx-runtime",
+      "react-dom/client",
+      "@toi/tds"
+    ],
+    "dependencies": {
+      "react": "19.3.0",
+      "react-dom": "19.3.0",
+      "@toi/tds": "1.0.0"
+    }
+  },
+  "conditions": {
+    "endpoint": "Visible benchmark h1 in preview DOM then 2 requestAnimationFrame callbacks; parent performance.now monotonic clock",
+    "start": "After host helper JS is loaded, before mounting Sandpack or creating PreviewRuntime and requesting dependency set; navigation and host JS download excluded equally",
+    "network": "Local HTTP services; Sandpack public remote bundler and npm CDN over ordinary internet, no artificial throttling; OS, DNS and remote CDN caches not cleared",
+    "sandpack": "New browser context and Network.clearBrowserCache each trial; public React 19.3.0 only, HTML table; bundler server cache cannot be cleared",
+    "toiCold": "New MinIO bucket, empty local Yarn cache and dependency workspace per trial; dependency POST miss must return 202; fresh browser context and cleared HTTP cache; React plus private @toi/tds Table",
+    "toiWarm": "Same dependency artifact; POST hit must return 200; new browser context and cleared HTTP cache; fresh Worker/WASM initialization",
+    "toiEdit": "Same runtime, retained Worker/esbuild context and browser dependency cache; edit source to committed visible marker; no package lookup",
+    "renderDifference": "TOI uses private @toi/tds Table; Sandpack uses equivalent plain HTML table with same 20 masked rows, no private package; not an equal dependency workload"
+  },
+  "samples": [
+    {
+      "repeat": 1,
+      "sandpackColdMs": 1075.8999999910593,
+      "toiColdMs": 2325.0999999940395,
+      "coldHttpStatus": 202,
+      "toiWarmMs": 397.29999999701977,
+      "warmHttpStatus": 200,
+      "toiEditMs": 114.79999999701977
+    },
+    {
+      "repeat": 2,
+      "sandpackColdMs": 885.4000000059605,
+      "toiColdMs": 1942.0999999940395,
+      "coldHttpStatus": 202,
+      "toiWarmMs": 386.8999999910593,
+      "warmHttpStatus": 200,
+      "toiEditMs": 114.29999999701977
+    },
+    {
+      "repeat": 3,
+      "sandpackColdMs": 917.8999999910593,
+      "toiColdMs": 2069.3999999910593,
+      "coldHttpStatus": 202,
+      "toiWarmMs": 396.59999999403954,
+      "warmHttpStatus": 200,
+      "toiEditMs": 131.3999999910593
+    }
+  ],
+  "medians": {
+    "sandpackColdMs": 917.8999999910593,
+    "toiColdMs": 2069.3999999910593,
+    "toiWarmMs": 396.59999999403954,
+    "toiEditMs": 114.79999999701977
+  }
+}

@@ -54,3 +54,28 @@ node run-browser.mjs && node validate.mjs   # 번들 없는 방식·분해 측�
 ## 한계
 
 Apple M4 한 대, 작은 fixture, 3회 중앙값입니다. 큰 모듈 그래프, CSS·asset, 사내 레지스트리, WAN p95, 동시 빌드 경합은 측정하지 못했습니다. 어느 수치도 토스의 1.3초를 독립적으로 재현한 것이 아닙니다. 공개되지 않은 토스 내부 구현은 보고서에서 `unverifiable`로 표시했습니다.
+
+## TOI-lite 실행
+
+Docker Desktop, Node.js 22, npm, 시스템 Google Chrome이 필요하다. Docker를 실행한 뒤 저장소 루트에서 다음 명령을 실행한다.
+
+```sh
+node scripts/dev-up.mjs
+```
+
+스크립트는 Docker Compose의 Verdaccio/MinIO, 사내 패키지 등록, mock-backend(7300), policy-proxy(7200), deps-builder(7100), agent-server(7400), 스튜디오(5173)와 프리뷰 origin(5174)을 순서대로 확인한다. 필요한 패키지는 각 폴더의 lockfile로 설치하며 정상 실행 중인 서비스는 재사용한다. 로그와 직접 시작한 프로세스 목록은 `scripts/.run/`에 보관한다.
+
+[스튜디오](http://localhost:5173)에서 프로젝트를 만들고 “고객 목록 화면 만들어줘”를 입력한다. 조회 사유 질문에 답하면 생성된 코드와 미리보기를 볼 수 있다. 조회 사유를 입력한 뒤 조회하면 마스킹된 고객 데이터가 표시된다. 코드 편집 후 “저장하고 반영”으로 저장하며 오류가 있으면 마지막 정상 화면을 유지한다. 쓰기 작업은 기본 차단되고 “쓰기 테스트 허용”을 켰을 때 현재 프로젝트의 API에 2분간 허용된다. 프리뷰에는 viewer 세션만 전달한다.
+
+기본 에이전트는 키가 필요 없는 mock 모드다. 실제 Claude 모드는 루트 `.env`에 `ANTHROPIC_API_KEY`를 설정하고 `AGENT_MODE=claude node scripts/dev-up.mjs`로 시작한다. 이미 agent-server가 실행 중이면 해당 프로세스를 먼저 종료해야 새 모드가 적용된다. 모델/SDK 설정과 실제 모드 검증 범위는 [agent-server README](services/agent-server/README.md)를 참고한다. 비밀 값은 브라우저 코드에 넣지 않는다.
+
+```sh
+npm --prefix apps/studio run typecheck
+npm --prefix e2e ci
+npm --prefix e2e run test:repeat
+npm --prefix bench ci
+npm --prefix bench run run
+node scripts/dev-down.mjs
+```
+
+E2E는 시스템 Chrome으로 A–F를 세 번 반복한다. 결과와 화면은 [e2e/README.md](e2e/README.md), 비교 조건과 3회 원시 측정값은 [bench/README.md](bench/README.md), 구현 구조는 [스튜디오 README](apps/studio/README.md)에 있다. `dev-down`은 dev-up이 직접 시작한 프로세스와 Docker Compose를 종료하며, 외부에서 시작해 재사용한 서비스는 종료하지 않는다. Docker 볼륨은 보존한다.
