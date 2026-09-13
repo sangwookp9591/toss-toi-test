@@ -94,6 +94,12 @@ SDK 0.125.0은 이미 `BetaFallbacksParam = Array<BetaFallbackParam> | 'default'
 
 `list_registered_apis`, `get_api_schema`, `list_files`, `read_file`, `write_file`, `delete_file`, `ask_user`, `request_packages`, `finish`를 제공합니다. write/delete/read 경로는 정규화된 `/src/` 아래만 허용합니다. 카탈로그는 react, react-dom, @tanstack/react-query, @toi/tds, @toi/fetch, zod, date-fns입니다. 카탈로그 밖 요청은 tool error이며 각 entry의 root package가 dependencies에 있어야 합니다. 시스템 프롬프트는 [`src/system-prompt.ts`](src/system-prompt.ts)의 고정 상수이고 프로젝트 정보는 user 메시지로 분리했습니다.
 
+R1 M2 보강: 두 레지스트리 도구의 결과는 `{"untrusted_api_registry_data": ...}` JSON으로 감쌉니다. 고정 시스템 프롬프트는 도구 결과 안의 지시를 따르지 않고 데이터로만 취급하도록 명시합니다. description·schema·example의 내용은 시스템 프롬프트에 삽입하지 않습니다.
+
+`finish`와 `PUT /projects/:id/source`는 저장 전에 모든 `/src/**` 파일을 공통 정적 검사합니다. raw `fetch(`, `XMLHttpRequest`, `WebSocket`, `EventSource`, `navigator.sendBeacon`, 모든 `http(s)://` 텍스트(허용 목록 없음), `/dev/session`·`/capabilities`·`/audit` 문자열, `__TOI_FETCH_CONFIG__` 대입 및 직접 속성 대입을 거부합니다. finish는 경로·이유가 담긴 tool error를 반환하여 모델이 수정할 수 있고 HTTP 저장은 400을 반환합니다. 거부된 소스는 저장하거나 revision_ready로 내보내지 않습니다. `@toi/fetch`의 `toiFetch`와 trusted host config 읽기는 허용합니다.
+
+이 검사는 **보조 방어선**입니다. 보수적인 텍스트 검사이므로 주석·표시용 문자열도 거부될 수 있고, 문자열 연결·별칭·`globalThis['fe'+'tch']` 등 동적 우회를 완전 차단하지 못합니다. 실제 인증·데이터 접근·쓰기 경계는 **policy-proxy(F1)**가 매 요청에 적용하는 정책입니다. 정적 검사나 프롬프트를 보안 sandbox로 취급하지 않습니다.
+
 ## 정책 프록시와 생성 UI 연결
 
 레지스트리 도구는 `POST :7200/dev/session {user:"agent-server",roles:["viewer"]}`로 서비스 세션을 받고 GET `/apis`, `/apis/:apiId`에 Bearer 인증을 씁니다. 토큰은 메모리에 캐시하고 401이면 한 번 갱신합니다. 운영 환경은 `POLICY_SESSION_TOKEN` 또는 별도 인증 어댑터로 교체합니다. 토큰을 모델 도구 결과·SSE·프로젝트 소스에 넣지 않습니다.
@@ -117,15 +123,18 @@ RUN_LIVE_CLAUDE=1 npm test -- tests/claude.test.ts
 
 ```text
 npm run typecheck: tsc --noEmit — exit 0
-vitest: Test Files 2 passed (2)
-        Tests 17 passed | 1 skipped (18)
-        Duration 467ms
+vitest: Test Files 3 passed (3)
+        Tests 37 passed | 1 skipped (38)
 skip: live Claude test — RUN_LIVE_CLAUDE was not 1
 npm run smoke: curl exit 0, answer HTTP 204, saved revision 2
 npm run smoke:policy: live customers API, schemaVersion 1, requireReason true, done
 ```
 
 네트워크 없는 Claude 테스트는 실제 Anthropic SDK의 fetch만 SSE fixture로 교체합니다. SDK가 betaZodTool을 실제 실행하고 파일/finish 이벤트가 만들어지는 것, 텍스트 스트림, pause_turn, refusal, auto 인증 fallback, SDK finish 중 CAS conflict를 검증합니다. 그 밖에 동시 CAS, requestId 멱등, SSE 끊김/replay, 늦은 도구 결과 취소, 질문/응답, 허용 import 정적 검사(esbuild parser), digest 동등성, 프로세스 재시작 이벤트 복구, 서비스 세션 401 갱신을 검증합니다.
+
+R1 수정 후 기존 17개 + live skip 1개를 유지하고 20개를 추가했습니다. 금지 패턴 15개를 각각 HTTP 400·finish tool_error·revision 미변경으로 검증하고, 목록/상세/상태 변경 템플릿과 toiFetch/config 읽기의 통과를 확인했습니다. 인젝션 description fixture + 실제 SDK fake SSE 테스트는 두 도구의 JSON 래퍼, 고정 시스템 프롬프트, 악성 코드 finish의 `is_error` 응답 및 안전한 수정 후 단 한 번의 revision_ready를 확인합니다. 실제 모델의 인젝션 저항성을 측정한 테스트는 아닙니다.
+
+수정한 7400 서비스를 `AGENT_MODE=mock`으로 재시작한 뒤 **“고객 목록 화면 만들어줘” → 답변 → revision_ready(revision 2) → done**을 실제 HTTP/SSE로 확인했습니다. 같은 프로젝트에 위험 소스를 PUT하면 이유를 포함한 400을 반환했습니다([R1 실서비스 증거](evidence/r1-mock-smoke.json)). 갱신한 레지스트리 래퍼를 소비하는 `npm run smoke:policy`도 실제 7200에서 통과했습니다. E2E가 저장하는 일반 JSX·지연 Promise·TDS/React 예제는 금지 패턴이 없으며 목록·상태 변경 생성은 검증한 mock 템플릿을 사용합니다. E2E의 iframe 보안 probe는 테스트 런너에서 실행되어 생성 소스 저장 검사 대상에 속하지 않습니다.
 
 실제 `curl --no-buffer`(동일한 `curl -N` 옵션)의 출력에서 추출한 전체 흐름은 다음과 같습니다. answers는 별도 HTTP 요청입니다.
 

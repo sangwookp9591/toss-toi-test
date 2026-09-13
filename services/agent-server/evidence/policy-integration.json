@@ -1,5 +1,5 @@
 {
-  "recordedAt": "2026-09-13T05:31:38.446Z",
+  "recordedAt": "2026-09-13T06:27:37.525Z",
   "passed": true,
   "transport": "Engine tools -> PolicyClient -> live :7200",
   "serviceSessionUser": "agent-server",

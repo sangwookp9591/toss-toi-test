@@ -1,0 +1,70 @@
+{
+  "recordedAt": "2026-09-13T06:27:18.530Z",
+  "agentMode": "mock",
+  "prompt": "고객 목록 화면 만들어줘",
+  "projectId": "35041518-f631-4799-892f-62db2bbe16f4",
+  "generationId": "4a5f8f41-f5f2-4b76-879a-8509b8139d98",
+  "revision": 2,
+  "events": [
+    {
+      "seq": 1,
+      "type": "state",
+      "state": "requested"
+    },
+    {
+      "seq": 2,
+      "type": "state",
+      "state": "staging"
+    },
+    {
+      "seq": 3,
+      "type": "text"
+    },
+    {
+      "seq": 4,
+      "type": "text"
+    },
+    {
+      "seq": 5,
+      "type": "state",
+      "state": "awaiting_answer"
+    },
+    {
+      "seq": 6,
+      "type": "question"
+    },
+    {
+      "seq": 7,
+      "type": "state",
+      "state": "staging"
+    },
+    {
+      "seq": 8,
+      "type": "file"
+    },
+    {
+      "seq": 9,
+      "type": "state",
+      "state": "revision_ready"
+    },
+    {
+      "seq": 10,
+      "type": "revision_ready"
+    },
+    {
+      "seq": 11,
+      "type": "state",
+      "state": "done"
+    },
+    {
+      "seq": 12,
+      "type": "done"
+    }
+  ],
+  "unsafeSourceSave": {
+    "status": 400,
+    "body": {
+      "error": "/src/unsafe.ts: raw fetch() is forbidden; use @toi/fetch toiFetch"
+    }
+  }
+}

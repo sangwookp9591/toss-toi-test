@@ -11,6 +11,8 @@ export interface BuilderOptions {
   onEvent?: (event: string, artifactKey: string) => void;
   beforeUpload?: (path: string, artifactKey: string) => Promise<void>;
   log?: (line: string) => void;
+  install?: typeof install;
+  bundle?: typeof bundle;
 }
 export class PackageBuilder {
   readonly profile: BuildProfile;
@@ -18,6 +20,7 @@ export class PackageBuilder {
   readonly states = new Map<string, PackageSetStatus>();
   readonly builds = new Map<string, Promise<void>>();
   private readonly requests = new Map<string, Promise<PackageSetStatus>>();
+  private readonly artifacts = new Map<string, Promise<PackageSetStatus>>();
   private readonly log: (message: unknown) => void;
   readonly metrics = { installs: 0, builds: 0 };
   constructor(readonly store: ObjectStore, readonly options: BuilderOptions = {}) {
@@ -38,7 +41,7 @@ export class PackageBuilder {
   }
   async request(input: unknown): Promise<PackageSetStatus> {
     const request = validateRequest(input);
-    const requestKey = sha256(canonicalJson({ request, profile: this.profile }));
+    const requestKey = sha256(canonicalJson({ entries: [...request.entries].sort(), dependencies: request.dependencies, buildProfile: this.profile }));
     const existing = this.requests.get(requestKey);
     if (existing) return existing;
     const pending = this.resolve(request, requestKey);
@@ -57,10 +60,33 @@ export class PackageBuilder {
       }
     }
     this.metrics.installs++;
-    const installed = await install(request, { registry: this.options.registry ?? settings().registry, token: this.options.token ?? settings().token, cacheRoot: this.options.cacheRoot });
+    const installed = await (this.options.install ?? install)(request, { registry: this.options.registry ?? settings().registry, token: this.options.token ?? settings().token, cacheRoot: this.options.cacheRoot });
     const identity = hashes(request.entries, installed.lock, this.profile), key = identity.artifactKey;
-    const existing = await this.status(key);
-    if (existing && existing.status !== 'failed') { await installed.cleanup(); await this.store.put(indexKey, Buffer.from(JSON.stringify({ artifactKey: key, createdAt: Date.now() })), 'application/json'); return existing; }
+    // Reserve the artifact before any asynchronous store lookup. Different ranges
+    // can converge here, after separate installs have produced identical lock bytes.
+    let pending = this.artifacts.get(key);
+    if (pending) {
+      await installed.cleanup();
+    } else {
+      pending = Promise.resolve().then(() => this.resolveArtifact(request, installed, identity));
+      this.artifacts.set(key, pending);
+    }
+    try {
+      const state = await pending;
+      await this.store.put(indexKey, Buffer.from(JSON.stringify({ artifactKey: key, createdAt: Date.now() })), 'application/json');
+      return state;
+    } finally {
+      if (this.artifacts.get(key) === pending) this.artifacts.delete(key);
+    }
+  }
+  private async resolveArtifact(request: PackageSetRequest, installed: Awaited<ReturnType<typeof install>>, identity: ReturnType<typeof hashes>): Promise<PackageSetStatus> {
+    const key = identity.artifactKey;
+    // The active build wins; otherwise recheck the persisted manifest under the reservation.
+    if (this.builds.has(key)) { await installed.cleanup(); return this.states.get(key)!; }
+    let existing: PackageSetStatus | undefined;
+    try { existing = await this.status(key); }
+    catch (error) { await installed.cleanup(); throw error; }
+    if (existing && existing.status !== 'failed') { await installed.cleanup(); return existing; }
     // No await between rechecking ownership and publishing building state.
     const claimed = this.states.get(key);
     if (claimed && claimed.status !== 'failed') { await installed.cleanup(); return claimed; }
@@ -70,7 +96,7 @@ export class PackageBuilder {
       try {
         this.metrics.builds++;
         this.options.onEvent?.('build-start', key);
-        const result = await bundle(installed.directory, request.entries, this.profile);
+        const result = await (this.options.bundle ?? bundle)(installed.directory, request.entries, this.profile);
         const files = result.files.map(file => ({ path: file.path, sha256: sha256(file.body), bytes: file.body.length }));
         for (const file of result.files) {
           await this.options.beforeUpload?.(file.path, key);
@@ -91,7 +117,6 @@ export class PackageBuilder {
       } finally { await installed.cleanup(); this.builds.delete(key); }
     })();
     this.builds.set(key, work);
-    await this.store.put(indexKey, Buffer.from(JSON.stringify({ artifactKey: key, createdAt: Date.now() })), 'application/json');
     return state;
   }
   async wait(key: string, timeoutMs: number) {

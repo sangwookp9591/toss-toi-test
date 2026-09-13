@@ -4,6 +4,8 @@ import { Engine, terminal, type AgentDriver } from './engine.ts';
 import { Store } from './store.ts';
 import { createProjectSchema, generationSchema, saveSchema, HttpError } from './schema.ts';
 import { PolicyClient } from './policy-client.ts';
+import { assertSourcePolicy } from './source-policy.ts';
+import { ToolError } from './schema.ts';
 export function createAgentServer(options: { dataDir: string; driver: AgentDriver; policy?: PolicyClient }) {
   const store = new Store(options.dataDir);
   const engine = new Engine(store, options.driver, options.policy);
@@ -42,6 +44,7 @@ export function createAgentServer(options: { dataDir: string; driver: AgentDrive
         if (!projectRoute[2] && req.method === 'GET') return json(res, 200, store.project(id));
         if (projectRoute[2] && req.method === 'PUT') {
           const input = saveSchema.parse(await body(req));
+          assertSourcePolicy(input.files);
           return json(res, 200, store.save(id, input.baseRevision, input.files, input.packageSet));
         }
       }
@@ -81,6 +84,7 @@ export function createAgentServer(options: { dataDir: string; driver: AgentDrive
     } catch (error) {
       if (res.headersSent) { res.end(); return; }
       if (error instanceof HttpError) json(res, error.status, { error: error.message, ...error.details });
+      else if (error instanceof ToolError) json(res, 400, { error: error.message });
       else if (error instanceof z.ZodError) json(res, 400, { error: 'invalid request', issues: error.issues.map(issue => issue.message) });
       else json(res, 500, { error: 'internal error' });
     }

@@ -4,6 +4,7 @@ import { Store, type GenerationRecord } from './store.ts';
 import { canonicalJson, sourceDigest } from './digest.ts';
 import { CanceledError, HttpError, ModelError, ToolError, packageSetSchema, sourcePath } from './schema.ts';
 import { PolicyClient } from './policy-client.ts';
+import { assertSourcePolicy } from './source-policy.ts';
 
 type EventInput = GenerationEvent extends infer E ? E extends GenerationEvent ? Omit<E, 'seq' | 'generationId'> : never : never;
 export const terminal = (state: GenerationState) => ['done', 'failed', 'canceled'].includes(state);
@@ -108,7 +109,7 @@ export class Engine {
         if (name === 'get_api_schema' && (typeof args.apiId !== 'string' || !/^[a-zA-Z0-9_-]+$/.test(args.apiId))) throw new ToolError('invalid apiId');
         const result = await this.policy.get(name === 'list_registered_apis' ? '/apis' : '/apis/' + args.apiId, execution.controller.signal);
         this.active(record);
-        return result;
+        return { untrusted_api_registry_data: result };
       }
       case 'list_files': return Object.keys(record.files).sort();
       case 'read_file': {
@@ -144,6 +145,7 @@ export class Engine {
       }
       case 'finish': {
         if (execution.answer) throw new ToolError('answer the pending question before finish');
+        assertSourcePolicy(record.files);
         let project;
         try { project = this.store.save(record.request.projectId, record.request.baseRevision, record.files, record.packageSet); }
         catch (error) {

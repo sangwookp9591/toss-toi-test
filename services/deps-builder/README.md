@@ -39,6 +39,10 @@ curl 'http://localhost:7100/package-sets/ARTIFACT_KEY/wait?timeoutMs=30000'
 
 실제 산출물은 `<artifactKey>/<file>`에만 저장한다. `requests/<requestDigest>.json`은 요청에서 이미 해석한 artifactKey를 찾기 위한 보조 색인이다. 재시작 후 색인→manifest 적중이면 설치 없이 200을 반환한다. 정확한 버전 조합은 색인을 계속 재사용하며 범위 버전은 5분마다 다시 해석한다. 진행 중 요청은 요청 digest로 설치를 합치고, 빌드는 artifactKey로 단일 소유권을 가진다. 실패하면 failed 상태로 전환하고 다음 POST에서 다시 설치·빌드한다.
 
+R1 M3 보강: install 전 후보 키는 `{entries: 정렬, dependencies: 키 정렬, buildProfile}`의 정규화 JSON SHA256이다. entries·dependency 키 순서만 다른 요청은 설치부터 1회로 합친다. install 후에는 계산된 artifactKey로 예약을 먼저 잡고 진행 중 빌드와 저장소 manifest를 재확인한다. 저장소 조회의 비동기 구간에도 예약을 유지하므로 서로 다른 후보가 같은 raw lockfile로 수렴하면 빌드·자산 업로드·최종 manifest 게시는 1회다.
+
+서로 다른 range(`react: "^19.0.0"` / `"19.3.0"`)는 lockfile 전에는 동일 artifact인지 알 수 없어 **install이 2회 발생할 수 있다**. 완전한 사전 병합을 보장하지 않는다. 또한 같은 resolved version이어도 Yarn lockfile에 range descriptor가 달리 남으면 raw bytes와 artifactKey도 다르다. 회귀 테스트는 install fixture가 동일 raw lock bytes를 반환하도록 보장해 수렴 경계를 결정적으로 검사하며, 실제 Yarn이 위 두 요청에 늘 동일 lockfile을 만든다고 주장하지 않는다.
+
 ## esbuild 선택과 싱글톤
 
 서버에서 필요한 것은 HTML/dev server가 아니라 ESM library entry와 shared chunk다. esbuild는 이 경로를 작은 API로 제공하며 [공식 code splitting 설명](https://esbuild.github.io/api/#splitting)처럼 공유 모듈을 청크로 추출한다. Vite 8의 앱/CSS 파이프라인은 이 PoC의 JS 중심 승인 카탈로그에는 추가 계층이다. Yarn 설정은 [공식 yarnrc 문서](https://yarnpkg.com/configuration/yarnrc)를 따른다.
@@ -70,7 +74,7 @@ npm run bench
 
 ### 확인된 결과 (2026-09-13)
 
-- `npm test`: **10/10 통과**, skipped 0. `npm run typecheck`: 통과. fake-tds의 typecheck와 ESM + d.ts build도 통과.
+- R1 수정 후 `npm run typecheck && npm test`: **12/12 통과**, skipped 0. 기존 10개 유지 + 후보 키 정규화와 range 수렴 single-flight 2개 추가. install·bundle 호출 카운터, 객체별 put 카운터, manifest 개수로 단일 빌드·업로드를 단언하며 진행 중 빌드 재진입과 저장소 적중도 확인했다.
 - 시스템 Chrome **153.0.8010.36**: React 객체 동일, hooks 클릭 갱신 정상, Context 공유 정상, page/console error **0**.
 - 레지스트리 setup 재실행: 두 버전 재사용 성공, 인증 없는 metadata **401** 유지.
 - 기본 포트 **7100** 실요청: 최초 **202 → ready**, 재요청 **200**, 자산 **7개**. 서비스와 compose 컨테이너는 실행 중인 상태로 인계.

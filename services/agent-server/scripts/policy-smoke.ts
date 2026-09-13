@@ -9,9 +9,9 @@ const app = createAgentServer({
   dataDir: mkdtempSync(join(process.cwd(), 'data', 'policy-smoke-')),
   policy: new PolicyClient(process.env.POLICY_PROXY_URL ?? 'http://localhost:7200'),
   driver: { mode: 'mock', async run(context) {
-    const list = await context.tool('list_registered_apis', {}) as PublicApi[];
-    const detail = await context.tool('get_api_schema', { apiId: 'customers' }) as PublicApi;
-    observations = { list, detail };
+    const list = await context.tool('list_registered_apis', {}) as { untrusted_api_registry_data: PublicApi[] };
+    const detail = await context.tool('get_api_schema', { apiId: 'customers' }) as { untrusted_api_registry_data: PublicApi };
+    observations = { list: list.untrusted_api_registry_data, detail: detail.untrusted_api_registry_data };
     await context.tool('finish', { summary: 'Live policy registry tools verified' });
   } },
 });

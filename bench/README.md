@@ -1,6 +1,8 @@
 # Sandpack / TOI-lite 비교
 
-이 환경의 3회 중앙값은 **Sandpack 첫 화면 918ms, TOI-lite 조합 miss 포함 첫 화면 2,069ms, 조합 hit 첫 화면 397ms, 수정 후 커밋 115ms**다. 이 작은 앱에서는 TOI-lite cold가 Sandpack보다 느렸다. 토스 사례의 “47초 → 1.3초” 수치를 재현했다고 주장하지 않는다.
+이 환경의 3회 중앙값에서 **Sandpack cold 첫 화면은 918ms, TOI-lite cold(조합 miss 포함)는 2,069ms**였다. 이 작은 앱에서는 TOI-lite cold가 Sandpack보다 느렸다. 토스 사례의 “47초 → 1.3초” 수치를 재현했다고 주장하지 않는다.
+
+**TOI-lite 내부 cold → warm 변화**는 조합 miss 포함 2,069ms에서 조합 hit 397ms로 측정됐고, 수정 후 커밋은 115ms였다. warm 값은 TOI의 조합 캐시 적중 효과를 보여 주며 Sandpack cold와의 동급 비교 값이 아니다.
 
 ## 실행과 결과
 
