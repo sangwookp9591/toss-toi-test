@@ -1,0 +1,8 @@
+agentMode=mock probe project revision before = 1 files= /src/main.tsx,/src/App.tsx,/src/api.ts
+browser = Google Chrome 153.0.8010.36
+preview → {"generationPost":"opaque 0","corsRead":"blocked (no ACAO for 5174)"}
+Chrome network responses → [{"method":"POST","url":"http://localhost:7400/generations","status":403}]
+probe project revision after = 1 | source changed = false | files= /src/main.tsx,/src/App.tsx,/src/api.ts
+server-side generation from preview request: not found
+server-side preview POST status = 403
+PASS: no generation created; all project and generation/event files unchanged (contents + mtime).

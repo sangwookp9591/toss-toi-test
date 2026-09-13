@@ -5,6 +5,6 @@ import { PolicyClient } from './policy-client.ts';
 const mode = process.env.AGENT_MODE ?? 'auto';
 if (!['auto', 'mock', 'claude'].includes(mode)) throw new Error('AGENT_MODE must be auto, mock or claude');
 const driver = await createDriver(mode as 'auto' | 'mock' | 'claude');
-const app = createAgentServer({ dataDir: resolve(process.env.DATA_DIR ?? 'data'), driver, policy: new PolicyClient(process.env.POLICY_PROXY_URL ?? 'http://localhost:7200', fetch, process.env.POLICY_SESSION_TOKEN) });
+const app = createAgentServer({ dataDir: resolve(process.env.DATA_DIR ?? 'data'), driver, studioOrigin: process.env.AGENT_STUDIO_ORIGIN, policy: new PolicyClient(process.env.POLICY_PROXY_URL ?? 'http://localhost:7200', fetch, process.env.POLICY_SESSION_TOKEN) });
 app.server.listen(7400, '127.0.0.1', () => console.log(JSON.stringify({ listening: 'http://localhost:7400', agentMode: driver.mode })));
 for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => { void app.close().then(() => process.exit(0)); });

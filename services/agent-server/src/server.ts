@@ -6,7 +6,8 @@ import { createProjectSchema, generationSchema, saveSchema, HttpError } from './
 import { PolicyClient } from './policy-client.ts';
 import { assertSourcePolicy } from './source-policy.ts';
 import { ToolError } from './schema.ts';
-export function createAgentServer(options: { dataDir: string; driver: AgentDriver; policy?: PolicyClient }) {
+export function createAgentServer(options: { dataDir: string; driver: AgentDriver; policy?: PolicyClient; studioOrigin?: string }) {
+  const studioOrigin = options.studioOrigin ?? 'http://localhost:5173';
   const store = new Store(options.dataDir);
   const engine = new Engine(store, options.driver, options.policy);
   async function body(req: IncomingMessage): Promise<unknown> {
@@ -23,15 +24,23 @@ export function createAgentServer(options: { dataDir: string; driver: AgentDrive
     res.end(value === undefined ? undefined : JSON.stringify(value));
   };
   const server = createServer(async (req, res) => {
-    const origin = req.headers.origin;
-    if (origin && ['http://localhost:5173', 'http://127.0.0.1:5173'].includes(origin)) {
-      res.setHeader('Access-Control-Allow-Origin', origin);
-      res.setHeader('Vary', 'Origin');
-      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Last-Event-ID');
-      res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,OPTIONS');
-    }
-    if (req.method === 'OPTIONS') { res.writeHead(204).end(); return; }
     try {
+      const origin = req.headers.origin;
+      const healthCheck = req.method === 'GET' && req.url?.split('?')[0] === '/healthz';
+      // CORS alone does not stop simple requests: reject before routing or reading a body.
+      if (!healthCheck && origin !== undefined && origin !== studioOrigin) throw new HttpError(403, 'origin forbidden');
+      if (origin === studioOrigin) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+        res.setHeader('Vary', 'Origin');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Last-Event-ID');
+        res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,OPTIONS');
+      }
+      if (req.method === 'OPTIONS') { res.writeHead(204).end(); return; }
+      // Include bodyless mutations such as cancel so browser writes require preflight.
+      if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method ?? '') &&
+          req.headers['content-type']?.split(';')[0].trim().toLowerCase() !== 'application/json') {
+        throw new HttpError(415, 'Content-Type must be application/json');
+      }
       const pathname = new URL(req.url ?? '/', 'http://localhost').pathname;
       if (pathname === '/healthz' && req.method === 'GET') return json(res, 200, { ok: true, agentMode: options.driver.mode });
       if (pathname === '/projects' && req.method === 'POST') {

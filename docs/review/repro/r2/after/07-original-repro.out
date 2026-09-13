@@ -1,0 +1,4 @@
+agentMode=mock probe project revision before = 1 files= /src/main.tsx,/src/App.tsx,/src/api.ts
+preview → {"generationPost":"opaque 0","corsRead":"blocked (no ACAO for 5174)"}
+probe project revision after = 1 | source changed = false | files= /src/main.tsx,/src/App.tsx,/src/api.ts
+server-side generation from preview request: not found

@@ -5,11 +5,11 @@ import { MockDriver } from '../src/mock.ts';
 import type { AgentDriver } from '../src/engine.ts';
 import type { PolicyClient } from '../src/policy-client.ts';
 import type { GenerationEvent } from '../../../contracts/src/generation.ts';
-export async function start(driver: AgentDriver = new MockDriver(1), policy?: PolicyClient, existingDirectory?: string) {
+export async function start(driver: AgentDriver = new MockDriver(1), policy?: PolicyClient, existingDirectory?: string, studioOrigin?: string) {
   // Temporary test storage stays within this package's owned data directory.
   const { mkdirSync } = await import('node:fs'); mkdirSync('data', { recursive: true });
   const directory = existingDirectory ?? mkdtempSync(join(process.cwd(), 'data', 'test-'));
-  const app = createAgentServer({ dataDir: directory, driver, policy });
+  const app = createAgentServer({ dataDir: directory, driver, policy, studioOrigin });
   await new Promise<void>(resolve => app.server.listen(0, '127.0.0.1', resolve));
   const address = app.server.address();
   if (!address || typeof address === 'string') throw new Error('missing address');
