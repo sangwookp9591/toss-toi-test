@@ -1,0 +1,20 @@
+
+ Test Files  3 passed (3)
+      Tests  67 passed (67)
+   Start at  15:56:38
+   Duration  1.52s (transform 301ms, setup 0ms, import 615ms, tests 1.69s, environment 0ms)
+
+
+ Test Files  3 passed (3)
+      Tests  37 passed | 1 skipped (38)
+   Start at  15:56:40
+   Duration  462ms (tests 49%, import 26%, transform 24%, worker 1%)
+
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 200.038709

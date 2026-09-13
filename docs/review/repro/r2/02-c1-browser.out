@@ -1,0 +1,23 @@
+== 기법별 결과 (echo 결과 | :7200 결과)
+1 fetch POST cors json                               ["cors 200 token=false","proxy threw Failed to fetch"]
+2 fetch POST no-cors text/plain                      ["opaque 0 token=false","opaque 0 token=false"]
+3 fetch POST no-cors referrerPolicy=no-referrer      ["opaque 0 token=false","opaque 0 token=false"]
+4 fetch GET no-cors + Authorization header           ["opaque 0 token=false","opaque 0 token=false"]
+5 sendBeacon Blob(text/plain)                        [true,true]
+6 sendBeacon Blob(application/json)                  true
+7 form POST text/plain (sandbox, no allow-forms)     "submitted (see echo log)"
+8 window.open studio origin                          "blocked (null)"
+9 top.location → studio                              "threw SecurityError"
+10 nested srcdoc iframe (Origin: null)               "echo 200 | proxy threw"
+11 blob: Worker fetch                                "echo 200 | proxy threw"
+12 nested iframe of studio origin 5173 (framable?)   "loaded, cross-origin (DOM not readable)"
+13 navigator.serviceWorker available / register blob: "rejected TypeError"
+== echo 서버가 받은 요청의 Origin 헤더
+cors-json          POST  origin=http://localhost:5174 content-type=application/json authorization=false
+nocors-text        POST  origin=http://localhost:5174 content-type=text/plain;charset=UTF-8 authorization=false
+nocors-noref       POST  origin=http://localhost:5174 content-type=text/plain;charset=UTF-8 authorization=false
+nocors-get-auth    GET   origin=(none) content-type=(none) authorization=false
+beacon             POST  origin=http://localhost:5174 content-type=text/plain authorization=false
+srcdoc             POST  origin=null content-type=application/json authorization=false
+worker             POST  origin=http://localhost:5174 content-type=text/plain;charset=UTF-8 authorization=false
+topPageUrlAfter=http://localhost:5173/healthz pages=1

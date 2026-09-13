@@ -1,0 +1,65 @@
+== H2. 경로 우회 시도 (registered: /reports/{year}/{month}, /customers/{id}, /customers/{id}/orders)
+baseline 정상                        200  upstream=["/reports/2024/07"]
+이중 인코딩 (R1)                        400  {"error":"INVALID_PATH"}
+삼중 인코딩                             400  {"error":"INVALID_PATH"}
+사중 인코딩(루프 3회 초과)                   400  {"error":"INVALID_PATH"}
+혼합 .%2e                            400  {"error":"INVALID_PATH"}
+전각 점 ．． (UTF-8 인코딩)                400  {"error":"INVALID_PATH"}
+전각 점 이중 인코딩                        400  {"error":"INVALID_PATH"}
+오버롱 UTF-8 %c0%ae                   400  {"error":"INVALID_PATH"}
+오버롱 UTF-8 %e0%80%ae                400  {"error":"INVALID_PATH"}
+IIS %u002e                         400  {"error":"INVALID_PATH"}
+세미콜론 ..;                           200  upstream=["/reports/..;/admin"]
+세미콜론 인코딩 ..%3b                     200  upstream=["/reports/..;/admin"]
+? 삽입 %3f                           400  {"error":"INVALID_PATH"}
+# 삽입 %23                           400  {"error":"INVALID_PATH"}
+이중 인코딩 %253f                       400  {"error":"INVALID_PATH"}
+세그먼트 끝 . (admin.)                  200  upstream=["/reports/2024./admin."]
+점 3개 ...                           404  {"error":"OPERATION_NOT_REGISTERED"}
+백슬래시 %5c                           400  {"error":"INVALID_PATH"}
+인코딩 슬래시 %2f                        400  {"error":"INVALID_PATH"}
+이중 인코딩 슬래시 %252f                   400  {"error":"INVALID_PATH"}
+템플릿 교차 /customers/{id}에 reports    400  {"error":"INVALID_PATH"}
+NUL %00                            400  {"error":"INVALID_PATH"}
+탭 %09                              400  {"error":"INVALID_PATH"}
+빈 세그먼트 //                          404  {"error":"OPERATION_NOT_REGISTERED"}
+한글 경로 파라미터(정상 입력 회귀 확인)            400  {"error":"INVALID_PATH"}
+"{" 문자 파라미터                        400  {"error":"INVALID_PATH"}
+== H2 회귀. upstreamBaseUrl에 경로 접두사가 있는 등록 API (base=<up>/tenant-a/api, path=/items/{id})
+proxy /proxy/tenant/items/42 -> 200 | upstream received: ["/items/42"] | R1 시점 코드(문자열 결합)라면 /tenant-a/api/items/42
+== M1. 마스킹 우회 시도 (응답 형태 변형, 등록 규칙은 seed와 동일)
+키 전각 ｐｈｏｎｅ(문자열)                            {"items":[{"ｐｈｏｎｅ":"010-****-5678"}]}                                    warn=["unregistered_pii_field","mask_rules_unmatched"]
+키 키릴 р + hone(문자열)                         {"items":[{"рhone":"010-****-5678"}]}                                    warn=["unregistered_pii_field","mask_rules_unmatched"]
+키 zero-width phone\u200b(문자열)              {"items":[{"phone​":"010-****-5678"}]}                                   warn=["unregistered_pii_field","mask_rules_unmatched"]
+미등록 키, 숫자 전화 1012345678                    {"items":[{"mobile":1012345678}]}                                        warn=["mask_rules_unmatched"]
+미등록 키, 숫자 주민번호 9001011234567               {"items":[{"ssn":9001011234567}]}                                        warn=["mask_rules_unmatched"]
+미등록 키, 숫자 계좌 110123456789                  {"items":[{"bankNo":110123456789}]}                                      warn=["mask_rules_unmatched"]
+등록 키 phone 숫자값                             {"items":[{"phone":"101-****-5678"}]}                                    warn=[]
+구분자 없음 01012345678                         {"items":[{"tel":"010-****-5678"}]}                                      warn=["unregistered_pii_field","mask_rules_unmatched"]
+밑줄 010_1234_5678                           {"items":[{"tel":"010_1234_5678"}]}                                      warn=["mask_rules_unmatched"]
+en dash 010–1234–5678                      {"items":[{"tel":"010–1234–5678"}]}                                      warn=["mask_rules_unmatched"]
+괄호 (010)1234-5678                          {"items":[{"tel":"(010)1234-5678"}]}                                     warn=["mask_rules_unmatched"]
+전각 숫자 ０１０-１２３４-５６７８                        {"items":[{"tel":"０１０-１２３４-５６７８"}]}                                      warn=["mask_rules_unmatched"]
+국가번호 82-10-1234-5678                       {"items":[{"tel":"****-****-5678"}]}                                     warn=["unregistered_pii_field","mask_rules_unmatched"]
++82 10 1234 5678                           {"items":[{"tel":"821-****-5678"}]}                                      warn=["unregistered_pii_field","mask_rules_unmatched"]
+주민번호 공백 900101 1234567                     {"items":[{"memo":"900101 1234567"}]}                                    warn=["mask_rules_unmatched"]
+문장 내 전화 "연락처:010-1234-5678입니다"             {"items":[{"memo":"연락처:010-****-5678입니다"}]}                              warn=["unregistered_pii_field","mask_rules_unmatched"]
+숫자 사이 문자 "010x1234x5678"                   {"items":[{"memo":"010x1234x5678"}]}                                     warn=["mask_rules_unmatched"]
+분할 필드 {p1:"010",p2:"1234",p3:"5678"}       {"items":[{"p1":"010","p2":"1234","p3":"5678"}]}                         warn=["mask_rules_unmatched"]
+등록 규칙 매칭 + 같은 객체의 숫자 주민번호(경고 없음?)          {"items":[{"phone":"010-****-5678","ssn":9001011234567}]}                warn=[]
+PII가 객체 키 {"010-1234-5678":true}           {"items":[{"010-1234-5678":true}]}                                       warn=["mask_rules_unmatched"]
+이메일 대문자·태그 A.B+tag@Example.CO.KR           {"items":[{"contact":"A.***@Example.CO.KR"}]}                            warn=["unregistered_pii_field","mask_rules_unmatched"]
+== M1. content-type 위장 (프록시 경유, /customers)
+text/plain + PII                         502 {"error":"UPSTREAM_PII_RESPONSE"}
+application/vnd.api+json + PII           502 {"error":"UPSTREAM_PII_RESPONSE"}
+application/json 선언 + 비JSON 본문           502 {"error":"UPSTREAM_UNAVAILABLE"}
+text/html; x=application/json + JSON     200 {"items":[{"tel":"010-****-5678"}]}
+application/json + JSON 문자열 루트           200 "010-****-5678"
+== M1. 대용량/깊은 응답 성능 (재귀 스캔 DoS 가능성). 스캔 중 healthz 지연도 측정
+10k rows (~2MB)                          status=200 total=1298ms maxEventLoopBlock=673ms maskJsonAlone=105ms bodyMB=1.9 
+100k rows (~20MB)                        status=200 total=12787ms maxEventLoopBlock=6623ms maskJsonAlone=1117ms bodyMB=19.5 
+단일 문자열 10MB 숫자-하이픈 반복                    status=200 total=1118ms maxEventLoopBlock=512ms maskJsonAlone=513ms bodyMB=10.2 
+단일 문자열 5MB a@a. 반복(이메일 regex)            status=200 total=144ms maxEventLoopBlock=60ms maskJsonAlone=50ms bodyMB=5.0 
+깊이 20000 중첩 객체                           status=502 total=9ms maxEventLoopBlock=0ms maskJsonAlone=-2ms bodyMB=0.1 {"error":"UPSTREAM_UNAVAILABLE"}
+깊이 100000 중첩 배열                          status=502 total=22ms maxEventLoopBlock=0ms maskJsonAlone=-2ms bodyMB=0.2 {"error":"UPSTREAM_UNAVAILABLE"}
+last audit statuses: [{"status":200,"warn":["mask_rules_unmatched"]},{"status":502,"denyReason":"UPSTREAM_UNAVAILABLE"},{"status":502,"denyReason":"UPSTREAM_UNAVAILABLE"}]

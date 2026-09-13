@@ -1,0 +1,4 @@
+JSON.parse                         59ms
+maskJson (pointer + residual scan) 1100ms
+sanitize (7 secrets x 3 repr)      5564ms
+JSON.stringify                     56ms

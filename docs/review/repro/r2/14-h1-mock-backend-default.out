@@ -1,0 +1,3 @@
+# R2-H1: 실행 중 mock-backend(:7300)가 저장소 기본 서비스 토큰을 받는지 (main.ts:4 fallback은 env 누락 시에만 사용)
+X-Service-Token=<repo default toi-dev-upstream-secret> GET /customers -> HTTP 401
+# 코드: services/mock-backend/src/main.ts:4-5 — env 미설정이면 저장소 기본값으로 기동, production은 존재만 검사(기본값 거부 없음)

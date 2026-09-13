@@ -1,0 +1,4 @@
+{"envFileMode":"600","gitIgnored":true,"gitTracked":false}
+TOI_SESSION_SECRET {"bytes":64,"inGitHistory":false,"inServiceLogs":false,"inAnyProcessArgs":false,"inProcessEnvironment":{"deps-builder":false,"policy-proxy":true,"mock-backend":true,"agent-server":false}}
+TOI_CAPABILITY_SECRET {"bytes":64,"inGitHistory":false,"inServiceLogs":false,"inAnyProcessArgs":false,"inProcessEnvironment":{"deps-builder":false,"policy-proxy":true,"mock-backend":true,"agent-server":false}}
+TOI_UPSTREAM_SERVICE_TOKEN {"bytes":64,"inGitHistory":false,"inServiceLogs":false,"inAnyProcessArgs":false,"inProcessEnvironment":{"deps-builder":false,"policy-proxy":true,"mock-backend":true,"agent-server":false}}

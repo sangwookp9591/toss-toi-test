@@ -1,0 +1,12 @@
+== (최초 실행, 캐시 없음) 동시 3요청 즉시 응답
+{"range":"19.3.0","status":"building","artifactKey":"7797c0569e0700e4","lockfileSha256":""}
+{"range":"^19.0.0","status":"building","artifactKey":"dd3fd06df0056327","lockfileSha256":""}
+{"range":"~19.3.0","status":"building","artifactKey":"6a9689f223eab4b3","lockfileSha256":""}
+== (두 번째 실행, 첫 실행 빌드 완료 후)
+{"range":"19.3.0","status":"ready","artifactKey":"7797c0569e0700e4","lockfileSha256":"355b076a3bed482a"}
+{"range":"^19.0.0","status":"ready","artifactKey":"dd3fd06df0056327","lockfileSha256":"4ccdb6fc964b1668"}
+{"range":"~19.3.0","status":"ready","artifactKey":"6a9689f223eab4b3","lockfileSha256":"f14dd7550758b3b9"}
+== 3개 요청을 다시 보내 최종 상태 확인(완료 대기 최대 30초, 영구 building 여부)
+{"range":"^19.0.0","status":"ready","artifactKey":"dd3fd06df0056327","lockfileSha256":"4ccdb6fc964b1668"}
+{"range":"19.3.0","status":"ready","artifactKey":"7797c0569e0700e4","lockfileSha256":"355b076a3bed482a"}
+{"range":"~19.3.0","status":"ready","artifactKey":"6a9689f223eab4b3","lockfileSha256":"f14dd7550758b3b9"}

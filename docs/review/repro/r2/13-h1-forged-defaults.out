@@ -1,0 +1,8 @@
+known/guessed secret #1 (len 47) -> GET /audit HTTP 401
+known/guessed secret #2 (len 50) -> GET /audit HTTP 401
+known/guessed secret #3 (len 28) -> GET /audit HTTP 401
+known/guessed secret #4 (len 31) -> GET /audit HTTP 401
+known/guessed secret #5 (len 23) -> GET /audit HTTP 401
+known/guessed secret #6 (len 0) -> GET /audit HTTP 401
+known/guessed secret #7 (len 6) -> GET /audit HTTP 401
+known/guessed secret #8 (len 8) -> GET /audit HTTP 401

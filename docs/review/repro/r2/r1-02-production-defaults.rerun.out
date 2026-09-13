@@ -1,0 +1,20 @@
+== A. NODE_ENV 미설정(dev-up.mjs 기본): dev 세션 발급 API 켜짐 + 저장소에 적힌 기본 서명 시크릿 사용
+{"NODE_ENV":null,"startupGuardWouldReject":false,"devAuth":true,"sessionSecretIsRepoDefault":false,"sessionSecretIsRootEnvExample":false,"capabilitySecretIsKnownValue":false}
+== B. NODE_ENV=production + services/policy-proxy/.env.example 그대로 복사 (TOI_DEV_AUTH_ENABLED=true 포함)
+/Users/psw/Projects/toss-toi-test/services/policy-proxy/src/config.ts:19
+    if (env.TOI_DEV_AUTH_ENABLED !== 'false') throw new Error('Production requires TOI_DEV_AUTH_ENABLED=false');
+                                              ^
+
+
+Error: Production requires TOI_DEV_AUTH_ENABLED=false
+    at configuration (/Users/psw/Projects/toss-toi-test/services/policy-proxy/src/config.ts:19:53)
+    at [eval]:2:43
+    at runScriptInThisContext (node:internal/vm:209:10)
+    at node:internal/process/execution:449:12
+    at [eval]-wrapper:6:24
+    at runScriptInContext (node:internal/process/execution:447:60)
+    at evalFunction (node:internal/process/execution:87:30)
+    at asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:116:11)
+
+Node.js v22.14.0
+exit=1

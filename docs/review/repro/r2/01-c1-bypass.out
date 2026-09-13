@@ -1,0 +1,40 @@
+prepared: viewer=208ch editor=220ch readCap=349ch (길이만 표시)
+== A. 프리뷰 origin(5174)에서 발급·레지스트리·감사 (R1 원래 공격)
+A1 POST /dev/session json roles=[viewer,editor,admin]          HTTP 403  ACAO=none                   token=false ORIGIN_FORBIDDEN
+A2 POST /dev/session text/plain (simple request)               HTTP 403  ACAO=none                   token=false ORIGIN_FORBIDDEN
+A3 POST /dev/session no content-type                           HTTP 403  ACAO=none                   token=false ORIGIN_FORBIDDEN
+A4 OPTIONS /dev/session (preflight)                            HTTP 403  ACAO=none                   token=false ORIGIN_FORBIDDEN
+A5 POST /capabilities write (viewer token)                     HTTP 403  ACAO=none                   token=false ORIGIN_FORBIDDEN
+A6 GET /apis (viewer token)                                    HTTP 403  ACAO=none                   token=false ORIGIN_FORBIDDEN
+A7 GET /audit?projectId (viewer token)                         HTTP 403  ACAO=none                   token=false ORIGIN_FORBIDDEN
+== B. Origin 변형 (브라우저가 보낼 수 있는 값 + 서버 문자열 비교 확인)
+B1 Origin: null (sandbox/data:/blob-in-sandbox)                HTTP 403  ACAO=none                   token=false ORIGIN_FORBIDDEN
+B2 Origin: HTTP://LOCALHOST:5173 (대소문자)                HTTP 403  ACAO=none                   token=false ORIGIN_FORBIDDEN
+B3 Origin: http://127.0.0.1:5173                               HTTP 403  ACAO=none                   token=false ORIGIN_FORBIDDEN
+B4 Origin: http://localhost:5173.evil.test                     HTTP 403  ACAO=none                   token=false ORIGIN_FORBIDDEN
+B5 Origin: http://localhost:05173 (포트 변형)              HTTP 403  ACAO=none                   token=false ORIGIN_FORBIDDEN
+B6 Origin 중복(5174 + 5173)                                  HTTP 403  ACAO=none                   token=false ORIGIN_FORBIDDEN
+B7 Origin 빈 문자열                                        HTTP 403  ACAO=none                   token=false ORIGIN_FORBIDDEN
+== C. 프리뷰 origin 허용 규칙(/proxy/*)으로 발급 라우트 도달 시도 (--path-as-is)
+C1 /proxy/../dev/session                                       HTTP 401  ACAO=http://localhost:5174  token=false SESSION_REQUIRED
+C2 /proxy/customers/../../capabilities                         HTTP 403  ACAO=http://localhost:5174  token=false CAPABILITY_INVALID
+C3 /proxy/%2e%2e/dev/session                                   HTTP 401  ACAO=http://localhost:5174  token=false SESSION_REQUIRED
+C4 /proxy/x/..%2f..%2fdev/session                              HTTP 401  ACAO=http://localhost:5174  token=false SESSION_REQUIRED
+C5 /proxy/customers?/dev/session                               HTTP 401  ACAO=http://localhost:5174  token=false SESSION_REQUIRED
+C6 /proxy%2fcustomers/../dev/session                           HTTP 403  ACAO=none                   token=false ORIGIN_FORBIDDEN
+C7 /PROXY/../audit                                             HTTP 403  ACAO=none                   token=false ORIGIN_FORBIDDEN
+C8 //proxy/x/../../apis                                        HTTP 403  ACAO=none                   token=false ORIGIN_FORBIDDEN
+== D. 서버 간 호출 허용 규칙(Origin 없음) — 브라우저 흉내 가능성 판단용
+D1 no Origin, Referer: 5174, roles=[viewer,editor]             HTTP 200  ACAO=none                   token=true 
+D2 no Origin, roles=[platform-admin] without admin token       HTTP 403  ACAO=none                   token=false DEV_ADMIN_FORBIDDEN
+D3 Origin studio, roles=[platform-admin]                       HTTP 403  ACAO=http://localhost:5173  token=false DEV_ADMIN_FORBIDDEN
+D4 no Origin, viewer → capability read env=live other project HTTP 200  ACAO=none                   token=true 
+== E. /audit subject 필터
+E1 editor(no Origin) GET /audit (projectId 없음)             HTTP 400  ACAO=none                   token=false AUDIT_PROJECT_REQUIRED
+E2 editor GET /audit?projectId=<다른 사용자 프로젝트 추정값> HTTP 200  ACAO=none                   token=false array(0)
+E3 editor GET /audit?projectId=a&projectId=  (중복 파라미터) HTTP 200  ACAO=none                   token=false array(0)
+E4 dev 발급기로 다른 studio 사용자 sub 사칭 → 그 사용자 /audit HTTP 200  ACAO=none                   token=false array(1)
+E5 같은 요청을 프리뷰 Origin으로                     HTTP 403  ACAO=none                   token=false ORIGIN_FORBIDDEN
+== F. 프리뷰가 정당하게 가진 토큰으로 할 수 있는 것 (기준선)
+F1 preview GET /proxy/customers/customers (read cap, reason)   HTTP 200  ACAO=http://localhost:5174  token=false 
+F2 preview PATCH with read cap                                 HTTP 403  ACAO=http://localhost:5174  token=false WRITE_FORBIDDEN

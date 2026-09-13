@@ -1,0 +1,16 @@
+literal fetch (차단 기대)                            blocked: raw fetch() is forbidden; use @toi/fetch toiFetch
+globalThis["fe"+"tch"]                           PASSES guard
+const f = window.fetch; f()                      PASSES guard
+fetch.call                                       PASSES guard
+Reflect.apply(fetch)                             PASSES guard
+fetch\u0028 유니코드 이스케이프 식별자                       PASSES guard
+protocol-relative //evil.test                    PASSES guard
+"http:" + "//" 조합                                PASSES guard
+"/dev/" + "session"                              PASSES guard
+atob로 URL 복원                                     PASSES guard
+__TOI_FETCH_CONFIG__ 읽기(허용)                      PASSES guard
+Object.assign(globalThis.__TOI_FETCH_CONFIG__, …) PASSES guard
+<form> POST                                      PASSES guard
+navigator["sendBeacon"]                          PASSES guard
+import("data:…")                                 PASSES guard
+/src/ 밖 파일 (/public/x.js)                        PASSES guard

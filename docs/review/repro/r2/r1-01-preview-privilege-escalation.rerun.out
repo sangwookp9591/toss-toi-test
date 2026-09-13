@@ -1,0 +1,2 @@
+== 1. 프리뷰 origin에서 POST /dev/session roles=[viewer,editor,platform-admin] (CORS 응답 헤더 확인)
+exit=1

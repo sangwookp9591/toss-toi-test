@@ -1,0 +1,17 @@
+
+> test
+> playwright test
+
+
+Running 6 tests using 1 worker
+
+  ✓  1 tests/studio.spec.ts:9:1 › A: 생성, 역질문, 마스킹, 조회 사유와 감사 기록 (3.6s)
+  ✓  2 tests/studio.spec.ts:10:1 › B: 문법 오류는 마지막 정상 화면 유지 (1.3s)
+  ✓  3 tests/studio.spec.ts:11:1 › C: 이전 실행을 지연해도 최신 revision만 커밋 (3.9s)
+D preview issuance boundary: {"roles":["viewer"],"probes":[{"endpoint":"/dev/session","tokenObtained":false,"blocked":true},{"endpoint":"/capabilities","tokenObtained":false,"blocked":true}],"authenticatedCapabilityBlocked":true}
+  ✓  4 tests/studio.spec.ts:12:1 › D: viewer 자체 발급 차단, 읽기 전용 차단, 제한된 쓰기 허용 (2.1s)
+  ✓  5 tests/studio.spec.ts:25:1 › E: 두 탭 CAS 충돌과 최신 내용 다시 불러오기 (2.0s)
+  ✓  6 tests/studio.spec.ts:26:1 › F: 사내 useToast와 앱 React 인스턴스 공유 (1.3s)
+
+  6 passed (15.3s)
+exit=0

@@ -1,0 +1,10 @@
+== 1. 다른 range 3개 동시 요청(설치 완료 시점이 서로 다름) → 빌드 1회, 예약 정리
+{"keysEqual":true,"final":"ready","counts":{"installs":3,"bundles":1,"cleanups":3},"internals":{"artifacts":0,"requests":0,"builds":0}}
+== 2. 빌드 실패 → failed 로 끝나고 재요청 시 재빌드 (영구 building / 예약 누수 없음)
+{"afterFail":"failed","retryImmediate":"building","afterRetry":"ready","counts":{"installs":2,"bundles":2,"cleanups":2},"internals":{"artifacts":0,"requests":0,"builds":0}}
+== 3. 예약 중 manifest 조회(store.get) 실패 → 동시 대기자 모두 reject, 예약 정리, 이후 복구
+{"settled":["rejected:store down","rejected:store down"],"internalsAfterFailure":{"artifacts":0,"requests":0,"builds":0},"recovered":"building","counts":{"installs":3,"bundles":1,"cleanups":2}}
+== 4. 예약 중 store.get이 영원히 응답하지 않음 → 같은 artifactKey로 수렴하는 모든 요청이 무기한 대기(타임아웃 없음)
+{"results":["TIMEOUT","TIMEOUT"],"internals":{"artifacts":1,"requests":2,"builds":0}}
+== 5. 빌드 후 installed.cleanup()이 throw → builds 맵 잔존 여부와 이후 요청 결과
+{"stateAfterFailedBuild":"failed","internalsAfter":{"artifacts":0,"requests":0,"builds":1},"secondRequest":"failed","bundlesTotal":1,"unhandledRejections":["cleanup failed"]}
