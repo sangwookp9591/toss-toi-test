@@ -2,8 +2,8 @@ import { createPreviewRuntime, sourceDigest } from '../../../packages/preview-ru
 import type { PreviewRuntime, PreviewEvent, RevisionToken, PreviewHostConfig, Diagnostic } from '../../../contracts/src/runtime.ts';
 import type { Project, GenerationEvent, ActiveGeneration } from '../../../contracts/src/generation.ts';
 import type { PackageSetStatus, PackageSetRequest, PackageSetFailureCode } from '../../../contracts/src/package-set.ts';
-import type { AuditRecord } from '../../../contracts/src/policy.ts';
-import { API, json, HttpError, consumeGeneration } from './api.ts';
+import type { AuditRecord, CapabilityClaims } from '../../../contracts/src/policy.ts';
+import { API, json, HttpError, consumeGeneration, isTerminal } from './api.ts';
 interface GenerationRecovery {
   generationId: string; seq: number; chats: StudioState['chats'];
   question?: StudioState['question']; answeredQuestion?: StudioState['answeredQuestion']; status: string; files: Record<string, string>;
@@ -27,8 +27,14 @@ function persist(key: string, value?: unknown) {
   try { if (value === undefined) sessionStorage.removeItem(key); else sessionStorage.setItem(key, JSON.stringify(value)); }
   catch { /* A full or disabled session store must not interrupt the live stream. */ }
 }
+const MAX_BACKUPS = 3;
+// Opt-in E2E hook read once at startup, clamped so it can only shorten the production TTL.
+const testWriteTtlSec = Number((globalThis as { __STUDIO_TEST_CONFIG__?: { writeTtlSec?: number } }).__STUDIO_TEST_CONFIG__?.writeTtlSec);
+const WRITE_TTL_SEC = Number.isInteger(testWriteTtlSec) && testWriteTtlSec > 0 ? Math.min(testWriteTtlSec, 120) : 120;
+// Wording defined by preview-runtime (contracts/src/runtime.ts external allowlist rule).
+const PACKAGE_DENIED = /package not in package set: (\S+)/;
 export function diagnosticMessage(message: string) {
-  const match = /package not in package set: ([^\s]+)/.exec(message);
+  const match = PACKAGE_DENIED.exec(message);
   return match ? `‘${match[1]}’ 패키지는 이 프로젝트에서 쓸 수 없어요` : message;
 }
 export interface StudioState {
@@ -65,8 +71,11 @@ export class StudioController {
           change.status = '화면을 준비하고 있어요';
         }
         if (event.type === 'build_failed') {
-          const packages = event.diagnostics.filter(d => d.message.includes('package not in package set:')).length;
-          change.status = `${this.failurePrefix()}: ${packages === event.diagnostics.length && packages ? '허용되지 않은 패키지' : '문법 오류'} ${event.diagnostics.length}건${packages && packages < event.diagnostics.length ? ' · 허용되지 않은 패키지 포함' : ''}`;
+          const total = event.diagnostics.length;
+          const packages = event.diagnostics.filter(d => PACKAGE_DENIED.test(d.message)).length;
+          const kind = packages && packages === total ? '허용되지 않은 패키지' : '문법 오류';
+          const mixed = packages && packages < total ? ' · 허용되지 않은 패키지 포함' : '';
+          change.status = `${this.failurePrefix()}: ${kind} ${total}건${mixed}`;
           change.diagnostics = event.diagnostics; change.previewPending = false;
         }
         if (event.type === 'runtime_failed') { change.status = `${this.failurePrefix()}: 실행 중 오류가 발생했어요`; change.diagnostics = [event.error]; change.previewPending = false; }
@@ -75,6 +84,7 @@ export class StudioController {
       this.update(change);
     });
   }
+  private generationProgress(text: string, extra: Partial<StudioState> = {}) { this.update({ ...extra, generationStatus: text, status: text }); }
   private failurePrefix() { return this.#state.lastCommit ? '이전 화면을 유지했어요' : '화면을 처음 준비하지 못했어요'; }
   private async sessions() {
     this.#sessions ??= (async () => {
@@ -97,16 +107,14 @@ export class StudioController {
       this.update({ project, files: { ...project.files }, dirty: false, conflict: false, backups: stored<EditBackup[]>(backupKey(project.projectId)) ?? (this.#state.project?.projectId === project.projectId ? this.#state.backups : []) });
       void this.preview(project);
       const active = await this.activeGeneration(project.projectId);
+      const saved = stored<GenerationRecovery>(generationKey(project.projectId));
+      const recovery = saved && this.validRecovery(saved) ? saved : undefined;
       if (active && active.generationId !== this.#generationId) {
-        const recovery = stored<GenerationRecovery>(generationKey(project.projectId));
-        if (!recovery || recovery.generationId !== active.generationId || !this.validRecovery(recovery) || recovery.seq > active.lastSeq) {
-          this.followActive(active);
-          return;
-        }
+        const matches = recovery?.generationId === active.generationId && recovery.seq <= active.lastSeq;
+        if (!matches) { this.followActive(active); return; }
       }
       if (!this.#generationId) {
-        const recovery = stored<GenerationRecovery>(generationKey(project.projectId));
-        if (recovery && this.validRecovery(recovery)) {
+        if (recovery) {
           this.#generationId = recovery.generationId; this.#lastSeq = recovery.seq; this.#recovering = true;
           this.update({ busy: true, chats: recovery.chats, question: recovery.question, answeredQuestion: recovery.answeredQuestion, status: recovery.status, generationStatus: recovery.status, files: recovery.files ?? project.files });
           void this.subscribeGeneration();
@@ -144,7 +152,7 @@ export class StudioController {
   async reload() {
     if (!this.#state.project) return;
     if (this.#state.dirty) {
-      const backups = [...this.#state.backups, { id: crypto.randomUUID(), createdAt: new Date().toISOString(), files: { ...this.#state.files } }];
+      const backups = [...this.#state.backups.slice(-(MAX_BACKUPS - 1)), { id: crypto.randomUUID(), createdAt: new Date().toISOString(), files: { ...this.#state.files } }];
       persist(backupKey(this.#state.project.projectId), backups); this.update({ backups });
     }
     await this.open(this.#state.project.projectId);
@@ -164,7 +172,7 @@ export class StudioController {
     if (!this.#generationId) return;
     this.#stream?.abort(); const stream = new AbortController(); this.#stream = stream;
     try {
-      await consumeGeneration(this.#generationId, stream.signal, event => this.handleGeneration(event), () => this.update({ generationStatus: '연결이 끊겨 다시 연결하고 있어요', status: '연결이 끊겨 다시 연결하고 있어요' }), this.#lastSeq);
+      await consumeGeneration(this.#generationId, stream.signal, event => this.handleGeneration(event), () => this.generationProgress('연결이 끊겨 다시 연결하고 있어요'), this.#lastSeq);
     } catch (error) {
       if (stream.signal.aborted) return;
       if (error instanceof HttpError && error.status === 404) this.finishGeneration('기록을 찾을 수 없어요');
@@ -178,7 +186,7 @@ export class StudioController {
       // Recheck at send time: a tab opened earlier may have started a generation meanwhile.
       const active = await this.activeGeneration(project.projectId);
       if (active) { this.followActive(active); return; }
-      this.update({ question: undefined, answeredQuestion: undefined, generationNotice: undefined, generationStatus: '화면을 만들고 있어요', status: '화면을 만들고 있어요', chats: [...this.#state.chats, { role: 'user', text: prompt }, { role: 'assistant', text: '' }] });
+      this.generationProgress('화면을 만들고 있어요', { question: undefined, answeredQuestion: undefined, generationNotice: undefined, chats: [...this.#state.chats, { role: 'user', text: prompt }, { role: 'assistant', text: '' }] });
       const { generationId } = await json<{ generationId: string }>(API.agent + '/generations', { projectId: project.projectId, baseRevision: project.revision, prompt, requestId: crypto.randomUUID() });
       this.#generationId = generationId; this.#lastSeq = 0; this.#recovering = false; this.saveGeneration();
       await this.subscribeGeneration();
@@ -188,13 +196,13 @@ export class StudioController {
     this.update({ generationEvents: [...this.#state.generationEvents, event] });
     this.#lastSeq = event.seq;
     if (event.type === 'state') {
-      if (event.state === 'staging') this.update({ answeredQuestion: this.#state.question ?? this.#state.answeredQuestion, question: undefined, generationStatus: '화면을 만들고 있어요', status: '화면을 만들고 있어요' });
-      else if (event.state === 'awaiting_answer') this.update({ generationStatus: '한 가지만 더 알려 주세요', status: '한 가지만 더 알려 주세요' });
+      if (event.state === 'staging') this.generationProgress('화면을 만들고 있어요', { answeredQuestion: this.#state.question ?? this.#state.answeredQuestion, question: undefined });
+      else if (event.state === 'awaiting_answer') this.generationProgress('한 가지만 더 알려 주세요');
     } else if (event.type === 'text') {
       const chats = [...this.#state.chats]; const last = chats.at(-1);
       if (last?.role === 'assistant') chats[chats.length - 1] = { ...last, text: last.text + event.delta };
       this.update({ chats });
-    } else if (event.type === 'question') this.update({ question: event, generationStatus: '한 가지만 더 알려 주세요', status: '한 가지만 더 알려 주세요' });
+    } else if (event.type === 'question') this.generationProgress('한 가지만 더 알려 주세요', { question: event });
     else if (event.type === 'file') this.update({ files: { ...this.#state.files, [event.path]: event.content } });
     else if (event.type === 'file_deleted') { const files = { ...this.#state.files }; delete files[event.path]; this.update({ files }); }
     else if (event.type === 'revision_ready') {
@@ -203,8 +211,9 @@ export class StudioController {
     } else if (event.type === 'done') this.update({ busy: false, question: undefined });
     else if (event.type === 'canceled') this.update({ busy: false, question: undefined, status: '생성을 중단했어요. 이전 화면은 그대로예요.' });
     else if (event.type === 'failed') this.update({ busy: false, question: undefined, status: event.code === 'conflict' ? '생성 중 다른 변경이 저장됐어요. 최신 내용을 불러와 주세요.' : '화면을 만들지 못했어요. 이전 화면을 유지했어요.', conflict: event.code === 'conflict' });
-    if (event.type === 'done' || event.type === 'failed' || event.type === 'canceled') this.finishGeneration(event.type === 'done' ? '완료' : event.type === 'canceled' ? '중단' : '실패');
-    else this.saveGeneration();
+    if (isTerminal(event)) this.finishGeneration(event.type === 'done' ? '완료' : event.type === 'canceled' ? '중단' : '실패');
+    // Text deltas are not checkpointed: resuming from the last checkpoint seq replays them.
+    else if (event.type !== 'text') this.saveGeneration();
   }
   async answer(answer: string) {
     if (!this.#generationId || !this.#state.question || !answer.trim()) return;
@@ -225,12 +234,10 @@ export class StudioController {
   }
   private async capability(project: Project): Promise<PreviewHostConfig> {
     await this.sessions(); const write = this.#state.writeAllowed; const epoch = this.#writeEpoch;
-    // Explicit opt-in E2E hook, clamped so it can only shorten the production TTL.
-    const configured = Number((window as unknown as { __STUDIO_TEST_CONFIG__?: { writeTtlSec?: number } }).__STUDIO_TEST_CONFIG__?.writeTtlSec);
-    const ttlSec = write ? (Number.isInteger(configured) && configured > 0 ? Math.min(configured, 120) : 120) : 300;
-    const capability = await json<{ token: string }>(API.policy + '/capabilities', { projectId: project.projectId, mode: write ? 'write' : 'read', env: 'preview', ttlSec, ...(write ? { apiIds: project.apiIds } : {}) }, 'POST', write ? this.#editorSession : this.#viewerSession);
+    const ttlSec = write ? WRITE_TTL_SEC : 300;
+    const capability = await json<{ token: string; claims: CapabilityClaims }>(API.policy + '/capabilities', { projectId: project.projectId, mode: write ? 'write' : 'read', env: 'preview', ttlSec, ...(write ? { apiIds: project.apiIds } : {}) }, 'POST', write ? this.#editorSession : this.#viewerSession);
     if (write && this.#state.writeAllowed && epoch === this.#writeEpoch) {
-      const expiresAt = Number(JSON.parse(atob(capability.token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))).exp) * 1000;
+      const expiresAt = capability.claims.exp * 1000;
       clearInterval(this.#writeTimer);
       const tick = () => {
         const remaining = Math.max(0, Math.ceil((expiresAt - Date.now()) / 1000));
@@ -241,7 +248,7 @@ export class StudioController {
           if (this.#state.project) void this.preview(this.#state.project);
         }
       };
-      this.#writeTimer = setInterval(tick, 250); tick();
+      this.#writeTimer = setInterval(tick, 1000); tick();
     }
     return { toiFetch: { sessionToken: this.#viewerSession, capabilityToken: capability.token, projectId: project.projectId, proxyBaseUrl: API.policy, env: 'preview' } };
   }
@@ -280,14 +287,13 @@ export class StudioController {
       }
       if (result.status === 'failed') {
         // Map only known error categories. Never render raw builder logs/URLs/secrets.
-        const reason = dependencyReason(result.code) ?? (/version|resolve|install|package set/i.test(result.error) ? '패키지 또는 버전 확인 필요' : '구성 요소 빌드 실패');
-        throw new DependencyError(reason);
+        throw new DependencyError(dependencyReason(result.code) ?? '구성 요소 빌드 실패');
       }
       return result;
     } catch (error) {
       if (error instanceof DependencyError) throw error;
       if (abort.signal.aborted) throw new DependencyError('대기 시간 초과');
-      if (error instanceof HttpError) throw new DependencyError(dependencyReason(error.body?.code) ?? (error.status === 400 ? '패키지 또는 버전 확인 필요' : '구성 요소 서비스 응답 오류'));
+      if (error instanceof HttpError) throw new DependencyError(dependencyReason(error.body?.code ?? (error.status === 400 ? 'input' : undefined)) ?? '구성 요소 서비스 응답 오류');
       throw new DependencyError('구성 요소 서비스 연결 실패');
     } finally { clearTimeout(timeout); }
   }

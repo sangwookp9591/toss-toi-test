@@ -8,16 +8,12 @@ const studioUrl = 'http://localhost:5273';
 let server;
 let browser;
 try {
-  let occupied = false;
-  try { await fetch(studioUrl); occupied = true; } catch {}
-  if (occupied) throw new Error('Benchmark port 5273 is already in use; stop the package test server before running the benchmark.');
-  {
-    server = spawn(process.execPath, ['scripts/dev.mjs'], { stdio: 'inherit', env: { ...process.env, STUDIO_PORT: '5273', PREVIEW_PORT: '5274' } });
-    for (let attempt = 0; ; attempt++) {
-      try { if ((await fetch(studioUrl)).ok) break; } catch {}
-      if (attempt >= 100 || server.exitCode !== null) throw new Error('Demo server did not start');
-      await new Promise(resolve => setTimeout(resolve, 100));
-    }
+  if (await fetch(studioUrl).then(() => true, () => false)) throw new Error('Benchmark port 5273 is already in use; stop the package test server before running the benchmark.');
+  server = spawn(process.execPath, ['scripts/dev.mjs'], { stdio: 'inherit', env: { ...process.env, STUDIO_PORT: '5273', PREVIEW_PORT: '5274' } });
+  for (let attempt = 0; ; attempt++) {
+    try { if ((await fetch(studioUrl)).ok) break; } catch {}
+    if (attempt >= 100 || server.exitCode !== null) throw new Error('Demo server did not start');
+    await new Promise(resolve => setTimeout(resolve, 100));
   }
   browser = await chromium.launch({ channel: 'chrome', headless: true });
   const samples = [];

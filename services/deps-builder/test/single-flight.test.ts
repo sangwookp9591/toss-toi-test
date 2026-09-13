@@ -1,19 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { Readable } from 'node:stream';
 import { PackageBuilder, type BuilderOptions } from '../src/builder.js';
-import type { ObjectStore } from '../src/store.js';
+import { MemoryStore } from './helpers.js';
 
-class FixtureStore implements ObjectStore {
-  objects = new Map<string, Buffer>();
-  puts: string[] = [];
-  async get(key: string) { await Promise.resolve(); return this.objects.get(key); }
-  async put(key: string, body: Buffer) { this.puts.push(key); this.objects.set(key, body); }
-  async stream(key: string) { return Readable.from(this.objects.get(key) ?? []); }
-}
 
 function fixture(expectedInstalls: number) {
-  const store = new FixtureStore();
+  const store = new MemoryStore();
   let installs = 0, bundles = 0, cleanups = 0, releaseInstalls!: () => void, releaseBuild!: () => void;
   const installed = new Promise<void>(resolve => { releaseInstalls = resolve; });
   const building = new Promise<void>(resolve => { releaseBuild = resolve; });

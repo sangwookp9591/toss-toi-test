@@ -1,7 +1,7 @@
 import * as esbuild from 'esbuild-wasm';
 import type { BuildFailure, Loader } from 'esbuild-wasm';
 import type { BundleRequest, BundleResponse } from './worker-protocol.ts';
-import { isAllowedExternal, resolveVfsPath } from './vfs.ts';
+import { isAllowedExternal, resolveVfsPath, VFS_NAMESPACE, stripVfsNamespace } from './vfs.ts';
 
 let current: BundleRequest;
 let context: esbuild.BuildContext | undefined;
@@ -28,9 +28,9 @@ async function bundle(request: BundleRequest) {
             return { errors: [{ text: `package not in package set: ${args.path}` }] };
           }
           const path = resolveVfsPath(args.path, args.importer || '/', current.files);
-          return path ? { path, namespace: 'vfs' } : { errors: [{ text: `VFS file not found: ${args.path}`, location: null }] };
+          return path ? { path, namespace: VFS_NAMESPACE } : { errors: [{ text: `VFS file not found: ${args.path}`, location: null }] };
         });
-        build.onLoad({ filter: /.*/, namespace: 'vfs' }, args => {
+        build.onLoad({ filter: /.*/, namespace: VFS_NAMESPACE }, args => {
           const ext = args.path.split('.').pop();
           if (!['tsx', 'ts', 'jsx', 'js', 'json'].includes(ext ?? '')) return { errors: [{ text: `unsupported VFS file: ${args.path}` }] };
           return { contents: current.files[args.path], loader: ext as Loader, resolveDir: args.path.slice(0, args.path.lastIndexOf('/')) || '/' };
@@ -38,10 +38,11 @@ async function bundle(request: BundleRequest) {
       } }]
     });
     const result = await context.rebuild();
-    scope.postMessage({ id: request.id, code: result.outputFiles!.find(file => file.path === '/bundle.js')!.text, map: result.outputFiles!.find(file => file.path === '/bundle.js.map')!.text, bundleMs: performance.now() - start });
+    const output = Object.fromEntries(result.outputFiles!.map(file => [file.path, file.text]));
+    scope.postMessage({ id: request.id, code: output['/bundle.js'], map: output['/bundle.js.map'], bundleMs: performance.now() - start });
   } catch (error) {
     const messages = (error as BuildFailure).errors;
-    scope.postMessage({ id: request.id, diagnostics: messages?.map(item => ({ message: item.text, file: item.location?.file.replace(/^vfs:/, ''), line: item.location?.line, column: item.location?.column })) ?? [{ message: String(error) }] });
+    scope.postMessage({ id: request.id, diagnostics: messages?.map(item => ({ message: item.text, file: item.location ? stripVfsNamespace(item.location.file) : undefined, line: item.location?.line, column: item.location?.column })) ?? [{ message: String(error) }] });
   }
 }
 scope.onmessage = event => { queue = queue.then(() => bundle(event.data)); };

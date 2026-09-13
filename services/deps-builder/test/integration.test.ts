@@ -1,7 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
-import type { Server } from 'node:http';
 import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { chromium } from 'playwright-core';
@@ -12,10 +11,9 @@ import { MinioStore } from '../src/store.js';
 import { defaultProfile, serviceRoot, settings } from '../src/config.js';
 import { canonicalJson, sha256 } from '../src/hash.js';
 import { install } from '../src/installer.js';
+import { listen, close } from './helpers.js';
 
 const request = { entries: ['react', 'react/jsx-runtime', 'react-dom/client', '@toi/tds'], dependencies: { react: '19.3.0', 'react-dom': '19.3.0', '@toi/tds': '1.0.0' } };
-const listen = (server: Server) => new Promise<string>(resolve => server.listen(0, '127.0.0.1', () => resolve(`http://127.0.0.1:${(server.address() as { port: number }).port}`)));
-const close = (server: Server) => new Promise<void>((resolve, reject) => { server.closeAllConnections(); server.close(error => error ? reject(error) : resolve()); });
 
 test('real Verdaccio auth, MinIO atomic publication, cache, retries, integrity and Chrome singleton', { timeout: 240000 }, async t => {
   assert.ok(settings().token, 'Run npm run setup-registry first');

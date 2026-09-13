@@ -50,3 +50,6 @@ export function resolveVfsPath(specifier: string, importer: string, files: VfsFi
   const extensions = ['.tsx', '.ts', '.jsx', '.js'];
   return [base, ...extensions.map(ext => base + ext), ...extensions.map(ext => base + '/index' + ext)].find(path => Object.hasOwn(files, path));
 }
+/** esbuild namespace for VFS modules; diagnostics and source maps carry it as a `vfs:` prefix. */
+export const VFS_NAMESPACE = 'vfs';
+export const stripVfsNamespace = (path: string) => path.startsWith(VFS_NAMESPACE + ':') ? path.slice(VFS_NAMESPACE.length + 1) : path;

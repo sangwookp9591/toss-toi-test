@@ -1,5 +1,6 @@
 import { TraceMap, originalPositionFor } from '@jridgewell/trace-mapping';
 import type { Diagnostic, FrameToParent } from '../../../contracts/src/runtime.ts';
+import { VFS_NAMESPACE, stripVfsNamespace } from './vfs.ts';
 
 // Private transport extension; public runtime events still expose only Diagnostic.
 export type RuntimeFrameMessage = FrameToParent & { stack?: string };
@@ -25,8 +26,8 @@ export function runtimeDiagnostic(message: string, stack: unknown, bundle: Bundl
       if (!Number.isSafeInteger(line) || !Number.isSafeInteger(column) || line < 1 || column < 0) continue;
       map ??= new TraceMap(bundle.map);
       const original = originalPositionFor(map, { line, column });
-      if (!original.source?.startsWith('vfs:/') || original.line === null || original.column === null) continue;
-      const file = original.source.slice('vfs:'.length);
+      if (!original.source?.startsWith(`${VFS_NAMESPACE}:/`) || original.line === null || original.column === null) continue;
+      const file = stripVfsNamespace(original.source);
       if (!bundle.files.has(file)) continue;
       // Match esbuild diagnostics: one-based lines, zero-based columns.
       return { message, file, line: original.line, column: original.column };

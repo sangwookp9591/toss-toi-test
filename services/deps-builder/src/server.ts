@@ -1,7 +1,7 @@
 import { createServer, type ServerResponse } from 'node:http';
 import { pipeline } from 'node:stream/promises';
 import { PackageBuilder } from './builder.js';
-import { failureCode, InputError } from './security.js';
+import { failureCode, FAILURE_RESPONSES, InputError } from './security.js';
 const allowedOrigins = new Set(['http://localhost:5173', 'http://localhost:5174']);
 function json(res: ServerResponse, status: number, body: unknown) { res.writeHead(status, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }); res.end(JSON.stringify(body)); }
 export function createApp(builder: PackageBuilder) {
@@ -36,9 +36,7 @@ export function createApp(builder: PackageBuilder) {
       json(res, 404, { error: 'Not found' });
     } catch (error) {
       const code = failureCode(error);
-      if (!res.headersSent) json(res, code === 'input' ? 400 : code === 'internal' ? 500 : 503, {
-        error: code === 'input' ? 'Invalid or unresolvable package set' : code === 'registry_unavailable' ? 'Package registry unavailable' : code === 'storage_unavailable' ? 'Artifact storage unavailable' : 'Internal builder error', code,
-      });
+      if (!res.headersSent) json(res, FAILURE_RESPONSES[code].status, { error: FAILURE_RESPONSES[code].error, code });
       else res.destroy();
     }
   });

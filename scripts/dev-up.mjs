@@ -1,4 +1,4 @@
-import { appendFileSync } from 'node:fs';
+import { createWriteStream } from 'node:fs';
 import { createInterface } from 'node:readline';
 import { redact, summarizeFailure } from './dev-diagnostics.mjs';
 import { spawn } from 'node:child_process';
@@ -57,12 +57,14 @@ async function main() {
  }
  await mkdir(run,{recursive:true});
  const logPath = path.join(run, 'dev-up.log');
- await writeFile(logPath, '');
+ const logFile = createWriteStream(logPath);
  const started = performance.now();
- const log = message => {
-  const line = `[${((performance.now()-started)/1000).toFixed(3)}s] ${redact(message)}`;
-  console.log(line); appendFileSync(logPath, line+'\n');
+ // Callers pass already-redacted subprocess lines through writeLine; everything else goes through log.
+ const writeLine = safe => {
+  const line = `[${((performance.now()-started)/1000).toFixed(3)}s] ${safe}`;
+  console.log(line); logFile.write(line+'\n');
  };
+ const log = message => writeLine(redact(message));
  async function stage(name, action, serviceLog) {
   const start = performance.now(); log(`${name}: starting`);
   try { await action(); log(`${name}: ready (${((performance.now()-start)/1000).toFixed(3)}s)`); }
@@ -78,9 +80,9 @@ async function main() {
   let output = '';
   for (const stream of [child.stdout, child.stderr]) {
    const lines = createInterface({input:stream});
-   lines.on('line', line => { const safe=redact(line); output=(output+'\n'+safe).slice(-16000); log(safe); });
+   lines.on('line', line => { const safe=redact(line); output=(output+'\n'+safe).slice(-16000); writeLine(safe); });
   }
-  child.on('error',error=>reject(Object.assign(error,{safeSummary:summarizeFailure(error.message)})));
+  child.on('error',reject);
   child.on('close',code=>code===0?resolve():reject(Object.assign(new Error(`${cmd} exited ${code}`),{safeSummary:summarizeFailure(output,`${cmd} exited ${code}`)})));
  });
  const healthy=async(url,headers={})=>{try{return (await fetch(url,{headers,signal:AbortSignal.timeout(1500)})).ok;}catch{return false;}};
@@ -96,10 +98,14 @@ async function main() {
  });
  await stage('Docker Compose',()=>command('docker',['compose','-f','infra/docker-compose.yml','up','-d']));
  await stage('registry and storage health',()=>Promise.all([wait('http://localhost:4873/-/ping'),wait('http://localhost:9000/minio/health/live')]));
- for(const dir of installDirectories) await stage(`${dir} install`,async()=>{
-  try { await access(path.join(root,dir,'node_modules')); log(`${dir}: dependencies already installed`); }
-  catch(error) { if(error.code!=='ENOENT')throw error; await command('npm',['ci'],path.join(root,dir)); }
- });
+ // Each directory has its own lockfile, so installs are independent; run a few at a time.
+ const pending=[...installDirectories];
+ await Promise.all(Array.from({length:3},async()=>{
+  for(let dir=pending.shift();dir;dir=pending.shift()) await stage(`${dir} install`,async()=>{
+   try { await access(path.join(root,dir,'node_modules')); log(`${dir}: dependencies already installed`); }
+   catch(error) { if(error.code!=='ENOENT')throw error; await command('npm',['ci'],path.join(root,dir)); }
+  });
+ }));
  await stage('registry setup',()=>command('npm',['run','setup-registry'],path.join(root,'services/deps-builder')));
  // Registry setup may have created the root environment file.
  try{process.loadEnvFile(path.join(root,'.env'));}catch{}
@@ -121,6 +127,7 @@ async function main() {
  }
  await stage('preview origin health',()=>wait('http://localhost:5174/healthz'));
  log('TOI-lite ready: http://localhost:5173 (logs: scripts/.run)');
+ logFile.end();
 }
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
  try { await main(); } catch (error) {

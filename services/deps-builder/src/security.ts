@@ -6,6 +6,13 @@ export class BuilderError extends Error {
 export class InputError extends BuilderError {
   constructor(message: string) { super('input', message); }
 }
+/** HTTP status and public message per failure code; adding a code without an entry fails to compile. */
+export const FAILURE_RESPONSES = {
+  input: { status: 400, error: 'Invalid or unresolvable package set' },
+  registry_unavailable: { status: 503, error: 'Package registry unavailable' },
+  storage_unavailable: { status: 503, error: 'Artifact storage unavailable' },
+  internal: { status: 500, error: 'Internal builder error' },
+} satisfies Record<PackageSetFailureCode, { status: number; error: string }>;
 export function failureCode(error: unknown): PackageSetFailureCode {
   return error instanceof BuilderError ? error.code : 'internal';
 }

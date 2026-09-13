@@ -3,7 +3,7 @@ const snapshot=(page:Page)=>page.evaluate(()=> (window as any).studio.getSnapsho
 async function commit(page:Page,revision:number){await expect.poll(async()=> (await snapshot(page)).lastCommit?.token.revision).toBe(revision);}
 async function create(page:Page){await page.goto('/');expect(await page.evaluate(()=>crossOriginIsolated)).toBe(false);await page.getByRole('button',{name:'프로젝트 만들기'}).click();await commit(page,1);}
 const frame=(page:Page)=>page.frameLocator('#preview iframe');
-async function generate(page:Page,prompt='고객 목록 화면 만들어줘'){await page.getByLabel('만들고 싶은 화면').fill(prompt);await page.getByRole('button',{name:'보내기'}).click();await page.getByRole('button',{name:'아니요',exact:true}).click();await commit(page,2);}
+async function generate(page:Page,prompt='고객 목록 화면 만들어줘'){await pendingQuestion(page,prompt);await page.getByRole('button',{name:'아니요',exact:true}).click();await commit(page,2);}
 async function save(page:Page,app:string){return page.evaluate(async app=>{const c=(window as any).studio;return c.saveFiles({...c.getSnapshot().project.files,'/src/App.tsx':app});},app);}
 const plain=(text:string)=>`export default function App(){return <h1>${text}</h1>}`;
 test('A: 생성, 역질문, 마스킹, 조회 사유와 감사 기록',async({page})=>{await create(page);await generate(page);await expect(frame(page).getByText('조회 사유', {exact:true})).toBeVisible();await frame(page).getByRole('button',{name:'조회',exact:true}).click();await expect(frame(page).getByRole('alert')).toBeVisible();await frame(page).getByLabel('조회 사유').fill('고객 문의 확인');await frame(page).getByRole('button',{name:'조회',exact:true}).click();await expect(frame(page).getByText('010-****-5678')).toBeVisible();await page.getByRole('button',{name:'활동 기록',exact:true}).click();await expect.poll(async()=>{await page.evaluate(()=> (window as any).studio.loadAudit());return (await snapshot(page)).audit.some((x:any)=>x.decision==='allowed'&&x.reason==='고객 문의 확인');}).toBe(true);await page.screenshot({path:'artifacts/studio.png',fullPage:true});});
@@ -25,15 +25,20 @@ expect(security.probes).toHaveLength(2);expect(security.probes.map((probe:any)=>
 test('E: 두 탭 CAS 충돌과 최신 내용 다시 불러오기',async({page,context})=>{await create(page);const tab=await context.newPage();await tab.goto(page.url());await commit(tab,1);await Promise.all([page.getByLabel('소스 코드').fill(plain('첫 탭')),tab.getByLabel('소스 코드').fill(plain('둘째 탭'))]);await Promise.all([page.getByRole('button',{name:'저장하고 반영'}).click(),tab.getByRole('button',{name:'저장하고 반영'}).click()]);await expect.poll(async()=>Number((await snapshot(page)).conflict)+Number((await snapshot(tab)).conflict)).toBe(1);const loser=(await snapshot(page)).conflict?page:tab;await expect(loser.getByRole('alert')).toContainText('다른 탭에서 먼저 저장');await loser.getByRole('button',{name:'최신 내용 불러오기'}).click();await expect.poll(async()=> (await snapshot(loser)).project.revision).toBe(2);await tab.close();});
 test('F: 사내 useToast와 앱 React 인스턴스 공유',async({page})=>{const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));await create(page);await save(page,`import React from 'react';import {ToastProvider,useToast,reactInstance} from '@toi/tds';function Content(){const {toast}=useToast();return <><p>{React===(reactInstance.default??reactInstance)?'동일 React':'React 불일치'}</p><button onClick={()=>toast('토스트 성공')}>알림 띄우기</button></>}export default function App(){return <ToastProvider><Content/></ToastProvider>}`);await commit(page,2);await expect(frame(page).getByText('동일 React')).toBeVisible();await frame(page).getByRole('button',{name:'알림 띄우기'}).click();await expect(frame(page).getByText('토스트 성공')).toBeVisible();expect(errors).toEqual([]);expect((await snapshot(page)).events.filter((x:any)=>x.type==='runtime_failed')).toEqual([]);});
 
-async function pendingQuestion(page: Page) {
-  await page.getByLabel('만들고 싶은 화면').fill('고객 목록 화면 만들어줘');
+async function pendingQuestion(page: Page, prompt = '고객 목록 화면 만들어줘') {
+  await page.getByLabel('만들고 싶은 화면').fill(prompt);
   await page.getByRole('button', { name: '보내기' }).click();
   await expect(page.locator('.question')).toBeVisible();
 }
+// Mirrors generationKey() in apps/studio/src/controller.ts.
 const recovery = (page: Page) => page.evaluate(() => {
   const id = (window as any).studio.getSnapshot().project.projectId;
   return JSON.parse(sessionStorage.getItem(`toi-studio-generation-v1:${id}`) ?? 'null');
 });
+const setRecovery = (page: Page, value: unknown) => page.evaluate(value => {
+  const id = (window as any).studio.getSnapshot().project.projectId;
+  sessionStorage.setItem(`toi-studio-generation-v1:${id}`, JSON.stringify(value));
+}, value);
 test('G: 역질문 새로고침 복구, Last-Event-ID 이후 답변과 revision_ready', async ({ page }) => {
   await create(page); await pendingQuestion(page);
   const before = await recovery(page);
@@ -60,11 +65,11 @@ test('G: 복구한 질문 취소와 이미 끝난 생성·404 안내', async ({ 
   await expect.poll(() => recovery(page)).toBeNull();
   await expect(page.locator('.generation-notice')).toContainText('진행 중이던 생성이 끝났어요: 중단');
   // Recreate the persisted checkpoint from before the terminal event arrived.
-  await page.evaluate(saved => sessionStorage.setItem(`toi-studio-generation-v1:${(window as any).studio.getSnapshot().project.projectId}`, JSON.stringify(saved)), saved);
+  await setRecovery(page, saved);
   await page.goto(url);
   await expect(page.locator('.generation-notice')).toContainText('진행 중이던 생성이 끝났어요: 중단');
   await expect.poll(() => recovery(page)).toBeNull();
-  await page.evaluate(saved => sessionStorage.setItem(`toi-studio-generation-v1:${(window as any).studio.getSnapshot().project.projectId}`, JSON.stringify({ ...saved, generationId: crypto.randomUUID() })), saved);
+  await setRecovery(page, { ...saved, generationId: crypto.randomUUID() });
   await page.reload();
   await expect(page.locator('.generation-notice')).toContainText('진행 중이던 생성이 끝났어요: 기록을 찾을 수 없어요');
   await expect.poll(() => recovery(page)).toBeNull();
@@ -201,7 +206,7 @@ test('L: 새 탭 활성 생성 전체 replay, 답변 동기화와 양쪽 취소 
   const tab = await context.newPage(); await tab.goto(page.url()); await commit(tab, 1);
   await pendingQuestion(page);
   const before = await recovery(page);
-  await tab.evaluate(saved => sessionStorage.setItem(`toi-studio-generation-v1:${(window as any).studio.getSnapshot().project.projectId}`, JSON.stringify({ ...saved, generationId: crypto.randomUUID(), seq: 999, chats: [{ role: 'assistant', text: 'stale chat' }] })), before);
+  await setRecovery(tab, { ...before, generationId: crypto.randomUUID(), seq: 999, chats: [{ role: 'assistant', text: 'stale chat' }] });
   const replay = tab.waitForRequest(request => request.url().includes(`/generations/${before.generationId}/events`));
   await tab.reload();
   expect((await replay).headers()['last-event-id']).toBeUndefined();

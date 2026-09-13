@@ -7,6 +7,7 @@ export async function json<T>(url: string, body?: unknown, method = body === und
   if (!response.ok) throw new HttpError(response.status, value);
   return value as T;
 }
+export const isTerminal = (event: GenerationEvent) => event.type === 'done' || event.type === 'failed' || event.type === 'canceled';
 export async function consumeGeneration(id: string, signal: AbortSignal, onEvent: (event: GenerationEvent) => void, reconnecting: () => void, initialSeq = 0) {
   let lastSeq = initialSeq;
   while (!signal.aborted) {
@@ -28,7 +29,7 @@ export async function consumeGeneration(id: string, signal: AbortSignal, onEvent
           if (event.seq !== lastSeq + 1) throw new Error('SSE sequence gap');
           lastSeq = event.seq;
           onEvent(event);
-          if (['done', 'failed', 'canceled'].includes(event.type)) { await reader.cancel(); return; }
+          if (isTerminal(event)) { await reader.cancel(); return; }
         }
       }
     } catch (error) {

@@ -1,24 +1,15 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createServer, type Server } from 'node:http';
+import { createServer } from 'node:http';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { Readable } from 'node:stream';
 import { install, classifyInstallFailure } from '../src/installer.js';
 import { BuilderError, InputError } from '../src/security.js';
 import { PackageBuilder, type BuilderOptions } from '../src/builder.js';
 import { createApp } from '../src/server.js';
-import type { ObjectStore } from '../src/store.js';
-const listen = (server: Server) => new Promise<string>(resolve => server.listen(0, '127.0.0.1', () => resolve(`http://127.0.0.1:${(server.address() as { port: number }).port}`)));
-const close = (server: Server) => new Promise<void>(resolve => { server.closeAllConnections(); server.close(() => resolve()); });
+import { listen, close, MemoryStore } from './helpers.js';
 const request = { entries: ['react'], dependencies: { react: '9999.0.0-missing' } };
-class MemoryStore implements ObjectStore {
-  objects = new Map<string, Buffer>(); fail = false;
-  async get(key: string) { if (this.fail) throw new Error('ECONNREFUSED'); return this.objects.get(key); }
-  async put(key: string, body: Buffer) { if (this.fail) throw new Error('MinIO disconnected'); this.objects.set(key, body); }
-  async stream(key: string) { return Readable.from(this.objects.get(key) ?? []); }
-}
 
 test('real Yarn distinguishes connection refusal from a healthy registry package 404', async () => {
   const server = createServer((req, res) => { res.writeHead(req.url === '/-/ping' ? 200 : 404, { 'Content-Type': 'application/json' }); res.end('{}'); });
