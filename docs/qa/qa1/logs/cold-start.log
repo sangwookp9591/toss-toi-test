@@ -1,0 +1,94 @@
+[0.143s]  Network toi-qa_default  Creating
+[0.239s]  Network toi-qa_default  Created
+[0.242s]  Volume "toi-qa_minio-data"  Creating
+[0.247s]  Volume "toi-qa_minio-data"  Created
+[0.248s]  Volume "toi-qa_verdaccio-storage"  Creating
+[0.249s]  Volume "toi-qa_verdaccio-storage"  Created
+[0.250s]  Volume "toi-qa_verdaccio-auth"  Creating
+[0.252s]  Volume "toi-qa_verdaccio-auth"  Created
+[0.254s]  Container toi-qa-minio-1  Creating
+[0.254s]  Container toi-qa-verdaccio-init-1  Creating
+[0.304s]  Container toi-qa-minio-1  Created
+[0.305s]  Container toi-qa-verdaccio-init-1  Created
+[0.305s]  Container toi-qa-verdaccio-1  Creating
+[0.356s]  Container toi-qa-verdaccio-1  Created
+[0.378s]  Container toi-qa-verdaccio-init-1  Starting
+[0.378s]  Container toi-qa-minio-1  Starting
+[0.515s]  Container toi-qa-minio-1  Started
+[0.520s]  Container toi-qa-verdaccio-init-1  Started
+[0.520s]  Container toi-qa-verdaccio-init-1  Waiting
+[1.024s]  Container toi-qa-verdaccio-init-1  Exited
+[1.024s]  Container toi-qa-verdaccio-1  Starting
+[1.154s]  Container toi-qa-verdaccio-1  Started
+[3.370s] 
+[3.370s] added 116 packages, and audited 117 packages in 1s
+[3.370s] 
+[3.370s] 22 packages are looking for funding
+[3.370s]   run `npm fund` for details
+[3.370s] 
+[3.370s] found 0 vulnerabilities
+[4.714s] 
+[4.714s] added 100 packages, and audited 101 packages in 1s
+[4.714s] 
+[4.714s] 25 packages are looking for funding
+[4.714s]   run `npm fund` for details
+[4.718s] 
+[4.718s] 5 moderate severity vulnerabilities
+[4.718s] 
+[4.718s] To address all issues, run:
+[4.718s]   npm audit fix --force
+[4.718s] 
+[4.718s] Run `npm audit` for details.
+[6.268s] 
+[6.268s] added 126 packages, and audited 127 packages in 1s
+[6.268s] 
+[6.268s] 17 packages are looking for funding
+[6.268s]   run `npm fund` for details
+[6.273s] 
+[6.273s] 2 vulnerabilities (1 moderate, 1 critical)
+[6.273s] 
+[6.273s] To address all issues, run:
+[6.273s]   npm audit fix --force
+[6.273s] 
+[6.273s] Run `npm audit` for details.
+[7.735s] 
+[7.735s] added 125 packages, and audited 126 packages in 1s
+[7.735s] 
+[7.735s] 17 packages are looking for funding
+[7.735s]   run `npm fund` for details
+[7.742s] 
+[7.742s] 2 vulnerabilities (1 moderate, 1 critical)
+[7.742s] 
+[7.742s] To address all issues, run:
+[7.742s]   npm audit fix --force
+[7.742s] 
+[7.742s] Run `npm audit` for details.
+[9.324s] 
+[9.324s] added 121 packages, and audited 122 packages in 1s
+[9.324s] 
+[9.324s] 23 packages are looking for funding
+[9.324s]   run `npm fund` for details
+[9.324s] 
+[9.324s] found 0 vulnerabilities
+[10.391s] 
+[10.391s] added 56 packages, and audited 57 packages in 985ms
+[10.392s] 
+[10.392s] found 0 vulnerabilities
+[10.529s] 
+[10.529s] > @toi/deps-builder@1.0.0 setup-registry
+[10.529s] > node scripts/setup-registry.mjs
+[10.529s] 
+[10.621s] Anonymous @toi/tds metadata blocked: HTTP 401
+[10.867s] Registry token stored in gitignored root .env (mode 0600)
+[11.726s] Registry setup failed (Error); inspect registry health and configuration
+[11.735s] file:///Users/psw/Projects/toi-lite-qa/scripts/dev-up.mjs:27
+[11.735s] const command=(cmd,args,cwd=root)=>new Promise((resolve,reject)=>{const child=spawn(cmd,args,{cwd,stdio:'inherit',env:process.env});child.on('exit',code=>code===0?resolve():reject(new Error(`${cmd} exited ${code}`)));child.on('error',reject);});
+[11.735s]                                                                                                                                                                                     ^
+[11.735s] 
+[11.735s] Error: npm exited 1
+[11.735s]     at ChildProcess.<anonymous> (file:///Users/psw/Projects/toi-lite-qa/scripts/dev-up.mjs:27:181)
+[11.735s]     at ChildProcess.emit (node:events:518:28)
+[11.735s]     at ChildProcess._handle.onexit (node:internal/child_process:293:12)
+[11.735s] 
+[11.735s] Node.js v22.14.0
+EXIT=1 ELAPSED=11.737s

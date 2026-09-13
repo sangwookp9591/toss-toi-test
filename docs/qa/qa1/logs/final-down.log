@@ -1,0 +1,21 @@
+Stopped studio
+Stopped agent-server
+Stopped deps-builder
+Stopped policy-proxy
+Stopped mock-backend
+Managed processes stopped; externally started services are left running.
+ Container toi-qa-minio-1  Stopping
+ Container toi-qa-verdaccio-1  Stopping
+ Container toi-qa-verdaccio-1  Stopped
+ Container toi-qa-verdaccio-1  Removing
+ Container toi-qa-verdaccio-1  Removed
+ Container toi-qa-verdaccio-init-1  Stopping
+ Container toi-qa-verdaccio-init-1  Stopped
+ Container toi-qa-verdaccio-init-1  Removing
+ Container toi-qa-verdaccio-init-1  Removed
+ Container toi-qa-minio-1  Stopped
+ Container toi-qa-minio-1  Removing
+ Container toi-qa-minio-1  Removed
+ Network toi-qa_default  Removing
+ Network toi-qa_default  Removed
+EXIT=0 ELAPSED=4.038s

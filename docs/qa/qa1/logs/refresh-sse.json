@@ -1,0 +1,11 @@
+{
+  "originalEventUrl": "http://localhost:7400/generations/708077aa-9bf4-4efa-a2ee-1fbf80cd5646/events",
+  "eventRequests": [
+    "http://localhost:7400/generations/708077aa-9bf4-4efa-a2ee-1fbf80cd5646/events"
+  ],
+  "state": {
+    "busy": false,
+    "chats": 0,
+    "question": false
+  }
+}

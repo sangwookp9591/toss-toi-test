@@ -1,0 +1,50 @@
+[
+  {
+    "port": 7200,
+    "path": "/dev/session",
+    "method": "OPTIONS",
+    "status": 403,
+    "body": "{\"error\":\"ORIGIN_FORBIDDEN\"}",
+    "corsAllowOrigin": null
+  },
+  {
+    "port": 7200,
+    "path": "/dev/session",
+    "method": "POST",
+    "status": 403,
+    "body": "{\"error\":\"ORIGIN_FORBIDDEN\"}",
+    "corsAllowOrigin": null
+  },
+  {
+    "port": 7200,
+    "path": "/capabilities",
+    "method": "OPTIONS",
+    "status": 403,
+    "body": "{\"error\":\"ORIGIN_FORBIDDEN\"}",
+    "corsAllowOrigin": null
+  },
+  {
+    "port": 7200,
+    "path": "/capabilities",
+    "method": "POST",
+    "status": 403,
+    "body": "{\"error\":\"ORIGIN_FORBIDDEN\"}",
+    "corsAllowOrigin": null
+  },
+  {
+    "port": 7400,
+    "path": "/generations",
+    "method": "OPTIONS",
+    "status": 403,
+    "body": "{\"error\":\"origin forbidden\"}",
+    "corsAllowOrigin": null
+  },
+  {
+    "port": 7400,
+    "path": "/generations",
+    "method": "POST",
+    "status": 403,
+    "body": "{\"error\":\"origin forbidden\"}",
+    "corsAllowOrigin": null
+  }
+]

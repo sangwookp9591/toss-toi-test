@@ -1,0 +1,4 @@
+{
+  "processCommandsContainingClonePath": [],
+  "scope": "service commands containing absolute clone path; excludes observer shell/python"
+}

@@ -1,0 +1,5 @@
+
+> @toi/tds@1.0.0 build
+> tsc
+
+sh: tsc: command not found

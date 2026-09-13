@@ -1,0 +1,7 @@
+{
+  "latencyMs": 400,
+  "downloadBytesPerSec": 750000,
+  "uploadBytesPerSec": 250000,
+  "firstCommitMs": 26427.10000000894,
+  "editCommitMs": 1811.0999999940395
+}

@@ -1,0 +1,14 @@
+{
+  "observedBySec": 22.544,
+  "status": "이전 화면을 유지했어요: 구성 요소를 준비하지 못했어요",
+  "request": {
+    "status": 200,
+    "dependencies": {
+      "react": "19.3.0",
+      "react-dom": "19.3.0",
+      "@tanstack/react-query": "^5.0.0",
+      "@toi/tds": "1.1.0",
+      "@toi/fetch": "1.0.0"
+    }
+  }
+}

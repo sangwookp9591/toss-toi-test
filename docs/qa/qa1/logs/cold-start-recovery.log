@@ -1,0 +1,34 @@
+COMMAND npm --prefix packages/fake-tds ci
+[0.545s] 
+[0.545s] added 4 packages, and audited 5 packages in 467ms
+[0.546s] 
+[0.546s] found 0 vulnerabilities
+EXIT=0 ELAPSED=0.552s
+COMMAND node scripts/dev-up.mjs
+[3.736s]  Container toi-qa-minio-1  Running
+[3.736s]  Container toi-qa-verdaccio-init-1  Created
+[3.736s]  Container toi-qa-verdaccio-1  Running
+[6.759s]  Container toi-qa-verdaccio-init-1  Starting
+[6.900s]  Container toi-qa-verdaccio-init-1  Started
+[6.900s]  Container toi-qa-verdaccio-init-1  Waiting
+[7.406s]  Container toi-qa-verdaccio-init-1  Exited
+[7.790s] 
+[7.790s] > @toi/deps-builder@1.0.0 setup-registry
+[7.790s] > node scripts/setup-registry.mjs
+[7.790s] 
+[7.879s] Anonymous @toi/tds metadata blocked: HTTP 401
+[10.114s] Published @toi/tds@1.0.0
+[10.819s] Published @toi/tds@1.1.0
+[10.823s] Verified both versions published; anonymous access remains HTTP 401
+[10.963s] 
+[10.963s] > @toi/policy-proxy@1.0.0 publish:client
+[10.963s] > node scripts/publish-client.mjs
+[10.963s] 
+[12.874s] Published @toi/fetch@1.0.0; anonymous metadata is blocked
+[13.955s] mock-backend: ready
+[14.967s] policy-proxy: ready
+[16.480s] deps-builder: ready
+[17.997s] agent-server: ready
+[18.509s] studio: ready
+[18.510s] TOI-lite ready: http://localhost:5173 (logs: scripts/.run)
+EXIT=0 ELAPSED=18.516s

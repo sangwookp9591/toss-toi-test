@@ -1,0 +1,26 @@
+ Container toi-qa-verdaccio-init-1  Created
+ Container toi-qa-minio-1  Running
+ Container toi-qa-verdaccio-1  Running
+ Container toi-qa-verdaccio-init-1  Starting
+ Container toi-qa-verdaccio-init-1  Started
+ Container toi-qa-verdaccio-init-1  Waiting
+ Container toi-qa-verdaccio-init-1  Exited
+
+> @toi/deps-builder@1.0.0 setup-registry
+> node scripts/setup-registry.mjs
+
+Anonymous @toi/tds metadata blocked: HTTP 401
+@toi/tds@1.0.0 already published
+@toi/tds@1.1.0 already published
+Verified both versions published; anonymous access remains HTTP 401
+
+> @toi/policy-proxy@1.0.0 publish:client
+> node scripts/publish-client.mjs
+
+@toi/fetch@1.0.0 already published
+mock-backend: ready
+policy-proxy: existing healthy service
+deps-builder: existing healthy service
+agent-server: existing healthy service
+studio: existing healthy service
+TOI-lite ready: http://localhost:5173 (logs: scripts/.run)

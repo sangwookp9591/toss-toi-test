@@ -1,0 +1,14 @@
+{
+  "url": "http://localhost:5173/?project=00553a6c-a208-415c-ad68-a8ff21502e38",
+  "project": {
+    "name": "QA 고객 어드민",
+    "revision": 16,
+    "heading": true
+  },
+  "dependencyResponses": [
+    {
+      "status": 200,
+      "at": 1789286066750
+    }
+  ]
+}

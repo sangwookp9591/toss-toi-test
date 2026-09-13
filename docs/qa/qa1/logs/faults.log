@@ -1,0 +1,17 @@
+1789285510.311303 SIGTERM process group agent-server pid=36999
+1789285565.50895 SIGKILL process group agent-server pid=44042
+1789285604.145002 SIGTERM policy-proxy pid=36868
+1789285694.725892 SIGTERM mock-backend pid=36812
+1789285720101 builder SIGKILL on HTTP202 pid=36918
+ Container toi-qa-minio-1  Stopping
+ Container toi-qa-minio-1  Stopped
+ Container toi-qa-minio-1  Starting
+ Container toi-qa-minio-1  Started
+ Container toi-qa-verdaccio-1  Stopping
+ Container toi-qa-verdaccio-1  Stopped
+ Container toi-qa-verdaccio-init-1  Starting
+ Container toi-qa-verdaccio-init-1  Started
+ Container toi-qa-verdaccio-init-1  Waiting
+ Container toi-qa-verdaccio-init-1  Exited
+ Container toi-qa-verdaccio-1  Starting
+ Container toi-qa-verdaccio-1  Started

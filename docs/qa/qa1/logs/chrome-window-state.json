@@ -1,0 +1,57 @@
+{
+  "id": "3d40b7f5-df08-471d-a340-e56b0c26e920",
+  "ok": true,
+  "result": {
+    "screenshot": {
+      "format": "png",
+      "width": 3204,
+      "height": 1764,
+      "scale": 2,
+      "path": "/var/folders/vm/2j4w6z7x4r9c54828njz5n9m0000gn/T/orca-computer-use/3d40b7f5-df08-471d-a340-e56b0c26e920-screenshot.png",
+      "dataOmitted": true,
+      "expiresAt": "2026-09-14T07:52:47.456Z"
+    },
+    "screenshotStatus": {
+      "metadata": {
+        "engine": "screenCaptureKit",
+        "windowId": 7760
+      },
+      "state": "captured"
+    },
+    "snapshot": {
+      "window": {
+        "title": "TOI Studio · 대화로 만드는 어드민 - Chrome",
+        "isMinimized": false,
+        "x": 22,
+        "y": 33,
+        "width": 1602,
+        "id": 7760,
+        "isOffscreen": false,
+        "screenIndex": 0,
+        "height": 882,
+        "platform": {
+          "layer": 0
+        }
+      },
+      "focusedElementId": null,
+      "coordinateSpace": "window",
+      "id": "3EDF6DC8-4C94-40E7-8826-6190DBBB7698",
+      "elementCount": 17,
+      "truncation": {
+        "maxNodes": 1200,
+        "maxDepth": 64,
+        "maxDepthReached": false,
+        "truncated": false
+      },
+      "app": {
+        "name": "Google Chrome",
+        "pid": 37899,
+        "bundleId": "com.google.Chrome"
+      },
+      "treeText": "App=com.google.Chrome (pid 37899)\nWindow: \"TOI Studio · 대화로 만드는 어드민 - Chrome\", App: Google Chrome.\n\n0 표준 윈도우 TOI Studio · 대화로 만드는 어드민 - Chrome\n\t1 container TOI Studio · 대화로 만드는 어드민 - Chrome\n\t\t2 도구 막대\n\t\t\t3 버튼 뒤로\n\t\t\t4 버튼 (disabled) 앞으로\n\t\t\t5 버튼 새로고침\n\t\t\t6 팝업 버튼 사이트 정보 보기\n\t\t\t7 텍스트 필드 (settable) 주소창 및 검색창, Value: localhost:5173/?project=00553a6c-a208-415c-ad68-a8ff21502e38, Placeholder: Google에 물어보거나 URL을 입력하세요.\n\t\t\t8 버튼 현재 탭을 북마크에 추가\n\t\t\t9 팝업 버튼 Chrome\n\t\t10 팝업 버튼 탭 검색\n\t\t11 탭 그룹\n\t\t\t12 탭 (selected, settable) TOI Studio · 대화로 만드는 어드민 - 메모리 사용량 - 226MB, Value: 1\n\t\t13 버튼 새 탭\n\t14 닫기 버튼\n\t15 전체 화면 버튼, Secondary Actions: zoom the window\n\t16 최소화 버튼\n\nNo UI element is currently focused."
+    }
+  },
+  "_meta": {
+    "runtimeId": "7ae12af0-64b7-430c-8299-c5c1022f2da8"
+  }
+}

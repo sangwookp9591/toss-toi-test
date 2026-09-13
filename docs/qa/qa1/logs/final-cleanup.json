@@ -1,0 +1,12 @@
+{
+  "exit": 0,
+  "elapsedSeconds": 4.342,
+  "portListeners": "",
+  "managedPidsRemaining": [],
+  "qaContainersRemaining": "",
+  "qaVolumesPreserved": [
+    "toi-qa_minio-data",
+    "toi-qa_verdaccio-auth",
+    "toi-qa_verdaccio-storage"
+  ]
+}

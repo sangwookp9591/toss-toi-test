@@ -1,0 +1,2 @@
+55501 32451 55501 /bin/zsh -c cat docs/qa/logs/first-down.log docs/qa/logs/first-down-ports.log; ps -axo pid,ppid,pgid,command | rg '/Users/psw/Projects/toi-lite-qa/|tsx src/main.ts|tsx --env-file' > docs/qa/logs/first-down-processes.log; cat docs/qa/logs/first-down-processes.log
+55504 55501 55501 rg /Users/psw/Projects/toi-lite-qa/|tsx src/main.ts|tsx --env-file

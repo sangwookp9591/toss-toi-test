@@ -1,0 +1,33 @@
+{
+  "keys": [
+    "sessionToken",
+    "capabilityToken",
+    "projectId",
+    "proxyBaseUrl",
+    "env"
+  ],
+  "sessionRoles": [
+    "viewer"
+  ],
+  "writable": true,
+  "configFrozen": true,
+  "checks": [
+    {
+      "port": 7200,
+      "path": "/dev/session",
+      "error": "TypeError: Failed to fetch"
+    },
+    {
+      "port": 7200,
+      "path": "/capabilities",
+      "error": "TypeError: Failed to fetch"
+    },
+    {
+      "port": 7400,
+      "path": "/generations",
+      "error": "TypeError: Failed to fetch"
+    }
+  ],
+  "propertyMutationSucceeded": false,
+  "configReplaceable": true
+}

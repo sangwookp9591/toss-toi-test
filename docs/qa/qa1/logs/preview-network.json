@@ -1,0 +1,55 @@
+[
+  {
+    "url": "http://localhost:5174/frame.js",
+    "status": 200,
+    "secretMatches": []
+  },
+  {
+    "url": "http://localhost:7100/assets/1dfd1347c037a6eaeda057633040f41eaa8f922ed7e54423d32d3db6dc6ae99b/entry-4.js",
+    "status": 200,
+    "secretMatches": []
+  },
+  {
+    "url": "http://localhost:7100/assets/1dfd1347c037a6eaeda057633040f41eaa8f922ed7e54423d32d3db6dc6ae99b/entry-3.js",
+    "status": 200,
+    "secretMatches": []
+  },
+  {
+    "url": "http://localhost:7100/assets/1dfd1347c037a6eaeda057633040f41eaa8f922ed7e54423d32d3db6dc6ae99b/entry-2.js",
+    "status": 200,
+    "secretMatches": []
+  },
+  {
+    "url": "http://localhost:7100/assets/1dfd1347c037a6eaeda057633040f41eaa8f922ed7e54423d32d3db6dc6ae99b/entry-1.js",
+    "status": 200,
+    "secretMatches": []
+  },
+  {
+    "url": "http://localhost:7100/assets/1dfd1347c037a6eaeda057633040f41eaa8f922ed7e54423d32d3db6dc6ae99b/entry-5.js",
+    "status": 200,
+    "secretMatches": []
+  },
+  {
+    "url": "http://localhost:7100/assets/1dfd1347c037a6eaeda057633040f41eaa8f922ed7e54423d32d3db6dc6ae99b/chunks/chunk-FXPQAAAO.js",
+    "status": 200,
+    "secretMatches": []
+  },
+  {
+    "url": "http://localhost:7100/assets/1dfd1347c037a6eaeda057633040f41eaa8f922ed7e54423d32d3db6dc6ae99b/chunks/chunk-ZX4GFXSY.js",
+    "status": 200,
+    "secretMatches": []
+  },
+  {
+    "url": "http://localhost:7100/assets/1dfd1347c037a6eaeda057633040f41eaa8f922ed7e54423d32d3db6dc6ae99b/chunks/chunk-NO5PECIB.js",
+    "status": 200,
+    "secretMatches": []
+  },
+  {
+    "url": "http://localhost:7200/proxy/customers/customers",
+    "status": 200,
+    "roles": [
+      "viewer"
+    ],
+    "secretMatches": []
+  }
+]

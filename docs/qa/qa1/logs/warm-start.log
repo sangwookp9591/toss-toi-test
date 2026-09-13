@@ -1,0 +1,36 @@
+[0.139s]  Network toi-qa_default  Creating
+[0.227s]  Network toi-qa_default  Created
+[0.234s]  Container toi-qa-verdaccio-init-1  Creating
+[0.234s]  Container toi-qa-minio-1  Creating
+[0.283s]  Container toi-qa-minio-1  Created
+[0.287s]  Container toi-qa-verdaccio-init-1  Created
+[0.287s]  Container toi-qa-verdaccio-1  Creating
+[0.334s]  Container toi-qa-verdaccio-1  Created
+[0.357s]  Container toi-qa-verdaccio-init-1  Starting
+[0.357s]  Container toi-qa-minio-1  Starting
+[0.489s]  Container toi-qa-verdaccio-init-1  Started
+[0.489s]  Container toi-qa-verdaccio-init-1  Waiting
+[0.497s]  Container toi-qa-minio-1  Started
+[0.992s]  Container toi-qa-verdaccio-init-1  Exited
+[0.992s]  Container toi-qa-verdaccio-1  Starting
+[1.117s]  Container toi-qa-verdaccio-1  Started
+[2.029s] 
+[2.029s] > @toi/deps-builder@1.0.0 setup-registry
+[2.029s] > node scripts/setup-registry.mjs
+[2.029s] 
+[2.118s] Anonymous @toi/tds metadata blocked: HTTP 401
+[3.152s] @toi/tds@1.0.0 already published
+[3.264s] @toi/tds@1.1.0 already published
+[3.266s] Verified both versions published; anonymous access remains HTTP 401
+[3.408s] 
+[3.408s] > @toi/policy-proxy@1.0.0 publish:client
+[3.408s] > node scripts/publish-client.mjs
+[3.408s] 
+[4.319s] @toi/fetch@1.0.0 already published
+[4.840s] mock-backend: ready
+[5.353s] policy-proxy: ready
+[5.863s] deps-builder: ready
+[6.374s] agent-server: ready
+[6.887s] studio: ready
+[6.889s] TOI-lite ready: http://localhost:5173 (logs: scripts/.run)
+EXIT=0 ELAPSED=6.895s
