@@ -1,8 +1,21 @@
 name: toi-lite
 
 services:
+  # 이름 있는 볼륨은 root 소유로 만들어진다. verdaccio(uid 10001)가 htpasswd·storage를 쓸 수 있게 먼저 소유권을 맞춘다.
+  verdaccio-init:
+    image: verdaccio/verdaccio:6
+    user: root
+    entrypoint: ["sh", "-c", "chown -R 10001:65533 /verdaccio/storage /verdaccio/auth"]
+    volumes:
+      - verdaccio-storage:/verdaccio/storage
+      - verdaccio-auth:/verdaccio/auth
+    restart: "no"
+
   verdaccio:
     image: verdaccio/verdaccio:6
+    depends_on:
+      verdaccio-init:
+        condition: service_completed_successfully
     ports:
       - "4873:4873"
     volumes:
