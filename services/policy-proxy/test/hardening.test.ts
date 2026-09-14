@@ -36,12 +36,12 @@ afterAll(async()=>{await close(proxy);await close(upstream);await rm(dir,{recurs
 
 test.each(['/dev/session','/capabilities','/apis','/apis/reports','/audit'])('C1 preview rejects %s on server, including simple requests and preflights', async endpoint => {
  for(const method of ['POST','GET','OPTIONS']) {
-  const r = await fetch(base+endpoint,{method,headers:{Origin:'http://localhost:5174','Content-Type':'text/plain',Authorization:`Bearer ${admin}`},...(method==='POST'?{body:JSON.stringify({user:'attacker',roles:['viewer','editor','platform-admin']})}:{})});
+  const r = await fetch(base+endpoint,{method,headers:{Origin:'http://localhost:5274','Content-Type':'text/plain',Authorization:`Bearer ${admin}`},...(method==='POST'?{body:JSON.stringify({user:'attacker',roles:['viewer','editor','platform-admin']})}:{})});
   expect(r.status).toBe(403);expect(r.headers.get('access-control-allow-origin')).toBeNull();expect(await r.text()).not.toContain('token');
  }
 });
 test.each(['/dev/session','/capabilities'])('C1 %s requires application/json before parsing/authentication',async endpoint=>{
- for (const origin of [undefined,'http://localhost:5173']) for(const type of [undefined,'text/plain','application/x-www-form-urlencoded']) {
+ for (const origin of [undefined,'http://localhost:5273']) for(const type of [undefined,'text/plain','application/x-www-form-urlencoded']) {
   const r=await fetch(base+endpoint,{method:'POST',headers:{...(origin?{Origin:origin}:{}),...(type?{'Content-Type':type}:{})},body:'{}'});expect(r.status).toBe(415);
  }
 });

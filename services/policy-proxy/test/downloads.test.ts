@@ -22,7 +22,7 @@ let dir: string, manager: Downloads, store: PolicyStorage, backend: Server, serv
 const objects = new MemoryObjects(), projectId = '11111111-1111-1111-1111-111111111111';
 let alice: string, bob: string, carol: string, admin: string, cap: string;
 const keys = { kek: randomBytes(32).toString('hex'), kekId: 'test-v1', urlSecret: randomBytes(32).toString('hex'), retainMs: 86400000 };
-const request = (t: string, format = 'csv', extra: Record<string, unknown> = {}, origin = 'http://localhost:5173') => fetch(base + '/downloads', { method: 'POST', headers: { Origin: origin, Authorization: 'Bearer ' + t, 'X-Toi-Project': projectId, 'X-Toi-Capability': cap, 'Content-Type': 'application/json' }, body: JSON.stringify({ projectId, apiId: 'customers', path: '/customers', format, reason: 'customer support report', ...extra }) });
+const request = (t: string, format = 'csv', extra: Record<string, unknown> = {}, origin = 'http://localhost:5273') => fetch(base + '/downloads', { method: 'POST', headers: { Origin: origin, Authorization: 'Bearer ' + t, 'X-Toi-Project': projectId, 'X-Toi-Capability': cap, 'Content-Type': 'application/json' }, body: JSON.stringify({ projectId, apiId: 'customers', path: '/customers', format, reason: 'customer support report', ...extra }) });
 const get = (url: string, t = alice) => fetch(base + url, { headers: { Authorization: 'Bearer ' + t } });
 beforeAll(async () => {
   dir = await mkdtemp(path.join(os.tmpdir(), 'policy-download-test-'));
@@ -80,21 +80,21 @@ test('editor minimum, membership hiding, preview origin and registered GET path 
   expect((await request(alice, 'csv', { path: '/%252e%252e/customers' })).status).toBe(400);
 });
 test('preview direct requests are forbidden; studio broker retains project scoping', async () => {
-  const p = await fetch(base + '/preview-sessions', { method: 'POST', headers: { Authorization: 'Bearer ' + alice, Origin: 'http://localhost:5173', 'Content-Type': 'application/json' }, body: JSON.stringify({ projectId }) }); const preview = await p.json();
+  const p = await fetch(base + '/preview-sessions', { method: 'POST', headers: { Authorization: 'Bearer ' + alice, Origin: 'http://localhost:5273', 'Content-Type': 'application/json' }, body: JSON.stringify({ projectId }) }); const preview = await p.json();
   const headers = { Origin: previewOriginForProject(projectId), Authorization: 'Bearer ' + preview.sessionToken, 'X-Toi-Capability': preview.capabilityToken, 'X-Toi-Project': projectId, 'X-Toi-Reason': 'verification reason' };
   for (const endpoint of ['/proxy/customers/customers', '/healthz', '/audit', '/downloads', '/preview-sessions']) for (const method of ['GET', 'OPTIONS', 'POST']) {
     const direct = await fetch(base + endpoint, { method, headers }); expect(direct.status).toBe(403); expect((await direct.json()).error).toBe('PREVIEW_DIRECT_FORBIDDEN'); expect(direct.headers.get('access-control-allow-origin')).toBeNull();
   }
-  expect((await fetch(base + '/proxy/customers/customers', { headers: { ...headers, Origin: 'http://localhost:5173' } })).status).toBe(200);
+  expect((await fetch(base + '/proxy/customers/customers', { headers: { ...headers, Origin: 'http://localhost:5273' } })).status).toBe(200);
   const otherProject = '22222222-2222-2222-2222-222222222222'; member(otherProject, 'alice', 'owner');
-  const other = await (await fetch(base + '/preview-sessions', { method: 'POST', headers: { Authorization: 'Bearer ' + alice, Origin: 'http://localhost:5173', 'Content-Type': 'application/json' }, body: JSON.stringify({ projectId: otherProject }) })).json();
+  const other = await (await fetch(base + '/preview-sessions', { method: 'POST', headers: { Authorization: 'Bearer ' + alice, Origin: 'http://localhost:5273', 'Content-Type': 'application/json' }, body: JSON.stringify({ projectId: otherProject }) })).json();
   for (const changed of [{ Authorization: 'Bearer ' + other.sessionToken }, { 'X-Toi-Capability': other.capabilityToken }]) {
     const denied = await fetch(base + '/proxy/customers/customers', { headers: { ...headers, ...changed } });
     expect(denied.status).toBe(403); expect((await denied.json()).error).toBe('PREVIEW_DIRECT_FORBIDDEN');
   }
   const mismatch = await fetch(base + '/proxy/customers/customers', { headers: { ...headers, Origin: previewOriginForProject('22222222-2222-2222-2222-222222222222') } });
   expect(mismatch.status).toBe(403); expect((await mismatch.json()).error).toBe('PREVIEW_DIRECT_FORBIDDEN');
-  expect((await fetch(base + '/proxy/customers/customers', { headers: { ...headers, Origin: 'http://localhost:5174' } })).status).toBe(403);
+  expect((await fetch(base + '/proxy/customers/customers', { headers: { ...headers, Origin: 'http://localhost:5274' } })).status).toBe(403);
 });
 test('audit verify requires admin and no password, key or URL signature is recorded', async () => {
   const ticket = await (await request(alice)).json(); await get(ticket.url);

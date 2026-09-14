@@ -38,19 +38,19 @@ it('limits concurrency to eight and rolling rate to fifty per second', async () 
 function clientHarness() {
   const window = new EventTarget(); const parent = { postMessage: vi.fn() };
   vi.stubGlobal('window', window); vi.stubGlobal('parent', parent);
-  vi.stubGlobal('__TOI_FETCH_BRIDGE__', { parentOrigin: 'http://localhost:5173', token });
+  vi.stubGlobal('__TOI_FETCH_BRIDGE__', { parentOrigin: 'http://localhost:5273', token });
   configureToiFetch({ projectId: 'p', env: 'preview', transport: 'broker' });
-  const receive = (data: any, source: any = parent, origin = 'http://localhost:5173') => { const event = new Event('message'); Object.assign(event, { data, source, origin }); window.dispatchEvent(event); };
+  const receive = (data: any, source: any = parent, origin = 'http://localhost:5273') => { const event = new Event('message'); Object.assign(event, { data, source, origin }); window.dispatchEvent(event); };
   return { window, parent, receive };
 }
 it('client checks parent source, boot origin and request id; creates a Response', async () => {
   const { parent, receive } = clientHarness();
   const pending = toiFetch('customers', '/customers', { reason: 'test reason', headers: { Authorization: 'ignored' } });
   const sent = parent.postMessage.mock.calls[0][0];
-  expect(parent.postMessage.mock.calls[0][1]).toBe('http://localhost:5173');
+  expect(parent.postMessage.mock.calls[0][1]).toBe('http://localhost:5273');
   expect(sent).not.toHaveProperty('headers');
   const response = { kind: 'toi_fetch_result', requestId: sent.requestId, status: 200, body: '{"ok":true}', contentType: 'application/json' };
-  receive(response, {}, 'http://localhost:5173'); receive(response, parent, 'http://evil'); receive({ ...response, requestId: 'wrong' });
+  receive(response, {}, 'http://localhost:5273'); receive(response, parent, 'http://evil'); receive({ ...response, requestId: 'wrong' });
   receive(response); expect(await (await pending).json()).toEqual({ ok: true });
 });
 it('client times out at 30 seconds and refuses legacy credentials', async () => {

@@ -10,7 +10,7 @@ const browser = await chromium.launch({ channel: 'chrome', headless: true });
 const log: string[] = [];
 try {
  const page = await browser.newPage({ viewport: {width:1600,height:1000} });
- await page.goto('http://localhost:5173');
+ await page.goto('http://localhost:5273');
  await page.getByRole('button',{name:'프로젝트 만들기'}).click();
  await expect.poll(()=>page.evaluate(()=>(window as any).studio.getSnapshot().lastCommit?.token.revision),{timeout:60000}).toBe(1);
  // Save the current mock generator's actual output through the F2 source boundary.
@@ -53,7 +53,7 @@ try {
   await page.route(pattern,async(route:any)=>{
    if(route.request().method()==='OPTIONS'){await route.continue();return;}
    if(status===0) await route.abort('connectionrefused');
-   else await route.fulfill({status,contentType:'application/json',headers:{'Access-Control-Allow-Origin':'http://localhost:5174'},body:JSON.stringify(body)});
+   else await route.fulfill({status,contentType:'application/json',headers:{'Access-Control-Allow-Origin':'http://localhost:5274'},body:JSON.stringify(body)});
   });
   await frame.getByRole('button',{name:'조회',exact:true}).click();
   await expect(status===200?frame.getByRole('status'):frame.getByRole('alert')).toContainText(message);

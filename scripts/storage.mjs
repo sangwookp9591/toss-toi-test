@@ -14,7 +14,7 @@ export async function verifyStorageCredentials(env = process.env, client) {
   if (!client) {
     const require = createRequire(new URL('../services/deps-builder/package.json', import.meta.url));
     const { Client } = require('minio');
-    const endpoint = new URL(env.MINIO_ENDPOINT ?? 'http://localhost:9000');
+    const endpoint = new URL(env.MINIO_ENDPOINT ?? 'http://localhost:9400');
     client = new Client({ endPoint: endpoint.hostname, port: Number(endpoint.port || (endpoint.protocol === 'https:' ? 443 : 80)), useSSL: endpoint.protocol === 'https:', accessKey: env.MINIO_ROOT_USER ?? 'toi', secretKey: env.MINIO_ROOT_PASSWORD ?? 'toi-local-secret' });
   }
   try { await client.listBuckets(); }
@@ -59,7 +59,7 @@ mc admin policy attach local toi-policy-storage --user ${quote(env.TOI_POLICY_MI
   // Do not silently accept an older bucket that was created without object lock.
   const require = createRequire(new URL('../services/deps-builder/package.json', import.meta.url));
   const { Client } = require('minio');
-  const endpoint = new URL(env.MINIO_ENDPOINT ?? 'http://localhost:9000');
+  const endpoint = new URL(env.MINIO_ENDPOINT ?? 'http://localhost:9400');
   const client = new Client({endPoint:endpoint.hostname, port:Number(endpoint.port || (endpoint.protocol === 'https:' ? 443 : 80)), useSSL:endpoint.protocol === 'https:', accessKey:env.TOI_POLICY_MINIO_USER, secretKey:env.TOI_POLICY_MINIO_PASSWORD});
   const lock = await client.getObjectLockConfig(audit);
   if (lock.objectLockEnabled !== 'Enabled') throw new Error('Audit bucket requires object lock');
@@ -72,7 +72,7 @@ mc admin policy attach local toi-policy-storage --user ${quote(env.TOI_POLICY_MI
 export async function verifyStorageRetention(env = process.env) {
   const require = createRequire(new URL('../services/policy-proxy/package.json', import.meta.url));
   const { S3Client, CreateBucketCommand, PutObjectCommand, GetObjectRetentionCommand, DeleteObjectCommand, DeleteBucketCommand } = require('@aws-sdk/client-s3');
-  const client = new S3Client({ endpoint: env.MINIO_ENDPOINT ?? 'http://localhost:9000', region: 'us-east-1', forcePathStyle: true,
+  const client = new S3Client({ endpoint: env.MINIO_ENDPOINT ?? 'http://localhost:9400', region: 'us-east-1', forcePathStyle: true,
     credentials: { accessKeyId: env.MINIO_ROOT_USER ?? 'toi', secretAccessKey: env.MINIO_ROOT_PASSWORD ?? 'toi-local-secret' }, maxAttempts: 1 });
   const Bucket = 'toi-retention-probe-' + randomUUID(), Key = 'retention-probe';
   const send = command => client.send(command, { abortSignal: AbortSignal.timeout(10000) });

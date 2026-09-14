@@ -17,8 +17,8 @@ async function runRevision(page: Page, code: string, revision: number) {
 }
 const committed = (page: Page) => page.frameLocator('iframe[data-state="committed"]');
 
-test('first commit, edit commit and no COOP/COEP', async ({ page, request }) => {
-  const response = await request.get('/');
+test('first commit, edit commit and no COOP/COEP', async ({ page }) => {
+  const response = (await page.goto('/?manual'))!;
   expect(response.headers()['cross-origin-opener-policy']).toBeUndefined();
   expect(response.headers()['cross-origin-embedder-policy']).toBeUndefined();
   await open(page);
@@ -141,7 +141,7 @@ test('forged messages from wrong origin or source cannot commit a candidate', as
     const data = { kind: 'rendered', token: (window as any).spoofToken, bootMs: 1 };
     const frame = document.querySelector<HTMLIFrameElement>('iframe[data-state="candidate"]')!;
     window.dispatchEvent(new MessageEvent('message', { origin: location.origin, source: frame.contentWindow, data }));
-    window.dispatchEvent(new MessageEvent('message', { origin: 'http://p-00000000-0000-4000-8000-000000000000.preview.localhost:5174', source: window, data }));
+    window.dispatchEvent(new MessageEvent('message', { origin: 'http://p-00000000-0000-4000-8000-000000000000.preview.localhost:5274', source: window, data }));
   });
   await expect(committed(page).locator('#root')).toHaveText('Trusted');
   await expect(page.locator('iframe[data-state="candidate"]')).toHaveCount(1);
@@ -243,7 +243,7 @@ test('boot timeout retains previous iframe and dispose settles a build during in
     const modulePath = '/runtime.js';
     const { createPreviewRuntime } = await import(modulePath);
     window.demo.runtime.dispose();
-    const runtime = createPreviewRuntime({ container: document.querySelector('#preview'), previewOrigin: 'http://p-00000000-0000-4000-8000-000000000000.preview.localhost:5174', frameUrl: 'http://p-00000000-0000-4000-8000-000000000000.preview.localhost:5174/frame.html', esbuildWasmUrl: new URL('/esbuild.wasm', location.origin).href, entry: '/src/main.tsx', bootTimeoutMs: 1000 });
+    const runtime = createPreviewRuntime({ container: document.querySelector('#preview'), previewOrigin: 'http://p-00000000-0000-4000-8000-000000000000.preview.localhost:5274', frameUrl: 'http://p-00000000-0000-4000-8000-000000000000.preview.localhost:5274/frame.html', esbuildWasmUrl: new URL('/esbuild.wasm', location.origin).href, entry: '/src/main.tsx', bootTimeoutMs: 1000 });
     const initial = await window.demo.prepare("document.getElementById('root')!.textContent = 'Before timeout';");
     runtime.setDesiredRevision(initial.token);
     const first = await runtime.build(initial);
@@ -258,7 +258,7 @@ test('boot timeout retains previous iframe and dispose settles a build during in
   const disposed = await page.evaluate(async () => {
     const modulePath = '/runtime.js';
     const { createPreviewRuntime } = await import(modulePath);
-    const runtime = createPreviewRuntime({ container: document.createElement('div'), previewOrigin: 'http://p-00000000-0000-4000-8000-000000000000.preview.localhost:5174', frameUrl: 'http://p-00000000-0000-4000-8000-000000000000.preview.localhost:5174/frame.html', esbuildWasmUrl: new URL('/esbuild.wasm', location.origin).href, entry: '/src/main.tsx' });
+    const runtime = createPreviewRuntime({ container: document.createElement('div'), previewOrigin: 'http://p-00000000-0000-4000-8000-000000000000.preview.localhost:5274', frameUrl: 'http://p-00000000-0000-4000-8000-000000000000.preview.localhost:5274/frame.html', esbuildWasmUrl: new URL('/esbuild.wasm', location.origin).href, entry: '/src/main.tsx' });
     const input = await window.demo.prepare('');
     runtime.setDesiredRevision(input.token);
     const pending = runtime.build(input);

@@ -1,8 +1,10 @@
+import { parseEnv } from 'node:util';
+import { configuredPort } from './dev-ports.mjs';
 import { readFile, writeFile, chmod } from 'node:fs/promises';
 import { volumeCredentialError } from './compose.mjs';
 // Bootstrap runs only in dev-up. Credentials and admin responses are never logged.
 export async function provisionIdentity(envFile, env = process.env) {
-  const base = 'http://localhost:8080';
+  const base = keycloakBase(env);
   const auth = await fetch(base + '/realms/master/protocol/openid-connect/token', { method: 'POST', body: new URLSearchParams({ grant_type: 'password', client_id: 'admin-cli', username: 'toi-bootstrap', password: env.TOI_KEYCLOAK_ADMIN_PASSWORD }), signal: AbortSignal.timeout(5000) });
   if (!auth.ok) {
     const body = await auth.json().catch(() => ({}));
@@ -30,12 +32,23 @@ export async function provisionIdentity(envFile, env = process.env) {
     if (!client) throw new Error('Keycloak seed client missing');
     await admin('/clients/' + client.id, 'PUT', { ...client, secret: env[key] });
   }
+  // Realm imports do not update clients already persisted in the Keycloak volume.
+  const studio = clients.find(c => c.clientId === 'toi-studio');
+  const migrateOrigin = value => value === 'http://localhost:5173' ? 'http://localhost:5273' : value === 'http://localhost:5173/*' ? 'http://localhost:5273/*' : value;
+  await admin('/clients/' + studio.id, 'PUT', { ...studio,
+    redirectUris: studio.redirectUris.map(migrateOrigin), webOrigins: studio.webOrigins.map(migrateOrigin),
+    attributes: { ...studio.attributes, 'post.logout.redirect.uris': migrateOrigin(studio.attributes['post.logout.redirect.uris']) },
+  });
   // Only the agent may resolve real identities for owner-authorized member management.
   const agent = clients.find(c => c.clientId === 'toi-agent-server');
   const management = clients.find(c => c.clientId === 'realm-management');
   const serviceUser = await admin('/clients/' + agent.id + '/service-account-user');
   const viewUsers = await admin('/clients/' + management.id + '/roles/view-users');
   await admin('/users/' + serviceUser.id + '/role-mappings/clients/' + management.id, 'POST', [viewUsers]);
-  set('TOI_IDENTITY_ISSUER', base + '/realms/toi');
+  if (!parseEnv(contents).TOI_IDENTITY_ISSUER) set('TOI_IDENTITY_ISSUER', env.TOI_IDENTITY_ISSUER || base + '/realms/toi');
   await writeFile(envFile, contents, { mode: 0o600 }); await chmod(envFile, 0o600);
+}
+
+export function keycloakBase(env = process.env) {
+  return `http://localhost:${configuredPort('TOI_KEYCLOAK_PORT', 8180, env)}`;
 }

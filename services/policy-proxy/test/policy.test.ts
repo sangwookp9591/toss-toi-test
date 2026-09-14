@@ -125,7 +125,7 @@ test('service credentials, addresses and identifying headers never escape respon
 });
 
 test('CORS only permits studio, including X-Toi headers', async () => {
-  const allowed = await fetch(base + '/proxy/customers/customers', { method: 'OPTIONS', headers: { Origin: 'http://localhost:5173', 'Access-Control-Request-Headers': 'authorization,x-toi-capability,x-toi-project,x-toi-reason,x-toi-extra' } }); expect(allowed.status).toBe(204); expect(allowed.headers.get('access-control-allow-headers')).toContain('x-toi-extra');
+  const allowed = await fetch(base + '/proxy/customers/customers', { method: 'OPTIONS', headers: { Origin: 'http://localhost:5273', 'Access-Control-Request-Headers': 'authorization,x-toi-capability,x-toi-project,x-toi-reason,x-toi-extra' } }); expect(allowed.status).toBe(204); expect(allowed.headers.get('access-control-allow-headers')).toContain('x-toi-extra');
   const blocked = await fetch(base + '/apis', { method: 'OPTIONS', headers: { Origin: 'http://evil.invalid' } }); expect(blocked.status).toBe(403); expect(blocked.headers.get('access-control-allow-origin')).toBeNull();
 });
 
@@ -140,8 +140,8 @@ test('real Chrome studio broker origin gets masked proxy data and upstream GET r
   const browser = await chromium.launch({ executablePath: process.env.CHROME_PATH ?? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', headless: true });
   try {
     const context = await browser.newContext(), cdp = await browser.newBrowserCDPSession(); const { browserContextIds } = await cdp.send('Target.getBrowserContexts');
-    await cdp.send('Browser.setPermission', { permission: { name: 'loopback-network' }, setting: 'granted', origin: 'http://localhost:5173', browserContextId: browserContextIds[0] });
-    const page = await context.newPage(); await page.route('http://localhost:5173/__policy-test', route => route.fulfill({ contentType: 'text/html', body: '<!doctype html><p>Policy test</p>' })); await page.goto('http://localhost:5173/__policy-test');
+    await cdp.send('Browser.setPermission', { permission: { name: 'loopback-network' }, setting: 'granted', origin: 'http://localhost:5273', browserContextId: browserContextIds[0] });
+    const page = await context.newPage(); await page.route('http://localhost:5273/__policy-test', route => route.fulfill({ contentType: 'text/html', body: '<!doctype html><p>Policy test</p>' })); await page.goto('http://localhost:5273/__policy-test');
     const result = await page.evaluate(async ({ upstream, base, viewer, read }) => {
       let directBlocked = false; try { await fetch(upstream + '/preview/customers?size=20'); } catch { directBlocked = true; } const proxied = await fetch(base + '/proxy/customers/customers?size=20', { headers: { Authorization: `Bearer ${viewer}`, 'X-Toi-Capability': read, 'X-Toi-Project': '11111111-1111-1111-1111-111111111111', 'X-Toi-Reason': 'customer support' } });
       const data = await proxied.json(); return { directBlocked, proxy: proxied.status, phone: data.items[0].phone, masked: data.items[0].rrn };

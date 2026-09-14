@@ -1,12 +1,14 @@
 import { readFile, mkdir } from 'node:fs/promises';
 import { build } from '../services/agent-server/node_modules/esbuild/lib/main.js';
 import { chromium } from '../e2e/node_modules/playwright/index.mjs';
-import { json, rawPii, records, budgetSignal } from './fixtures.mjs';
+import { json, rawPii, records, budgetSignal, studioOrigin as host } from './fixtures.mjs';
 const cache = new URL('.cache/preview/', import.meta.url);
-const host = 'http://localhost:5173', frameOrigin = 'http://localhost:5174';
+import { previewOriginForProject } from '../contracts/src/runtime.ts';
+import { previewHostConfig } from '../apps/studio/src/preview-auth.ts';
+import { previewDocument, studioHeaders } from '../apps/studio/scripts/security.mjs';
 export async function previewHarness(deadline = Date.now() + 3600000) {
   await mkdir(cache, { recursive: true });
-  await build({ entryPoints: { runtime: 'packages/preview-runtime/src/index.ts', worker: 'packages/preview-runtime/src/worker.ts', frame: 'packages/preview-runtime/src/frame.ts' }, outdir: cache.pathname, bundle: true, platform: 'browser', format: 'esm', target: 'es2022', logLevel: 'silent' });
+  await build({ entryPoints: { runtime: 'packages/preview-runtime/src/index.ts', worker: 'packages/preview-runtime/src/worker.ts', frame: 'packages/preview-runtime/src/frame.ts', broker: 'apps/studio/src/fetch-broker.ts' }, outdir: cache.pathname, bundle: true, platform: 'browser', format: 'esm', target: 'es2022', logLevel: 'silent' });
   const browser = await chromium.launch({ headless: true });
   const manifests = new Map();
   async function manifestFor(packageSet) {
@@ -19,6 +21,7 @@ export async function previewHarness(deadline = Date.now() + 3600000) {
     manifests.set(key, result.manifest); return result.manifest;
   }
   return { close: () => browser.close(), async render(project, testCase, env) {
+    const frameOrigin = previewOriginForProject(project.projectId);
     const context = await browser.newContext({ permissions: ['local-network-access'] }); const page = await context.newPage();
     page.setDefaultTimeout(10000);
     const renderTimer = setTimeout(() => { void context.close(); }, Math.max(1, Math.min(90000, deadline - Date.now())));
@@ -28,11 +31,15 @@ export async function previewHarness(deadline = Date.now() + 3600000) {
     page.on('pageerror', error => runtimeErrors.push(error.message));
     await context.route('**/*', async route => {
       const request = route.request(); const url = new URL(request.url());
-      if (url.origin === host && url.pathname === '/__eval/host') return route.fulfill({ contentType: 'text/html', body: '<!doctype html><main id="preview"></main><script type="module">import {createPreviewRuntime,sourceDigest,digestJson} from "/__eval/runtime.js"; globalThis.evalRuntime={createPreviewRuntime,sourceDigest,digestJson};</script>' });
+      if (url.origin === host && url.pathname === '/__eval/host') return route.fulfill({ headers: studioHeaders, contentType: 'text/html', body: '<!doctype html><main id="preview"></main><script type="module">import {createPreviewRuntime,sourceDigest,digestJson} from "/__eval/runtime.js"; import {validateBrokerRequest,proxyBrokerRequest} from "/__eval/broker.js"; globalThis.evalRuntime={createPreviewRuntime,sourceDigest,digestJson,validateBrokerRequest,proxyBrokerRequest};</script>' });
       if ([host, frameOrigin].includes(url.origin) && url.pathname.startsWith('/__eval/')) {
-        if (url.pathname === '/__eval/frame.html') return route.fulfill({ contentType: 'text/html', body: '<!doctype html><meta name="studio-origins" content="http://localhost:5173"><script type="module" src="/ __eval/frame.js"></script>'.replace('/ __eval','/__eval') });
+        if (url.origin === frameOrigin && url.pathname === '/__eval/frame.html') {
+          const template = await readFile(new URL('../packages/preview-runtime/public/frame.html', import.meta.url), 'utf8');
+          const document = previewDocument(template.replace('/frame.js', '/__eval/frame.js'));
+          return route.fulfill({ headers: document.headers, body: document.body });
+        }
         const name = url.pathname.split('/').at(-1);
-        if (!['runtime.js','worker.js','frame.js','esbuild.wasm'].includes(name)) return route.abort();
+        if (!['runtime.js','worker.js','frame.js','broker.js','esbuild.wasm'].includes(name)) return route.abort();
         const body = await readFile(name === 'esbuild.wasm' ? new URL('../packages/preview-runtime/node_modules/esbuild-wasm/esbuild.wasm', import.meta.url) : new URL(name, cache));
         return route.fulfill({ contentType: name.endsWith('wasm') ? 'application/wasm' : 'text/javascript', body });
       }
@@ -48,15 +55,19 @@ export async function previewHarness(deadline = Date.now() + 3600000) {
     });
     try {
       const manifest = await manifestFor(project.packageSet);
-      const hostConfig = await env.preview(project, testCase.kind === 'write');
+      const credentials = await env.preview(project, testCase.kind === 'write');
+      const hostConfig = previewHostConfig(credentials.session, project.projectId);
       await page.goto(host + '/__eval/host');
       await page.waitForFunction(() => !!globalThis.evalRuntime);
-      const event = await page.evaluate(async ({ project, manifest, hostConfig }) => {
-        const { createPreviewRuntime, sourceDigest, digestJson } = globalThis.evalRuntime;
-        const runtime = createPreviewRuntime({ container: document.getElementById('preview'), previewOrigin: 'http://localhost:5174', frameUrl: 'http://localhost:5174/__eval/frame.html', esbuildWasmUrl: 'http://localhost:5173/__eval/esbuild.wasm', entry: '/src/main.tsx', bootTimeoutMs: 15000 });
+      const event = await page.evaluate(async ({ project, manifest, hostConfig, session, frameOrigin, host, policyUrl }) => {
+        const { createPreviewRuntime, sourceDigest, digestJson, validateBrokerRequest, proxyBrokerRequest } = globalThis.evalRuntime;
+        const runtime = createPreviewRuntime({ container: document.getElementById('preview'), previewOrigin: frameOrigin, frameUrl: frameOrigin + '/__eval/frame.html', esbuildWasmUrl: host + '/__eval/esbuild.wasm', entry: '/src/main.tsx', bootTimeoutMs: 15000 }, (request, signal) => {
+          const writeAllowed = session.capability.mode === 'write' && session.capability.apiIds?.includes(request.apiId) && session.capability.exp * 1000 > Date.now();
+          return validateBrokerRequest(request, project.apiIds, writeAllowed) ?? proxyBrokerRequest(request, session, policyUrl, signal);
+        });
         const token = { projectId: project.projectId, revision: project.revision, attemptId: crypto.randomUUID(), sourceDigest: await sourceDigest(project.files), manifestDigest: await digestJson(manifest) };
         runtime.setDesiredRevision(token); return runtime.build({ token, layers: { project: project.files }, manifest, hostConfig });
-      }, { project, manifest, hostConfig });
+      }, { project, manifest, hostConfig, session: credentials.session, frameOrigin, host, policyUrl: env.policyUrl });
       let text = '', piiChecks = {}, fieldChecks = {}, writeConfirmed = false;
       if (event.type === 'committed') {
         const frame = page.frameLocator('iframe[data-state="committed"]');
@@ -78,7 +89,7 @@ export async function previewHarness(deadline = Date.now() + 3600000) {
         fieldChecks = Object.fromEntries(testCase.expectedVisible.map(value => [value, text.replaceAll(',', '').includes(value)]));
         // Compare visible text with the actual masked policy response, not a generic asterisk regex.
         for (const apiId of testCase.apiIds) {
-          const cfg = hostConfig.toiFetch;
+          const cfg = credentials.session;
           const response = await fetch(env.policyUrl + `/proxy/${apiId}/${apiId}`, { headers: { Authorization: `Bearer ${cfg.sessionToken}`, 'X-Toi-Project': project.projectId, 'X-Toi-Capability': cfg.capabilityToken, 'X-Toi-Reason': 'evaluation readback' }, signal: budgetSignal() });
           const data = await response.json();
           if (testCase.expectedWrite && apiId === 'refunds') writeConfirmed = data.items?.some(row => row.id === 'R001' && row.status === 'approved') === true;
@@ -88,7 +99,7 @@ export async function previewHarness(deadline = Date.now() + 3600000) {
           }
         }
       }
-      return redactRuntimeObservation({ event, text, fieldChecks, piiChecks, writeConfirmed, rawPiiVisible: rawPii.filter(value => text.includes(value)), forbiddenRequests, apiRequests, runtimeErrors, browserErrors }, [hostConfig.toiFetch.sessionToken, hostConfig.toiFetch.capabilityToken, env.token, process.env.EVAL_AUTH_TOKEN]);
+      return redactRuntimeObservation({ event, text, fieldChecks, piiChecks, writeConfirmed, rawPiiVisible: rawPii.filter(value => text.includes(value)), forbiddenRequests, apiRequests, runtimeErrors, browserErrors }, [credentials.session.sessionToken, credentials.session.capabilityToken, env.token, process.env.EVAL_AUTH_TOKEN]);
     } finally { clearTimeout(renderTimer); await context.close(); }
   } };
 }

@@ -4,6 +4,7 @@ import { createRequire } from 'node:module';
 import { spawn } from 'node:child_process';
 import type { PackageSetRequest } from '../../../contracts/src/package-set.js';
 import { serviceRoot } from './config.js';
+import { sha256 } from './hash.js';
 import { BuilderError, InputError, redact } from './security.js';
 const require = createRequire(import.meta.url);
 const yarnCli = require.resolve('@yarnpkg/cli-dist/bin/yarn.js');
@@ -35,7 +36,9 @@ export async function install(request: PackageSetRequest, options: { registry: s
     // An empty lock marks this directory as an independent Yarn project.
     await writeFile(path.join(directory, 'yarn.lock'), '');
     const registry = new URL(options.registry);
-    await writeFile(path.join(directory, '.yarnrc.yml'), `nodeLinker: node-modules\nenableGlobalCache: false\nenableMirror: false\nglobalFolder: ${JSON.stringify(path.join(root, 'yarn-global'))}\nenableScripts: false\nhttpTimeout: 10000\nhttpRetry: 0\nnpmMinimalAgeGate: 1440\nnpmPreapprovedPackages:\n  - "@toi/*"\ncacheFolder: ${JSON.stringify(path.join(root, 'yarn'))}\nunsafeHttpWhitelist:\n  - ${JSON.stringify(registry.hostname)}\nnpmRegistryServer: ${JSON.stringify(options.registry)}\nnpmScopes:\n  toi:\n    npmRegistryServer: ${JSON.stringify(options.registry)}\n    npmAlwaysAuth: true\n    npmAuthToken: "\${TOI_REGISTRY_TOKEN-}"\n`);
+    // Yarn keys npm metadata by hostname; isolate ports and paths to avoid stale tarball URLs.
+    const metadataCache = path.join(root, 'yarn-global', sha256(registry.href));
+    await writeFile(path.join(directory, '.yarnrc.yml'), `nodeLinker: node-modules\nenableGlobalCache: false\nenableMirror: false\nglobalFolder: ${JSON.stringify(metadataCache)}\nenableScripts: false\nhttpTimeout: 10000\nhttpRetry: 0\nnpmMinimalAgeGate: 1440\nnpmPreapprovedPackages:\n  - "@toi/*"\ncacheFolder: ${JSON.stringify(path.join(root, 'yarn'))}\nunsafeHttpWhitelist:\n  - ${JSON.stringify(registry.hostname)}\nnpmRegistryServer: ${JSON.stringify(options.registry)}\nnpmScopes:\n  toi:\n    npmRegistryServer: ${JSON.stringify(options.registry)}\n    npmAlwaysAuth: true\n    npmAuthToken: "\${TOI_REGISTRY_TOKEN-}"\n`);
     await new Promise<void>((resolve, reject) => {
       // Explicit environment: no upstream API or object-store credentials reach dependencies.
       const child = spawn(process.execPath, [yarnCli, 'install'], { cwd: directory, env: { PATH: process.env.PATH, HOME: process.env.HOME, TMPDIR: process.env.TMPDIR, SYSTEMROOT: process.env.SYSTEMROOT, TOI_REGISTRY_TOKEN: options.token, YARN_ENABLE_IMMUTABLE_INSTALLS: 'false', YARN_ENABLE_TELEMETRY: '0', YARN_IGNORE_PATH: '1' }, stdio: ['ignore', 'pipe', 'pipe'] });

@@ -54,7 +54,7 @@ export class AuthSession {
 export function oidcSettings(origin: string): UserManagerSettings {
   const env = import.meta.env ?? {};
   return {
-    authority: env.VITE_OIDC_ISSUER ?? 'http://localhost:8080/realms/toi',
+    authority: env.VITE_OIDC_ISSUER ?? 'http://localhost:8180/realms/toi',
     client_id: env.VITE_OIDC_CLIENT_ID ?? 'toi-studio',
     redirect_uri: origin + '/', silent_redirect_uri: origin + '/?oidc=silent', post_logout_redirect_uri: origin + '/',
     response_type: 'code', scope: 'openid profile email', disablePKCE: false,

@@ -12,7 +12,7 @@ async function preview(account: Parameters<typeof api>[0], projectId: string) {
   expect(response.status).toBe(200); return response.json();
 }
 async function proxy(session: { sessionToken: string; capabilityToken: string }, projectId: string, path = '/customers', method = 'GET') {
-  return fetch(policy + '/proxy/customers' + path, { method, headers: { Origin: 'http://localhost:5173', Authorization: 'Bearer ' + session.sessionToken, 'X-Toi-Capability': session.capabilityToken, 'X-Toi-Project': projectId, 'X-Toi-Reason': 'Identity boundary verification', 'Content-Type': 'application/json' }, ...(method === 'GET' ? {} : { body: JSON.stringify({ status: 'active' }) }) });
+  return fetch(policy + '/proxy/customers' + path, { method, headers: { Origin: 'http://localhost:5273', Authorization: 'Bearer ' + session.sessionToken, 'X-Toi-Capability': session.capabilityToken, 'X-Toi-Project': projectId, 'X-Toi-Reason': 'Identity boundary verification', 'Content-Type': 'application/json' }, ...(method === 'GET' ? {} : { body: JSON.stringify({ status: 'active' }) }) });
 }
 test('N: carol nonmember receives 404 and cannot mint or use preview/capability', async ({ browser, accounts }) => {
   const alice = await accounts('alice'); const carol = await accounts('carol'); const p = await project(alice);

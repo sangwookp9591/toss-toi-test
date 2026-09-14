@@ -15,7 +15,7 @@ const close=(s:Server)=>new Promise<void>(r=>{s.closeAllConnections();s.close(()
 let backend:Server,server:Server,base:string,dir:string,cfg:PolicyConfig,store:PolicyStorage,access:Access;
 let alice:string,bob:string,carol:string,dana:string;
 const call=(endpoint:string,t:string,body?:unknown,origin?:string)=>fetch(base+endpoint,{method:body===undefined?'GET':'POST',headers:{Authorization:'Bearer '+t,'Content-Type':'application/json',...(origin?{Origin:origin}:{})},...(body===undefined?{}:{body:JSON.stringify(body)})});
-const preview=(t:string,write?:unknown)=>call('/preview-sessions',t,{projectId:'p',...(write?{write}:{})},'http://localhost:5173');
+const preview=(t:string,write?:unknown)=>call('/preview-sessions',t,{projectId:'p',...(write?{write}:{})},'http://localhost:5273');
 const cap=(t:string,env='preview',mode='read')=>call('/capabilities',t,{projectId:'p',env,mode,ttlSec:120,...(mode==='write'?{apiIds:['customers']}:{})});
 const proxy=(t:string,c:string,method='GET')=>fetch(base+'/proxy/customers'+(method==='GET'?'/customers':'/customers/C001'),{method,headers:{Authorization:'Bearer '+t,'X-Toi-Project':'p','X-Toi-Capability':c,'X-Toi-Reason':'test customer support','Content-Type':'application/json'},...(method==='GET'?{}:{body:JSON.stringify({status:'active'})})});
 beforeAll(async()=>{
@@ -35,7 +35,7 @@ test('JWKS validates issuer audience signature and expiry; dev session stays rem
 });
 test('nonmember denied before API/capability; sessions require exact studio origin',async()=>{
  expect((await preview(carol)).status).toBe(404);expect((await cap(carol)).status).toBe(404);expect((await proxy(carol,'forged')).status).toBe(404);
- for(const origin of [undefined,'http://localhost:5174','null']) expect((await call('/preview-sessions',alice,{projectId:'p'},origin)).status).toBe(403);
+ for(const origin of [undefined,'http://localhost:5274','null']) expect((await call('/preview-sessions',alice,{projectId:'p'},origin)).status).toBe(403);
 });
 test('preview sessions are downscoped and TTL bounded by the identity',async()=>{
  const short=await token('alice', ['builder'], {exp:Math.floor(Date.now()/1000)+30});

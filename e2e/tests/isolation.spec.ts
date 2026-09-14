@@ -83,23 +83,23 @@ test('Z: project A preview session from project B origin returns PREVIEW_DIRECT_
 });
 
 test('AA: preview Host/path allowlist and studio embedding headers', async ({request}) => {
-  for (const host of ['localhost:5174', '127.0.0.1:5174', 'p-invalid.preview.localhost:5174', 'p-00000000-0000-4000-8000-000000000000.preview.localhost.evil:5174']) {
-    expect((await request.get('http://localhost:5174/frame.html', {headers:{Host:host}})).status()).toBe(421);
+  for (const host of ['localhost:5274', '127.0.0.1:5274', 'p-invalid.preview.localhost:5274', 'p-00000000-0000-4000-8000-000000000000.preview.localhost.evil:5274']) {
+    expect((await request.get('http://localhost:5274/frame.html', {headers:{Host:host}})).status()).toBe(421);
   }
   const host = new URL(previewOriginForProject(crypto.randomUUID())).host;
   for (const path of ['/studio.js', '/esbuild.wasm', '/bench.html', '/bench.js', '/sandpack.html', '/runtime.js', '/', '/healthz']) {
-    expect((await request.get('http://localhost:5174' + path, {headers:{Host:host}})).status()).toBe(404);
+    expect((await request.get('http://localhost:5274' + path, {headers:{Host:host}})).status()).toBe(404);
   }
-  const first = await request.get('http://localhost:5174/frame.html', {headers:{Host:host}});
-  const second = await request.get('http://localhost:5174/frame.html', {headers:{Host:host}});
+  const first = await request.get('http://localhost:5274/frame.html', {headers:{Host:host}});
+  const second = await request.get('http://localhost:5274/frame.html', {headers:{Host:host}});
   expect(first.status()).toBe(200);
   const csp = first.headers()['content-security-policy'];
-  expect(csp).toContain("connect-src 'none';"); expect(csp).toContain('frame-ancestors http://localhost:5173');
+  expect(csp).toContain("connect-src 'none';"); expect(csp).toContain('frame-ancestors http://localhost:5273');
   expect(csp).not.toContain('unsafe-eval'); expect(csp.match(/script-src[^;]+/)![0]).not.toContain('unsafe-inline');
   expect(csp).not.toBe(second.headers()['content-security-policy']);
   for (const path of ['/frame.html', '/frame.js', '/bench.html', '/sandpack.html']) expect((await request.get(path)).status()).toBe(404);
   const studio = await request.get('/'); expect(studio.headers()['x-frame-options']).toBe('SAMEORIGIN');
-  expect(studio.headers()['content-security-policy']).toBe("frame-ancestors 'self'; frame-src http://*.preview.localhost:5174");
+  expect(studio.headers()['content-security-policy']).toBe("frame-ancestors 'self'; frame-src http://*.preview.localhost:5274");
 });
 
 test('AB: AST bypass sources are rejected without incrementing the source revision', async ({accounts}) => {

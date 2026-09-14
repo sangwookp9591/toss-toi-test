@@ -9,7 +9,7 @@ import { summarizeFailure } from '../../../scripts/dev-diagnostics.mjs';
 const run = promisify(execFile), root = fileURLToPath(new URL('../../../', import.meta.url));
 const envPath = path.join(root, '.env');
 if (process.env.TOI_MANAGED_ENV !== '1') config({ path: envPath, quiet: true });
-const registry = process.env.TOI_REGISTRY_URL ?? 'http://localhost:4873';
+const registry = process.env.TOI_REGISTRY_URL ?? 'http://localhost:4973';
 let token = process.env.TOI_REGISTRY_TOKEN;
 let stage = 'registry configuration';
 async function packageCommand(name, args, cwd) {
@@ -36,7 +36,7 @@ try {
     token = (await response.json()).token;
     if (typeof token !== 'string' || !token) throw new Error('Registry did not issue a token');
     let previous = ''; try { previous = await readFile(envPath, 'utf8'); } catch (error) { if (error.code !== 'ENOENT') throw error; }
-    if (/^TOI_REGISTRY_TOKEN=/m.test(previous)) throw new Error('Existing .env token is invalid; operator must rotate it');
+    previous = previous.replace(/^[ \t]*(?:export[ \t]+)?TOI_REGISTRY_TOKEN[ \t]*=.*$/gm, '').trimEnd();
     await writeFile(envPath, `${previous}${previous && !previous.endsWith('\n') ? '\n' : ''}TOI_REGISTRY_TOKEN=${token}\n`, { mode: 0o600 });
     await chmod(envPath, 0o600);
     console.log('Registry token stored in gitignored root .env (mode 0600)');

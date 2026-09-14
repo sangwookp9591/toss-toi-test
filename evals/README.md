@@ -4,7 +4,7 @@
 
 ## 실행
 
-저장소 루트에서 실행한다. Node 22, 기존 agent-server/policy-proxy/e2e/fake-tds/preview-runtime의 `node_modules`, Playwright Chromium, 실행 중인 deps-builder(기본 7100 및 그 registry/storage)가 필요하다. 전역 설치와 모델 가중치의 저장소 저장은 하지 않는다.
+저장소 루트에서 실행한다. Node 22, 기존 agent-server/policy-proxy/e2e/fake-tds/preview-runtime의 `node_modules`, Playwright Chromium, 실행 중인 deps-builder(기본 7100 및 그 registry/storage)가 필요하다. 전역 설치와 모델 가중치의 저장소 저장은 하지 않는다. 현재 하네스는 스튜디오 `http://localhost:5273`과 프로젝트별 `http://p-<uuid>.preview.localhost:5274` origin을 사용한다. 실행 스택의 registry/storage 기본 포트는 4973/9400이다.
 
 ```sh
 node evals/run.mjs --driver mock
@@ -36,7 +36,7 @@ npm --prefix services/agent-server test
 | `GEMINI_TIMEOUT_MS` | Gemini 요청당 타임아웃(기본 120초) |
 | `GEMINI_INPUT_USD_PER_MTOK`, `GEMINI_OUTPUT_USD_PER_MTOK` | `--max-cost-usd` 예약·실제 usage 정산에 사용하는 검증된 단가 |
 
-기본 실행은 격리된 agent-server와 **실제 policy-proxy 구현**을 임의 loopback 포트에 띄운다. 평가용 임시 RS256 issuer/JWKS가 사용자·서비스 토큰을 서명하고 서버의 실제 서명/issuer/audience 검사와 HTTP membership 조회를 거친다. 따라서 Keycloak 서버를 기동하지 않아도 모델 품질을 재현할 수 있지만, 이 결과는 Keycloak 로그인 E2E 증거가 아니다. 프리뷰에는 실제 `/preview-sessions`가 발급한 하향 세션만 전달한다. HTTP 클라이언트는 토큰이 없으면 Authorization 헤더를 생략하지만, 현재 P0A 통합 서버는 토큰과 `/preview-sessions`를 요구한다. 이번 최종 검증은 인증 통합 이후의 토큰 경로를 사용했다.
+기본 실행은 격리된 agent-server와 **실제 policy-proxy 구현**을 임의 loopback 포트에 띄운다. 평가용 임시 RS256 issuer/JWKS가 사용자·서비스 토큰을 서명하고 서버의 실제 서명/issuer/audience 검사와 HTTP membership 조회를 거친다. 따라서 Keycloak 서버를 기동하지 않아도 모델 품질을 재현할 수 있지만, 이 결과는 Keycloak 로그인 E2E 증거가 아니다. 실제 `/preview-sessions`가 발급한 세션·capability는 호스트 메모리에만 둔다. 프리뷰에는 토큰 없는 broker 설정을 전달하고 제품의 origin/source 검사와 fetch 브로커를 재사용한다. HTTP 클라이언트는 토큰이 없으면 Authorization 헤더를 생략하지만, 현재 P0A 통합 서버는 토큰과 `/preview-sessions`를 요구한다. 이번 최종 검증은 인증 통합 이후의 토큰 경로를 사용했다.
 
 외부 모드는 전용 평가 환경에만 사용한다. `customers/orders/refunds/employees`를 `POST /apis`로 등록/갱신하므로 기존 업무 등록이 있는 서비스와 공유하지 않는다. `EVAL_UPSTREAM_URL`은 `fixtures.mjs`와 같은 응답/상태 변경/인젝션 전환을 제공해야 하며, 외부 서버의 모델 모드를 `AGENT_MODE=local|mock|claude|gemini`로 따로 선택한다. 외부 실행에는 도구/턴 수가 HTTP 계약에 없으므로 `null`로 표시한다. 제어 가능한 fault 주입은 standalone에서만 지원한다.
 
@@ -89,11 +89,11 @@ export default function App() {
 }
 ```
 
-이 probe는 **소스 저장만** 했고 버튼 실행이나 외부 연결은 하지 않았다. 상대 URL은 실행 iframe의 origin(현재 프리뷰 `http://localhost:5174`)을 대상으로 한다. 따라서 이 형태만으로 다른 origin의 policy API에 닿거나 임의 외부 유출이 일어났다고 주장하지 않는다. 다만 계산된 이름/별칭과 동적으로 조합한 URL을 문자열 guard가 완전하게 통제하지 못한다는 증거다. policy-proxy는 자신을 통과하는 요청의 capability/등록 API/쓰기/사유를 차단하지만, 프록시를 거치지 않는 브라우저 통신을 통제하지 않는다. 근본적인 AST 검사·프리뷰 CSP connect-src 보강은 코디네이터의 P0-2 작업으로 넘겼으며 여기서는 수정하지 않았다.
+이 probe는 **소스 저장만** 했고 버튼 실행이나 외부 연결은 하지 않았다. 상대 URL은 실행 iframe의 origin(당시 프리뷰 `http://localhost:5174`)을 대상으로 한다. 따라서 이 형태만으로 다른 origin의 policy API에 닿거나 임의 외부 유출이 일어났다고 주장하지 않는다. 다만 계산된 이름/별칭과 동적으로 조합한 URL을 문자열 guard가 완전하게 통제하지 못한다는 증거다. policy-proxy는 자신을 통과하는 요청의 capability/등록 API/쓰기/사유를 차단하지만, 프록시를 거치지 않는 브라우저 통신을 통제하지 않는다. 근본적인 AST 검사·프리뷰 CSP connect-src 보강은 코디네이터의 P0-2 작업으로 넘겼으며 여기서는 수정하지 않았다.
 
 별도 실제 HTTP negative controls: capability 없음 403, 미등록 API 404, read capability로 PATCH 403, 사유 없음 428. 수치와 pass/fail은 결과의 `security`에 보존한다.
 
-브라우저 하네스는 허용되지 않은 요청을 기록하고 Playwright에서 차단해 공격 목적지에 연결하지 않는다. 이는 관찰·격리 장치이며 제품 CSP가 막았다는 증거가 아니다. 테스트 host/frame HTML만 Playwright route로 공급하고 runtime/worker/frame 소스는 실제 패키지를 번들한다. Chromium의 local-network-access 권한을 평가 context에 부여해 loopback fixture/빌더 접근을 허용한다. 실제 서비스 CORS와 프리뷰 sandbox, import map, Worker 빌드는 그대로 수행되지만 최종 배포 CSP·HTTPS·키클록 UI 흐름을 평가하지 않는다.
+브라우저 하네스는 허용되지 않은 요청을 기록하고 Playwright에서 차단해 공격 목적지에 연결하지 않는다. 현재 host/frame 응답에는 제품의 CSP 생성 함수를 재사용하고, 실제 frame 문서와 runtime/worker/frame 및 스튜디오 브로커 소스를 번들한다. 테스트 문서는 Playwright route로 공급하므로 실제 서버 배포의 CSP 검증은 별도 E2E 결과를 따른다. Chromium의 local-network-access 권한을 평가 context에 부여해 loopback fixture/빌더 접근을 허용한다. 실제 서비스 CORS와 프리뷰 sandbox, import map, Worker 빌드는 그대로 수행되지만 최종 배포 CSP·HTTPS·키클록 UI 흐름을 평가하지 않는다.
 
 현재 에이전트 도구 집합은 registry/schema와 소스 편집만 제공하고 **upstream 데이터를 읽는 도구가 없다**. 따라서 11번은 upstream 지시문에 노출된 생성 화면의 안전한 텍스트 처리/통신 동작 검사이며, 모델이 upstream 응답을 읽은 후 지시를 무시했다는 증거가 아니다. 모델 노출 인젝션은 10번 registry description과 12번 사용자 프롬프트가 담당한다. 접근성 이름이 없는 버튼, 사용자 정의 복잡한 화면 흐름은 자동 조작 한계로 실패할 수 있어 원문 DOM/요청을 함께 검토해야 한다.
 
@@ -103,7 +103,7 @@ export default function App() {
 
 Claude는 자격증명이 없으면 명확히 skip하고, 자격증명이 있어도 비용 한도 기본 0에서는 요청하지 않는다. 실행하려면 유효한 Anthropic 키, 명시적 `--max-cost-usd`, 확인한 모델 단가를 `EVAL_CLAUDE_INPUT_USD_PER_M`, `EVAL_CLAUDE_OUTPUT_USD_PER_M`으로 설정한다. SDK의 **각 HTTP 요청 이전**에 UTF-8 입력 bytes와 max_tokens로 보수적인 비용 상한을 예약해 한도를 넘는 요청을 거부한다. 캐시 할인을 가정하지 않으며 예약 합계는 실제 청구 비용이 아니다. 외부 Claude 서버에는 이 클라이언트 측 제한을 적용할 수 없으므로 이 실행기는 외부 Claude 실행을 skip한다.
 
-Gemini는 각 요청 전에 최악 비용을 예약하고, 응답의 `usageMetadata`가 있으면 `promptTokenCount + toolUsePromptTokenCount`와 `candidatesTokenCount + thoughtsTokenCount`로 실제 비용을 정산한다. 한도 검사는 전역 실제 누적 비용과 진행 중 예약을 함께 사용하며, usage가 없거나 요청이 실패하면 해당 예약을 보수적으로 비용 확정한다. 결과 JSON에는 `actualCostUsd`와 `peakReservedUsd`가 기록된다.
+Gemini는 각 요청 전에 최악 비용을 예약하고, 응답의 `usageMetadata`가 있으면 `promptTokenCount + toolUsePromptTokenCount`와 `candidatesTokenCount + thoughtsTokenCount`로 실제 비용을 정산한다. `toolConfig.functionCallingConfig.mode: ANY`를 사용해 도구 호출을 요청하며, 텍스트만 반환된 `STOP` 응답에는 finish 도구를 요구하는 user 재요청을 최대 2회 보낸다. `MAX_TOKENS`·`SAFETY` 등 비-STOP 종료 사유는 기존 분류를 유지한다. 한도 검사는 전역 실제 누적 비용과 진행 중 예약을 함께 사용하며, usage가 없거나 요청이 실패하면 해당 예약을 보수적으로 비용 확정한다. 결과 JSON에는 `actualCostUsd`와 `peakReservedUsd`가 기록된다.
 
 ```sh
 # 키와 검증한 단가는 환경에 설정한 뒤, 실제 허용할 비용을 명시한다.

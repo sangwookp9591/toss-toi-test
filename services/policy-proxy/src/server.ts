@@ -14,7 +14,7 @@ import { PolicyStorage, publicApi, sanitize, validateApi } from './storage.js';
 import { HttpError, identifier, issueCapability, capabilityFromToken, signToken } from './tokens.js';
 import { maskJson, scanPii, type PolicyWarning } from './mask.js';
 import type { PolicyAuditRecord } from './storage.js';
-const studioOrigin = 'http://localhost:5173';
+const studioOrigin = 'http://localhost:5273';
 const parsedBodies = new WeakMap<IncomingMessage, Record<string, unknown>>();
 function requireJson(req: IncomingMessage) {
   if (header(req, 'content-type').split(';')[0].trim().toLowerCase() !== 'application/json') throw new HttpError(415, 'JSON_CONTENT_TYPE_REQUIRED');

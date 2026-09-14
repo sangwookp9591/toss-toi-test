@@ -10,7 +10,7 @@ import { assertSourcePolicy } from './source-policy.ts';
 import { ToolError } from './schema.ts';
 export function createAgentServer(options: { dataDir: string; driver: AgentDriver; policy?: PolicyClient; studioOrigin?: string; identity?: Identity }) {
   const identity = options.identity ?? new Identity({ clientId: 'toi-agent-server', clientSecret: process.env.TOI_AGENT_CLIENT_SECRET });
-  const studioOrigin = options.studioOrigin ?? 'http://localhost:5173';
+  const studioOrigin = options.studioOrigin ?? 'http://localhost:5273';
   const store = new Store(options.dataDir);
   const engine = new Engine(store, options.driver, options.policy);
   async function body(req: IncomingMessage): Promise<unknown> {

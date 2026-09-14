@@ -24,27 +24,29 @@
 ## 구성과 포트
 
 ```
-                         ┌──────────────── apps/studio (5173) ────────────────┐
+                         ┌──────────────── apps/studio (5273) ────────────────┐
  사용자 ── 채팅 ────────▶ │ ChatPanel ─SSE─▶ agent-server (7400) ─▶ Claude API  │
                          │ PreviewPane ─ preview-runtime (Worker+esbuild-wasm)  │
-                         │      └ iframe (preview origin 5174)                  │
+                         │      └ iframe (preview origin 5274)                  │
                          └──────────────────────────────────────────────────────┘
- preview-runtime ─ GET manifest/assets ─▶ deps-builder (7100) ─▶ MinIO (9000)
- deps-builder ─ yarn install (npmAuthToken) ─▶ Verdaccio (4873): @toi/* 인증 필수, 그 외 npmjs 프록시
+ preview-runtime ─ GET manifest/assets ─▶ deps-builder (7100) ─▶ MinIO (9400)
+ deps-builder ─ yarn install (npmAuthToken) ─▶ Verdaccio (4973): @toi/* 인증 필수, 그 외 npmjs 프록시
  생성 UI (iframe) ─ fetch /proxy/:apiId/* ─▶ policy-proxy (7200) ─▶ mock-backend (7300)
+ 스튜디오 ─ 로그인 ─▶ Keycloak (8180)
  agent-server ─ GET /apis, /apis/:id ─▶ policy-proxy (API 레지스트리)
 ```
 
 | 컴포넌트 | 경로 | 포트 |
 |---|---|---|
-| Verdaccio (사내 레지스트리 흉내) | `infra/verdaccio` | 4873 |
-| MinIO (S3 흉내) | `infra/docker-compose.yml` | 9000 / 9001 |
+| Keycloak (OIDC 로그인) | `infra/keycloak` | 8180 |
+| Verdaccio (사내 레지스트리 흉내) | `infra/verdaccio` | 4973 |
+| MinIO (S3 흉내) | `infra/docker-compose.yml` | 9400 / 9401 |
 | 의존성 빌더 | `services/deps-builder` | 7100 |
 | 정책 프록시 + API 레지스트리 | `services/policy-proxy` | 7200 |
 | mock 업무 백엔드 | `services/mock-backend` | 7300 |
 | 에이전트 서버 | `services/agent-server` | 7400 |
-| 스튜디오 (채팅 + 프리뷰) | `apps/studio` | 5173 |
-| 프리뷰 iframe origin | `apps/studio` 두 번째 서버 | 5174 |
+| 스튜디오 (채팅 + 프리뷰) | `apps/studio` | 5273 |
+| 프리뷰 iframe origin | `apps/studio` 두 번째 서버 | 5274 |
 | 브라우저 런타임 라이브러리 | `packages/preview-runtime` | — |
 | 가짜 사내 디자인시스템 | `packages/fake-tds` → Verdaccio에 `@toi/tds`로 publish | — |
 

@@ -63,7 +63,28 @@ Docker Desktop, Node.js 22, npm, 시스템 Google Chrome이 필요하다. Docker
 node scripts/dev-up.mjs
 ```
 
-스크립트는 Docker Compose의 Keycloak(8080)/Verdaccio/MinIO, 사내 패키지 등록, mock-backend(7300), policy-proxy(7200), deps-builder(7100), agent-server(7400), 스튜디오(5173)와 프로젝트별 프리뷰 origin(`p-<projectId>.preview.localhost:5174`)을 순서대로 확인한다. fake-tds·preview-runtime과 모든 실행 서비스·스튜디오의 의존성을 각 폴더의 lockfile로 설치하며 정상 실행 중인 서비스는 재사용한다. `node scripts/dev-up.mjs --check`로 설치 대상과 lockfile을 서비스 기동 없이 검사할 수 있다.
+스크립트는 Docker Compose의 Keycloak(8180)/Verdaccio(4973)/MinIO(9400, 콘솔 9401), 사내 패키지 등록, mock-backend(7300), policy-proxy(7200), deps-builder(7100), agent-server(7400), 스튜디오(5273)와 프로젝트별 프리뷰 origin(`p-<projectId>.preview.localhost:5274`)을 순서대로 확인한다. fake-tds·preview-runtime과 모든 실행 서비스·스튜디오의 의존성을 각 폴더의 lockfile로 설치하며 정상 실행 중인 서비스는 재사용한다. `node scripts/dev-up.mjs --check`로 설치 대상과 lockfile을 서비스 기동 없이 검사할 수 있다.
+
+다른 로컬 프로젝트와의 충돌을 피하려고 Vite·Keycloak·Verdaccio·MinIO 도구의 기본 포트 대신 아래 호스트 포트를 사용한다.
+
+| 서비스 | 새 기본 포트 | 이전 포트 | 조정 환경변수 |
+|---|---:|---:|---|
+| 스튜디오 | 5273 | 5173 | 없음 — origin 계약·CSP·리다이렉트와 함께 고정 |
+| 프로젝트별 프리뷰 | 5274 | 5174 | 없음 — origin 계약·CSP·postMessage 검사와 함께 고정 |
+| Keycloak | 8180 | 8080 | `TOI_KEYCLOAK_PORT` |
+| Verdaccio | 4973 | 4873 | `TOI_REGISTRY_PORT` |
+| MinIO API | 9400 | 9000 | `TOI_MINIO_PORT` |
+| MinIO 콘솔 | 9401 | 9001 | `TOI_MINIO_CONSOLE_PORT` |
+| deps-builder | 7100 | 7100 | 없음 — 고정 |
+| policy-proxy | 7200 | 7200 | 없음 — 고정 |
+| mock-backend | 7300 | 7300 | 없음 — 고정 |
+| agent-server | 7400 | 7400 | 없음 — 고정 |
+
+인프라 포트 환경변수는 Compose와 dev-up이 함께 사용한다. Docker의 컨테이너 내부 포트(8080·4873·9000·9001)는 그대로 두고 호스트는 `127.0.0.1`에만 공개한다. 스튜디오·프리뷰는 포트 변수만 바꾸는 방식은 지원하지 않는다.
+
+기존 루트 `.env`는 다음 값과 **정확히 일치할 때만** 자동 이행한다: `TOI_IDENTITY_ISSUER`·`VITE_OIDC_ISSUER`의 `http://localhost:8080/realms/toi`, `TOI_REGISTRY_URL`의 `http://localhost:4873`, `MINIO_ENDPOINT`의 `http://localhost:9000`, `AGENT_STUDIO_ORIGIN`의 `http://localhost:5173`. 사용자 지정 URL과 후행 `/`가 붙은 값은 보존하며 이행 로그에는 값이나 비밀을 출력하지 않는다. 기존 Keycloak 볼륨의 옛 스튜디오 리다이렉트도 이행한다. 레지스트리가 기존 토큰을 거부하면 setup-registry가 재발급하여 `.env`에 저장하고 dev-up이 새 토큰을 사용한다. Yarn 메타데이터 캐시는 레지스트리 URL별로 분리해 옛 포트의 tarball 주소를 재사용하지 않는다.
+
+모든 개발 포트 사전 점검은 localhost의 IPv4·IPv6와 `127.0.0.1`·`::1`을 확인하며 다른 서비스가 응답하면 기동 전에 실패한다. 포트 변경 후에는 관리 서비스를 `--restart`로 다시 시작하고, 외부에서 수동 기동한 서비스는 해당 실행자가 새 URL 설정으로 재시작한다.
 
 기동 출력에는 단계별 소요 시간이 표시된다. 실패하면 `registry setup failed: fake-tds build failed: tsc not found`처럼 실패 단계와 원인 요약, 로그 경로를 표시한다. 전체 기동 로그는 `scripts/.run/dev-up.log`, 서비스별 로그는 `scripts/.run/<서비스 이름>.log`, 직접 시작한 프로세스 목록은 `scripts/.run/processes.json`에 보관한다. 기동 로그는 비밀값을 가리고 레지스트리 설정 오류는 안전한 원인 요약만 출력한다. 원인을 해결한 뒤 같은 dev-up 명령을 다시 실행한다.
 
@@ -80,7 +101,7 @@ Keycloak admin 또는 MinIO root 인증이 실패하면 대상 `<프로젝트>_k
 
 감사 버킷의 COMPLIANCE 객체는 보존 기한 전 S3/`mc` 삭제가 거부된다. 보존 만료를 기다리면 객체를 삭제할 수 있다. 개발 데이터를 전부 폐기하는 `dev-down --volumes`는 컨테이너를 내린 뒤 Docker 볼륨 자체를 제거하므로 S3 object lock의 보호 대상이 아니다. 볼륨 사용 중 오류가 나면 해당 프로젝트의 남은 컨테이너를 확인하고 종료한 뒤 같은 명령을 재시도하며, 다른 프로젝트 볼륨은 제거하지 않는다.
 
-[스튜디오](http://localhost:5173)에서 Keycloak 사용자 alice로 로그인한다. 비밀번호는 dev-up이 무작위 생성한 `.env`의 `TOI_PASSWORD_ALICE`를 확인한다(bob/carol/dana/root도 `TOI_PASSWORD_*`). 로그인 후 프로젝트를 만들고 “고객 목록 화면 만들어줘”를 입력한다. 조회 사유 질문에 답하면 생성된 코드와 미리보기를 볼 수 있다. 조회 사유를 입력한 뒤 조회하면 마스킹된 고객 데이터가 표시된다. 코드 편집 후 “저장하고 반영”으로 저장하며 오류가 있으면 마지막 정상 화면을 유지한다. 쓰기 작업은 기본 차단되고 “쓰기 테스트 허용”을 켰을 때 현재 프로젝트의 API에 2분간 허용된다. 프리뷰에는 자격 증명 없는 `{ projectId, env, transport: "broker" }` 설정만 전달한다. Keycloak 토큰과 `/preview-sessions`의 viewer 세션·capability는 스튜디오 메모리에만 두며 검증된 postMessage 요청을 브로커가 policy-proxy로 보낸다. `/dev/session`은 제거했다.
+[스튜디오](http://localhost:5273)에서 Keycloak 사용자 alice로 로그인한다. 비밀번호는 dev-up이 무작위 생성한 `.env`의 `TOI_PASSWORD_ALICE`를 확인한다(bob/carol/dana/root도 `TOI_PASSWORD_*`). 로그인 후 프로젝트를 만들고 “고객 목록 화면 만들어줘”를 입력한다. 조회 사유 질문에 답하면 생성된 코드와 미리보기를 볼 수 있다. 조회 사유를 입력한 뒤 조회하면 마스킹된 고객 데이터가 표시된다. 코드 편집 후 “저장하고 반영”으로 저장하며 오류가 있으면 마지막 정상 화면을 유지한다. 쓰기 작업은 기본 차단되고 “쓰기 테스트 허용”을 켰을 때 현재 프로젝트의 API에 2분간 허용된다. 프리뷰에는 자격 증명 없는 `{ projectId, env, transport: "broker" }` 설정만 전달한다. Keycloak 토큰과 `/preview-sessions`의 viewer 세션·capability는 스튜디오 메모리에만 두며 검증된 postMessage 요청을 브로커가 policy-proxy로 보낸다. `/dev/session`은 제거했다.
 
 프로젝트 viewer는 열기·preview read, editor는 생성·저장·preview write, owner는 멤버 관리·live 승인 요청을 할 수 있다. 비멤버는 404이며 멤버 제거는 다음 proxy 요청부터 적용된다. 스튜디오는 프로젝트를 연 동안 30초마다, 창에 포커스가 돌아올 때도 멤버십을 확인한다. 접근 거부 시 프리뷰를 내리고 편집·생성·저장을 잠근다. live 쓰기는 owner 요청 후 해당 API api-owner(dana)의 4-eyes 승인이 필요하고 본인 승인은 금지한다. 승인은 기본 5분 후 만료된다. preview/live는 서로 다른 upstream 경로·데이터셋·서비스 토큰을 사용한다. 자세한 API와 역할표는 [policy-proxy README](services/policy-proxy/README.md)에 있다.
 
@@ -101,7 +122,7 @@ E2E는 시스템 Chrome의 실제 Keycloak 로그인으로 기존 39개 시나�
 
 ### 프리뷰 네트워크·환경변수 격리 (P0-2)
 
-프로젝트 UUID마다 `http://p-<projectId>.preview.localhost:5174` origin을 만든다. 프로젝트를 바꾸면 런타임·iframe을 새로 만들고, 해당 프로젝트의 토큰 없는 브로커 설정만 주입한다. viewer 프리뷰 세션과 capability는 스튜디오가 보관한다. 스튜디오 부모는 `http://localhost:5173` 하나다. 로그인 복원은 iframe 대신 최상위 `prompt=none` PKCE 리다이렉트를 사용하고, 이후 토큰 갱신은 메모리의 refresh token grant만 사용한다. 5174는 정확한 프로젝트 Host에서 `/frame.html`과 `/frame.js`만 제공하며 잘못된 Host는 421, 다른 경로는 404다. 스튜디오에서는 frame 자산을 제공하지 않으며, 벤치는 `TOI_ENABLE_BENCH=true`로 시작했을 때만 열린다.
+프로젝트 UUID마다 `http://p-<projectId>.preview.localhost:5274` origin을 만든다. 프로젝트를 바꾸면 런타임·iframe을 새로 만들고, 해당 프로젝트의 토큰 없는 브로커 설정만 주입한다. viewer 프리뷰 세션과 capability는 스튜디오가 보관한다. 스튜디오 부모는 `http://localhost:5273` 하나다. 로그인 복원은 iframe 대신 최상위 `prompt=none` PKCE 리다이렉트를 사용하고, 이후 토큰 갱신은 메모리의 refresh token grant만 사용한다. 5274는 정확한 프로젝트 Host에서 `/frame.html`과 `/frame.js`만 제공하며 잘못된 Host는 421, 다른 경로는 404다. 스튜디오에서는 frame 자산을 제공하지 않으며, 벤치는 `TOI_ENABLE_BENCH=true`로 시작했을 때만 열린다.
 
 | 프리뷰 CSP 지시문 | 허용 범위 |
 |---|---|
@@ -110,10 +131,10 @@ E2E는 시스템 Chrome의 실제 Keycloak 로그인으로 기존 39개 시나�
 | `script-src` | `'self' http://localhost:7100` 및 응답마다 새 nonce |
 | `style-src` | `'self' 'unsafe-inline'` |
 | `img-src` / `font-src` | `data: blob:` / `data:` |
-| `frame-ancestors` | `http://localhost:5173` |
+| `frame-ancestors` | `http://localhost:5273` |
 | `worker-src`, `object-src`, `form-action`, `base-uri` | `'none'` |
 
-CSP는 HTTP 응답 헤더다. nonce를 import map·호스트 설정·부트에 전달하며 `document.open/write` 뒤에도 적용되는지 실제 Chromium의 isolation E2E가 검사한다. script `unsafe-inline`, `unsafe-eval`, connect `self`는 허용하지 않는다. 차단은 `securitypolicyviolation`에서 기존 `runtime_failed` 진단으로 전달되고 스튜디오에 “차단된 요청”이 표시된다. 스튜디오에는 `frame-ancestors 'self'`, `frame-src http://*.preview.localhost:5174`, `X-Frame-Options: SAMEORIGIN`을 붙인다.
+CSP는 HTTP 응답 헤더다. nonce를 import map·호스트 설정·부트에 전달하며 `document.open/write` 뒤에도 적용되는지 실제 Chromium의 isolation E2E가 검사한다. script `unsafe-inline`, `unsafe-eval`, connect `self`는 허용하지 않는다. 차단은 `securitypolicyviolation`에서 기존 `runtime_failed` 진단으로 전달되고 스튜디오에 “차단된 요청”이 표시된다. 스튜디오에는 `frame-ancestors 'self'`, `frame-src http://*.preview.localhost:5274`, `X-Frame-Options: SAMEORIGIN`을 붙인다.
 
 소스 저장 정책은 기존 문자열 규칙에 고정 버전 `typescript-ast`(TypeScript 5.9.3) AST 검사를 더한다. 계산된 전역 멤버, 전역 구조 분해·리플렉션, eval/Function, 동적 import와 Worker를 거부한다. 이 검사는 보조 수단이며 임의 JavaScript의 안전성을 증명하지 않는다. **브라우저 요청의 근본 차단은 프리뷰 CSP이고, 허용된 policy-proxy 요청의 권한·프로젝트 일치는 서버가 검사한다.**
 

@@ -21,8 +21,8 @@ await bundle({ entryPoints: Object.fromEntries(Object.keys(fixtureModules).map(n
   } }],
 });
 const mime = { '.html': 'text/html', '.js': 'text/javascript', '.json': 'application/json', '.wasm': 'application/wasm', '.map': 'application/json' };
-const studioPort = Number(process.env.STUDIO_PORT ?? 5173);
-const previewPort = Number(process.env.PREVIEW_PORT ?? 5174);
+const studioPort = Number(process.env.STUDIO_PORT ?? 5273);
+const previewPort = Number(process.env.PREVIEW_PORT ?? 5274);
 const servers = [studioPort, previewPort].map(port => createServer(async (req, res) => {
   if (port === previewPort && !previewHostPattern.test(req.headers.host ?? '')) { res.writeHead(421).end(); return; }
   const pathname = new URL(req.url, 'http://localhost').pathname;

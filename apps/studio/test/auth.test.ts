@@ -52,7 +52,7 @@ test('credentials never go to builder or lookalike origin', async () => {
 });
 test('OIDC uses PKCE code flow, memory user store and only session-scoped transient state', async () => {
   Object.assign(globalThis, { sessionStorage: new InMemoryWebStorage() });
-  const settings = oidcSettings('http://localhost:5173');
+  const settings = oidcSettings('http://localhost:5273');
   assert.equal(settings.response_type, 'code'); assert.equal(settings.disablePKCE, false);
   assert.equal(settings.client_id, 'toi-studio');
   await settings.userStore!.set('user', 'secret');

@@ -1,4 +1,5 @@
 import { createServer } from 'node:http';
+export const studioOrigin = 'http://localhost:5273';
 let deadline = Infinity;
 export function setDeadline(value) { deadline = value; }
 export function budgetSignal(maxMs = 15000) { return AbortSignal.timeout(Math.max(1, Math.min(maxMs, deadline - Date.now()))); }

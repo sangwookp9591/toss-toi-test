@@ -39,8 +39,28 @@ it('runs Gemini function calls through finish and keeps the API key in the heade
       expect(declaration.parametersJsonSchema).toBeDefined();
       expect(JSON.stringify(declaration.parametersJsonSchema)).not.toContain('$schema');
     }
+    expect(body.toolConfig).toEqual({ functionCallingConfig: { mode: 'ANY' } });
   }
   expect(JSON.stringify(app.store.generation(id).events)).not.toContain(key);
+});
+
+it('re-prompts after a text-only STOP response and finishes within the retry budget', async () => {
+  const bodies: any[] = [];
+  const app = await start(new GeminiDriver({ apiKey: 'text-retry-secret', fetcher: async (_url, init) => {
+    bodies.push(JSON.parse(String(init?.body)));
+    return bodies.length === 1 ? result([{ text: '계속 작업 중입니다.' }]) : result([call('finish', { summary: '완료' })]);
+  } })); apps.push(app);
+  const id = await app.generate(); await waitFor(() => app.store.generation(id).state === 'done');
+  expect(bodies).toHaveLength(2);
+  expect(bodies[1].contents.at(-1)).toEqual({ role: 'user', parts: [{ text: '작업을 계속하고 끝나면 finish 도구를 호출하라.' }] });
+});
+
+it('keeps the existing no-finish error after the text retry budget is exhausted', async () => {
+  let calls = 0;
+  const app = await start(new GeminiDriver({ apiKey: 'text-retry-limit-secret', fetcher: async () => { calls++; return result([{ text: '아직 텍스트입니다.' }]); } })); apps.push(app);
+  const id = await app.generate(); await waitFor(() => app.store.generation(id).state === 'failed');
+  expect(calls).toBe(3);
+  expect(app.store.generation(id).events.at(-1)).toMatchObject({ type: 'failed', message: 'Model completed without calling finish', code: 'model_error' });
 });
 
 it('uses the documented stable Flash default and records thinking/tool-use tokens', async () => {
@@ -56,7 +76,7 @@ it('groups parallel function responses into one user Content', async () => {
   const bodies: any[] = [];
   const app = await start(new GeminiDriver({ apiKey: 'parallel-secret', fetcher: async (_url, init) => {
     bodies.push(JSON.parse(String(init?.body)));
-    return bodies.length === 1 ? result([call('list_files', {}), call('list_registered_apis', {})]) : result([{ text: 'done' }]);
+    return bodies.length === 1 ? result([call('list_files', {}), call('list_registered_apis', {})]) : result([call('finish', { summary: 'done' })]);
   } })); apps.push(app);
   const id = await app.generate(); await waitFor(() => app.store.generation(id).state === 'failed' || app.store.generation(id).state === 'done');
   expect(bodies).toHaveLength(2);

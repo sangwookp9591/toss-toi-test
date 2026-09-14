@@ -70,8 +70,8 @@ export type GenerationEvent = { seq: number; generationId: string } & (
  * - 자격증명이 없으면(AGENT_MODE=mock 또는 인증 실패) 같은 이벤트 형태를 내는 결정적 mock 생성기로 동작한다.
  */
 export const AGENT_SERVER_PORT = 7400;
-export const STUDIO_PORT = 5173;
-export const PREVIEW_ORIGIN_PORT = 5174;
+export const STUDIO_PORT = 5273;
+export const PREVIEW_ORIGIN_PORT = 5274;
 
 export interface ActiveGeneration {
   generationId: string;

@@ -5,11 +5,11 @@ services:
     image: quay.io/keycloak/keycloak:26.3.3
     command: start-dev --import-realm
     ports:
-      - "127.0.0.1:8080:8080"
+      - "127.0.0.1:${TOI_KEYCLOAK_PORT:-8180}:8080"
     environment:
       KC_BOOTSTRAP_ADMIN_USERNAME: toi-bootstrap
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${TOI_KEYCLOAK_ADMIN_PASSWORD:?Run scripts/dev-up.mjs to generate identity secrets}
-      KC_HOSTNAME: http://localhost:8080
+      KC_HOSTNAME: http://localhost:${TOI_KEYCLOAK_PORT:-8180}
     volumes:
       - keycloak-data:/opt/keycloak/data
       - ./keycloak/realm-toi.json:/opt/keycloak/data/import/realm-toi.json:ro
@@ -30,7 +30,7 @@ services:
       verdaccio-init:
         condition: service_completed_successfully
     ports:
-      - "4873:4873"
+      - "127.0.0.1:${TOI_REGISTRY_PORT:-4973}:4873"
     volumes:
       - ./verdaccio/config.yaml:/verdaccio/conf/config.yaml:ro
       - verdaccio-storage:/verdaccio/storage
@@ -41,8 +41,8 @@ services:
     image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z
     command: server /data --console-address ":9001"
     ports:
-      - "9000:9000"
-      - "9001:9001"
+      - "127.0.0.1:${TOI_MINIO_PORT:-9400}:9000"
+      - "127.0.0.1:${TOI_MINIO_CONSOLE_PORT:-9401}:9001"
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:-toi}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-toi-local-secret}

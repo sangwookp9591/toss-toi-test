@@ -37,7 +37,7 @@ async function targets(app: App) {
   ];
 }
 
-it.each(['http://localhost:5174', 'null', 'https://unknown.example', '', 'http://localhost:5173.evil.example', 'http://127.0.0.1:5173'])(
+it.each(['http://localhost:5274', 'null', 'https://unknown.example', '', 'http://localhost:5273.evil.example', 'http://127.0.0.1:5273'])(
   'rejects Origin %j for every protected route without changing storage or events', async origin => {
     const app = await setup();
     const routes = await targets(app);
@@ -65,7 +65,7 @@ it.each(['http://localhost:5174', 'null', 'https://unknown.example', '', 'http:/
   },
 );
 
-it.each([undefined, 'http://localhost:5173'])('requires JSON on every mutation for allowed Origin %j', async origin => {
+it.each([undefined, 'http://localhost:5273'])('requires JSON on every mutation for allowed Origin %j', async origin => {
   const app = await setup();
   const routes = (await targets(app)).filter(target => target.method !== 'GET');
   const before = snapshot(app);
@@ -82,7 +82,7 @@ it.each([undefined, 'http://localhost:5173'])('requires JSON on every mutation f
   }
 });
 
-it.each([undefined, 'http://localhost:5173'])('preserves projects, generation, answers, cancel and SSE for allowed Origin %j', async origin => {
+it.each([undefined, 'http://localhost:5273'])('preserves projects, generation, answers, cancel and SSE for allowed Origin %j', async origin => {
   const app = await setup();
   const headers = new Headers({ 'Content-Type': 'Application/JSON; charset=utf-8' });
   if (origin !== undefined) headers.set('Origin', origin);
@@ -125,6 +125,6 @@ it('uses the configured studio origin as the exact allowlist', async () => {
   const allowed = await app.fetch(app.url + path, { headers: { Origin: origin } });
   expect(allowed.status).toBe(200);
   expect(allowed.headers.get('access-control-allow-origin')).toBe(origin);
-  expect((await app.fetch(app.url + path, { headers: { Origin: 'http://localhost:5173' } })).status).toBe(403);
+  expect((await app.fetch(app.url + path, { headers: { Origin: 'http://localhost:5273' } })).status).toBe(403);
   expect((await app.fetch(app.url + path)).status).toBe(200);
 });

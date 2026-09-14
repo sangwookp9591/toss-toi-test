@@ -1,10 +1,10 @@
 # 정책 프록시와 API 레지스트리
 
-포트 7200. Keycloak 액세스 토큰을 `jose@6.1.3`의 JWKS RS256 검증으로 확인한다. issuer는 `http://localhost:8080/realms/toi`, audience는 `toi-api`이며 서명·만료·필수 클레임을 검사한다. `/dev/session`은 제거되어 항상 404다.
+포트 7200. Keycloak 액세스 토큰을 `jose@6.1.3`의 JWKS RS256 검증으로 확인한다. issuer는 `http://localhost:8180/realms/toi`, audience는 `toi-api`이며 서명·만료·필수 클레임을 검사한다. `/dev/session`은 제거되어 항상 404다.
 
 ## 실행과 로그인
 
-저장소 루트에서 `node scripts/dev-up.mjs`를 실행하고 [스튜디오](http://localhost:5173)에 로그인한다. 사용자 alice/bob/carol/dana/root의 비밀번호는 무작위 생성된 루트 `.env`의 `TOI_PASSWORD_ALICE` 등에서 확인한다. realm import에는 비밀번호와 client secret을 넣지 않는다. dev-up은 Keycloak admin API로 비밀번호·서비스 client secret을 설정하고 파일 권한을 0600으로 제한한다.
+저장소 루트에서 `node scripts/dev-up.mjs`를 실행하고 [스튜디오](http://localhost:5273)에 로그인한다. 사용자 alice/bob/carol/dana/root의 비밀번호는 무작위 생성된 루트 `.env`의 `TOI_PASSWORD_ALICE` 등에서 확인한다. realm import에는 비밀번호와 client secret을 넣지 않는다. dev-up은 Keycloak admin API로 비밀번호·서비스 client secret을 설정하고 파일 권한을 0600으로 제한한다.
 
 ```sh
 npm --prefix services/policy-proxy run typecheck
@@ -75,7 +75,7 @@ POST 처리 중 파일과 ZIP을 메모리에서만 만든다. `@zip.js/zip.js@2
 | `TOI_DOWNLOAD_KEK_ID` | 회전 식별자, 예 `dev-v1` |
 | `TOI_DOWNLOAD_URL_SECRET` | KEK와 다른 무작위 32바이트, 64자리 hex |
 | `TOI_DOWNLOAD_BUCKET` / `TOI_AUDIT_BUCKET` | `toi-downloads` / `toi-audit` |
-| `MINIO_ENDPOINT` | 로컬 `http://localhost:9000` |
+| `MINIO_ENDPOINT` | 로컬 `http://localhost:9400` |
 | `MINIO_ROOT_USER` / `MINIO_ROOT_PASSWORD` | 정책 자식 프로세스에서는 전용 사용자 값; dev-up이 `TOI_POLICY_MINIO_USER/PASSWORD`를 이 이름에 매핑 |
 | `TOI_DOWNLOAD_RETAIN_MS` | 선택, 기본/최대 86400000ms |
 | `TOI_AUDIT_RETENTION_DAYS` | 정수 1–36500일, 개발 기본 1; 운영은 보존 정책에 맞춰 명시적으로 설정(예: 365) |

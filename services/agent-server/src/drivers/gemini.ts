@@ -8,6 +8,8 @@ export const DEFAULT_TIMEOUT_MS = 120_000;
 const DEFAULT_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
 const DEFAULT_MAX_TURNS = 24;
 const DEFAULT_MAX_OUTPUT_TOKENS = 8192;
+const MAX_TEXT_RETRIES = 2;
+const CONTINUE_TO_FINISH = '작업을 계속하고 끝나면 finish 도구를 호출하라.';
 
 export interface GeminiMetrics {
   turns: number; toolCalls: number; toolErrors: number; inputTokens: number; outputTokens: number; thoughtsTokens: number; durationMs: number; costUsd: number;
@@ -45,6 +47,7 @@ export class GeminiDriver implements AgentDriver {
     const specs = createTools(context);
     const declarations = specs.map(tool => ({ name: tool.name, description: 'description' in tool ? tool.description : '', parametersJsonSchema: 'input_schema' in tool ? stripSchemaMeta(tool.input_schema) : { type: 'object', properties: {} } }));
     const messages: Content[] = [{ role: 'user', parts: [{ text: safe(JSON.stringify({ request: context.record.request.prompt, files: context.record.files, packageSet: context.record.packageSet }), this.apiKey) }] }];
+    let textRetries = 0;
     const timeout = this.options.maxDurationMs === undefined ? undefined : AbortSignal.timeout(this.options.maxDurationMs);
     const signal = timeout ? AbortSignal.any([context.signal, timeout]) : context.signal;
     try {
@@ -53,6 +56,7 @@ export class GeminiDriver implements AgentDriver {
         const body = JSON.stringify({
           systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] }, contents: messages,
           tools: [{ functionDeclarations: declarations }], generationConfig: { maxOutputTokens: this.options.maxOutputTokens ?? DEFAULT_MAX_OUTPUT_TOKENS, temperature: 0 },
+          toolConfig: { functionCallingConfig: { mode: 'ANY' } },
         });
         const settleReservation = this.reserveCost(metrics, body);
         const requestTimeout = AbortSignal.timeout(this.timeoutMs);
@@ -113,7 +117,11 @@ export class GeminiDriver implements AgentDriver {
         }
         if (responses.length) messages.push({ role: 'user', parts: responses });
           if (finished) return;
-          if (!calls.length) return;
+          if (!calls.length) {
+            if (finishReason && finishReason !== 'STOP') return;
+            if (textRetries++ >= MAX_TEXT_RETRIES) return;
+            messages.push({ role: 'user', parts: [{ text: CONTINUE_TO_FINISH }] });
+          }
         } catch (error) {
           if (!settled) settleReservation();
           throw error;

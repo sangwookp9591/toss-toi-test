@@ -18,7 +18,7 @@ export function createApp(builder: PackageBuilder) {
     const url = new URL(req.url ?? '/', 'http://localhost');
     const method = req.method === 'OPTIONS' ? req.headers['access-control-request-method'] : req.method;
     const previewAsset = !!origin && !!projectIdFromPreviewOrigin(origin) && /^\/assets\/[a-f0-9]{64}\//.test(url.pathname) && (method === 'GET' || method === 'HEAD');
-    const allowed = origin === 'http://localhost:5173' || previewAsset;
+    const allowed = origin === 'http://localhost:5273' || previewAsset;
     res.setHeader('Vary', 'Origin');
     if (origin && !allowed) return json(res, 403, {error:'Origin is not allowed'});
     if (origin && allowed) { res.setHeader('Access-Control-Allow-Origin', origin); res.setHeader('Access-Control-Allow-Methods', previewAsset ? 'GET, HEAD, OPTIONS' : 'GET, HEAD, POST, OPTIONS'); res.setHeader('Access-Control-Allow-Headers', 'Content-Type'); }

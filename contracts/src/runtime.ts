@@ -37,9 +37,9 @@ export type PreviewEvent =
 export interface PreviewRuntimeOptions {
   /** 프리뷰 iframe을 붙일 요소 */
   container: HTMLElement;
-  /** 프리뷰 iframe origin. 스튜디오 origin과 달라야 한다. 예: "http://localhost:5174" */
+  /** 프리뷰 iframe origin. 스튜디오 origin과 달라야 한다. 예: "http://localhost:5274" */
   previewOrigin: string;
-  /** 프리뷰 iframe 문서 URL(previewOrigin 아래). 예: "http://localhost:5174/frame.html" */
+  /** 프리뷰 iframe 문서 URL(previewOrigin 아래). 예: "http://localhost:5274/frame.html" */
   frameUrl: string;
   esbuildWasmUrl: string;
   /** 앱 진입점 VFS 경로. 예: "/src/main.tsx" */
@@ -138,7 +138,7 @@ export interface PreviewRuntime {
  * 다른 프로젝트 프리뷰의 storage·BroadcastChannel·열린 창에 닿을 수 있다.
  * `*.localhost`는 브라우저가 loopback으로 해석하고 secure context로 취급한다.
  */
-export const PREVIEW_PORT = 5174;
+export const PREVIEW_PORT = 5274;
 export const PREVIEW_HOST_SUFFIX = ".preview.localhost";
 /** projectId는 UUID(소문자). 그 밖의 값은 거부한다. DNS label: "p-" + 36자 = 38자(≤63) */
 export const PROJECT_ID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
@@ -148,18 +148,18 @@ export function previewOriginForProject(projectId: string): string {
 }
 /** previewOriginForProject의 역함수. 형식이 아니면 null */
 export function projectIdFromPreviewOrigin(origin: string): string | null {
-  const match = /^http:\/\/p-([0-9a-f-]{36})\.preview\.localhost:5174$/.exec(origin);
+  const match = /^http:\/\/p-([0-9a-f-]{36})\.preview\.localhost:5274$/.exec(origin);
   return match && PROJECT_ID_PATTERN.test(match[1]) ? match[1] : null;
 }
 
 /**
- * 프리뷰 서버(5174) 규칙
- * - Host 헤더가 `p-<uuid>.preview.localhost:5174`가 아니면 421. 이 포트는 frame 문서와 frame 스크립트만 제공한다
- *   (스튜디오 번들·벤치·esbuild.wasm·임의 파일 없음). 스튜디오(5173)는 프리뷰 자산을 제공하지 않는다.
+ * 프리뷰 서버(5274) 규칙
+ * - Host 헤더가 `p-<uuid>.preview.localhost:5274`가 아니면 421. 이 포트는 frame 문서와 frame 스크립트만 제공한다
+ *   (스튜디오 번들·벤치·esbuild.wasm·임의 파일 없음). 스튜디오(5273)는 프리뷰 자산을 제공하지 않는다.
  * - frame 문서 응답 CSP(헤더, document.open 뒤에도 유지되어야 한다). 최소 요구:
  *     default-src 'none'; connect-src 'none'; script-src 'self' <패키지 자산 origin> 'nonce-<응답별>';
  *     style-src 'self' 'unsafe-inline'; img-src data: blob:; font-src data:; form-action 'none'; base-uri 'none';
- *     frame-ancestors http://localhost:5173; worker-src 'none'; object-src 'none'
+ *     frame-ancestors http://localhost:5273; worker-src 'none'; object-src 'none'
  *   'unsafe-eval' 금지. connect-src는 'none'(R3-M2: 데이터 요청은 브로커만). script-src에 data:·blob: 금지(R3-L2):
  *   번들은 nonce가 붙은 인라인 module 스크립트로 실행한다.
  *   인라인 부트 스크립트·import map 허용은 응답마다 새 nonce 또는 동등한 방식으로 하고, 'unsafe-inline' script는 금지.

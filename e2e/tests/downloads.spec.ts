@@ -9,7 +9,7 @@ import { previewOriginForProject } from '../../contracts/src/runtime';
 const serviceRequire = createRequire(new URL('../../services/policy-proxy/package.json', import.meta.url));
 const { ZipReader, Uint8ArrayReader, Uint8ArrayWriter } = serviceRequire('@zip.js/zip.js');
 const ExcelJS = serviceRequire('exceljs');
-const objectStore = () => new S3Objects('http://localhost:9000', required('TOI_POLICY_MINIO_USER'), required('TOI_POLICY_MINIO_PASSWORD'), 'toi-downloads');
+const objectStore = () => new S3Objects('http://localhost:9400', required('TOI_POLICY_MINIO_USER'), required('TOI_POLICY_MINIO_PASSWORD'), 'toi-downloads');
 async function setup(alice: Account) {
   const p = await (await api(alice, '/projects', { name: 'Encrypted download verification', apiIds: ['customers'] })).json();
   const capability = await (await api(alice, '/capabilities', { projectId: p.projectId, mode: 'read', env: 'preview', ttlSec: 120 }, 'POST', policy)).json();

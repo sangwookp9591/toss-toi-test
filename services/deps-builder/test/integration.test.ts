@@ -73,10 +73,10 @@ test('real Verdaccio auth, MinIO atomic publication, cache, retries, integrity a
         assert.ok(!body.toString().includes(settings().token));
       }
       assert.ok(!JSON.stringify(ready).includes(settings().token));
-      const legacy = await fetch(ready.manifestUrl, { headers: { Origin: 'http://localhost:5174' } });
+      const legacy = await fetch(ready.manifestUrl, { headers: { Origin: 'http://localhost:5274' } });
       assert.equal(legacy.status, 403); assert.equal(legacy.headers.get('access-control-allow-origin'), null);
       const denied = await fetch(ready.manifestUrl, { headers: { Origin: 'http://evil.example' } }); assert.equal(denied.headers.get('access-control-allow-origin'), null);
-      const allowed = await fetch(ready.manifestUrl, { headers: { Origin: 'http://localhost:5173' } }); assert.equal(allowed.headers.get('access-control-allow-origin'), 'http://localhost:5173');
+      const allowed = await fetch(ready.manifestUrl, { headers: { Origin: 'http://localhost:5273' } }); assert.equal(allowed.headers.get('access-control-allow-origin'), 'http://localhost:5273');
     });
     await t.test('fresh service instance finds persisted manifest without installing', async () => {
       const restarted = new PackageBuilder(store, { profile, publicUrl: base });

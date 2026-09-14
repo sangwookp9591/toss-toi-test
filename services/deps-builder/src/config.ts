@@ -12,7 +12,7 @@ export function defaultProfile(): BuildProfile {
   return { builder: 'esbuild', builderVersion: version, packageManager: 'yarn-berry', packageManagerVersion: '4.18.0', target: 'es2022', nodeEnv: 'production', conditions: ['browser', 'import', 'module', 'default'], configDigest: sha256(canonicalJson(buildConfig)), registryNamespace: 'verdaccio-local-v1' };
 }
 export function settings() {
-  return { registry: process.env.TOI_REGISTRY_URL ?? 'http://localhost:4873', token: process.env.TOI_REGISTRY_TOKEN ?? '', publicUrl: process.env.DEPS_BUILDER_PUBLIC_URL ?? 'http://localhost:7100', bucket: process.env.MINIO_BUCKET ?? 'toi-dependencies', minioUrl: process.env.MINIO_ENDPOINT ?? 'http://localhost:9000', accessKey: process.env.MINIO_ROOT_USER ?? 'toi', secretKey: process.env.MINIO_ROOT_PASSWORD ?? 'toi-local-secret' };
+  return { registry: process.env.TOI_REGISTRY_URL ?? 'http://localhost:4973', token: process.env.TOI_REGISTRY_TOKEN ?? '', publicUrl: process.env.DEPS_BUILDER_PUBLIC_URL ?? 'http://localhost:7100', bucket: process.env.MINIO_BUCKET ?? 'toi-dependencies', minioUrl: process.env.MINIO_ENDPOINT ?? 'http://localhost:9400', accessKey: process.env.MINIO_ROOT_USER ?? 'toi', secretKey: process.env.MINIO_ROOT_PASSWORD ?? 'toi-local-secret' };
 }
 function timeout(value: string | undefined, fallback: number) {
   if (value === undefined) return fallback;

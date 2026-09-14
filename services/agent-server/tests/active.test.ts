@@ -26,7 +26,7 @@ it('finds the newest nonterminal generation for this project and falls back afte
   expect((await active()).status).toBe(404);
 });
 
-it.each([undefined, 'http://localhost:5173'])('active lookup permits server and studio Origin %j', async origin => {
+it.each([undefined, 'http://localhost:5273'])('active lookup permits server and studio Origin %j', async origin => {
   const app = await start(); apps.push(app);
   const id = await app.generate(); await question(app, id);
   const response = await app.fetch(`${app.url}/projects/${app.project.projectId}/generations/active`, { headers: origin ? { Origin: origin } : {} });

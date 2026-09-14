@@ -5,7 +5,7 @@ import { login, policy } from '../helpers/auth.ts';
 const browser = await chromium.launch({ channel: 'chrome' });
 try {
   const account = await login(browser, 'alice');
-  const context = await browser.newContext({ baseURL: 'http://localhost:5173', storageState: account.state });
+  const context = await browser.newContext({ baseURL: 'http://localhost:5273', storageState: account.state });
   const page = await context.newPage(); let issues = 0;
   await page.route(policy + '/preview-sessions', async route => {
     const response = await route.fetch(); const value = await response.json(); issues++;

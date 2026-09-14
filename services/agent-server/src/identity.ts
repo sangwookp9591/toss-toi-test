@@ -6,7 +6,7 @@ export class Identity {
   private readonly jwks;
   private cached?: { token: string; until: number };
   constructor(readonly options: IdentityOptions = {}) {
-    this.issuer = options.issuer ?? process.env.TOI_IDENTITY_ISSUER ?? 'http://localhost:8080/realms/toi';
+    this.issuer = options.issuer ?? process.env.TOI_IDENTITY_ISSUER ?? 'http://localhost:8180/realms/toi';
     this.jwks = createRemoteJWKSet(new URL(options.jwksUri ?? `${this.issuer}/protocol/openid-connect/certs`), { timeoutDuration: 3000 });
   }
   async verify(authorization: string | undefined): Promise<AccessClaims> {

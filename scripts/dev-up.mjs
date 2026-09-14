@@ -1,8 +1,10 @@
+import { parseEnv } from 'node:util';
+import { configureDevelopmentPorts, checkDevelopmentPorts } from './dev-ports.mjs';
 import { serviceEnvironment, commandEnvironment } from './service-env.mjs';
 import { composeArguments, composeProject, defaultComposeProject } from './compose.mjs';
 import { provisionStorage } from './storage.mjs';
 import { request as httpRequest } from 'node:http';
-import { provisionIdentity } from './keycloak.mjs';
+import { provisionIdentity, keycloakBase } from './keycloak.mjs';
 import { createWriteStream } from 'node:fs';
 import { createInterface } from 'node:readline';
 import { redact, summarizeFailure } from './dev-diagnostics.mjs';
@@ -34,7 +36,7 @@ export const services = [
  {name:'policy-proxy', dir:'services/policy-proxy', url:'http://localhost:7200/healthz'},
  {name:'deps-builder', dir:'services/deps-builder', url:'http://localhost:7100/healthz'},
  {name:'agent-server', dir:'services/agent-server', url:'http://localhost:7400/healthz'},
- {name:'studio', dir:'apps/studio', url:'http://localhost:5173/healthz', args:['run','dev']},
+ {name:'studio', dir:'apps/studio', url:'http://localhost:5273/healthz', args:['run','dev']},
 ];
 export const installDirectories = ['packages/fake-tds', 'packages/preview-runtime', ...services.map(service => service.dir)];
 export async function checkInstallDirectories(root) {
@@ -112,14 +114,16 @@ async function main() {
   process.env.TOI_E2E = process.argv.includes('--e2e') ? 'true' : 'false';
   process.env.NODE_ENV='development'; process.env.TOI_DEV_AUTH_ENABLED='false';
   process.env.TOI_APPROVAL_TTL_SEC = process.argv.includes('--e2e') ? '8' : (process.env.TOI_APPROVAL_TTL_SEC || '300');
+  await configureDevelopmentPorts(path.join(root,'.env'), process.env, log);
   await ensureDevelopmentSecrets(path.join(root,'.env'));
   await checkInstallDirectories(root);
  });
  const project = composeProject();
  if (project !== defaultComposeProject) log(`Docker Compose project: ${project}`);
+ await stage('development port preflight',()=>checkDevelopmentPorts());
  await stage('Docker Compose',()=>command('docker',devUpArguments(),root,'docker'));
- await stage('Keycloak identity provisioning', async()=>{ await wait('http://localhost:8080/realms/toi/.well-known/openid-configuration'); await provisionIdentity(path.join(root,'.env')); });
- await stage('registry and storage health',()=>Promise.all([wait('http://localhost:4873/-/ping'),wait('http://localhost:9000/minio/health/live')]));
+ await stage('Keycloak identity provisioning', async()=>{ await wait(keycloakBase() + '/realms/toi/.well-known/openid-configuration'); await provisionIdentity(path.join(root,'.env')); });
+ await stage('registry and storage health',()=>Promise.all([wait(process.env.TOI_REGISTRY_URL+'/-/ping'),wait(process.env.MINIO_ENDPOINT+'/minio/health/live')]));
  // Each directory has its own lockfile, so installs are independent; run a few at a time.
  const pending=[...installDirectories];
  await Promise.all(Array.from({length:3},async()=>{
@@ -129,9 +133,10 @@ async function main() {
   });
  }));
  await stage('download and audit storage provisioning', () => provisionStorage());
+ const registryTokenBefore = parseEnv(await readFile(path.join(root,'.env'),'utf8')).TOI_REGISTRY_TOKEN;
  await stage('registry setup',()=>command('npm',['run','setup-registry'],path.join(root,'services/deps-builder'),'registry'));
  // Registry setup may have created the root environment file.
- try{process.loadEnvFile(path.join(root,'.env'));}catch{}
+ try{const refreshed = parseEnv(await readFile(path.join(root,'.env'),'utf8')); if (refreshed.TOI_REGISTRY_TOKEN && refreshed.TOI_REGISTRY_TOKEN !== registryTokenBefore) process.env.TOI_REGISTRY_TOKEN = refreshed.TOI_REGISTRY_TOKEN;}catch{}
  await stage('fetch client publish',()=>command('npm',['run','publish:client'],path.join(root,'services/policy-proxy'),'publish'));
  let managed=[];try{managed=JSON.parse(await readFile(path.join(run,'processes.json'),'utf8'));}catch{}
  for(const {name,dir,url,args=['start']} of services) {
@@ -161,8 +166,8 @@ async function main() {
    catch(error) { error.safeSummary=summarizeFailure(await readFile(serviceLog,'utf8'),error.safeSummary); throw error; }
   },serviceLog);
  }
- await stage('preview origin health',()=>wait('http://localhost:5174/frame.html', {Host:'p-00000000-0000-4000-8000-000000000000.preview.localhost:5174'}));
- log('TOI-lite ready: http://localhost:5173 (logs: scripts/.run)');
+ await stage('preview origin health',()=>wait('http://localhost:5274/frame.html', {Host:'p-00000000-0000-4000-8000-000000000000.preview.localhost:5274'}));
+ log('TOI-lite ready: http://localhost:5273 (logs: scripts/.run)');
  logFile.end();
 }
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

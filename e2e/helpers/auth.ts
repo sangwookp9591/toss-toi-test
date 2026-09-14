@@ -2,8 +2,8 @@ import { test as base, expect, type Browser, type BrowserContext, type APIReques
 import { readFileSync } from 'node:fs';
 import { parseEnv } from 'node:util';
 const env = { ...parseEnv(readFileSync(new URL('../../.env', import.meta.url), 'utf8')), ...process.env };
-export const issuer = env.VITE_OIDC_ISSUER ?? 'http://localhost:8080/realms/toi';
-export const studio = 'http://localhost:5173';
+export const issuer = env.VITE_OIDC_ISSUER ?? env.TOI_IDENTITY_ISSUER ?? `http://localhost:${env.TOI_KEYCLOAK_PORT || '8180'}/realms/toi`;
+export const studio = 'http://localhost:5273';
 export const agent = 'http://localhost:7400';
 export const policy = 'http://localhost:7200';
 export const policyDataDir = env.TOI_POLICY_DATA_DIR;

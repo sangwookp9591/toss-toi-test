@@ -122,8 +122,8 @@ test('mapping stays in studio memory and never requests a map or transmits sourc
   expect(loads[0].code).not.toContain('sourceMappingURL');
   expect(loads[0].code).not.toContain('VFS_PRIVATE_SENTINEL_041');
   expect(errors).toHaveLength(1);
-  expect(errors[0].stack).toContain('http://localhost:5173/__toi_preview__/');
+  expect(errors[0].stack).toContain('http://localhost:5273/__toi_preview__/');
   expect(errors[0].stack).not.toContain('data:text/javascript');
-  expect(requests.every(request => new URL(request.url).origin === 'http://localhost:5173' || new URL(request.url).origin === 'http://p-00000000-0000-4000-8000-000000000000.preview.localhost:5174')).toBe(true);
+  expect(requests.every(request => new URL(request.url).origin === 'http://localhost:5273' || new URL(request.url).origin === 'http://p-00000000-0000-4000-8000-000000000000.preview.localhost:5274')).toBe(true);
   expect(JSON.stringify(requests)).not.toMatch(/VFS_PRIVATE_SENTINEL_041|__toi_preview__|\.map(?:[?"/]|$)/);
 });

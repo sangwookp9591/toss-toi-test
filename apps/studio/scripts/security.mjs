@@ -1,9 +1,9 @@
 import { randomBytes } from 'node:crypto';
 
-export const studioOrigin = 'http://localhost:5173';
-export const previewHostPattern = /^p-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.preview\.localhost:5174$/;
+export const studioOrigin = 'http://localhost:5273';
+export const previewHostPattern = /^p-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.preview\.localhost:5274$/;
 export const studioHeaders = {
-  'Content-Security-Policy': "frame-ancestors 'self'; frame-src http://*.preview.localhost:5174",
+  'Content-Security-Policy': "frame-ancestors 'self'; frame-src http://*.preview.localhost:5274",
   'X-Frame-Options': 'SAMEORIGIN',
   'X-Content-Type-Options': 'nosniff',
 };

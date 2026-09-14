@@ -7,7 +7,7 @@ import { Identity } from '../services/agent-server/src/identity.ts';
 import { PolicyClient } from '../services/agent-server/src/policy-client.ts';
 import { createPolicyProxy } from '../services/policy-proxy/src/server.ts';
 import { PolicyStorage } from '../services/policy-proxy/src/storage.ts';
-import { listen, close, startUpstream, seedApis, json, budgetSignal } from './fixtures.mjs';
+import { listen, close, startUpstream, seedApis, json, budgetSignal, studioOrigin } from './fixtures.mjs';
 
 /** Local test IdP: real RS256/JWKS verification, isolated keys, no production credentials. */
 async function startIdentity() {
@@ -53,8 +53,9 @@ export async function environment(driver) {
   };
 }
 async function previewSession(policyUrl, token, project, write) {
-  const response = await fetch(policyUrl + '/preview-sessions', { method: 'POST', headers: { 'Content-Type': 'application/json', Origin: 'http://localhost:5173', Authorization: `Bearer ${token}` }, body: JSON.stringify({ projectId: project.projectId, ...(write ? { write: { apiIds: project.apiIds, ttlSec: 120 } } : {}) }), signal: budgetSignal() });
+  const response = await fetch(policyUrl + '/preview-sessions', { method: 'POST', headers: { 'Content-Type': 'application/json', Origin: studioOrigin, Authorization: `Bearer ${token}` }, body: JSON.stringify({ projectId: project.projectId, ...(write ? { write: { apiIds: project.apiIds, ttlSec: 120 } } : {}) }), signal: budgetSignal() });
   if (!response.ok) throw new Error(`preview-session HTTP ${response.status}`);
   const value = await response.json();
-  return { toiFetch: { sessionToken: value.sessionToken, capabilityToken: value.capabilityToken, projectId: project.projectId, proxyBaseUrl: policyUrl, env: 'preview' } };
+  // Node-only credentials for readback/security probes; frames receive previewHostConfig instead.
+  return { session: value, toiFetch: { sessionToken: value.sessionToken, capabilityToken: value.capabilityToken, projectId: project.projectId, proxyBaseUrl: policyUrl, env: 'preview' } };
 }

@@ -1,6 +1,6 @@
 # TOI Studio
 
-React 19 스튜디오가 채팅 생성, 파일 CAS 저장, 조합 빌드, 트랜잭션 프리뷰를 연결한다. 스튜디오 origin은 `http://localhost:5173`, 프리뷰 origin은 프로젝트 UUID마다 다른 `http://p-<projectId>.preview.localhost:5174`다.
+React 19 스튜디오가 채팅 생성, 파일 CAS 저장, 조합 빌드, 트랜잭션 프리뷰를 연결한다. 스튜디오 origin은 `http://localhost:5273`, 프리뷰 origin은 프로젝트 UUID마다 다른 `http://p-<projectId>.preview.localhost:5274`다.
 
 ## 실행
 
@@ -22,7 +22,7 @@ React 19 스튜디오가 채팅 생성, 파일 CAS 저장, 조합 빌드, 트랜
 
 “Keycloak으로 로그인”을 누르고 `.env`의 `TOI_PASSWORD_ALICE` 등 사용자별 비밀번호를 입력한다. 계정은 alice·bob·carol·dana·root이며 비밀번호는 문서에 복사하지 않는다. “로그아웃”은 Keycloak SSO 세션을 종료하고 스튜디오 인증 상태를 지운다.
 
-OIDC 클라이언트는 버전을 고정한 `oidc-client-ts@3.3.0`이며 Authorization Code + PKCE S256을 사용한다. 공개 설정은 `VITE_OIDC_ISSUER`(기본 `http://localhost:8080/realms/toi`), `VITE_OIDC_CLIENT_ID`(기본 `toi-studio`)다. 기존 esbuild 스크립트가 루트 `.env`와 프로세스 환경에서 이 두 Vite 형식 변수만 읽어 `import.meta.env`로 주입한다. client secret은 스튜디오에 필요하지 않다.
+OIDC 클라이언트는 버전을 고정한 `oidc-client-ts@3.3.0`이며 Authorization Code + PKCE S256을 사용한다. 공개 설정은 `VITE_OIDC_ISSUER`(기본 `http://localhost:8180/realms/toi`), `VITE_OIDC_CLIENT_ID`(기본 `toi-studio`)다. 기존 esbuild 스크립트가 루트 `.env`와 프로세스 환경에서 이 두 Vite 형식 변수만 읽어 `import.meta.env`로 주입한다. client secret은 스튜디오에 필요하지 않다.
 
 access·refresh·ID 토큰은 `InMemoryWebStorage` 기반 OIDC user store와 비공개 인증 객체 메모리에만 둔다. localStorage에 토큰을 쓰지 않는다. sessionStorage에는 리다이렉트 왕복에 필요한 일회용 PKCE verifier·state·nonce와 복귀 경로만 잠깐 저장하며 callback 처리 뒤 소비한다. 새로고침·새 탭은 Keycloak의 HttpOnly SSO 쿠키와 `prompt=none` 인증 코드 흐름으로 새 메모리 토큰을 얻는다. silent callback(`/?oidc=silent`)은 인증 코드 응답만 부모에 전달하며 토큰을 교환하거나 스튜디오를 렌더링하지 않는다. 따라서 Playwright storageState의 SSO 쿠키만으로도 새 탭을 복구할 수 있다. 브라우저가 이 SSO 쿠키 사용을 막거나 세션이 끝났으면 로그인 버튼을 안내한다. 토큰을 디스크에 지속하지 않아 탈취 가능한 저장 범위를 줄이지만 같은 스튜디오 origin의 악성 스크립트에 대한 방어를 대신하지는 않는다. [oidc-client-ts 저장소 설정](https://authts.github.io/oidc-client-ts/interfaces/UserManagerSettings.html)을 따른다.
 

@@ -2,7 +2,7 @@
 
 Run the full stack with `node scripts/dev-up.mjs` from the repository root, then run `npm --prefix e2e run test:repeat`. The suite runs 23 cases (A–S plus recovery/layout variants) three times with one browser worker.
 
-`helpers/auth.ts` reads `.env` through Node's env parser: `TOI_PASSWORD_ALICE/BOB/CAROL/DANA/ROOT` and `TOI_KEYCLOAK_ADMIN_PASSWORD`. The admin username is `toi-bootstrap`. The issuer defaults to `http://localhost:8080/realms/toi` and accepts `VITE_OIDC_ISSUER`. Never copy credential values into fixtures, logs, reports or screenshots.
+`helpers/auth.ts` reads `.env` through Node's env parser: `TOI_PASSWORD_ALICE/BOB/CAROL/DANA/ROOT` and `TOI_KEYCLOAK_ADMIN_PASSWORD`. The admin username is `toi-bootstrap`. The issuer defaults to `http://localhost:8180/realms/toi` and accepts `VITE_OIDC_ISSUER`. Never copy credential values into fixtures, logs, reports or screenshots.
 
 The helper logs in through Keycloak's real username/password UI and PKCE callback once per user and worker, retaining SSO cookie storageState in memory for browser contexts. API tokens also remain in memory and refresh through Keycloak. The account revocation scenario uses a fresh bob login because it invalidates bob sessions. Trace, automatic screenshots and video are disabled so authorization headers, token responses and password fields cannot appear in test artifacts. Existing explicit screenshots run only after returning to the studio and contain no tokens. Do not enable Playwright API debug logging for this suite.
 

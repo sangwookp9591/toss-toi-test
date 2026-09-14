@@ -10,8 +10,8 @@ Node 22와 시스템 Google Chrome이 필요합니다. 전역 설치는 하지 �
 cd packages/preview-runtime
 npm ci
 npm run dev
-# studio: http://localhost:5173
-# preview document: http://p-00000000-0000-4000-8000-000000000000.preview.localhost:5174/frame.html
+# studio: http://localhost:5273
+# preview document: http://p-00000000-0000-4000-8000-000000000000.preview.localhost:5274/frame.html
 ```
 
 `npm test`와 `npm run bench`는 패키지 전용 **5273·5274** 서버를 사용하며 통합 서비스 포트를 점유하지 않습니다. `STUDIO_PORT=5273 PREVIEW_PORT=5274 npm run dev`로 직접 실행할 수도 있습니다.
@@ -23,10 +23,10 @@ npm run dev
 실제 deps-builder가 만든 manifest로 연결할 때:
 
 ```text
-http://localhost:5173/?manifestUrl=http%3A%2F%2Flocalhost%3A7100%2Fassets%2FARTIFACT_KEY%2Fmanifest.json
+http://localhost:5273/?manifestUrl=http%3A%2F%2Flocalhost%3A7100%2Fassets%2FARTIFACT_KEY%2Fmanifest.json
 ```
 
-`manifestUrl`은 manifest 본문 또는 `{status:"ready", manifest: ...}` 응답을 지원합니다. 해당 서버는 5173의 manifest fetch와 5174의 ESM import에 CORS를 허용해야 합니다. `?manual`은 자동 첫 빌드를 끕니다. 개발 origin이 바뀌면 `STUDIO_ORIGIN=https://studio.example npm run dev`처럼 iframe 문서의 허용 부모 origin을 **서버에서** 지정하고 런타임 옵션도 함께 바꿉니다.
+`manifestUrl`은 manifest 본문 또는 `{status:"ready", manifest: ...}` 응답을 지원합니다. 해당 서버는 5273의 manifest fetch와 5274의 ESM import에 CORS를 허용해야 합니다. `?manual`은 자동 첫 빌드를 끕니다. 개발 origin이 바뀌면 `STUDIO_ORIGIN=https://studio.example npm run dev`처럼 iframe 문서의 허용 부모 origin을 **서버에서** 지정하고 런타임 옵션도 함께 바꿉니다.
 
 실행 화면: [`bench/demo.png`](bench/demo.png).
 
@@ -44,9 +44,9 @@ import type { BuildInput } from '@toi/preview-runtime';
 
 const runtime = createPreviewRuntime({
   container: document.querySelector<HTMLElement>('#preview')!,
-  previewOrigin: 'http://p-00000000-0000-4000-8000-000000000000.preview.localhost:5174',
-  frameUrl: 'http://p-00000000-0000-4000-8000-000000000000.preview.localhost:5174/frame.html',
-  esbuildWasmUrl: 'http://localhost:5173/esbuild.wasm',
+  previewOrigin: 'http://p-00000000-0000-4000-8000-000000000000.preview.localhost:5274',
+  frameUrl: 'http://p-00000000-0000-4000-8000-000000000000.preview.localhost:5274/frame.html',
+  esbuildWasmUrl: 'http://localhost:5273/esbuild.wasm',
   entry: '/src/main.tsx',
   bootTimeoutMs: 5000,
 });
@@ -162,7 +162,7 @@ QA-04는 기존 단위 23개·브라우저 15개를 모두 유지하고 단위 1
 
 
 P0-2: runtime accepts only `previewOriginForProject(projectId)` and rejects build
-or host-config project mismatches. The trusted parent is localhost:5173. Frame
+or host-config project mismatches. The trusted parent is localhost:5273. Frame
 responses carry nonce CSP through document replacement; CSP violations use the
 existing runtime_failed diagnostic with a CSP_BLOCKED prefix, including after commit.
 The AST source policy is defense in depth; CSP enforces the browser network boundary.

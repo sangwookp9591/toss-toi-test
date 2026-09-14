@@ -3,16 +3,16 @@ import type { CapabilityClaims } from "./policy.ts";
 
 /** Keycloak realm "toi". 서비스는 JWKS로 RS256 서명·iss·aud·exp를 검증한다. */
 export interface IdentityConfig {
-  /** 예: "http://localhost:8080/realms/toi" */
+  /** 예: "http://localhost:8180/realms/toi" */
   issuer: string;
-  /** 예: "http://localhost:8080/realms/toi/protocol/openid-connect/certs" */
+  /** 예: "http://localhost:8180/realms/toi/protocol/openid-connect/certs" */
   jwksUri: string;
   /** 스튜디오 공개 클라이언트(Authorization Code + PKCE, client secret 없음) */
   studioClientId: "toi-studio";
   /** 서비스 API 액세스 토큰의 audience */
   apiAudience: "toi-api";
 }
-export const KEYCLOAK_PORT = 8080;
+export const KEYCLOAK_PORT = 8180;
 
 /** realm role. 프로젝트 권한과 별개인 조직 권한 */
 export type RealmRole = "platform-admin" | "api-owner" | "builder";

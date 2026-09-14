@@ -6,7 +6,7 @@ import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 const run = promisify(execFile), root = fileURLToPath(new URL('../', import.meta.url));
 if (process.env.TOI_MANAGED_ENV !== '1') config({ path: path.resolve(root, '../../.env'), quiet: true });
-const token = process.env.TOI_REGISTRY_TOKEN, registry = process.env.TOI_REGISTRY_URL ?? 'http://localhost:4873';
+const token = process.env.TOI_REGISTRY_TOKEN, registry = process.env.TOI_REGISTRY_URL ?? 'http://localhost:4973';
 try {
   if (!token) throw new Error('Missing registry token');
   await run('npm', ['run', 'build:client'], { cwd: root });

@@ -28,7 +28,7 @@ AGENT_MODE=mock npm start
 | `POST /generations/:id/cancel` | 취소 / 204; 이미 종결됐으면 무해한 no-op |
 | `GET /healthz` | `{ok:true,agentMode:"claude"|"mock"|"local"|"gemini"}` |
 
-CAS 충돌 응답은 `{error:"conflict",currentRevision}`입니다. 같은 requestId를 다른 내용에 재사용하면 409입니다. requestId는 이 서비스 전체에서 유일하게 사용합니다. 잘못된 입력/경로/카탈로그는 400, 없는 리소스는 404입니다. HTTP body는 2MiB로 제한합니다. studio origin 5173에 CORS를 허용합니다.
+CAS 충돌 응답은 `{error:"conflict",currentRevision}`입니다. 같은 requestId를 다른 내용에 재사용하면 409입니다. requestId는 이 서비스 전체에서 유일하게 사용합니다. 잘못된 입력/경로/카탈로그는 400, 없는 리소스는 404입니다. HTTP body는 2MiB로 제한합니다. studio origin 5273에 CORS를 허용합니다.
 
 프로젝트에는 `/src/main.tsx`(createRoot + App), `/src/App.tsx`, `/src/api.ts`가 생성됩니다. 기본 exact entries는 `react`, `react-dom/client`, `react/jsx-runtime`, `@tanstack/react-query`, `@toi/tds`, `@toi/fetch`이며 React/ReactDOM 19.3.0, 사내 fixture 패키지 1.0.0을 사용합니다. React Query는 `^5.0.0`이고 실제 의존성 lock/manifest는 deps-builder가 만듭니다.
 
@@ -107,7 +107,7 @@ R1 M2 보강: 두 레지스트리 도구의 결과는 `{"untrusted_api_registry_
 AGENT_MODE=gemini GEMINI_API_KEY=... npm start
 ```
 
-Gemini는 새 SDK 없이 `fetch`로 `generateContent` function calling을 사용하며 요청 헤더 `x-goog-api-key`로만 인증합니다. 기본 모델은 `gemini-3.8-flash`이며, 2026-09 현재 Google 공식 모델 문서에서 Stable·Function calling 지원, deprecations 문서에서 shutdown 미정으로 확인했습니다: [Gemini models](https://ai.google.dev/gemini-api/docs/models), [Gemini 3.8 Flash](https://ai.google.dev/gemini-api/docs/latest-model), [Gemini deprecations](https://ai.google.dev/gemini-api/docs/deprecations). `GEMINI_MODEL`로 변경할 수 있습니다. Function declaration은 공식 Generate Content API가 지원하는 `parametersJsonSchema` 필드를 사용합니다([Function calling](https://ai.google.dev/gemini-api/docs/function-calling), [Generate Content API](https://ai.google.dev/api/generate-content)). 요청에는 시스템 프롬프트와 기존 도구 집합을 그대로 사용하고, 취소·턴/요청 시간/비용 한도·429/5xx 분류·입출력·thinking 토큰 metrics를 적용합니다. `GEMINI_TIMEOUT_MS` 기본값은 요청당 120초입니다. 실제 Gemini 호출은 이 저장소 테스트에서 수행하지 않고 fake `fetch`만 사용합니다.
+Gemini는 새 SDK 없이 `fetch`로 `generateContent` function calling을 사용하며 요청 헤더 `x-goog-api-key`로만 인증합니다. 기본 모델은 `gemini-3.8-flash`이며, 2026-09 현재 Google 공식 모델 문서에서 Stable·Function calling 지원, deprecations 문서에서 shutdown 미정으로 확인했습니다: [Gemini models](https://ai.google.dev/gemini-api/docs/models), [Gemini 3.8 Flash](https://ai.google.dev/gemini-api/docs/latest-model), [Gemini deprecations](https://ai.google.dev/gemini-api/docs/deprecations). `GEMINI_MODEL`로 변경할 수 있습니다. Function declaration은 공식 Generate Content API가 지원하는 `parametersJsonSchema` 필드를 사용하며, `toolConfig.functionCallingConfig.mode: ANY`로 선언된 도구 중 하나를 매 응답 호출하도록 요청합니다([Function calling](https://ai.google.dev/gemini-api/docs/function-calling), [Generate Content API](https://ai.google.dev/api/generate-content)). 텍스트만 반환되는 예외 응답에는 `STOP`(또는 누락)일 때만 “작업을 계속하고 끝나면 finish 도구를 호출하라.”를 최대 2회 user 턴으로 재요청합니다. `MAX_TOKENS`·`SAFETY` 등 비-STOP 종료 사유의 기존 분류는 유지합니다. 요청에는 시스템 프롬프트와 기존 도구 집합을 그대로 사용하고, 취소·턴/요청 시간/비용 한도·429/5xx 분류·입출력·thinking 토큰 metrics를 적용합니다. `GEMINI_TIMEOUT_MS` 기본값은 요청당 120초입니다. 실제 Gemini 호출은 이 저장소 테스트에서 수행하지 않고 fake `fetch`만 사용합니다.
 
 ## 정책 프록시와 생성 UI 연결
 

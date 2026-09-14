@@ -54,7 +54,7 @@ R1 M3 보강: install 전 후보 키는 `{entries: 정렬, dependencies: 키 정
 ## 보안 경계와 한계
 
 - 레지스트리 자격증명은 설치 subprocess의 환경변수로만 전달하고 `.yarnrc`에는 참조만 둔다. 설치 subprocess에는 MinIO·upstream API 자격증명을 전달하지 않는다. 토큰·URI 인코딩·base64 형태 및 auth 필드를 로그 sink에서 마스킹하고, HTTP 오류는 일반 메시지로 응답한다.
-- 산출물은 공개 브라우저 실행용 코드다. 토큰 차단과 패키지 코드 접근 제어는 별개다. 자산 CORS는 `http://localhost:5173`, `http://localhost:5174`만 허용하며 CORS 자체가 인증은 아니다. 이 로컬 PoC API에는 SSO·요청 권한·quota가 없다.
+- 산출물은 공개 브라우저 실행용 코드다. 토큰 차단과 패키지 코드 접근 제어는 별개다. 자산 CORS는 `http://localhost:5273`, `http://localhost:5274`만 허용하며 CORS 자체가 인증은 아니다. 이 로컬 PoC API에는 SSO·요청 권한·quota가 없다.
 - single-flight는 **프로세스 하나** 범위다. 여러 replica를 운영하려면 분산 lease/lock과 publish 조건부 쓰기가 필요하다. 임시 workspace는 정리하지만 Yarn cache와 MinIO artifact의 GC 정책은 아직 없다.
 - lifecycle scripts와 임의 URL 설치는 막지만 이 프로세스는 악성 패키지용 OS sandbox가 아니다. 운영에서는 승인 카탈로그, egress 제한, 격리된 워커가 필요하다.
 - 임의 CSS·이미지·native/browser 비호환 패키지를 처리하는 일반 CDN은 아니다. import-only exports 조건에만 존재하는 일부 공개 subpath는 Node의 정적 require.resolve 단계에서 거절될 수 있다. React singleton은 한 window/module graph 안의 보장이다.

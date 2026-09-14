@@ -1,13 +1,12 @@
 {
   "config": {
     "argv": [
-      "/usr/local/bin/node",
-      "/Users/psw/Projects/toss-toi-test/e2e/node_modules/.bin/playwright",
-      "test",
-      "--repeat-each=3"
+      "/Users/iron/.nvm/versions/node/v22.22.1/bin/node",
+      "/Users/iron/Project/psw/toss-toi-test/e2e/node_modules/.bin/playwright",
+      "test"
     ],
-    "configFile": "/Users/psw/Projects/toss-toi-test/e2e/playwright.config.ts",
-    "rootDir": "/Users/psw/Projects/toss-toi-test/e2e/tests",
+    "configFile": "/Users/iron/Project/psw/toss-toi-test/e2e/playwright.config.ts",
+    "rootDir": "/Users/iron/Project/psw/toss-toi-test/e2e/tests",
     "failOnFlakyTests": false,
     "forbidOnly": false,
     "fullyParallel": false,
@@ -23,15 +22,15 @@
     "preserveOutput": "always",
     "projects": [
       {
-        "outputDir": "/Users/psw/Projects/toss-toi-test/e2e/test-results",
-        "repeatEach": 3,
+        "outputDir": "/Users/iron/Project/psw/toss-toi-test/e2e/test-results",
+        "repeatEach": 1,
         "retries": 0,
         "metadata": {
           "actualWorkers": 1
         },
         "id": "",
         "name": "",
-        "testDir": "/Users/psw/Projects/toss-toi-test/e2e/tests",
+        "testDir": "/Users/iron/Project/psw/toss-toi-test/e2e/tests",
         "testIgnore": [],
         "testMatch": [
           "**/*.@(spec|test).?(c|m)[jt]s?(x)"
@@ -87,12 +86,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 63000,
+                  "duration": 65910,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T15:26:46.721Z",
+                  "startTime": "2026-09-14T09:42:07.269Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -121,12 +120,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1138,
+                  "duration": 1665,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T15:27:50.139Z",
+                  "startTime": "2026-09-14T09:43:13.731Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -155,12 +154,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 132,
+                  "duration": 161,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T15:27:51.287Z",
+                  "startTime": "2026-09-14T09:43:15.412Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -189,12 +188,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1774,
+                  "duration": 1511,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T15:27:51.426Z",
+                  "startTime": "2026-09-14T09:43:15.581Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -223,12 +222,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1198,
+                  "duration": 1757,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T15:27:53.208Z",
+                  "startTime": "2026-09-14T09:43:17.099Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -237,346 +236,6 @@
             }
           ],
           "id": "6e21fe7132a631b5f5c4-b1f126e4982b7085fc87",
-          "file": "downloads.spec.ts",
-          "line": 81,
-          "column": 1
-        },
-        {
-          "title": "T: Alice CSV/XLSX are AES-256 AE-2; signature, sub, single-use and 60-second expiry enforced",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 150000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 62136,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:30:01.558Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "6e21fe7132a631b5f5c4-cd16d524e96e29962f24",
-          "file": "downloads.spec.ts",
-          "line": 36,
-          "column": 1
-        },
-        {
-          "title": "U: viewer, nonmember and preview origin cannot create downloads",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1022,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:31:04.138Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "6e21fe7132a631b5f5c4-d535dadd54e0197d2502",
-          "file": "downloads.spec.ts",
-          "line": 53,
-          "column": 1
-        },
-        {
-          "title": "V: MinIO bytes hide row values and password; successful delivery deletes ciphertext and wrapped key",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 144,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:31:05.172Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "6e21fe7132a631b5f5c4-7d4327e0bb2055121619",
-          "file": "downloads.spec.ts",
-          "line": 59,
-          "column": 1
-        },
-        {
-          "title": "W: audit verification is valid, seq remains continuous and audit contains no password, keys or signature",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1778,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:31:05.324Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "6e21fe7132a631b5f5c4-4b819a9b6a36b3cbb2f2",
-          "file": "downloads.spec.ts",
-          "line": 70,
-          "column": 1
-        },
-        {
-          "title": "download UI shows password once, saves using Bearer and clears it on close",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1291,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:31:07.108Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "6e21fe7132a631b5f5c4-eaf7cda370a4c421a8de",
-          "file": "downloads.spec.ts",
-          "line": 81,
-          "column": 1
-        },
-        {
-          "title": "T: Alice CSV/XLSX are AES-256 AE-2; signature, sub, single-use and 60-second expiry enforced",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 150000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 61641,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:33:17.046Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "6e21fe7132a631b5f5c4-c4788886f4c8acb9f04b",
-          "file": "downloads.spec.ts",
-          "line": 36,
-          "column": 1
-        },
-        {
-          "title": "U: viewer, nonmember and preview origin cannot create downloads",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1094,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:34:19.137Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "6e21fe7132a631b5f5c4-68c1d81c2013771fda44",
-          "file": "downloads.spec.ts",
-          "line": 53,
-          "column": 1
-        },
-        {
-          "title": "V: MinIO bytes hide row values and password; successful delivery deletes ciphertext and wrapped key",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 142,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:34:20.241Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "6e21fe7132a631b5f5c4-d74b22541372a982bb56",
-          "file": "downloads.spec.ts",
-          "line": 59,
-          "column": 1
-        },
-        {
-          "title": "W: audit verification is valid, seq remains continuous and audit contains no password, keys or signature",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1720,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:34:20.389Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "6e21fe7132a631b5f5c4-1c3dd69c9aa567931bf7",
-          "file": "downloads.spec.ts",
-          "line": 70,
-          "column": 1
-        },
-        {
-          "title": "download UI shows password once, saves using Bearer and clears it on close",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1212,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:34:22.116Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "6e21fe7132a631b5f5c4-e5bf760a396aa374b114",
           "file": "downloads.spec.ts",
           "line": 81,
           "column": 1
@@ -605,12 +264,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 740,
+                  "duration": 800,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T15:27:54.439Z",
+                  "startTime": "2026-09-14T09:43:18.887Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -639,12 +298,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 3369,
+                  "duration": 4730,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T15:27:55.186Z",
+                  "startTime": "2026-09-14T09:43:19.694Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -673,12 +332,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 10241,
+                  "duration": 10958,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T15:27:58.563Z",
+                  "startTime": "2026-09-14T09:43:24.437Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -707,12 +366,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 78,
+                  "duration": 80,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T15:28:08.815Z",
+                  "startTime": "2026-09-14T09:43:35.416Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -741,12 +400,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1537,
+                  "duration": 1877,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T15:28:22.438Z",
+                  "startTime": "2026-09-14T09:43:49.672Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -775,12 +434,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 31606,
+                  "duration": 31788,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T15:28:23.982Z",
+                  "startTime": "2026-09-14T09:43:51.562Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -809,12 +468,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1667,
+                  "duration": 1817,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T15:28:55.597Z",
+                  "startTime": "2026-09-14T09:44:23.362Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -823,482 +482,6 @@
             }
           ],
           "id": "bc384e94f5cb1e491b4d-09242bf6b3a18baaaf4c",
-          "file": "identity.spec.ts",
-          "line": 225,
-          "column": 1
-        },
-        {
-          "title": "N: carol nonmember receives 404 and cannot mint or use preview/capability",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 697,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:31:08.431Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "bc384e94f5cb1e491b4d-1dd33d2596aba91d9422",
-          "file": "identity.spec.ts",
-          "line": 17,
-          "column": 1
-        },
-        {
-          "title": "O: owner member UI protects last owner; viewer read only, editor generation, removal revokes proxy within 5s",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 3874,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:31:09.135Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "bc384e94f5cb1e491b4d-cf731cce1ea48c97e27a",
-          "file": "identity.spec.ts",
-          "line": 28,
-          "column": 1
-        },
-        {
-          "title": "P: live write requires another API owner approval and expires",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 380000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 10297,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:31:13.018Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "bc384e94f5cb1e491b4d-10996f0b298c661c20f7",
-          "file": "identity.spec.ts",
-          "line": 51,
-          "column": 1
-        },
-        {
-          "title": "Q: preview capability never selects live upstream",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 75,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:31:23.326Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "bc384e94f5cb1e491b4d-7e55705144b08659c63f",
-          "file": "identity.spec.ts",
-          "line": 77,
-          "column": 1
-        },
-        {
-          "title": "S: iframe globals/storage/messages/URLs contain no Keycloak token",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1662,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:31:36.410Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "bc384e94f5cb1e491b4d-b48c1515b52b027ed547",
-          "file": "identity.spec.ts",
-          "line": 149,
-          "column": 1
-        },
-        {
-          "title": "AI: removed bob sees access revoked on broker query and periodic check without preview requests",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 30857,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:31:38.081Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "bc384e94f5cb1e491b4d-f8e3f30151567b98e37c",
-          "file": "identity.spec.ts",
-          "line": 180,
-          "column": 1
-        },
-        {
-          "title": "AJ: viewer download panel explains role restriction with aria-describedby",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1604,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:32:08.948Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "bc384e94f5cb1e491b4d-247d680f39f53d178a5f",
-          "file": "identity.spec.ts",
-          "line": 225,
-          "column": 1
-        },
-        {
-          "title": "N: carol nonmember receives 404 and cannot mint or use preview/capability",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 692,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:34:23.360Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "bc384e94f5cb1e491b4d-705b291980567d0041a1",
-          "file": "identity.spec.ts",
-          "line": 17,
-          "column": 1
-        },
-        {
-          "title": "O: owner member UI protects last owner; viewer read only, editor generation, removal revokes proxy within 5s",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 3731,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:34:24.059Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "bc384e94f5cb1e491b4d-79fb41c6d32bd79adad6",
-          "file": "identity.spec.ts",
-          "line": 28,
-          "column": 1
-        },
-        {
-          "title": "P: live write requires another API owner approval and expires",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 380000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 10191,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:34:27.799Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "bc384e94f5cb1e491b4d-f237155e804838598c3e",
-          "file": "identity.spec.ts",
-          "line": 51,
-          "column": 1
-        },
-        {
-          "title": "Q: preview capability never selects live upstream",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 70,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:34:38.000Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "bc384e94f5cb1e491b4d-784040adba0229ffdfb7",
-          "file": "identity.spec.ts",
-          "line": 77,
-          "column": 1
-        },
-        {
-          "title": "S: iframe globals/storage/messages/URLs contain no Keycloak token",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1227,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:34:51.402Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "bc384e94f5cb1e491b4d-5bc3a3365dd9a98a79de",
-          "file": "identity.spec.ts",
-          "line": 149,
-          "column": 1
-        },
-        {
-          "title": "AI: removed bob sees access revoked on broker query and periodic check without preview requests",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 31242,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:34:52.636Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "bc384e94f5cb1e491b4d-6e8391ff1210c8b4f97f",
-          "file": "identity.spec.ts",
-          "line": 180,
-          "column": 1
-        },
-        {
-          "title": "AJ: viewer download panel explains role restriction with aria-describedby",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1577,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:35:23.887Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "bc384e94f5cb1e491b4d-5944184c031b8da7d60e",
           "file": "identity.spec.ts",
           "line": 225,
           "column": 1
@@ -1322,7 +505,7 @@
                     {
                       "type": "serial",
                       "location": {
-                        "file": "/Users/psw/Projects/toss-toi-test/e2e/tests/identity.spec.ts",
+                        "file": "/Users/iron/Project/psw/toss-toi-test/e2e/tests/identity.spec.ts",
                         "line": 85,
                         "column": 6
                       }
@@ -1336,17 +519,17 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 13531,
+                      "duration": 14157,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-09-13T15:28:08.901Z",
+                      "startTime": "2026-09-14T09:43:35.507Z",
                       "annotations": [
                         {
                           "type": "serial",
                           "location": {
-                            "file": "/Users/psw/Projects/toss-toi-test/e2e/tests/identity.spec.ts",
+                            "file": "/Users/iron/Project/psw/toss-toi-test/e2e/tests/identity.spec.ts",
                             "line": 85,
                             "column": 6
                           }
@@ -1359,110 +542,6 @@
                 }
               ],
               "id": "bc384e94f5cb1e491b4d-bbea6060824053cafce1",
-              "file": "identity.spec.ts",
-              "line": 87,
-              "column": 3
-            },
-            {
-              "title": "R: short-token renewal preserves a pending build; disabled bob cannot refresh or use expired access",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 120000,
-                  "annotations": [
-                    {
-                      "type": "serial",
-                      "location": {
-                        "file": "/Users/psw/Projects/toss-toi-test/e2e/tests/identity.spec.ts",
-                        "line": 85,
-                        "column": 6
-                      }
-                    }
-                  ],
-                  "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 12994,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-09-13T15:31:23.407Z",
-                      "annotations": [
-                        {
-                          "type": "serial",
-                          "location": {
-                            "file": "/Users/psw/Projects/toss-toi-test/e2e/tests/identity.spec.ts",
-                            "line": 85,
-                            "column": 6
-                          }
-                        }
-                      ],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "bc384e94f5cb1e491b4d-b7530e4a842c6d5c5c48",
-              "file": "identity.spec.ts",
-              "line": 87,
-              "column": 3
-            },
-            {
-              "title": "R: short-token renewal preserves a pending build; disabled bob cannot refresh or use expired access",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 120000,
-                  "annotations": [
-                    {
-                      "type": "serial",
-                      "location": {
-                        "file": "/Users/psw/Projects/toss-toi-test/e2e/tests/identity.spec.ts",
-                        "line": 85,
-                        "column": 6
-                      }
-                    }
-                  ],
-                  "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
-                  "results": [
-                    {
-                      "workerIndex": 2,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 13311,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-09-13T15:34:38.079Z",
-                      "annotations": [
-                        {
-                          "type": "serial",
-                          "location": {
-                            "file": "/Users/psw/Projects/toss-toi-test/e2e/tests/identity.spec.ts",
-                            "line": 85,
-                            "column": 6
-                          }
-                        }
-                      ],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "bc384e94f5cb1e491b4d-067537e581ac9a9380ec",
               "file": "identity.spec.ts",
               "line": 87,
               "column": 3
@@ -1493,12 +572,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2781,
+                  "duration": 3775,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T15:28:57.292Z",
+                  "startTime": "2026-09-14T09:44:25.206Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1527,12 +606,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1878,
+                  "duration": 2871,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T15:29:00.081Z",
+                  "startTime": "2026-09-14T09:44:29.012Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1561,12 +640,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 16,
+                  "duration": 23,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T15:29:01.969Z",
+                  "startTime": "2026-09-14T09:44:31.902Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1595,12 +674,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 23,
+                  "duration": 51,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T15:29:01.994Z",
+                  "startTime": "2026-09-14T09:44:31.937Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1629,12 +708,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 40,
+                  "duration": 53,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T15:29:02.021Z",
+                  "startTime": "2026-09-14T09:44:31.993Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1663,12 +742,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1650,
+                  "duration": 2235,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T15:29:02.066Z",
+                  "startTime": "2026-09-14T09:44:32.052Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1697,7 +776,7 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1824,
+                  "duration": 2224,
                   "errors": [],
                   "stdout": [
                     {
@@ -1706,7 +785,7 @@
                   ],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T15:29:03.723Z",
+                  "startTime": "2026-09-14T09:44:34.295Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1735,12 +814,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1265,
+                  "duration": 1902,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T15:29:05.557Z",
+                  "startTime": "2026-09-14T09:44:36.533Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1769,12 +848,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1619,
+                  "duration": 2396,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T15:29:06.831Z",
+                  "startTime": "2026-09-14T09:44:38.446Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1803,12 +882,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1782,
+                  "duration": 2077,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T15:29:08.460Z",
+                  "startTime": "2026-09-14T09:44:40.853Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1837,12 +916,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 3596,
+                  "duration": 4440,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T15:29:10.255Z",
+                  "startTime": "2026-09-14T09:44:42.943Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1851,762 +930,6 @@
             }
           ],
           "id": "8603831629f4016ade15-2cacb904b8e0289ed6b1",
-          "file": "isolation.spec.ts",
-          "line": 219,
-          "column": 1
-        },
-        {
-          "title": "X: project origins isolate storage and cross-project frame access",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 3250,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:32:10.575Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "8603831629f4016ade15-5e11b5156fd51369b72e",
-          "file": "isolation.spec.ts",
-          "line": 13,
-          "column": 1
-        },
-        {
-          "title": "Y: response CSP survives document.open and blocks egress before the server receives it",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 2164,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:32:13.834Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "8603831629f4016ade15-76c5c649d75648a7a599",
-          "file": "isolation.spec.ts",
-          "line": 39,
-          "column": 1
-        },
-        {
-          "title": "Z: project A preview session from project B origin returns PREVIEW_DIRECT_FORBIDDEN",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 16,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:32:16.007Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "8603831629f4016ade15-65038218ef98fe20f790",
-          "file": "isolation.spec.ts",
-          "line": 76,
-          "column": 1
-        },
-        {
-          "title": "AA: preview Host/path allowlist and studio embedding headers",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 23,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:32:16.029Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "8603831629f4016ade15-aab0fb7d322b6b1994fd",
-          "file": "isolation.spec.ts",
-          "line": 85,
-          "column": 1
-        },
-        {
-          "title": "AB: AST bypass sources are rejected without incrementing the source revision",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 30,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:32:16.058Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "8603831629f4016ade15-5498e99d77aeda528850",
-          "file": "isolation.spec.ts",
-          "line": 105,
-          "column": 1
-        },
-        {
-          "title": "AC: actual studio preview credentials never appear in frame globals, DOM, storage or messages",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1302,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:32:16.093Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "8603831629f4016ade15-3ab0df4adc47a0cf743d",
-          "file": "isolation.spec.ts",
-          "line": 130,
-          "column": 1
-        },
-        {
-          "title": "AD: generated location navigation leaks zero credentials, removes the frame and restores the good revision",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1532,
-                  "errors": [],
-                  "stdout": [
-                    {
-                      "text": "AD navigation receiver: {\"requests\":0,\"credentialLeaks\":0}\n"
-                    }
-                  ],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:32:17.402Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "8603831629f4016ade15-d8bc1465f54b16227cc0",
-          "file": "isolation.spec.ts",
-          "line": 159,
-          "column": 1
-        },
-        {
-          "title": "AE: direct policy fetch is CSP-blocked while postMessage broker succeeds",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1582,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:32:18.947Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "8603831629f4016ade15-2d23697916ed03bb9d24",
-          "file": "isolation.spec.ts",
-          "line": 185,
-          "column": 1
-        },
-        {
-          "title": "AF: replaced frame requests are ignored and its pending response is discarded",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1939,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:32:20.540Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "8603831629f4016ade15-46ce782c6e99d8d10356",
-          "file": "isolation.spec.ts",
-          "line": 193,
-          "column": 1
-        },
-        {
-          "title": "AG: PATCH is 403 WRITE_NOT_ALLOWED until the user grants write capability",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1327,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:32:22.488Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "8603831629f4016ade15-2287d76baa9be1281d13",
-          "file": "isolation.spec.ts",
-          "line": 209,
-          "column": 1
-        },
-        {
-          "title": "AH: broker enforces concurrency, rolling request rate, and 5 MiB response limit",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 3916,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:32:23.827Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "8603831629f4016ade15-477a206a63c8ff38eba2",
-          "file": "isolation.spec.ts",
-          "line": 219,
-          "column": 1
-        },
-        {
-          "title": "X: project origins isolate storage and cross-project frame access",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 3596,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:35:25.485Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "8603831629f4016ade15-3fd3c81f0396320bb381",
-          "file": "isolation.spec.ts",
-          "line": 13,
-          "column": 1
-        },
-        {
-          "title": "Y: response CSP survives document.open and blocks egress before the server receives it",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1778,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:35:29.089Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "8603831629f4016ade15-9ae9779d7a693ec1595c",
-          "file": "isolation.spec.ts",
-          "line": 39,
-          "column": 1
-        },
-        {
-          "title": "Z: project A preview session from project B origin returns PREVIEW_DIRECT_FORBIDDEN",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 18,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:35:30.878Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "8603831629f4016ade15-37965dadf95e81c75e43",
-          "file": "isolation.spec.ts",
-          "line": 76,
-          "column": 1
-        },
-        {
-          "title": "AA: preview Host/path allowlist and studio embedding headers",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 25,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:35:30.903Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "8603831629f4016ade15-5b1592656fdf2758ceb0",
-          "file": "isolation.spec.ts",
-          "line": 85,
-          "column": 1
-        },
-        {
-          "title": "AB: AST bypass sources are rejected without incrementing the source revision",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 27,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:35:30.933Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "8603831629f4016ade15-9dbca96c72c0bb5dea01",
-          "file": "isolation.spec.ts",
-          "line": 105,
-          "column": 1
-        },
-        {
-          "title": "AC: actual studio preview credentials never appear in frame globals, DOM, storage or messages",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1690,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:35:30.965Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "8603831629f4016ade15-0c4582a7192326601193",
-          "file": "isolation.spec.ts",
-          "line": 130,
-          "column": 1
-        },
-        {
-          "title": "AD: generated location navigation leaks zero credentials, removes the frame and restores the good revision",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1823,
-                  "errors": [],
-                  "stdout": [
-                    {
-                      "text": "AD navigation receiver: {\"requests\":0,\"credentialLeaks\":0}\n"
-                    }
-                  ],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:35:32.663Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "8603831629f4016ade15-55fbfe5dc5952354538e",
-          "file": "isolation.spec.ts",
-          "line": 159,
-          "column": 1
-        },
-        {
-          "title": "AE: direct policy fetch is CSP-blocked while postMessage broker succeeds",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1203,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:35:34.498Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "8603831629f4016ade15-ec2544f80c9a9b54782a",
-          "file": "isolation.spec.ts",
-          "line": 185,
-          "column": 1
-        },
-        {
-          "title": "AF: replaced frame requests are ignored and its pending response is discarded",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1960,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:35:35.711Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "8603831629f4016ade15-eddb40c2bef9dee443dc",
-          "file": "isolation.spec.ts",
-          "line": 193,
-          "column": 1
-        },
-        {
-          "title": "AG: PATCH is 403 WRITE_NOT_ALLOWED until the user grants write capability",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1665,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:35:37.681Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "8603831629f4016ade15-90f4bb1df7f64d20cd1c",
-          "file": "isolation.spec.ts",
-          "line": 209,
-          "column": 1
-        },
-        {
-          "title": "AH: broker enforces concurrency, rolling request rate, and 5 MiB response limit",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 3595,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:35:39.355Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "8603831629f4016ade15-5488eb200eee3e3bfe64",
           "file": "isolation.spec.ts",
           "line": 219,
           "column": 1
@@ -2635,12 +958,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2027,
+                  "duration": 2749,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T15:29:13.882Z",
+                  "startTime": "2026-09-14T09:44:47.430Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -2669,12 +992,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1682,
+                  "duration": 3554,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T15:29:15.917Z",
+                  "startTime": "2026-09-14T09:44:50.194Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -2703,12 +1026,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 3813,
+                  "duration": 4606,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T15:29:17.610Z",
+                  "startTime": "2026-09-14T09:44:53.764Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -2737,12 +1060,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2306,
+                  "duration": 3016,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T15:29:21.431Z",
+                  "startTime": "2026-09-14T09:44:58.388Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -2771,12 +1094,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2448,
+                  "duration": 3156,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T15:29:23.745Z",
+                  "startTime": "2026-09-14T09:45:01.418Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -2805,12 +1128,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1582,
+                  "duration": 1913,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T15:29:26.203Z",
+                  "startTime": "2026-09-14T09:45:04.585Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -2839,12 +1162,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1954,
+                  "duration": 2766,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T15:29:27.796Z",
+                  "startTime": "2026-09-14T09:45:06.510Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -2873,12 +1196,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2291,
+                  "duration": 3209,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T15:29:29.762Z",
+                  "startTime": "2026-09-14T09:45:09.292Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -2907,12 +1230,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 5692,
+                  "duration": 6213,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T15:29:32.066Z",
+                  "startTime": "2026-09-14T09:45:12.517Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -2941,12 +1264,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1598,
+                  "duration": 1856,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T15:29:37.769Z",
+                  "startTime": "2026-09-14T09:45:18.749Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -2975,12 +1298,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 3668,
+                  "duration": 4366,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T15:29:39.379Z",
+                  "startTime": "2026-09-14T09:45:20.622Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -3009,12 +1332,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2397,
+                  "duration": 3165,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T15:29:43.056Z",
+                  "startTime": "2026-09-14T09:45:24.997Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -3043,12 +1366,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2665,
+                  "duration": 3192,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T15:29:45.464Z",
+                  "startTime": "2026-09-14T09:45:28.174Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -3077,12 +1400,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1857,
+                  "duration": 2020,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T15:29:48.138Z",
+                  "startTime": "2026-09-14T09:45:31.375Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -3111,12 +1434,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1472,
+                  "duration": 2151,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T15:29:50.003Z",
+                  "startTime": "2026-09-14T09:45:33.408Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -3145,12 +1468,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 4150,
+                  "duration": 5421,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T15:29:51.486Z",
+                  "startTime": "2026-09-14T09:45:35.573Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -3179,12 +1502,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 5102,
+                  "duration": 6382,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-13T15:29:55.644Z",
+                  "startTime": "2026-09-14T09:45:41.006Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -3196,1171 +1519,15 @@
           "file": "studio.spec.ts",
           "line": 241,
           "column": 1
-        },
-        {
-          "title": "A: 생성, 역질문, 마스킹, 조회 사유와 감사 기록",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 2399,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:32:27.776Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "64bdea7002f9c9cea9f4-1e4fc2524073232df892",
-          "file": "studio.spec.ts",
-          "line": 10,
-          "column": 1
-        },
-        {
-          "title": "B: 문법 오류는 마지막 정상 화면 유지",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1354,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:32:30.183Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "64bdea7002f9c9cea9f4-2ec9047b500f6430bb7f",
-          "file": "studio.spec.ts",
-          "line": 11,
-          "column": 1
-        },
-        {
-          "title": "C: 이전 실행을 지연해도 최신 revision만 커밋",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 3820,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:32:31.546Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "64bdea7002f9c9cea9f4-4f660569d40dea5785b3",
-          "file": "studio.spec.ts",
-          "line": 12,
-          "column": 1
-        },
-        {
-          "title": "D: viewer 자체 발급 차단, 읽기 전용 차단, 제한된 쓰기 허용",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 2618,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:32:35.375Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "64bdea7002f9c9cea9f4-f8a3bc6343380c81dcb3",
-          "file": "studio.spec.ts",
-          "line": 13,
-          "column": 1
-        },
-        {
-          "title": "E: 두 탭 CAS 충돌과 최신 내용 다시 불러오기",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 2521,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:32:38.003Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "64bdea7002f9c9cea9f4-4a1978ccdf3ab823649a",
-          "file": "studio.spec.ts",
-          "line": 16,
-          "column": 1
-        },
-        {
-          "title": "F: 사내 useToast와 앱 React 인스턴스 공유",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1395,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:32:40.533Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "64bdea7002f9c9cea9f4-8dacaa6999ffdb001752",
-          "file": "studio.spec.ts",
-          "line": 17,
-          "column": 1
-        },
-        {
-          "title": "G: 역질문 새로고침 복구, Last-Event-ID 이후 답변과 revision_ready",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1937,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:32:41.939Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "64bdea7002f9c9cea9f4-3d0a5d3cd56fea00e757",
-          "file": "studio.spec.ts",
-          "line": 33,
-          "column": 1
-        },
-        {
-          "title": "G: 복구한 질문 취소와 이미 끝난 생성·404 안내",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 2648,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:32:43.885Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "64bdea7002f9c9cea9f4-1fecd2ab7ea7874c40ab",
-          "file": "studio.spec.ts",
-          "line": 50,
-          "column": 1
-        },
-        {
-          "title": "H: 쓰기 권한 만료 시 토글 off, 안내와 read capability 재반영",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 5684,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:32:46.542Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "64bdea7002f9c9cea9f4-31b9fe3d02210cedeb9b",
-          "file": "studio.spec.ts",
-          "line": 72,
-          "column": 1
-        },
-        {
-          "title": "I: 문법 오류 위치, 금지 패키지 이름과 runtime 원인",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1860,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:32:52.236Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "64bdea7002f9c9cea9f4-292aaccaf9fce03f35e0",
-          "file": "studio.spec.ts",
-          "line": 83,
-          "column": 1
-        },
-        {
-          "title": "J: CAS 최신 불러오기 전에 파일별 내 편집 보관, 복사와 새로고침 유지",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 4676,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:32:54.106Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "64bdea7002f9c9cea9f4-79408440567dfbf2150b",
-          "file": "studio.spec.ts",
-          "line": 100,
-          "column": 1
-        },
-        {
-          "title": "K: 존재하지 않는 패키지 버전의 실제 조합 실패와 동일 revision 재시도",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 2343,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:32:58.791Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "64bdea7002f9c9cea9f4-347f5c84f5a14afa0b3f",
-          "file": "studio.spec.ts",
-          "line": 120,
-          "column": 1
-        },
-        {
-          "title": "K: failed 응답·연결 실패·시간 초과 구분과 새로고침 없는 재빌드",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 2958,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:33:01.144Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "64bdea7002f9c9cea9f4-0b809ae6ce2d092eb565",
-          "file": "studio.spec.ts",
-          "line": 138,
-          "column": 1
-        },
-        {
-          "title": "레이아웃: 1600px 답변 버튼은 한 줄",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1844,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:33:04.110Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "64bdea7002f9c9cea9f4-a7846fb0ef6c71cae354",
-          "file": "studio.spec.ts",
-          "line": 188,
-          "column": 34
-        },
-        {
-          "title": "레이아웃: 400px 답변 버튼은 한 줄",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1373,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:33:05.963Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "64bdea7002f9c9cea9f4-d3df1227add94f2e3e10",
-          "file": "studio.spec.ts",
-          "line": 188,
-          "column": 34
-        },
-        {
-          "title": "L: 새 탭 활성 생성 전체 replay, 답변 동기화와 양쪽 취소 종결",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 3781,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:33:07.346Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "64bdea7002f9c9cea9f4-db7078014afe85f6bb07",
-          "file": "studio.spec.ts",
-          "line": 203,
-          "column": 1
-        },
-        {
-          "title": "M: 실제 Yarn 레지스트리 503 안내 후 저장소 복구와 동일 revision 재시도 성공",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 5120,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:33:11.137Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "64bdea7002f9c9cea9f4-15b2191df711e266a14c",
-          "file": "studio.spec.ts",
-          "line": 241,
-          "column": 1
-        },
-        {
-          "title": "A: 생성, 역질문, 마스킹, 조회 사유와 감사 기록",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 2066,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:35:42.985Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "64bdea7002f9c9cea9f4-f516bf88587d856127c3",
-          "file": "studio.spec.ts",
-          "line": 10,
-          "column": 1
-        },
-        {
-          "title": "B: 문법 오류는 마지막 정상 화면 유지",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1335,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:35:45.059Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "64bdea7002f9c9cea9f4-d42d749d6c452a8cad4e",
-          "file": "studio.spec.ts",
-          "line": 11,
-          "column": 1
-        },
-        {
-          "title": "C: 이전 실행을 지연해도 최신 revision만 커밋",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 4200,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:35:46.405Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "64bdea7002f9c9cea9f4-f56c3359babcd45bcd2b",
-          "file": "studio.spec.ts",
-          "line": 12,
-          "column": 1
-        },
-        {
-          "title": "D: viewer 자체 발급 차단, 읽기 전용 차단, 제한된 쓰기 허용",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 2644,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:35:50.616Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "64bdea7002f9c9cea9f4-2005c8a0cebf1f86daf4",
-          "file": "studio.spec.ts",
-          "line": 13,
-          "column": 1
-        },
-        {
-          "title": "E: 두 탭 CAS 충돌과 최신 내용 다시 불러오기",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 2383,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:35:53.268Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "64bdea7002f9c9cea9f4-9b73ef5f98d6055f1464",
-          "file": "studio.spec.ts",
-          "line": 16,
-          "column": 1
-        },
-        {
-          "title": "F: 사내 useToast와 앱 React 인스턴스 공유",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1976,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:35:55.661Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "64bdea7002f9c9cea9f4-e0ee9de85982c8a6f271",
-          "file": "studio.spec.ts",
-          "line": 17,
-          "column": 1
-        },
-        {
-          "title": "G: 역질문 새로고침 복구, Last-Event-ID 이후 답변과 revision_ready",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1953,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:35:57.646Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "64bdea7002f9c9cea9f4-86ade82b29553eef5602",
-          "file": "studio.spec.ts",
-          "line": 33,
-          "column": 1
-        },
-        {
-          "title": "G: 복구한 질문 취소와 이미 끝난 생성·404 안내",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 2381,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:35:59.609Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "64bdea7002f9c9cea9f4-9ca4da7081cbae5d9211",
-          "file": "studio.spec.ts",
-          "line": 50,
-          "column": 1
-        },
-        {
-          "title": "H: 쓰기 권한 만료 시 토글 off, 안내와 read capability 재반영",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 5644,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:36:01.999Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "64bdea7002f9c9cea9f4-8ceb8bd6893d46001c66",
-          "file": "studio.spec.ts",
-          "line": 72,
-          "column": 1
-        },
-        {
-          "title": "I: 문법 오류 위치, 금지 패키지 이름과 runtime 원인",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1549,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:36:07.654Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "64bdea7002f9c9cea9f4-925d1bb09926061253c1",
-          "file": "studio.spec.ts",
-          "line": 83,
-          "column": 1
-        },
-        {
-          "title": "J: CAS 최신 불러오기 전에 파일별 내 편집 보관, 복사와 새로고침 유지",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 3993,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:36:09.211Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "64bdea7002f9c9cea9f4-4fa48f6484db115870ca",
-          "file": "studio.spec.ts",
-          "line": 100,
-          "column": 1
-        },
-        {
-          "title": "K: 존재하지 않는 패키지 버전의 실제 조합 실패와 동일 revision 재시도",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 2350,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:36:13.214Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "64bdea7002f9c9cea9f4-503659794f76e680186a",
-          "file": "studio.spec.ts",
-          "line": 120,
-          "column": 1
-        },
-        {
-          "title": "K: failed 응답·연결 실패·시간 초과 구분과 새로고침 없는 재빌드",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 2637,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:36:15.573Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "64bdea7002f9c9cea9f4-2402927ea303d8265146",
-          "file": "studio.spec.ts",
-          "line": 138,
-          "column": 1
-        },
-        {
-          "title": "레이아웃: 1600px 답변 버튼은 한 줄",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1798,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:36:18.218Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "64bdea7002f9c9cea9f4-2ab00802f94558104b9b",
-          "file": "studio.spec.ts",
-          "line": 188,
-          "column": 34
-        },
-        {
-          "title": "레이아웃: 400px 답변 버튼은 한 줄",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1777,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:36:20.026Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "64bdea7002f9c9cea9f4-de060d72d967d0241f00",
-          "file": "studio.spec.ts",
-          "line": 188,
-          "column": 34
-        },
-        {
-          "title": "L: 새 탭 활성 생성 전체 replay, 답변 동기화와 양쪽 취소 종결",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 4026,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:36:21.814Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "64bdea7002f9c9cea9f4-c49863a791697991c447",
-          "file": "studio.spec.ts",
-          "line": 203,
-          "column": 1
-        },
-        {
-          "title": "M: 실제 Yarn 레지스트리 503 안내 후 저장소 복구와 동일 revision 재시도 성공",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 120000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 5125,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-13T15:36:25.850Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "64bdea7002f9c9cea9f4-0e081fe09b940e8a4624",
-          "file": "studio.spec.ts",
-          "line": 241,
-          "column": 1
         }
       ]
     }
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-09-13T15:26:45.874Z",
-    "duration": 585343.3019999999,
-    "expected": 123,
+    "startTime": "2026-09-14T09:42:05.612Z",
+    "duration": 221910.225,
+    "expected": 41,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0

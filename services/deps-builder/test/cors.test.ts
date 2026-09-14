@@ -14,12 +14,12 @@ test('project preview CORS is restricted to GET/HEAD published assets; managemen
    const result=await fetch(`${base}/assets/${key}/entry.js`,{method,headers:{Origin:origin}});
    assert.equal(result.status,200);assert.equal(result.headers.get('access-control-allow-origin'),origin);assert.equal(result.headers.get('vary'),'Origin');assert.equal(result.headers.get('access-control-allow-credentials'),null);
   }
-  for(const other of ['http://localhost:5174','http://evil.invalid','http://p-invalid.preview.localhost:5174']) {
+  for(const other of ['http://localhost:5274','http://evil.invalid','http://p-invalid.preview.localhost:5274']) {
    const result=await fetch(`${base}/assets/${key}/entry.js`,{headers:{Origin:other}});assert.equal(result.status,403);assert.equal(result.headers.get('access-control-allow-origin'),null);
   }
   for(const path of ['/package-sets',`/package-sets/${key}`]) assert.equal((await fetch(base+path,{method:'POST',headers:{Origin:origin},body:'{}'})).status,403);
   assert.equal(requests,0);
-  assert.equal((await fetch(base+'/package-sets',{method:'POST',headers:{Origin:'http://localhost:5173'},body:'{}'})).status,202);
+  assert.equal((await fetch(base+'/package-sets',{method:'POST',headers:{Origin:'http://localhost:5273'},body:'{}'})).status,202);
   assert.equal(requests,1);
   assert.equal((await fetch(`${base}/assets/${key}/entry.js`,{method:'OPTIONS',headers:{Origin:origin,'Access-Control-Request-Method':'POST'}})).status,403);
  } finally {server.closeAllConnections();await new Promise<void>(resolve=>server.close(()=>resolve()));}
