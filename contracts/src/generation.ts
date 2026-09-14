@@ -1,6 +1,7 @@
 // 채팅 생성 + 프로젝트 소스 계약. services/agent-server가 구현하고 apps/studio가 소비한다.
 import type { VfsFiles } from "./runtime.ts";
 import type { PackageSetRequest } from "./package-set.ts";
+import type { ProjectApiBinding } from "./registry.ts";
 
 export interface Project {
   projectId: string;
@@ -12,6 +13,8 @@ export interface Project {
   packageSet: PackageSetRequest;
   /** 이 프로젝트가 쓰는 등록 API */
   apiIds: string[];
+  /** P1-3: apiIds 각각의 고정 버전(apiIds와 같은 순서). 없는 기존 프로젝트는 버전 1로 이관한다 */
+  apiBindings?: ProjectApiBinding[];
   updatedAt: string;
 }
 
@@ -55,7 +58,7 @@ export type GenerationEvent = { seq: number; generationId: string } & (
  * GET  /generations/:id/events            SSE. Last-Event-ID 헤더로 끊긴 지점 이후 replay. 종결 이벤트(done/failed/canceled) 후 종료
  * POST /generations/:id/answers           body: { questionId, answer } → 204
  * POST /generations/:id/cancel            → 204. 이후 도착하는 결과는 저장·전송하지 않는다
- * GET  /healthz                           → { ok, agentMode: "claude" | "mock" | "local" }
+ * GET  /healthz                           → { ok, agentMode: "claude" | "mock" | "local" | "gemini" }
  *
  * 에이전트
  * - 모델: claude-opus-5, thinking { type: "adaptive" }, 스트리밍 tool runner(@anthropic-ai/sdk betaZodTool).

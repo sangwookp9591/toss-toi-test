@@ -1,5 +1,5 @@
 import type { BuildProfile, PackageSetManifest, PackageSetRequest, PackageSetStatus } from '../../../contracts/src/package-set.js';
-import { defaultProfile, settings } from './config.js';
+import { defaultProfile, settings, storageTimeouts } from './config.js';
 import { canonicalJson, hashes, sha256 } from './hash.js';
 import { install } from './installer.js';
 import { bundle } from './bundle.js';
@@ -26,9 +26,9 @@ export class PackageBuilder {
   readonly store: ObjectStore;
   constructor(store: ObjectStore, readonly options: BuilderOptions = {}) {
     this.store = {
-      get: key => storageOperation(() => store.get(key)),
-      put: (key, body, contentType) => storageOperation(() => store.put(key, body, contentType)),
-      stream: key => storageOperation(() => store.stream(key)),
+      get: key => storageOperation(signal => store.get(key, signal), storageTimeouts().get),
+      put: (key, body, contentType) => storageOperation(signal => store.put(key, body, contentType, signal), storageTimeouts().put),
+      stream: key => storageOperation(signal => store.stream(key, signal), storageTimeouts().get),
     };
     this.profile = options.profile ?? defaultProfile();
     this.publicUrl = options.publicUrl ?? settings().publicUrl;
@@ -72,7 +72,7 @@ export class PackageBuilder {
     // can converge here, after separate installs have produced identical lock bytes.
     let pending = this.artifacts.get(key);
     if (pending) {
-      await installed.cleanup();
+      await this.cleanup(installed);
     } else {
       pending = Promise.resolve().then(() => this.resolveArtifact(request, installed, identity));
       this.artifacts.set(key, pending);
@@ -88,14 +88,14 @@ export class PackageBuilder {
   private async resolveArtifact(request: PackageSetRequest, installed: Awaited<ReturnType<typeof install>>, identity: ReturnType<typeof hashes>): Promise<PackageSetStatus> {
     const key = identity.artifactKey;
     // The active build wins; otherwise recheck the persisted manifest under the reservation.
-    if (this.builds.has(key)) { await installed.cleanup(); return this.states.get(key)!; }
+    if (this.builds.has(key)) { await this.cleanup(installed); return this.states.get(key)!; }
     let existing: PackageSetStatus | undefined;
     try { existing = await this.status(key); }
-    catch (error) { await installed.cleanup(); throw error; }
-    if (existing && existing.status !== 'failed') { await installed.cleanup(); return existing; }
+    catch (error) { await this.cleanup(installed); throw error; }
+    if (existing && existing.status !== 'failed') { await this.cleanup(installed); return existing; }
     // No await between rechecking ownership and publishing building state.
     const claimed = this.states.get(key);
-    if (claimed && claimed.status !== 'failed') { await installed.cleanup(); return claimed; }
+    if (claimed && claimed.status !== 'failed') { await this.cleanup(installed); return claimed; }
     const state: PackageSetStatus = { status: 'building', artifactKey: key, startedAt: new Date().toISOString() };
     this.states.set(key, state);
     const work = (async () => {
@@ -120,11 +120,15 @@ export class PackageBuilder {
       } catch (error) {
         this.log(error);
         this.states.set(key, { status: 'failed', artifactKey: key, code: failureCode(error), error: 'Dependency build failed; check the masked worker log and retry the request' });
-      } finally { await installed.cleanup(); this.builds.delete(key); }
+      } finally {
+        this.builds.delete(key);
+        await this.cleanup(installed);
+      }
     })();
     this.builds.set(key, work);
     return state;
   }
+  private async cleanup(installed: Awaited<ReturnType<typeof install>>) { try { await installed.cleanup(); } catch (error) { this.log(error); } }
   async wait(key: string, timeoutMs: number) {
     const work = this.builds.get(key);
     if (work) {

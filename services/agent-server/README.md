@@ -26,7 +26,7 @@ AGENT_MODE=mock npm start
 | `GET /generations/:id/events` | SSE, `Last-Event-ID` 이후 replay |
 | `POST /generations/:id/answers {questionId,answer}` | 대기 중인 질문에 응답 / 204; 없거나 다른 질문 / 409 |
 | `POST /generations/:id/cancel` | 취소 / 204; 이미 종결됐으면 무해한 no-op |
-| `GET /healthz` | `{ok:true,agentMode:"claude"|"mock"}` |
+| `GET /healthz` | `{ok:true,agentMode:"claude"|"mock"|"local"|"gemini"}` |
 
 CAS 충돌 응답은 `{error:"conflict",currentRevision}`입니다. 같은 requestId를 다른 내용에 재사용하면 409입니다. requestId는 이 서비스 전체에서 유일하게 사용합니다. 잘못된 입력/경로/카탈로그는 400, 없는 리소스는 404입니다. HTTP body는 2MiB로 제한합니다. studio origin 5173에 CORS를 허용합니다.
 
@@ -99,6 +99,15 @@ R1 M2 보강: 두 레지스트리 도구의 결과는 `{"untrusted_api_registry_
 `finish`와 `PUT /projects/:id/source`는 저장 전에 모든 `/src/**` 파일을 공통 정적 검사합니다. raw `fetch(`, `XMLHttpRequest`, `WebSocket`, `EventSource`, `navigator.sendBeacon`, 모든 `http(s)://` 텍스트(허용 목록 없음), `/dev/session`·`/capabilities`·`/audit` 문자열, `__TOI_FETCH_CONFIG__` 대입 및 직접 속성 대입을 거부합니다. finish는 경로·이유가 담긴 tool error를 반환하여 모델이 수정할 수 있고 HTTP 저장은 400을 반환합니다. 거부된 소스는 저장하거나 revision_ready로 내보내지 않습니다. `@toi/fetch`의 `toiFetch`와 trusted host config 읽기는 허용합니다.
 
 이 검사는 **보조 방어선**입니다. 보수적인 텍스트 검사이므로 주석·표시용 문자열도 거부될 수 있고, 문자열 연결·별칭·`globalThis['fe'+'tch']` 등 동적 우회를 완전 차단하지 못합니다. 실제 인증·데이터 접근·쓰기 경계는 **policy-proxy(F1)**가 매 요청에 적용하는 정책입니다. 정적 검사나 프롬프트를 보안 sandbox로 취급하지 않습니다.
+
+## Gemini 모드
+
+```sh
+# GEMINI_API_KEY는 agent-server 프로세스에만 전달한다
+AGENT_MODE=gemini GEMINI_API_KEY=... npm start
+```
+
+Gemini는 새 SDK 없이 `fetch`로 `generateContent` function calling을 사용하며 요청 헤더 `x-goog-api-key`로만 인증합니다. 기본 모델은 `gemini-3.8-flash`이며, 2026-09 현재 Google 공식 모델 문서에서 Stable·Function calling 지원, deprecations 문서에서 shutdown 미정으로 확인했습니다: [Gemini models](https://ai.google.dev/gemini-api/docs/models), [Gemini 3.8 Flash](https://ai.google.dev/gemini-api/docs/latest-model), [Gemini deprecations](https://ai.google.dev/gemini-api/docs/deprecations). `GEMINI_MODEL`로 변경할 수 있습니다. Function declaration은 공식 Generate Content API가 지원하는 `parametersJsonSchema` 필드를 사용합니다([Function calling](https://ai.google.dev/gemini-api/docs/function-calling), [Generate Content API](https://ai.google.dev/api/generate-content)). 요청에는 시스템 프롬프트와 기존 도구 집합을 그대로 사용하고, 취소·턴/요청 시간/비용 한도·429/5xx 분류·입출력·thinking 토큰 metrics를 적용합니다. `GEMINI_TIMEOUT_MS` 기본값은 요청당 120초입니다. 실제 Gemini 호출은 이 저장소 테스트에서 수행하지 않고 fake `fetch`만 사용합니다.
 
 ## 정책 프록시와 생성 UI 연결
 

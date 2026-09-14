@@ -49,7 +49,25 @@ function allowedPath(api: RegisteredApi, pathname: string, method: string): bool
 }
 export function createPolicyProxy(config: PolicyConfig, storage: PolicyStorage, access = new Access(config, storage), downloads?: Downloads) {
   const secrets = () => [config.downloads?.kek ?? '', config.downloads?.urlSecret ?? '', config.minio?.secretKey ?? '', config.upstreamToken, config.liveToken, config.policyClientSecret ?? '', config.sessionSecret, config.capabilitySecret, config.devAdminToken ?? '', ...[...storage.apis.values()].flatMap(api => Object.values(api.environments).flatMap(e => [e.upstreamBaseUrl, new URL(e.upstreamBaseUrl).host])), config.upstreamUrl, new URL(config.upstreamUrl).host];
-  const send = (res: ServerResponse, status: number, value: unknown) => { res.writeHead(status, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' }); res.end(JSON.stringify(sanitize(value, secrets()))); };
+  const send = (res: ServerResponse, status: number, value: unknown, sanitized = false) => { res.writeHead(status, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' }); res.end(JSON.stringify(sanitized ? value : sanitize(value, secrets()))); };
+  async function upstreamBody(response: Response, abort: AbortController): Promise<Uint8Array> {
+    const declared = response.headers.get('content-length');
+    if (declared !== null && Number.isSafeInteger(Number(declared)) && Number(declared) > config.upstreamMaxBytes) { abort.abort(); throw new HttpError(502, 'UPSTREAM_TOO_LARGE'); }
+    if (!response.body) return new Uint8Array();
+    const reader = response.body.getReader(), chunks: Uint8Array[] = [];
+    let total = 0;
+    try {
+      while (true) {
+        const next = await reader.read(); if (next.done) break;
+        total += next.value.byteLength;
+        if (total > config.upstreamMaxBytes) { abort.abort(); void reader.cancel().catch(() => {}); throw new HttpError(502, 'UPSTREAM_TOO_LARGE'); }
+        chunks.push(next.value);
+      }
+    } finally { reader.releaseLock(); }
+    const result = new Uint8Array(total); let offset = 0;
+    for (const chunk of chunks) { result.set(chunk, offset); offset += chunk.byteLength; }
+    return result;
+  }
   async function proxy(req: IncomingMessage, res: ServerResponse, apiId: string, rawPath: string, query: string, download?: DownloadRequest) {
     const method = download ? 'GET' : req.method ?? 'GET', projectId = download?.projectId ?? header(req, 'x-toi-project');
     let session: Actor | undefined, capability: CapabilityClaims | undefined, reason: string | undefined, status = 500, value: unknown = { error: 'INTERNAL_ERROR' }, maskedFields: string[] = [], policyWarnings: PolicyWarning[] = [], denyReason: string | undefined;
@@ -80,18 +98,25 @@ export function createPolicyProxy(config: PolicyConfig, storage: PolicyStorage, 
       if (upstreamUrl.pathname !== expectedPath) throw new HttpError(400, 'INVALID_PATH');
       upstreamUrl.search = query;
       const payload = writes.has(method) && method !== 'DELETE' ? await body(req) : undefined;
-      const upstream = await fetch(upstreamUrl, { method, headers: { 'X-Service-Token': capability.env === 'preview' ? config.upstreamToken : config.liveToken, Accept: 'application/json', ...(payload !== undefined ? { 'Content-Type': 'application/json' } : {}) }, body: payload === undefined ? undefined : JSON.stringify(payload), signal: AbortSignal.timeout(5000), redirect: 'error' });
-      if (!upstream.ok) throw new HttpError(upstream.status >= 500 ? 502 : upstream.status, 'UPSTREAM_REJECTED');
+      const upstreamAbort = new AbortController(), timeout = setTimeout(() => upstreamAbort.abort(), 5000);
+      let upstream: Response, upstreamBytes: Uint8Array;
+      try {
+        upstream = await fetch(upstreamUrl, { method, headers: { 'X-Service-Token': capability.env === 'preview' ? config.upstreamToken : config.liveToken, Accept: 'application/json', ...(payload !== undefined ? { 'Content-Type': 'application/json' } : {}) }, body: payload === undefined ? undefined : JSON.stringify(payload), signal: upstreamAbort.signal, redirect: 'error' });
+        if (!upstream.ok) { upstreamAbort.abort(); throw new HttpError(upstream.status >= 500 ? 502 : upstream.status, 'UPSTREAM_REJECTED'); }
+        upstreamBytes = method === 'HEAD' ? new Uint8Array() : await upstreamBody(upstream, upstreamAbort);
+      } finally { clearTimeout(timeout); }
+      const upstreamText = new TextDecoder().decode(upstreamBytes);
       if (!upstream.headers.get('content-type')?.includes('application/json')) {
-        const detected = scanPii(await upstream.text());
+        const detected = scanPii(upstreamText);
         maskedFields = detected.maskedFields;
         policyWarnings = detected.policyWarnings;
         throw new HttpError(502, policyWarnings.length ? 'UPSTREAM_PII_RESPONSE' : 'UPSTREAM_RESPONSE_INVALID');
       }
-      const masked = maskJson(await upstream.json(), api.policy.mask); maskedFields = masked.maskedFields; policyWarnings = masked.policyWarnings; value = sanitize(masked.value, secrets()); status = upstream.status;
+      let parsed: unknown; try { parsed = JSON.parse(upstreamText); } catch { throw new HttpError(502, 'UPSTREAM_UNAVAILABLE'); }
+      const masked = maskJson(parsed, api.policy.mask); maskedFields = masked.maskedFields; policyWarnings = masked.policyWarnings; value = masked.value; status = upstream.status;
       if (download) {
         if (!downloads) throw new HttpError(503, 'DOWNLOADS_UNAVAILABLE');
-        value = await downloads.create(download, session.sub, value, maskedFields); status = 201;
+        value = await downloads.create(download, session.sub, sanitize(value, secrets()), maskedFields); status = 201;
       }
     } catch (error) {
       status = error instanceof HttpError ? error.status : 502;
@@ -104,7 +129,7 @@ export function createPolicyProxy(config: PolicyConfig, storage: PolicyStorage, 
     };
     // Await durable append before responding. An audit write failure never becomes success.
     await storage.append(sanitize(record, [...secrets(), header(req, 'x-toi-capability'), header(req, 'authorization').replace(/^Bearer /, '')]));
-    send(res, status, value);
+    send(res, status, sanitize(value, secrets()), true);
   }
   return createServer(async (req, res) => {
     let actor: Actor | undefined;

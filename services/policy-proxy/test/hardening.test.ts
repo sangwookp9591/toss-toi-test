@@ -14,17 +14,18 @@ const listen = (s: Server) => new Promise<string>(r => s.listen(0, '127.0.0.1', 
 const close = (s: Server) => new Promise<void>(r => { s.closeAllConnections(); s.close(() => r()); });
 let proxy: Server, upstream: Server, base: string, store: PolicyStorage, cfg: PolicyConfig, dir: string;
 const seen: string[] = [];
-let response: unknown, contentType = 'application/json';
+let response: unknown, rawBody: string | undefined, contentType = 'application/json';
+let contentLength: number | undefined, chunked = false, upstreamStatus = 200, sendBody = true;
 let viewer: string, admin: string, cap: string;
 const headers = () => ({ Authorization: `Bearer ${viewer}`, 'X-Toi-Capability': cap, 'X-Toi-Project': 'p' });
 const post = (endpoint: string, body: unknown, extra: Record<string,string> = {}) => fetch(base + endpoint, {method:'POST', headers:{'Content-Type':'application/json',...extra}, body:JSON.stringify(body)});
 beforeAll(async () => {
  dir = await mkdtemp(path.join(os.tmpdir(), 'policy-hardening-'));
- upstream = createServer((req,res) => { seen.push(req.url!); res.setHeader('Content-Type',contentType); res.end(contentType === 'application/json' ? JSON.stringify(response) : String(response)); });
+ upstream = createServer((req,res) => { seen.push(req.url!); res.statusCode = upstreamStatus; res.setHeader('Content-Type',contentType); if (contentLength !== undefined) res.setHeader('Content-Length', String(contentLength)); if (!sendBody) return res.end(); const value = rawBody ?? (contentType === 'application/json' ? JSON.stringify(response) : String(response)); if (chunked) { res.write(value.slice(0, 8)); setTimeout(() => res.end(value.slice(8)), 1); } else res.end(value); });
  const up = await listen(upstream);
  cfg = {...configuration({NODE_ENV:'test'}), ...identityConfig, dataDir:dir, upstreamUrl:up, upstreamAllowlist:[up], devAuth:true, devAdminToken:'private-bootstrap-token'};
  store = new PolicyStorage(dir); await store.init();
- await store.save({apiId:'reports',name:'reports',description:'test',environments:{preview:{upstreamBaseUrl:up},live:{upstreamBaseUrl:up}},owners:[],schemaVersion:1,openapi:{openapi:'3.1.0',paths:{'/reports/{year}/{month}':{get:{}},'/customers':{get:{}}}},policy:{mask:{'/items/*/phone':'phone'},requireReason:false,allowedRoles:['viewer'],allowWrite:false}});
+ await store.save({apiId:'reports',name:'reports',description:'test',environments:{preview:{upstreamBaseUrl:up},live:{upstreamBaseUrl:up}},owners:[],schemaVersion:1,openapi:{openapi:'3.1.0',paths:{'/reports/{year}/{month}':{get:{}},'/customers':{get:{},head:{}}}},policy:{mask:{'/items/*/phone':'phone'},requireReason:false,allowedRoles:['viewer'],allowWrite:false}});
  proxy = createPolicyProxy(cfg,store); base = await listen(proxy);
  const exp = Math.floor(Date.now()/1000)+600;
  viewer = await token('owner'); member('p','owner','viewer');
@@ -110,6 +111,46 @@ test('M1 non-JSON PII is blocked with audited detection and no raw response',asy
  try {const r=await fetch(base+'/proxy/reports/customers',{headers:headers()});expect(r.status).toBe(502);expect(await r.text()).toBe('{"error":"UPSTREAM_PII_RESPONSE"}');const audit=(await store.audit('p',1))[0];expect(audit.policyWarnings).toEqual(['possible_unregistered_pii']);expect(audit.maskedFields).toEqual([]);expect(audit.decision).toBe('denied');}
  finally {contentType='application/json';}
 });
+test('A1 caps upstream bodies before and during streaming, and audits denials', async () => {
+ const original = cfg.upstreamMaxBytes; cfg.upstreamMaxBytes = 16;
+ try {
+  response = { ok: true, value: 'small' }; contentLength = Buffer.byteLength(JSON.stringify(response));
+  expect((await fetch(base+'/proxy/reports/customers',{headers:headers()})).status).toBe(502);
+  expect((await store.audit('p',1))[0].denyReason).toBe('UPSTREAM_TOO_LARGE');
+  contentLength = undefined; chunked = true; response = 'x'.repeat(64);
+  const before = (await store.audit('p',100)).length;
+  const result = await fetch(base+'/proxy/reports/customers',{headers:headers()});
+  expect(result.status).toBe(502); expect(await result.json()).toEqual({error:'UPSTREAM_TOO_LARGE'});
+  const audit = (await store.audit('p',100)).slice(before).at(-1); expect(audit?.denyReason).toBe('UPSTREAM_TOO_LARGE'); expect(audit?.decision).toBe('denied');
+ } finally { cfg.upstreamMaxBytes = original; contentLength = undefined; chunked = false; }
+});
+test('A1 accepts a response within the configured byte cap', async () => {
+ const original = cfg.upstreamMaxBytes; cfg.upstreamMaxBytes = 64;
+ try { response = { ok: true }; contentLength = Buffer.byteLength(JSON.stringify(response)); expect((await fetch(base+'/proxy/reports/customers',{headers:headers()})).status).toBe(200); }
+ finally { cfg.upstreamMaxBytes = original; contentLength = undefined; }
+});
+test('M4 preserves upstream rejection without reading its body', async () => {
+ upstreamStatus = 404; contentLength = 1_000_000_000; response = 'secret-body'; sendBody = false;
+ try {
+  const started = Date.now(), result = await fetch(base+'/proxy/reports/customers',{headers:headers()});
+  expect(result.status).toBe(404); expect(await result.json()).toEqual({error:'UPSTREAM_REJECTED'}); expect(Date.now() - started).toBeLessThan(1000);
+  const audit = (await store.audit('p',1))[0]; expect(audit.denyReason).toBe('UPSTREAM_REJECTED'); expect(JSON.stringify(audit)).not.toContain('secret-body');
+ } finally { upstreamStatus = 200; contentLength = undefined; response = undefined; sendBody = true; }
+});
+test('M5 keeps invalid JSON classified as upstream unavailable', async () => {
+ contentType = 'application/json'; rawBody = '{not-json';
+ try {
+  const result = await fetch(base+'/proxy/reports/customers',{headers:headers()});
+  expect(result.status).toBe(502); expect(await result.json()).toEqual({error:'UPSTREAM_UNAVAILABLE'}); expect((await store.audit('p',1))[0].denyReason).toBe('UPSTREAM_UNAVAILABLE');
+ } finally { rawBody = undefined; }
+});
+test('L3 HEAD skips content size checks and body reads', async () => {
+ contentLength = 1_000_000_000; response = {ok:true};
+ try {
+  const result = await fetch(base+'/proxy/reports/customers',{method:'HEAD',headers:headers()});
+  expect(result.status).toBe(502); expect((await store.audit('p',1))[0].denyReason).toBe('UPSTREAM_UNAVAILABLE');
+ } finally { contentLength = undefined; response = undefined; }
+});
 
 const guardedEnvironments = ['Production', 'prod', 'staging', 'production ', '', undefined];
 test.each(guardedEnvironments)('N5 NODE_ENV=%s applies production guards', NODE_ENV => {
@@ -121,6 +162,11 @@ test.each(guardedEnvironments)('N5 NODE_ENV=%s applies production guards', NODE_
 test.each(['development','test'])('N5 %s development auth requires exact opt-in', NODE_ENV => {
  for(const TOI_DEV_AUTH_ENABLED of [undefined,'false','TRUE','true ','']) expect(configuration({NODE_ENV,TOI_DEV_AUTH_ENABLED}).devAuth).toBe(false);
  expect(configuration({NODE_ENV,TOI_DEV_AUTH_ENABLED:'true'}).devAuth).toBe(false);
+});
+test('A1 rejects invalid upstream response caps and defaults to 5 MiB', () => {
+ expect(configuration({NODE_ENV:'test'}).upstreamMaxBytes).toBe(5 * 1024 * 1024);
+ for (const value of ['', '0', '-1', '1.5', 'abc', '9007199254740992']) expect(() => configuration({NODE_ENV:'test', POLICY_MAX_UPSTREAM_BYTES:value})).toThrow('Invalid POLICY_MAX_UPSTREAM_BYTES');
+ expect(configuration({NODE_ENV:'test', POLICY_MAX_UPSTREAM_BYTES:'1024'}).upstreamMaxBytes).toBe(1024);
 });
 test.each([
  {TOI_CAPABILITY_SECRET:production.TOI_SESSION_SECRET},

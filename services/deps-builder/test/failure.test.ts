@@ -1,13 +1,15 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
+import { Readable } from 'node:stream';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { install, classifyInstallFailure } from '../src/installer.js';
-import { BuilderError, InputError } from '../src/security.js';
+import { BuilderError, InputError, storageOperation } from '../src/security.js';
+import { storageTimeouts } from '../src/config.js';
 import { PackageBuilder, type BuilderOptions } from '../src/builder.js';
-import { createApp } from '../src/server.js';
+import { createApp, idleTimeout } from '../src/server.js';
 import { listen, close, MemoryStore } from './helpers.js';
 const request = { entries: ['react'], dependencies: { react: '9999.0.0-missing' } };
 
@@ -72,4 +74,87 @@ test('HTTP failure codes, async failed codes, and identical-request retries are 
     assert.equal(builder.metrics.builds, 3);
     assert.equal((await post()).status, 200);
   } finally { await close(server); }
+});
+
+test('cleanup failure does not change the build result or retain build ownership', async () => {
+  const builder = new PackageBuilder(new MemoryStore(), {
+    install: async () => ({ directory: 'fixture', lock: Buffer.from('cleanup-lock'), cleanup: async () => { throw new Error('cleanup failed'); } }),
+    bundle: async () => ({ files: [{ path: 'react.js', body: Buffer.from('export default {};') }], entryPaths: { react: 'react.js' } }),
+    log: () => {},
+  });
+  const building = await builder.request({ entries: ['react'], dependencies: { react: '19.3.0' } });
+  assert.equal((await builder.wait(building.artifactKey, 1000))?.status, 'ready');
+  assert.equal(builder.builds.size, 0);
+});
+
+test('storage get timeout is classified and the same artifact can be retried', async () => {
+  const previous = process.env.DEPS_BUILDER_STORAGE_GET_TIMEOUT_MS;
+  process.env.DEPS_BUILDER_STORAGE_GET_TIMEOUT_MS = '20';
+  let gets = 0;
+  let blocked = true;
+  const objects = new Map<string, Buffer>();
+  const store = {
+    get: async (key: string) => {
+      if (blocked && ++gets === 3) await new Promise<never>(() => {});
+      return objects.get(key);
+    },
+    put: async (key: string, body: Buffer) => { objects.set(key, body); },
+    stream: async () => { throw new Error('unused'); },
+  };
+  try {
+    const builder = new PackageBuilder(store, {
+      install: async () => ({ directory: 'fixture', lock: Buffer.from('timeout-lock'), cleanup: async () => {} }),
+      bundle: async () => ({ files: [{ path: 'react.js', body: Buffer.from('export default {};') }], entryPaths: { react: 'react.js' } }),
+      log: () => {},
+    });
+    const first = await builder.request({ entries: ['react'], dependencies: { react: '19.3.0' } });
+    assert.equal((await builder.wait(first.artifactKey, 1000))?.status, 'failed');
+    const failed = await builder.status(first.artifactKey);
+    assert.equal(failed && 'code' in failed && failed.code, 'storage_unavailable');
+    assert.equal(builder.builds.size, 0);
+    blocked = false;
+    const retry = await builder.request({ entries: ['react'], dependencies: { react: '19.3.0' } });
+    assert.equal((await builder.wait(retry.artifactKey, 1000))?.status, 'ready');
+  } finally {
+    if (previous === undefined) delete process.env.DEPS_BUILDER_STORAGE_GET_TIMEOUT_MS;
+    else process.env.DEPS_BUILDER_STORAGE_GET_TIMEOUT_MS = previous;
+  }
+});
+
+test('storage timeout aborts the operation and destroys a late stream', async () => {
+  let aborted = false, destroyed = false;
+  const late = new Readable({ read() {} });
+  late.destroy = ((error?: Error) => { destroyed = true; return Readable.prototype.destroy.call(late, error); }) as typeof late.destroy;
+  await assert.rejects(storageOperation(async signal => {
+    signal.addEventListener('abort', () => { aborted = true; });
+    await new Promise(resolve => setTimeout(resolve, 30));
+    return late;
+  }, 5), /Artifact storage unavailable/);
+  await new Promise(resolve => setTimeout(resolve, 40));
+  assert.equal(aborted, true); assert.equal(destroyed, true);
+});
+
+test('storage timeout environment values require a bounded integer', () => {
+  const previous = process.env.DEPS_BUILDER_STORAGE_GET_TIMEOUT_MS;
+  try {
+    for (const value of ['0', '-1', '1.5', 'abc', '2147483648']) {
+      process.env.DEPS_BUILDER_STORAGE_GET_TIMEOUT_MS = value;
+      assert.throws(() => storageTimeouts(), /1 to 2147483647/);
+    }
+    process.env.DEPS_BUILDER_STORAGE_GET_TIMEOUT_MS = '1';
+    assert.equal(storageTimeouts().get, 1);
+    process.env.DEPS_BUILDER_STORAGE_GET_TIMEOUT_MS = '2147483647';
+    assert.equal(storageTimeouts().get, 2147483647);
+  } finally {
+    if (previous === undefined) delete process.env.DEPS_BUILDER_STORAGE_GET_TIMEOUT_MS;
+    else process.env.DEPS_BUILDER_STORAGE_GET_TIMEOUT_MS = previous;
+  }
+});
+
+test('streaming assets are destroyed after an idle timeout', async () => {
+  const stream = new Readable({ read() {} });
+  const error = new Promise<Error>(resolve => stream.once('error', resolve));
+  idleTimeout(stream, 5);
+  assert.match((await error).message, /idle timeout/);
+  assert.equal(stream.destroyed, true);
 });

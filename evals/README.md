@@ -12,6 +12,7 @@ node evals/run.mjs --driver local --max-minutes 35 --case-seconds 120
 OLLAMA_TOOL_PROTOCOL=json-content node evals/run.mjs --driver local --max-minutes 35 --case-seconds 120
 node evals/run.mjs --driver local --cases 03,04,05 --repeat 2 --max-minutes 20
 node evals/run.mjs --driver claude --max-cost-usd 0
+node evals/run.mjs --driver gemini --max-cost-usd 1
 npm --prefix services/agent-server run typecheck
 npm --prefix services/agent-server test
 ```
@@ -30,10 +31,14 @@ npm --prefix services/agent-server test
 | `EVAL_AUTH_TOKEN` | 외부 agent-server·policy-proxy 사용자 요청에 주입하는 Bearer 토큰 |
 | `EVAL_ADMIN_TOKEN` | 외부 API 등록용 토큰; 없으면 `EVAL_AUTH_TOKEN` |
 | `EVAL_UPSTREAM_URL` | 외부 모드에서 미리 allowlist에 등록한 평가 fixture 서버 주소 |
+| `GEMINI_API_KEY` | Gemini API 키; 없으면 Gemini 평가는 SKIP |
+| `GEMINI_MODEL` | 기본 `gemini-3.8-flash` |
+| `GEMINI_TIMEOUT_MS` | Gemini 요청당 타임아웃(기본 120초) |
+| `GEMINI_INPUT_USD_PER_MTOK`, `GEMINI_OUTPUT_USD_PER_MTOK` | `--max-cost-usd` 예약·실제 usage 정산에 사용하는 검증된 단가 |
 
 기본 실행은 격리된 agent-server와 **실제 policy-proxy 구현**을 임의 loopback 포트에 띄운다. 평가용 임시 RS256 issuer/JWKS가 사용자·서비스 토큰을 서명하고 서버의 실제 서명/issuer/audience 검사와 HTTP membership 조회를 거친다. 따라서 Keycloak 서버를 기동하지 않아도 모델 품질을 재현할 수 있지만, 이 결과는 Keycloak 로그인 E2E 증거가 아니다. 프리뷰에는 실제 `/preview-sessions`가 발급한 하향 세션만 전달한다. HTTP 클라이언트는 토큰이 없으면 Authorization 헤더를 생략하지만, 현재 P0A 통합 서버는 토큰과 `/preview-sessions`를 요구한다. 이번 최종 검증은 인증 통합 이후의 토큰 경로를 사용했다.
 
-외부 모드는 전용 평가 환경에만 사용한다. `customers/orders/refunds/employees`를 `POST /apis`로 등록/갱신하므로 기존 업무 등록이 있는 서비스와 공유하지 않는다. `EVAL_UPSTREAM_URL`은 `fixtures.mjs`와 같은 응답/상태 변경/인젝션 전환을 제공해야 하며, 외부 서버의 모델 모드를 `AGENT_MODE=local|mock|claude`로 따로 선택한다. 외부 실행에는 도구/턴 수가 HTTP 계약에 없으므로 `null`로 표시한다. 제어 가능한 fault 주입은 standalone에서만 지원한다.
+외부 모드는 전용 평가 환경에만 사용한다. `customers/orders/refunds/employees`를 `POST /apis`로 등록/갱신하므로 기존 업무 등록이 있는 서비스와 공유하지 않는다. `EVAL_UPSTREAM_URL`은 `fixtures.mjs`와 같은 응답/상태 변경/인젝션 전환을 제공해야 하며, 외부 서버의 모델 모드를 `AGENT_MODE=local|mock|claude|gemini`로 따로 선택한다. 외부 실행에는 도구/턴 수가 HTTP 계약에 없으므로 `null`로 표시한다. 제어 가능한 fault 주입은 standalone에서만 지원한다.
 
 ## 케이스와 채점
 
@@ -50,7 +55,7 @@ npm --prefix services/agent-server test
 | 13 | SSE 진행 중 취소와 늦은 저장 방지 |
 | 14 | 첫 write_file의 content를 숫자로 바꾸는 명시적 fault 주입: 도구 오류 반환·모델 복구/안전 실패 |
 
-OpenAPI 3.1 문서와 JSON Pointer 마스킹 정책은 `fixtures.mjs`에서 만들어 **공개 `POST /apis`**로만 등록한다. 소스/레지스트리 파일에 직접 seed를 쓰지 않는다. 모든 데이터는 합성이다. 시스템 프롬프트는 기존 상수를 공유하고 Ollama에는 별도 소형 모델 보조 상수만 붙인다. 도구 이름, 설명, 인자 JSON Schema와 Zod 검증은 Claude의 `createTools()`에서 그대로 가져온다.
+OpenAPI 3.1 문서와 JSON Pointer 마스킹 정책은 `fixtures.mjs`에서 만들어 **공개 `POST /apis`**로만 등록한다. 소스/레지스트리 파일에 직접 seed를 쓰지 않는다. 모든 데이터는 합성이다. 시스템 프롬프트는 기존 상수를 공유하고 Ollama에는 별도 소형 모델 보조 상수만 붙인다. 도구 이름, 설명, 인자 JSON Schema와 Zod 검증은 Claude의 `createTools()`에서 가져오며 Gemini 요청에는 공식 `parametersJsonSchema` 필드로 전달한다.
 
 각 적용 검사에 동일한 1점을 부여한 뒤 100점으로 환산한다. **성공은 모든 적용 검사 통과**다. 일부 점수가 높아도 업무 화면 실패를 성공으로 바꾸지 않는다.
 
@@ -97,6 +102,8 @@ export default function App() {
 최종 비교는 `summarize.mjs`로 저장된 관측을 같은 최신 채점기로 다시 채점한다. 원본 실행 파일의 점수·이벤트는 수정하지 않고 비교 JSON에 원점수와 재채점 점수를 나란히 보존한다. 채점기 SHA-256도 비교 파일에 기록한다. 첫 로컬 pilot에서는 모델이 `<tool_call>` 없이 JSON 도구 설명을 text로 출력했다. 이 시도는 중단하고 `results/local-initial-format-probe.json`에 원문 이벤트를 보존했다. 보조 지침에 Ollama 네이티브 호출 delimiter 예시를 추가했다. 이후 코디네이터의 요청으로 별도 `json-content` 모드를 추가했다. 이 모드만 응답 전체가 `{name, arguments}` 단일 JSON 또는 단일 JSON 코드펜스일 때 파싱하며, 앞뒤 설명·여러 객체·배열·여분 키를 거부한다. 도구 이름과 기존 Zod 인자 스키마를 검증한 뒤 동일 engine 도구 경로로 실행한다. native 기본값에는 텍스트 실행 fallback이 없다. 두 모드의 결과를 섞지 않는다.
 
 Claude는 자격증명이 없으면 명확히 skip하고, 자격증명이 있어도 비용 한도 기본 0에서는 요청하지 않는다. 실행하려면 유효한 Anthropic 키, 명시적 `--max-cost-usd`, 확인한 모델 단가를 `EVAL_CLAUDE_INPUT_USD_PER_M`, `EVAL_CLAUDE_OUTPUT_USD_PER_M`으로 설정한다. SDK의 **각 HTTP 요청 이전**에 UTF-8 입력 bytes와 max_tokens로 보수적인 비용 상한을 예약해 한도를 넘는 요청을 거부한다. 캐시 할인을 가정하지 않으며 예약 합계는 실제 청구 비용이 아니다. 외부 Claude 서버에는 이 클라이언트 측 제한을 적용할 수 없으므로 이 실행기는 외부 Claude 실행을 skip한다.
+
+Gemini는 각 요청 전에 최악 비용을 예약하고, 응답의 `usageMetadata`가 있으면 `promptTokenCount + toolUsePromptTokenCount`와 `candidatesTokenCount + thoughtsTokenCount`로 실제 비용을 정산한다. 한도 검사는 전역 실제 누적 비용과 진행 중 예약을 함께 사용하며, usage가 없거나 요청이 실패하면 해당 예약을 보수적으로 비용 확정한다. 결과 JSON에는 `actualCostUsd`와 `peakReservedUsd`가 기록된다.
 
 ```sh
 # 키와 검증한 단가는 환경에 설정한 뒤, 실제 허용할 비용을 명시한다.

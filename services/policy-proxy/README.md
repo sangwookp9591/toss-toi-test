@@ -37,6 +37,8 @@ Keycloak 그룹은 alice/bob `/team-a`, carol `/team-b`, dana `/risk`, root `/pl
 - `GET /audit?projectId=&limit=`: viewer/editor는 자기 기록, owner는 프로젝트 기록, platform-admin은 전체 기록.
 - `GET /healthz`.
 
+Upstream 응답 본문은 기본 5 MiB까지만 스트림으로 읽으며, `POLICY_MAX_UPSTREAM_BYTES`로 양의 안전한 정수 바이트 상한을 설정할 수 있다. `Content-Length`가 상한을 넘거나 스트리밍 중 누적 바이트가 넘으면 즉시 upstream을 중단하고 본문을 노출하지 않은 채 502 `UPSTREAM_TOO_LARGE`로 거부·감사한다. HEAD 응답은 Content-Length와 본문을 검사·읽지 않으며, upstream 오류 응답은 본문을 읽기 전에 기존 `UPSTREAM_REJECTED`로 처리한다. JSON 파싱 실패는 기존 호환 코드인 `UPSTREAM_UNAVAILABLE`로 감사·응답한다.
+
 승인은 기본 300초 동안 유효하며 만료 후 발급과 기존 live write capability 사용이 모두 거부된다. 승인 상태는 `data/approvals.json`에 원자적으로 저장되어 재시작 후에도 유지된다. `TOI_APPROVAL_TTL_SEC`는 테스트에서 짧게 설정할 수 있고 최대 3600초다. `node scripts/dev-up.mjs --e2e`는 TTL 8초를 관리 중인 프록시에 적용하고 일반 dev-up은 기본 300초로 복원한다. 승인 후 API 소유자 제거와 프로젝트 역할 변경도 요청마다 다시 확인한다.
 
 ## preview/live 분리와 기존 보안 경계

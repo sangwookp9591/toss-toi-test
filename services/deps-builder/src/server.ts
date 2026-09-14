@@ -1,9 +1,17 @@
 import { createServer, type ServerResponse } from 'node:http';
+import type { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { PackageBuilder } from './builder.js';
 import { failureCode, FAILURE_RESPONSES, InputError } from './security.js';
+import { storageTimeouts } from './config.js';
 import { projectIdFromPreviewOrigin } from '../../../contracts/src/runtime.js';
 function json(res: ServerResponse, status: number, body: unknown) { res.writeHead(status, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }); res.end(JSON.stringify(body)); }
+export function idleTimeout<T extends Readable>(stream: T, timeoutMs: number): T {
+  let timer = setTimeout(() => stream.destroy(new Error('Storage stream idle timeout')), timeoutMs);
+  const reset = () => { clearTimeout(timer); timer = setTimeout(() => stream.destroy(new Error('Storage stream idle timeout')), timeoutMs); };
+  stream.on('data', reset).once('close', () => clearTimeout(timer)).once('end', () => clearTimeout(timer));
+  return stream;
+}
 export function createApp(builder: PackageBuilder) {
   return createServer(async (req, res) => {
     const origin = req.headers.origin;
@@ -36,7 +44,7 @@ export function createApp(builder: PackageBuilder) {
         if (!status || status.status !== 'ready' || (filename !== 'manifest.json' && !status.manifest.files.some(file => file.path === filename))) return json(res, 404, { error: 'Asset is not published' });
         res.writeHead(200, { 'Content-Type': filename.endsWith('.json') ? 'application/json' : filename.endsWith('.css') ? 'text/css' : 'text/javascript', 'Cache-Control': 'public, max-age=31536000, immutable', 'X-Content-Type-Options': 'nosniff' });
         if (req.method === 'HEAD') {res.end(); return;}
-        const stream = await builder.store.stream(`${key}/${filename}`);
+        const stream = idleTimeout(await builder.store.stream(`${key}/${filename}`), storageTimeouts().get);
         await pipeline(stream, res); return;
       }
       json(res, 404, { error: 'Not found' });

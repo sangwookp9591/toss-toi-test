@@ -14,3 +14,13 @@ export function defaultProfile(): BuildProfile {
 export function settings() {
   return { registry: process.env.TOI_REGISTRY_URL ?? 'http://localhost:4873', token: process.env.TOI_REGISTRY_TOKEN ?? '', publicUrl: process.env.DEPS_BUILDER_PUBLIC_URL ?? 'http://localhost:7100', bucket: process.env.MINIO_BUCKET ?? 'toi-dependencies', minioUrl: process.env.MINIO_ENDPOINT ?? 'http://localhost:9000', accessKey: process.env.MINIO_ROOT_USER ?? 'toi', secretKey: process.env.MINIO_ROOT_PASSWORD ?? 'toi-local-secret' };
 }
+function timeout(value: string | undefined, fallback: number) {
+  if (value === undefined) return fallback;
+  if (!/^\d+$/.test(value)) throw new Error('Storage timeout must be an integer from 1 to 2147483647');
+  const parsed = Number(value);
+  if (!Number.isSafeInteger(parsed) || parsed < 1 || parsed > 2147483647) throw new Error('Storage timeout must be an integer from 1 to 2147483647');
+  return parsed;
+}
+export function storageTimeouts() {
+  return { get: timeout(process.env.DEPS_BUILDER_STORAGE_GET_TIMEOUT_MS, 10000), put: timeout(process.env.DEPS_BUILDER_STORAGE_PUT_TIMEOUT_MS, 60000) };
+}

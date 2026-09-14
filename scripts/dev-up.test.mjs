@@ -65,6 +65,8 @@ test('each runtime receives exactly its own allowlist and no inherited credentia
  const studio = serviceEnvironment('studio', env);
  for (const key of Object.keys(env).filter(key => /SECRET|TOKEN|PASSWORD|KEK/.test(key))) assert.equal(studio[key], undefined);
  assert.equal(serviceEnvironment('policy-proxy', env).MINIO_ROOT_PASSWORD, env.TOI_POLICY_MINIO_PASSWORD);
+ assert.equal(serviceEnvironment('agent-server', env).GEMINI_API_KEY, env.GEMINI_API_KEY);
+ for (const name of Object.keys(serviceKeys).filter(name => name !== 'agent-server')) assert.equal(serviceEnvironment(name, env).GEMINI_API_KEY, undefined);
  assert.deepEqual(Object.keys(serviceEnvironment('mock-backend', env)).sort(), ['PATH','HOME','TOI_MANAGED_ENV','TOI_PREVIEW_SERVICE_TOKEN','TOI_LIVE_SERVICE_TOKEN'].sort());
  assert.equal(commandEnvironment('install', env).TOI_SESSION_SECRET, undefined);
  for (const kind of ['registry', 'publish']) {

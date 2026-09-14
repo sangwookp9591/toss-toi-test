@@ -18,6 +18,8 @@ npm --prefix services/deps-builder start
 
 환경변수 예시는 [`.env.example`](.env.example). MinIO 기본 접속값은 compose와 동일하다. 브라우저는 MinIO와 Verdaccio에 직접 접근하지 않는다.
 
+저장소 작업은 조회(`DEPS_BUILDER_STORAGE_GET_TIMEOUT_MS`, 기본 10000ms)와 업로드(`DEPS_BUILDER_STORAGE_PUT_TIMEOUT_MS`, 기본 60000ms)별 타임아웃을 적용한다. 타임아웃은 `storage_unavailable`로 분류되며, 빌드 소유권과 임시 설치 정리는 타임아웃 뒤에도 해제된다.
+
 ```sh
 curl -i -X POST http://localhost:7100/package-sets \
   -H 'Content-Type: application/json' \

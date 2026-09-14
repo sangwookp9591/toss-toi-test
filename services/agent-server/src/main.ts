@@ -1,11 +1,12 @@
 import { resolve } from 'node:path';
 import { createDriver } from './claude.ts';
 import { OllamaDriver } from './drivers/ollama.ts';
+import { GeminiDriver } from './drivers/gemini.ts';
 import { createAgentServer } from './server.ts';
 import { PolicyClient } from './policy-client.ts';
 const mode = process.env.AGENT_MODE ?? 'auto';
-if (!['auto', 'mock', 'claude', 'local'].includes(mode)) throw new Error('AGENT_MODE must be auto, mock, claude or local');
-const driver = mode === 'local' ? new OllamaDriver() : await createDriver(mode as 'auto' | 'mock' | 'claude');
+if (!['auto', 'mock', 'claude', 'local', 'gemini'].includes(mode)) throw new Error('AGENT_MODE must be auto, mock, claude, local or gemini');
+const driver = mode === 'local' ? new OllamaDriver() : mode === 'gemini' ? new GeminiDriver() : await createDriver(mode as 'auto' | 'mock' | 'claude');
 const app = createAgentServer({ dataDir: resolve(process.env.DATA_DIR ?? 'data'), driver, studioOrigin: process.env.AGENT_STUDIO_ORIGIN, policy: new PolicyClient(process.env.POLICY_PROXY_URL ?? 'http://localhost:7200') });
 app.server.listen(7400, '127.0.0.1', () => console.log(JSON.stringify({ listening: 'http://localhost:7400', agentMode: driver.mode })));
 for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => { void app.close().then(() => process.exit(0)); });

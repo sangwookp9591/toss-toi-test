@@ -14,7 +14,7 @@ export interface AgentContext {
   text(delta: string): void;
   tool(name: string, args: Record<string, unknown>): Promise<unknown>;
 }
-export interface AgentDriver { mode: 'claude' | 'mock' | 'local'; run(context: AgentContext): Promise<void> }
+export interface AgentDriver { mode: 'claude' | 'mock' | 'local' | 'gemini'; run(context: AgentContext): Promise<void> }
 interface Execution { controller: AbortController; answer?: { questionId: string; resolve: (answer: string) => void; reject: (error: Error) => void } }
 export class Engine {
   private execution = new Map<string, Execution>();

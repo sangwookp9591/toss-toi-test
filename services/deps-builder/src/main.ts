@@ -2,9 +2,10 @@ import { createApp } from './server.js';
 import { PackageBuilder } from './builder.js';
 import { MinioStore } from './store.js';
 import { safeLogger } from './security.js';
-import { settings } from './config.js';
+import { settings, storageTimeouts } from './config.js';
 const log = safeLogger([settings().token, settings().secretKey]);
 try {
+  storageTimeouts();
   const store = new MinioStore(); await store.init();
   const builder = new PackageBuilder(store);
   const server = createApp(builder);

@@ -59,7 +59,9 @@ export interface AuditRecord {
   hash: string;
   ts: string;
   /** 요청 종류 */
-  action: "proxy" | "capability" | "preview-session" | "approval" | "download-create" | "download-fetch" | "membership-denied";
+  action: "proxy" | "capability" | "preview-session" | "approval" | "download-create" | "download-fetch" | "membership-denied"
+    /** P1-3: 스키마 버전 제출·결정·폐기(projectId "system"), 프로젝트 API 선택 변경 */
+    | "api-registry" | "project-apis";
   user: string;
   projectId: string;
   apiId: string;
