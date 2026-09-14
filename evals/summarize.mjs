@@ -2,7 +2,7 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { basename } from 'node:path';
-import { score } from './score.mjs';
+import { score, primaryFailure as derivePrimaryFailure } from './score.mjs';
 const inputs = process.argv.slice(2);
 if (!inputs.length) throw new Error('Pass completed model report JSON paths');
 const scorerSha256 = createHash('sha256').update(await readFile(new URL('score.mjs', import.meta.url))).digest('hex');
@@ -18,19 +18,17 @@ for (const input of inputs) {
     const failure = result.events?.find(e => e.type === 'failed');
     let primaryFailure = null;
     if (!rescored.success) {
-      if (result.failures?.some(f => f.type === 'timeout')) primaryFailure = 'timeout';
-      else if (failure) primaryFailure = report.driver === 'local' && !result.metrics?.toolCalls ? 'no_tool_calls' : result.metrics?.stagedPolicyViolations?.length ? 'source_policy_blocked' : failure.code ?? 'model_error';
-      else if (result.preview?.event?.type === 'build_failed') primaryFailure = 'build_failure';
-      else if (result.preview?.event?.type === 'runtime_failed' || result.preview?.runtimeErrors?.length) primaryFailure = 'runtime_failure';
-      else if (result.preview?.forbiddenRequests?.length) primaryFailure = 'forbidden_network_attempt';
-      else if (result.preview?.error) primaryFailure = 'preview_or_service_error';
-      else primaryFailure = rescored.failures?.[0]?.type ?? 'skipped';
+      primaryFailure = result.project
+        ? derivePrimaryFailure(testCase, result.events, result.project, result.preview, result.metrics ?? {}, rescored, result.failures ?? [])
+        : result.failures?.some(f => f.type === 'timeout') ? 'timeout' : failure?.code ?? 'model_error';
     }
-    cases.push({ id: result.id, kind: testCase.kind, iteration: result.iteration, originalScore: result.score, score: rescored.score, success: rescored.success, failures: rescored.failures, primaryFailure, durationMs: result.durationMs, metrics: result.metrics, generationCompleted: result.events?.some(e => e.type === 'done') ?? false, previewCommitted: result.preview?.event?.type === 'committed', diagnostics: result.preview?.event?.diagnostics ?? (result.preview?.event?.error ? [result.preview.event.error] : []), stagedPolicyViolations: result.metrics?.stagedPolicyViolations ?? [] });
+    cases.push({ id: result.id, kind: testCase.kind, iteration: result.iteration, originalScore: result.score, score: rescored.score, success: rescored.success, failures: rescored.failures, primaryFailure, injectionOutcome: rescored.injectionOutcome, durationMs: result.durationMs, metrics: result.metrics, generationCompleted: result.events?.some(e => e.type === 'done') ?? false, previewCommitted: result.preview?.event?.type === 'committed', diagnostics: result.preview?.event?.diagnostics ?? (result.preview?.event?.error ? [result.preview.event.error] : []), stagedPolicyViolations: result.metrics?.stagedPolicyViolations ?? [] });
   }
   const categories = {};
   for (const c of cases) if (c.primaryFailure) categories[c.primaryFailure] = (categories[c.primaryFailure] ?? 0) + 1;
-  reports.push({ label, source: input, durationMs: report.durationMs, model: report.model, limits: report.limits, categories, cases });
+  const injectionOutcomes = {};
+  for (const c of cases) if (c.injectionOutcome) injectionOutcomes[c.injectionOutcome] = (injectionOutcomes[c.injectionOutcome] ?? 0) + 1;
+  reports.push({ label, source: input, durationMs: report.durationMs, model: report.model, limits: report.limits, categories, injectionOutcomes, cases });
 }
 const ids = [...new Set(reports.flatMap(r => r.cases.map(c => c.id)))].sort();
 let markdown = '# Generation evaluation comparison\n\nAll saved observations rescored with score.mjs SHA-256 `' + scorerSha256 + '`. Original scores remain in the input reports; raw events and source were not changed.\n\n';
@@ -40,6 +38,8 @@ markdown += '\n| Case | ' + reports.map(r => r.label + ' score / passed').join('
 for (const id of ids) markdown += '| ' + id + ' | ' + reports.map(r => { const cases = r.cases.filter(c => c.id === id); return cases.map(c => `${c.score ?? '—'} / ${c.success ? 'PASS' : 'FAIL'}`).join(', '); }).join(' | ') + ' |\n';
 markdown += '\n| Mode | Tool calls | Tool errors | Turns | Input tokens (reported) | Output tokens (reported) | Thoughts tokens (reported) |\n|---|---:|---:|---:|---:|---:|---:|\n';
 for (const r of reports) markdown += '| ' + r.label + ' | ' + ['toolCalls','toolErrors','turns','inputTokens','outputTokens','thoughtsTokens'].map(key => r.cases.some(c => c.metrics?.[key] != null) ? r.cases.reduce((sum,c) => sum + (c.metrics?.[key] ?? 0),0) : 'unavailable').join(' | ') + ' |\n';
+markdown += '\n| Mode | Injection outcome distribution |\n|---|---|\n';
+for (const r of reports) markdown += '| ' + r.label + ' | ' + JSON.stringify(r.injectionOutcomes) + ' |\n';
 markdown += '\nSource reports: ' + reports.map(r => `[${r.label}](${basename(r.source)})`).join(', ') + '.\n\nLocal native and JSON-content runs are separate serial experiments; JSON-content accepts only a whole single tool object and validates its name/arguments through the same schema and engine. Token counts include completed Ollama responses only; timed-out responses may have additional unreported tokens. Cancellation and malformed-argument safe failure are lifecycle controls rather than generated business screens. A tool_error terminal with the injected fault, unchanged revision, and no late mutation passes the failure control; UI quality is reported separately.\n\nThese are 14 synthetic cases, one pass each; no confidence interval or production quality claim is warranted. Claude was not measured; improvements from a larger model are hypotheses. See ../README.md for security findings and browser/authentication limitations.\n';
 const stamp = new Date().toISOString().replace(/[:.]/g,'-');
 const output = new URL(`results/comparison-${stamp}`, import.meta.url);

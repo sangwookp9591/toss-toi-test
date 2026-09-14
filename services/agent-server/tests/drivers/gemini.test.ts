@@ -1,6 +1,8 @@
 import { afterEach, expect, it } from 'vitest';
 import { DEFAULT_MODEL, DEFAULT_TIMEOUT_MS, GeminiDriver } from '../../src/drivers/gemini.ts';
+import { SYSTEM_PROMPT } from '../../src/system-prompt.ts';
 import { start, waitFor } from '../helpers.ts';
+import { PolicyClient } from '../../src/policy-client.ts';
 
 const apps: Array<Awaited<ReturnType<typeof start>>> = [];
 afterEach(async () => { for (const app of apps.splice(0)) await app.cleanup(); });
@@ -83,6 +85,41 @@ it('groups parallel function responses into one user Content', async () => {
   const user = bodies[1].contents.filter((content: any) => content.role === 'user').at(-1);
   expect(user.parts).toHaveLength(2);
   expect(user.parts.every((part: any) => part.functionResponse)).toBe(true);
+});
+
+it('documents the real TDS props and preview button contract', () => {
+  expect(SYSTEM_PROMPT).toContain('Table은 columns, rows, 선택 rowKey props');
+  expect(SYSTEM_PROMPT).toContain("<Table columns={[{key:'id',header:'ID'}]} rows={rows} rowKey=\"id\" />");
+  expect(SYSTEM_PROMPT).toContain('native form 제출은 form-action \'none\'으로 차단된다');
+  expect(SYSTEM_PROMPT).toContain('type="button" Button의 단일 onClick handler');
+  expect(SYSTEM_PROMPT).toContain('onSubmit과 onClick을 동시에');
+});
+
+it('preserves registry JSON objects in Gemini function responses', async () => {
+  const bodies: any[] = [];
+  const policy = new PolicyClient('http://registry', async () => new Response(JSON.stringify([{ apiId: 'customers', responses: { items: { type: 'array', items: { type: 'object' } } } }]), { headers: { 'Content-Type': 'application/json' } }), 'registry-token');
+  const app = await start(new GeminiDriver({ apiKey: 'registry-shape-secret', fetcher: async (_url, init) => {
+    bodies.push(JSON.parse(String(init?.body)));
+    return bodies.length === 1 ? result([call('list_registered_apis', {})]) : result([call('finish', { summary: 'done' })]);
+  } }), policy); apps.push(app);
+  const id = await app.generate(); await waitFor(() => app.store.generation(id).state === 'done');
+  const response = bodies[1].contents.at(-1).parts[0].functionResponse.response;
+  expect(response.result.untrusted_api_registry_data).toBeDefined();
+  expect(response.result.untrusted_api_registry_data[0].responses.items).toBeDefined();
+});
+
+it('keeps scalar and malformed tool results as strings while errors stay objects', async () => {
+  const bodies: any[] = [];
+  const app = await start(new GeminiDriver({ apiKey: 'result-compat-secret', fetcher: async (_url, init) => {
+    bodies.push(JSON.parse(String(init?.body)));
+    if (bodies.length === 1) return result([call('list_files', {}), call('read_file', { path: '/src/App.tsx' }), call('read_file', { path: '/missing' })]);
+    return result([call('finish', { summary: 'done' })]);
+  } })); apps.push(app);
+  const id = await app.generate(); await waitFor(() => app.store.generation(id).state === 'done');
+  const responses = bodies[1].contents.at(-1).parts.map((part: any) => part.functionResponse.response);
+  expect(responses[0].result).toEqual(expect.any(Array));
+  expect(responses[1].result).toBe(JSON.stringify(app.project.files['/src/App.tsx']));
+  expect(responses[2]).toMatchObject({ is_error: true });
 });
 
 it('classifies timeout during JSON parsing as a timeout and bounds finish reasons', async () => {

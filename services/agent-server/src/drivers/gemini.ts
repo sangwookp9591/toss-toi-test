@@ -107,7 +107,7 @@ export class GeminiDriver implements AgentDriver {
             const args = sanitizedArgs && typeof sanitizedArgs === 'object' && !Array.isArray(sanitizedArgs) ? sanitizedArgs as Record<string, unknown> : {};
             const parsed = spec.parse ? spec.parse(args) : args;
             const output = await spec.run(parsed as Record<string, unknown>);
-            responses.push({ functionResponse: { name, response: sanitize(typeof output === 'string' ? { result: output } : output, this.apiKey) } });
+            responses.push({ functionResponse: { name, response: sanitize(typeof output === 'string' ? functionResponse(output, this.apiKey) : output, this.apiKey) } });
             if (name === 'finish') finished = true;
           } catch (error) {
             if (context.signal.aborted) throw error;
@@ -168,4 +168,11 @@ function sanitize(value: unknown, secret: string): unknown {
   if (Array.isArray(value)) return value.map(item => sanitize(item, secret));
   if (value && typeof value === 'object') return Object.fromEntries(Object.entries(value).map(([key, item]) => [safe(key, secret), sanitize(item, secret)]));
   return value;
+}
+function functionResponse(output: string, secret: string) {
+  try {
+    const parsed = JSON.parse(output);
+    if (parsed !== null && typeof parsed === 'object') return { result: sanitize(parsed, secret) };
+  } catch { /* preserve the existing string response for malformed JSON */ }
+  return { result: safe(output, secret) };
 }
